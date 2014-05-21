@@ -30,20 +30,25 @@
             android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
         <service
-            android:name=".UpdaterService"
+            android:name="com.fairphone.updater.UpdaterService"
             android:icon="@drawable/fairphone_updater_app_icon_small"
             android:label="@string/updaterService" />
 
-        <receiver android:name="BootBroadcastReceiver" >
+        <receiver android:name="com.fairphone.updater.BootBroadcastReceiver" >
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
+
+        <activity
+            android:name="com.fairphone.updater.VersionListActivity"/>
+
     </application>
 
 </manifest>

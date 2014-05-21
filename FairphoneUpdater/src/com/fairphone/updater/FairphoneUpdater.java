@@ -16,7 +16,11 @@
 
 package com.fairphone.updater;
 
+import com.squareup.picasso.Picasso;
+
 import android.app.Activity;
+import android.app.ActivityManager;
+import android.app.ActivityManager.RunningServiceInfo;
 import android.app.AlertDialog;
 import android.app.DownloadManager;
 import android.app.DownloadManager.Request;
@@ -38,7 +42,9 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -54,638 +60,892 @@ import java.security.NoSuchAlgorithmException;
 
 public class FairphoneUpdater extends Activity {
 
-	public static final String FAIRPHONE_UPDATER_NEW_VERSION_RECEIVED = "FairphoneUpdater.NEW.VERSION.RECEIVED";
-    protected static final String PREFERENCE_NEW_VERSION_NAME = "PREFERENCE_NEW_VERSION_NAME";
-	protected static final String PREFERENCE_NEW_VERSION_NUMBER = "PREFERENCE_NEW_VERSION_NUMBER";
-	protected static final String PREFERENCE_NEW_VERSION_MD5_SUM = "PREFERENCE_NEW_VERSION_MD5_SUM";
-	protected static final String PREFERENCE_NEW_VERSION_URL = "PREFERENCE_NEW_VERSION_URL";
-	protected static final String PREFERENCE_NEW_VERSION_ANDROID = "PREFERENCE_NEW_VERSION_ANDROID";
+    private static final String TAG = FairphoneUpdater.class.getSimpleName();
 
-	private static final String ANDROID_LABEL = "Android ";
-	private static final String FAIRPHONE_LABEL = "Fairphone ";
+    public static final String FAIRPHONE_UPDATER_NEW_VERSION_RECEIVED = "FairphoneUpdater.NEW.VERSION.RECEIVED";
 
-	private static final String TAG = FairphoneUpdater.class.getSimpleName();
+    public static final String FAIRPHONE_UPDATER_VERSION_SELECTED = "FairphoneUpdater.VERSION.SELECTED";
 
-	private static final String PREFERENCE_CURRENT_UPDATER_STATE = "CurrentUpdaterState";
-	private static final String PREFERENCE_DOWNLOAD_ID = "LatestUpdateDownloadId";
-	public static final String FAIRPHONE_UPDATER_PREFERENCES = "FairphoneUpdaterPreferences";
+    private static final String PREFERENCE_CURRENT_UPDATER_STATE = "CurrentUpdaterState";
+
+    private static final String PREFERENCE_DOWNLOAD_ID = "LatestUpdateDownloadId";
+
+    public static final String FAIRPHONE_UPDATER_PREFERENCES = "FairphoneUpdaterPreferences";
+
     private static final String GAPPS_REINSTALATION = "GAPPS_REINSTALATION_REQUEST";
 
-	public static enum UpdaterState {
-		NORMAL, DOWNLOAD, PREINSTALL
-	};
+    public static final String PREFERENCE_SELECTED_VERSION_NUMBER = "SelectedVersionNumber";
 
-	private Version mDeviceVersion;
-	private Version mLatestVersion;
+    public static final String PREFERENCE_SELECTED_VERSION_TYPE = "SelectedVersionImageType";
 
-	private UpdaterState mCurrentState;
+    public static enum UpdaterState {
+        NORMAL, DOWNLOAD, PREINSTALL
+    };
 
-	private SharedPreferences mSharedPreferences;
+    private Version mDeviceVersion;
 
-	// views
-	private TextView mViewCurrentVersionTitle;
-	private TextView mViewCurrentVersionText;
+    private Version mLatestVersion;
 
-	private TextView mViewUpdateVersionTitle;
-	private TextView mViewUpdateVersionText;
+    private UpdaterState mCurrentState;
 
-	private TextView mViewMessageText;
-	private Button mViewUpdateButton;
+    private SharedPreferences mSharedPreferences;
 
-	private LinearLayout mLatestGroupLla;
+    // views
+    private ImageView mCurrentVersionImage;
 
-	private DownloadManager mDownloadManager;
-	private DownloadBroadCastReceiver mDownloadBroadCastReceiver;
-	private long mLatestUpdateDownloadId;
-    
-	private BroadcastReceiver newVersionbroadcastReceiver;
+    private TextView mCurrentVersionNameText;
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_fairphone_updater);
+    private TextView mUpdateAvailableText;
 
-		setupLayout();
+    private TextView mCurrentVersionReleaseDateText;
 
-		mSharedPreferences = getSharedPreferences(
-				FAIRPHONE_UPDATER_PREFERENCES, MODE_PRIVATE);
+    private TextView mReleaseNotesText;
 
-		// get system data
-		mDeviceVersion = VersionParserHelper.getDeviceVersion(this);
+    private Button mFairphoneVersionsButton;
 
-		mLatestVersion = getLastestVersion();
+    private Button mAOSPVersionsButton;
 
-		// check current state
-		mCurrentState = getCurrentUpdaterState();
+    private DownloadManager mDownloadManager;
 
-		setupInstallationReceivers();
-		
-	    setupBroadcastReceiver();
+    private DownloadBroadCastReceiver mDownloadBroadCastReceiver;
 
-		// TODO : remove this
-		Intent i = new Intent(this, UpdaterService.class);
-		startService(i);
-	}
-   
-	protected void setupBroadcastReceiver() {
-        newVersionbroadcastReceiver = new BroadcastReceiver(){
+    private long mLatestUpdateDownloadId;
+
+    private BroadcastReceiver newVersionbroadcastReceiver;
+
+    private TextView mMoreInfoText;
+
+    private LinearLayout mOtherVersionsLayout;
+
+    private LinearLayout mMoreInfoLayout;
+
+    private Button mMoreInfoActionButton;
+
+    private LinearLayout mCurrentVersionInfoLayout;
+
+    private LinearLayout mUpdateDownloadInfoLayout;
+
+    private ProgressBar mUpdateVersionDownloadProgressBar;
+
+    private Button mMoreInfoCancelButton;
+
+    private LinearLayout mMoreInfoButtonsLayout;
+
+    private TextView mDownloadingVersionText;
+
+    private Version mSelectedVersion;
+
+    private TextView mReleaseNotesTitleText;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_fairphone_updater);
+
+        mSharedPreferences = getSharedPreferences(FAIRPHONE_UPDATER_PREFERENCES, MODE_PRIVATE);
+
+        boolean isConfigLoaded = UpdaterService.readUpdaterData(this);
+
+        // get system data
+        mDeviceVersion = VersionParserHelper.getDeviceVersion(this);
+
+        mLatestVersion = isConfigLoaded ? UpdaterData.getInstance().getLatestVersion(
+                mDeviceVersion.getImageType()) : new Version();
+
+        getSelectedVersionFromSharedPreferences();
+
+        // check current state
+        mCurrentState = getCurrentUpdaterState();
+
+        setupLayout();
+
+        setupInstallationReceivers();
+
+        setupBroadcastReceiver();
+
+        if (mCurrentState == UpdaterState.NORMAL) {
+            startUpdaterService();
+        }
+    }
+
+    public void startUpdaterService() {
+        boolean isRunning = false;
+        ActivityManager manager = (ActivityManager)this.getSystemService(Context.ACTIVITY_SERVICE);
+        for (RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (UpdaterService.class.getName().equals(service.service.getClassName())) {
+                isRunning = true;
+                break;
+            }
+        }
+
+        if (!isRunning) {
+            Log.e(TAG, "Starting Updater Service...");
+            Intent i = new Intent(this, UpdaterService.class);
+            startService(i);
+        }
+    }
+
+    protected void setupBroadcastReceiver() {
+        newVersionbroadcastReceiver = new BroadcastReceiver() {
 
             @Override
             public void onReceive(Context context, Intent intent) {
                 String action = intent.getAction();
 
                 if (FairphoneUpdater.FAIRPHONE_UPDATER_NEW_VERSION_RECEIVED.equals(action)) {
-                    mLatestVersion = getLastestVersion();
-                    updateNewVersionLayout();
-                }  
-            }    
+                    mLatestVersion = getLatestVersion();
+                    if (mCurrentState == UpdaterState.NORMAL) {
+                        setupState(mCurrentState);
+                    }
+                }
+
+                if (FairphoneUpdater.FAIRPHONE_UPDATER_VERSION_SELECTED.equals(action)) {
+                    getSelectedVersionFromSharedPreferences();
+                    startUpdateDownload();
+                }
+            }
         };
     }
 
-	private Version getLastestVersion() {
-		Version latest = null;
-
-		String newVersionName = mSharedPreferences.getString(
-				PREFERENCE_NEW_VERSION_NAME, null);
-
-		String number = mSharedPreferences.getString(
-				PREFERENCE_NEW_VERSION_NUMBER, null);
-		String url = mSharedPreferences.getString(PREFERENCE_NEW_VERSION_URL,
-				null);
-		String md5 = mSharedPreferences.getString(
-				PREFERENCE_NEW_VERSION_MD5_SUM, null);
-		String android = mSharedPreferences.getString(
-				PREFERENCE_NEW_VERSION_ANDROID, null);
-
-		if (newVersionName != null && number != null && url != null
-				&& md5 != null && android != null) {
-			latest = new Version();
-
-			latest.setName(newVersionName);
-			latest.setNumber(number);
-			latest.setDownloadLink(url);
-			latest.setMd5Sum(md5);
-			latest.setAndroid(android);
-		}
-
-		return latest;
-	}
-
-	private void setupLayout() {
-		mViewCurrentVersionTitle = (TextView) findViewById(R.id.currentVersionTitleText);
-		mViewCurrentVersionTitle.setVisibility(View.VISIBLE);
-		mViewCurrentVersionText = (TextView) findViewById(R.id.currentVersionDescriptionText);
-		mViewCurrentVersionText.setVisibility(View.VISIBLE);
-
-		mViewUpdateVersionTitle = (TextView) findViewById(R.id.nextVersionTitleText);
-		mViewUpdateVersionText = (TextView) findViewById(R.id.nextVersionDescriptionText);
-
-		mViewUpdateButton = (Button) findViewById(R.id.newVersionUpdateButton);
-
-		mViewMessageText = (TextView) findViewById(R.id.messageText);
-
-		mViewUpdateButton.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				if (mCurrentState == UpdaterState.NORMAL) {
-					startUpdateDownload();
-				} else if (mCurrentState == UpdaterState.PREINSTALL) {
-					startPreInstall();
-				}
-			}
-		});
-
-		mLatestGroupLla = (LinearLayout) findViewById(R.id.latestVersionGroup);
-
-		mLatestGroupLla.setVisibility(View.GONE);
-	}
-
-	public String getStringPreference(String key) {
-		return mSharedPreferences.getString(key, null);
-	}
-
-	public long getLongPreference(String key) {
-		return mSharedPreferences.getLong(key, 0);
-	}
-
-	public boolean getBooleanPreference(String key) {
-		return mSharedPreferences.getBoolean(key, false);
-	}
-
-	public void savePreference(String key, String value) {
-		Editor editor = mSharedPreferences.edit();
-
-		editor.putString(key, value);
-
-		editor.commit();
-	}
-
-	public void savePreference(String key, boolean value) {
-		Editor editor = mSharedPreferences.edit();
-
-		editor.putBoolean(key, value);
-
-		editor.commit();
-	}
-
-	public void savePreference(String key, long value) {
-		Editor editor = mSharedPreferences.edit();
-
-		editor.putLong(key, value);
-
-		editor.commit();
-	}
-
-	@Override
-	protected void onResume() {
-		super.onResume();
-
-		registerBroadCastReceiver();
-		// check current state
-		mCurrentState = getCurrentUpdaterState();
-		
-		mLatestVersion = VersionParserHelper.getLastestVersion(this);
-		if (mLatestVersion != null) {
-		    if(!mLatestVersion.isNewerVersionThan(mDeviceVersion)){  
-		        mLatestVersion.deleteFromSharedPreferences(this);
-		        mLatestVersion = null;   
-		    }
-		}
-
-		mViewCurrentVersionTitle.setText(mDeviceVersion.getName());
-		mViewCurrentVersionText.setText(FAIRPHONE_LABEL
-				+ mDeviceVersion.getNumber() + "\n" + ANDROID_LABEL
-				+ mDeviceVersion.getAndroid());
-
-		setupState(mCurrentState);
-	}
-
-	private void setupState(UpdaterState state) {
-		switch (state) {
-		case NORMAL:
-			setupNormalState();
-			break;
-		case DOWNLOAD:
-			setupDownloadState();
-			break;
-		case PREINSTALL:
-			setupPreInstallState();
-			break;
-		}
-	}
-
-	private void changeState(UpdaterState newState) {
-		mCurrentState = newState;
-
-		Editor editor = mSharedPreferences.edit();
-
-		editor.putString(PREFERENCE_CURRENT_UPDATER_STATE, mCurrentState.name());
-
-		editor.commit();
-
-		setupState(mCurrentState);
-	}
-
-	@Override
-	protected void onPause() {
-		super.onPause();
-
-		unregisterBroadCastReceiver();
-	}
-
-	private void setupNormalState() {
-
-		if (mLatestUpdateDownloadId != 0) {
-			// residue download ID
-			mDownloadManager.remove(mLatestUpdateDownloadId);
-
-			mLatestUpdateDownloadId = 0;
-			savePreference(PREFERENCE_DOWNLOAD_ID, mLatestUpdateDownloadId);
-		}
-
-		// check to see if there is a new version to install
-		updateNewVersionLayout();
-	}
-
-    protected void updateNewVersionLayout() {
-        if (mLatestVersion != null) {
-			mLatestGroupLla.setVisibility(View.VISIBLE);
-			mViewUpdateButton.setVisibility(View.VISIBLE);
-
-			mViewUpdateVersionTitle.setText(mLatestVersion.getName());
-			mViewUpdateVersionText.setText(FAIRPHONE_LABEL
-					+ mLatestVersion.getNumber() + "\n" + ANDROID_LABEL
-					+ mLatestVersion.getAndroid());
-
-			mViewMessageText.setVisibility(View.GONE);
-			mViewUpdateButton.setText(getResources().getString(
-					R.string.installVersion));
-		} else {
-			mLatestGroupLla.setVisibility(View.GONE);
-		}
+    private Version getLatestVersion() {
+        Version latest = UpdaterData.getInstance().getLatestVersion(mDeviceVersion.getImageType());
+        return latest;
     }
 
-	private UpdaterState getCurrentUpdaterState() {
+    private void setupLayout() {
 
-		String currentState = getStringPreference(PREFERENCE_CURRENT_UPDATER_STATE);
+        // title bar
+        // titleText
 
-		if (currentState == null || currentState.isEmpty()) {
-			currentState = UpdaterState.NORMAL.name();
+        setupCurrentVersionInfoLayout();
+        setupUpdateDownloadInfoLayout();
+        setupOtherVersionsLayout();
+        setupMoreInfoLayout();
+    }
 
-			Editor editor = mSharedPreferences.edit();
+    public void setupMoreInfoLayout() {
+        mMoreInfoLayout = (LinearLayout)findViewById(R.id.moreInfoLayout);
+        mReleaseNotesTitleText = (TextView)findViewById(R.id.releaseNotesTitle);
+        mReleaseNotesText = (TextView)findViewById(R.id.releaseNotesText);
+        mMoreInfoButtonsLayout = (LinearLayout)findViewById(R.id.actionButtonsContainer);
+        mMoreInfoCancelButton = (Button)findViewById(R.id.cancelButton);
+        mMoreInfoActionButton = (Button)findViewById(R.id.actionButton);
+    }
 
-			editor.putString(currentState, currentState);
+    public void setupOtherVersionsLayout() {
+        mOtherVersionsLayout = (LinearLayout)findViewById(R.id.otherVersionsLayout);
+        mFairphoneVersionsButton = (Button)findViewById(R.id.fairphoneVersionsButton);
+        mAOSPVersionsButton = (Button)findViewById(R.id.aospVersionsButton);
 
-			editor.commit();
-		}
+        mFairphoneVersionsButton.setOnClickListener(new OnClickListener() {
 
-		return UpdaterState.valueOf(currentState);
-	}
+            @Override
+            public void onClick(View v) {
+                startFairphoneVersionsActivity();
+            }
+        });
 
-	private static String getVersionDownloadPath(Version version) {
-		return Environment.getExternalStorageDirectory()
-				+ VersionParserHelper.UPDATER_FOLDER
-				+ VersionParserHelper.getNameFromVersion(version);
-	}
+        mAOSPVersionsButton.setOnClickListener(new OnClickListener() {
 
-	// ************************************************************************************
-	// PRE INSTALL
-	// ************************************************************************************
+            @Override
+            public void onClick(View v) {
+                startAOSPVersionActivity();
+            }
+        });
+    }
 
-	private void setupPreInstallState() {
+    public void setupUpdateDownloadInfoLayout() {
+        mUpdateDownloadInfoLayout = (LinearLayout)findViewById(R.id.updateDownloadInfo);
+        mDownloadingVersionText = (TextView)findViewById(R.id.downloadingText);
+        mUpdateVersionDownloadProgressBar = (ProgressBar)findViewById(R.id.updateDownloadProgressBar);
+    }
 
-		// the latest version data must exist
-		if (mLatestVersion != null) {
+    public void setupCurrentVersionInfoLayout() {
+        // top layout part
+        mCurrentVersionImage = (ImageView)findViewById(R.id.currentVersionImage);
+        // currentVersionInfo layout
+        mCurrentVersionInfoLayout = (LinearLayout)findViewById(R.id.currentVersionInfo);
+        // youAreRunningText
+        mCurrentVersionNameText = (TextView)findViewById(R.id.currentVersionNameText);
+        mUpdateAvailableText = (TextView)findViewById(R.id.updateAvailableText);
+        mCurrentVersionReleaseDateText = (TextView)findViewById(R.id.currentVersionReleaseDateText);
+        mMoreInfoText = (TextView)findViewById(R.id.moreInfoText);
+    }
 
-			mViewUpdateVersionTitle.setText(mLatestVersion.getName());
-			mViewUpdateVersionText.setText(FAIRPHONE_LABEL
-					+ mLatestVersion.getNumber() + "\n" + ANDROID_LABEL
-					+ mLatestVersion.getAndroid());
+    public void updateMoreInfoLayout(boolean hasUpdate) {
 
-			// check the md5 of the file
-			File file = new File(getVersionDownloadPath(mLatestVersion));
+        updateMoreInfoReleaseNotesText(hasUpdate);
+        mMoreInfoCancelButton
+                .setVisibility(hasUpdate && mCurrentState != UpdaterState.NORMAL ? View.VISIBLE
+                        : View.GONE);
+        mMoreInfoActionButton.setVisibility(hasUpdate ? View.VISIBLE : View.GONE);
 
-			if (file.exists()) {
+        mMoreInfoCancelButton.setOnClickListener(new OnClickListener() {
 
-				if (FairphoneUpdater.checkMD5(mLatestVersion.getMd5Sum(), file)) {
-					mLatestGroupLla.setVisibility(View.VISIBLE);
+            @Override
+            public void onClick(View v) {
+                toggleReleaseInfoOtherVersions();
+                if (mCurrentState == UpdaterState.DOWNLOAD
+                        || mCurrentState == UpdaterState.PREINSTALL) {
 
-					mViewMessageText.setText(getResources().getString(
-							R.string.messageReadyToInstall));
+                    changeState(UpdaterState.NORMAL);
+                }
+            }
+        });
 
-					mViewUpdateButton.setText(getResources().getString(
-							R.string.rebootDevice));
-					mViewUpdateButton.setVisibility(View.VISIBLE);
+        updateMoreInfoActionButton();
+    }
 
-					mViewMessageText.setVisibility(View.VISIBLE);
-					return;
-				} else {
-					mDownloadManager.remove(mLatestUpdateDownloadId);
-					mLatestUpdateDownloadId = 0;
+    public void updateMoreInfoActionButton() {
+        // set button text
+        switch (mCurrentState) {
+            case NORMAL:
+                mMoreInfoActionButton.setText(R.string.downloadAndUpdateVersionBtn);
+                mMoreInfoActionButton.setEnabled(true);
+                break;
+            case DOWNLOAD:
+                mMoreInfoActionButton.setText(R.string.installBtn);
+                mMoreInfoActionButton.setEnabled(false);
+                break;
+            case PREINSTALL:
+                mMoreInfoActionButton.setText(R.string.installBtn);
+                mMoreInfoActionButton.setEnabled(true);
+                break;
+        }
 
-					savePreference(PREFERENCE_DOWNLOAD_ID,
-							mLatestUpdateDownloadId);
+        mMoreInfoActionButton.setOnClickListener(new OnClickListener() {
 
-					Toast.makeText(
-							this,
-							getResources().getString(
-									R.string.invalidDownloadMessage),
-							Toast.LENGTH_SHORT).show();
-				}
-			}
-		}
+            @Override
+            public void onClick(View v) {
 
-		// remove the updater directory
-		File fileDir = new File(Environment.getExternalStorageDirectory()
-				+ VersionParserHelper.UPDATER_FOLDER);
-		fileDir.delete();
+                setSelectedVersion(mLatestVersion);
 
-		// else if the perfect case does not happen, reset the download
-		changeState(UpdaterState.NORMAL);
-	}
+                if (mSelectedVersion != null) {
+                    Picasso.with(getApplicationContext()).load(mSelectedVersion.getThumbnailLink())
+                            .placeholder(R.drawable.fairphone_updater_current_version)
+                            .into(mCurrentVersionImage);
+                }
 
-	private void startPreInstall() {
-		// set the command for the recovery
-		Process p;
-		try {
-			p = Runtime.getRuntime().exec("su");
+                if (mCurrentState == UpdaterState.NORMAL) {
+                    startUpdateDownload();
+                } else if (mCurrentState == UpdaterState.PREINSTALL) {
+                    startPreInstall();
+                }
+            }
+        });
+    }
 
-			DataOutputStream os = new DataOutputStream(p.getOutputStream());
-			os.writeBytes("rm -f /cache/recovery/command\n");
-			os.writeBytes("rm -f /cache/recovery/extendedcommand\n");
+    protected void setSelectedVersion(Version selectedVersion) {
+        int versionNumber = selectedVersion != null ? selectedVersion.getNumber() : 0;
+        String versionImageType = selectedVersion != null ? selectedVersion.getImageType() : "";
 
-			os.writeBytes("echo '--wipe_cache' >> /cache/recovery/command\n");
+        Editor editor = mSharedPreferences.edit();
+        editor.putInt(PREFERENCE_SELECTED_VERSION_NUMBER, versionNumber);
+        editor.putString(PREFERENCE_SELECTED_VERSION_TYPE, versionImageType);
+        editor.commit();
 
-			os.writeBytes("echo '--update_package=/"
-					+ VersionParserHelper.RECOVERY_PATH
-					+ VersionParserHelper.UPDATER_FOLDER
-					+ VersionParserHelper.getNameFromVersion(mLatestVersion)
-					+ "' >> /cache/recovery/command\n");
+        mSelectedVersion = UpdaterData.getInstance().getVersion(versionImageType, versionNumber);
+    }
 
-			os.writeBytes("sync\n");
-			os.writeBytes("exit\n");
-			os.flush();
-			p.waitFor();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+    protected void getSelectedVersionFromSharedPreferences() {
+        String versionImageType = mSharedPreferences
+                .getString(PREFERENCE_SELECTED_VERSION_TYPE, "");
+        int versionNumber = mSharedPreferences.getInt(PREFERENCE_SELECTED_VERSION_NUMBER, 0);
+        mSelectedVersion = UpdaterData.getInstance().getVersion(versionImageType, versionNumber);
+    }
 
-		// send broadcast intent
-		Intent broadcastIntent = new Intent();
+    private void updateMoreInfoReleaseNotesText(boolean hasUpdate) {
+        Version version = mSelectedVersion != null ? mSelectedVersion : mLatestVersion;
+        Resources resources = getResources();
+        if (hasUpdate) {
+            mReleaseNotesTitleText.setText(version.getName() + " " + version.getBuildNumber() + " " + resources.getString(R.string.releaseNotes));
+            mReleaseNotesText.setText(version.getReleaseNotes());
+        } else {
+            mReleaseNotesTitleText.setText(mDeviceVersion.getName() + " " + mDeviceVersion.getBuildNumber() + " " + resources.getString(R.string.releaseNotes));
+            mReleaseNotesText.setText(mDeviceVersion.getReleaseNotes());
+        }
+    }
+
+    public void toggleReleaseInfoOtherVersions() {
+        if (mOtherVersionsLayout.getVisibility() == View.VISIBLE) {
+            mOtherVersionsLayout.setVisibility(View.GONE);
+            mMoreInfoLayout.setVisibility(View.VISIBLE);
+            mMoreInfoText.setText(R.string.lessInfo);
+        } else {
+            mOtherVersionsLayout.setVisibility(View.VISIBLE);
+            mMoreInfoLayout.setVisibility(View.GONE);
+            mMoreInfoText.setText(R.string.moreInfo);
+        }
+    }
+
+    protected void startAOSPVersionActivity() {
+        Intent i = new Intent(this, VersionListActivity.class);
+        i.putExtra(VersionListActivity.VERSION_LIST_TYPE, VersionListActivity.AOSP_VERSIONS);
+        startActivity(i);
+    }
+
+    protected void startFairphoneVersionsActivity() {
+        Intent i = new Intent(this, VersionListActivity.class);
+        i.putExtra(VersionListActivity.VERSION_LIST_TYPE, VersionListActivity.FAIRPHONE_VERSIONS);
+        startActivity(i);
+    }
+
+    public String getStringPreference(String key) {
+        return mSharedPreferences.getString(key, null);
+    }
+
+    public long getLongPreference(String key) {
+        return mSharedPreferences.getLong(key, 0);
+    }
+
+    public boolean getBooleanPreference(String key) {
+        return mSharedPreferences.getBoolean(key, false);
+    }
+
+    public void savePreference(String key, String value) {
+        Editor editor = mSharedPreferences.edit();
+
+        editor.putString(key, value);
+
+        editor.commit();
+    }
+
+    public void savePreference(String key, boolean value) {
+        Editor editor = mSharedPreferences.edit();
+
+        editor.putBoolean(key, value);
+
+        editor.commit();
+    }
+
+    public void savePreference(String key, long value) {
+        Editor editor = mSharedPreferences.edit();
+
+        editor.putLong(key, value);
+
+        editor.commit();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        registerBroadCastReceiver();
+        // check current state
+        mCurrentState = getCurrentUpdaterState();
+
+        boolean isConfigLoaded = UpdaterService.readUpdaterData(this);
+        mDeviceVersion = VersionParserHelper.getDeviceVersion(this);
+        mLatestVersion = isConfigLoaded ? UpdaterData.getInstance().getLatestVersion(
+                mDeviceVersion.getImageType()) : new Version();
+
+        getSelectedVersionFromSharedPreferences();
+
+        setupState(mCurrentState);
+    }
+
+    private void setupState(UpdaterState state) {
+        switch (state) {
+            case NORMAL:
+                setupNormalState();
+                break;
+            case DOWNLOAD:
+                setupDownloadState();
+                break;
+            case PREINSTALL:
+                setupPreInstallState();
+                break;
+        }
+    }
+
+    private void changeState(UpdaterState newState) {
+        mCurrentState = newState;
+
+        Editor editor = mSharedPreferences.edit();
+
+        editor.putString(PREFERENCE_CURRENT_UPDATER_STATE, mCurrentState.name());
+
+        editor.commit();
+
+        setupState(mCurrentState);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        unregisterBroadCastReceiver();
+    }
+
+    private void setupNormalState() {
+
+        if (mLatestUpdateDownloadId != 0) {
+            // residue download ID
+            mDownloadManager.remove(mLatestUpdateDownloadId);
+
+            mLatestUpdateDownloadId = 0;
+            savePreference(PREFERENCE_DOWNLOAD_ID, mLatestUpdateDownloadId);
+            setSelectedVersion(null);
+        }
+
+        mCurrentVersionInfoLayout.setVisibility(View.VISIBLE);
+        mOtherVersionsLayout.setVisibility(View.VISIBLE);
+        mUpdateDownloadInfoLayout.setVisibility(View.GONE);
+        mMoreInfoLayout.setVisibility(View.GONE);
+
+        setupCurrentVersionInfoLayout(UpdaterState.NORMAL);
+    }
+
+    private void setupCurrentVersionInfoLayout(UpdaterState state) {
+        Resources resources = getResources();
+        final boolean isUpdateAvailable = mLatestVersion.isNewerVersionThan(mDeviceVersion);
+        switch (state) {
+            case NORMAL:
+
+                Picasso.with(this).load(mDeviceVersion.getThumbnailLink())
+                        .placeholder(R.drawable.fairphone_updater_current_version)
+                        .into(mCurrentVersionImage);
+
+                mCurrentVersionNameText.setText(mDeviceVersion.getImageTypeDescription(resources)
+                        + " " + mDeviceVersion.getName() + " " + mDeviceVersion.getBuildNumber());
+
+                setupUpdateAvailable(resources, isUpdateAvailable);
+
+                mMoreInfoText
+                        .setText(mMoreInfoLayout.getVisibility() == View.VISIBLE ? R.string.lessInfo
+                                : R.string.moreInfo);
+                mMoreInfoText.setVisibility(View.VISIBLE);
+
+                mMoreInfoText.setOnClickListener(new OnClickListener() {
+
+                    @Override
+                    public void onClick(View v) {
+                        updateMoreInfoLayout(isUpdateAvailable);
+                        toggleReleaseInfoOtherVersions();
+                    }
+                });
+
+                break;
+            case DOWNLOAD:
+            case PREINSTALL:
+                if (mSelectedVersion != null) {
+                    Picasso.with(getApplicationContext()).load(mSelectedVersion.getThumbnailLink())
+                            .placeholder(R.drawable.fairphone_updater_current_version)
+                            .into(mCurrentVersionImage);
+                }
+                break;
+        }
+    }
+
+    public void setupUpdateAvailable(Resources resources, final boolean isUpdateAvailable) {
+        if (isUpdateAvailable) {
+            mUpdateAvailableText.setText(R.string.newVersionAvailable);
+            mCurrentVersionReleaseDateText.setVisibility(View.GONE);
+        } else {
+            mUpdateAvailableText.setText(R.string.noUpdatesAvailable);
+            mCurrentVersionReleaseDateText.setText(resources.getString(R.string.releasedIn) + " "
+                    + mDeviceVersion.getReleaseDate());
+            mCurrentVersionReleaseDateText.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private UpdaterState getCurrentUpdaterState() {
+
+        String currentState = getStringPreference(PREFERENCE_CURRENT_UPDATER_STATE);
+
+        if (currentState == null || currentState.isEmpty()) {
+            currentState = UpdaterState.NORMAL.name();
+
+            Editor editor = mSharedPreferences.edit();
+
+            editor.putString(currentState, currentState);
+
+            editor.commit();
+        }
+
+        return UpdaterState.valueOf(currentState);
+    }
+
+    private static String getVersionDownloadPath(Version version) {
+        return Environment.getExternalStorageDirectory() + VersionParserHelper.UPDATER_FOLDER
+                + VersionParserHelper.getNameFromVersion(version);
+    }
+
+    // ************************************************************************************
+    // PRE INSTALL
+    // ************************************************************************************
+
+    private void setupPreInstallState() {
+
+        // the latest version data must exist
+        if (mSelectedVersion != null) {
+
+            mCurrentVersionInfoLayout.setVisibility(View.GONE);
+            mOtherVersionsLayout.setVisibility(View.GONE);
+            mUpdateDownloadInfoLayout.setVisibility(View.GONE);
+            mMoreInfoLayout.setVisibility(View.VISIBLE);
+
+            // check the md5 of the file
+            File file = new File(getVersionDownloadPath(mSelectedVersion));
+
+            if (file.exists()) {
+                if (FairphoneUpdater.checkMD5(mSelectedVersion.getMd5Sum(), file)) {
+                    setupCurrentVersionInfoLayout(mCurrentState);
+                    updateMoreInfoLayout(true);
+                    return;
+                } else {
+                    mDownloadManager.remove(mLatestUpdateDownloadId);
+                    mLatestUpdateDownloadId = 0;
+
+                    savePreference(PREFERENCE_DOWNLOAD_ID, mLatestUpdateDownloadId);
+
+                    Toast.makeText(this, getResources().getString(R.string.invalidDownloadMessage),
+                            Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+
+        // remove the updater directory
+        File fileDir = new File(Environment.getExternalStorageDirectory()
+                + VersionParserHelper.UPDATER_FOLDER);
+        fileDir.delete();
+
+        // else if the perfect case does not happen, reset the download
+        changeState(UpdaterState.NORMAL);
+    }
+
+    private void startPreInstall() {
+        // set the command for the recovery
+        Process p;
+        try {
+            p = Runtime.getRuntime().exec("su");
+
+            DataOutputStream os = new DataOutputStream(p.getOutputStream());
+            os.writeBytes("rm -f /cache/recovery/command\n");
+            os.writeBytes("rm -f /cache/recovery/extendedcommand\n");
+
+            os.writeBytes("echo '--wipe_cache' >> /cache/recovery/command\n");
+
+            os.writeBytes("echo '--update_package=/" + VersionParserHelper.RECOVERY_PATH
+                    + VersionParserHelper.UPDATER_FOLDER
+                    + VersionParserHelper.getNameFromVersion(mLatestVersion)
+                    + "' >> /cache/recovery/command\n");
+
+            os.writeBytes("sync\n");
+            os.writeBytes("exit\n");
+            os.flush();
+            p.waitFor();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        // send broadcast intent
+        Intent broadcastIntent = new Intent();
         broadcastIntent.setAction(FairphoneUpdater.GAPPS_REINSTALATION);
         this.sendBroadcast(broadcastIntent);
-		
-		// reboot the device into recovery
-		((PowerManager) getSystemService(POWER_SERVICE)).reboot("recovery");
-	}
 
-	// ************************************************************************************
-	// DOWNLOAD UPDATE
-	// ************************************************************************************
+        setSelectedVersion(null);
+        // reboot the device into recovery
+        ((PowerManager)getSystemService(POWER_SERVICE)).reboot("recovery");
+    }
 
-	private void startUpdateDownload() {
-		// use only on WiFi
-		if (isWiFiEnabled()) {
-			// set the download for the latest version on the download manager
-			String fileName = VersionParserHelper
-					.getNameFromVersion(mLatestVersion);
-			Request request = createDownloadRequest(
-					mLatestVersion.getDownloadLink(), fileName,
-					mLatestVersion.getName() + " FP Update");
-			mLatestUpdateDownloadId = mDownloadManager.enqueue(request);
+    // ************************************************************************************
+    // DOWNLOAD UPDATE
+    // ************************************************************************************
 
-			// save it on the shared preferences
-			savePreference(PREFERENCE_DOWNLOAD_ID, mLatestUpdateDownloadId);
+    private void startUpdateDownload() {
+        // use only on WiFi
+        if (isWiFiEnabled()) {
+            // set the download for the latest version on the download manager
+            String fileName = VersionParserHelper.getNameFromVersion(mSelectedVersion);
+            Request request = createDownloadRequest(
+                    mSelectedVersion.getDownloadLink(),
+                    fileName,
+                    mSelectedVersion.getName()
+                            + " " +  mSelectedVersion.getImageTypeDescription(getResources()) + " Update");
+            mLatestUpdateDownloadId = mDownloadManager.enqueue(request);
 
-			// change state to download
-			changeState(UpdaterState.DOWNLOAD);
-		} else {
-			Resources resources = this.getResources();
+            // save it on the shared preferences
+            savePreference(PREFERENCE_DOWNLOAD_ID, mLatestUpdateDownloadId);
 
-			AlertDialog.Builder disclaimerDialog = new AlertDialog.Builder(this);
+            // change state to download
+            changeState(UpdaterState.DOWNLOAD);
+        } else {
+            Resources resources = this.getResources();
 
-			disclaimerDialog.setTitle(resources
-					.getString(R.string.wifiDiscaimerTitle));
+            AlertDialog.Builder disclaimerDialog = new AlertDialog.Builder(this);
 
-			// Setting Dialog Message
-			disclaimerDialog.setMessage(resources
-					.getString(R.string.wifiDiscaimerMessage));
-			disclaimerDialog.setPositiveButton(
-					resources.getString(android.R.string.ok),
-					new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog, int id) {
-							// do nothing, since the state is still the same
-						}
-					});
-			disclaimerDialog.create();
-			disclaimerDialog.show();
-		}
-	}
+            disclaimerDialog.setTitle(resources.getString(R.string.wifiDiscaimerTitle));
 
-	private Request createDownloadRequest(String url, String fileName,
-			String downloadTitle) {
+            // Setting Dialog Message
+            disclaimerDialog.setMessage(resources.getString(R.string.wifiDiscaimerMessage));
+            disclaimerDialog.setPositiveButton(resources.getString(android.R.string.ok),
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            // do nothing, since the state is still the same
+                        }
+                    });
+            disclaimerDialog.create();
+            disclaimerDialog.show();
+        }
+    }
 
-		Request request = new Request(Uri.parse(url));
-		Environment.getExternalStoragePublicDirectory(
-				Environment.getExternalStorageDirectory()
-						+ VersionParserHelper.UPDATER_FOLDER).mkdirs();
+    private Request createDownloadRequest(String url, String fileName, String downloadTitle) {
 
-		request.setDestinationInExternalPublicDir(
-				VersionParserHelper.UPDATER_FOLDER, fileName);
-		request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI);
-		request.setAllowedOverRoaming(false);
+        Request request = new Request(Uri.parse(url));
+        Environment.getExternalStoragePublicDirectory(
+                Environment.getExternalStorageDirectory() + VersionParserHelper.UPDATER_FOLDER)
+                .mkdirs();
 
-		request.setTitle(downloadTitle);
+        request.setDestinationInExternalPublicDir(VersionParserHelper.UPDATER_FOLDER, fileName);
+        request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI);
+        request.setAllowedOverRoaming(false);
 
-		return request;
-	}
+        request.setTitle(downloadTitle);
 
-	private boolean isWiFiEnabled() {
+        return request;
+    }
 
-		ConnectivityManager manager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+    private boolean isWiFiEnabled() {
 
-		boolean isWifi = manager.getNetworkInfo(ConnectivityManager.TYPE_WIFI)
-				.isConnectedOrConnecting();
+        ConnectivityManager manager = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
 
-		return isWifi;
-	}
+        boolean isWifi = manager.getNetworkInfo(ConnectivityManager.TYPE_WIFI)
+                .isConnectedOrConnecting();
 
-	private void setupDownloadState() {
-		// setup the download state views
-		if (mLatestVersion == null) {
-			// we don't have the lastest.xml so get back to initial state
-			File updateDir = new File(Environment.getExternalStorageDirectory()
-					+ VersionParserHelper.UPDATER_FOLDER);
+        return isWifi;
+    }
 
-			updateDir.delete();
+    private void setupDownloadState() {
+        // setup the download state views
+        if (mSelectedVersion == null) {
+            // we don't have the lastest.xml so get back to initial state
+            File updateDir = new File(Environment.getExternalStorageDirectory()
+                    + VersionParserHelper.UPDATER_FOLDER);
 
-			changeState(UpdaterState.NORMAL);
+            updateDir.delete();
 
-			return;
-		}
+            changeState(UpdaterState.NORMAL);
 
-		mViewUpdateVersionTitle.setText(mLatestVersion.getName());
-		mViewUpdateVersionText.setText(FAIRPHONE_LABEL
-				+ mLatestVersion.getNumber() + "\n" + ANDROID_LABEL
-				+ mLatestVersion.getAndroid());
+            return;
+        }
 
-		// if there is a download ID on the shared preferences
-		if (mLatestUpdateDownloadId == 0) {
-			mLatestUpdateDownloadId = getLongPreference(PREFERENCE_DOWNLOAD_ID);
+        // if there is a download ID on the shared preferences
+        if (mLatestUpdateDownloadId == 0) {
+            mLatestUpdateDownloadId = getLongPreference(PREFERENCE_DOWNLOAD_ID);
 
-			// invalid download Id
-			if (mLatestUpdateDownloadId == 0) {
+            // invalid download Id
+            if (mLatestUpdateDownloadId == 0) {
+                changeState(UpdaterState.NORMAL);
+                return;
+            }
+        }
 
-				changeState(UpdaterState.NORMAL);
+        mCurrentVersionInfoLayout.setVisibility(View.GONE);
+        mOtherVersionsLayout.setVisibility(View.GONE);
+        mUpdateDownloadInfoLayout.setVisibility(View.VISIBLE);
+        mMoreInfoLayout.setVisibility(View.VISIBLE);
 
-				return;
-			}
-		}
+        updateMoreInfoLayout(true);
+        setupUpdateDownloadInfoLayout(UpdaterState.DOWNLOAD);
+        setupCurrentVersionInfoLayout(UpdaterState.DOWNLOAD);
 
-		mLatestGroupLla.setVisibility(View.VISIBLE);
-		mViewUpdateButton.setVisibility(View.GONE);
-		mViewMessageText.setVisibility(View.VISIBLE);
-		mViewMessageText.setText(getResources().getString(
-				R.string.downloadMessage));
+        updateDownloadFile();
 
-		updateDownloadFile();
+    }
 
-	}
+    private void setupUpdateDownloadInfoLayout(UpdaterState state) {
 
-	private void updateDownloadFile() {
+        Resources resources = getResources();
+        switch (state) {
+            case NORMAL:
+                break;
+            case DOWNLOAD:
+                mDownloadingVersionText.setText(resources.getString(R.string.downloading) + " "
+                        + mSelectedVersion.getName() + " " + mSelectedVersion.getBuildNumber()
+                        + ":");
+                break;
+            case PREINSTALL:
+                break;
+        }
+    }
 
-		DownloadManager.Query query = new DownloadManager.Query();
+    private void updateDownloadFile() {
 
-		query.setFilterById(mLatestUpdateDownloadId);
+        DownloadManager.Query query = new DownloadManager.Query();
 
-		Cursor cursor = mDownloadManager.query(query);
+        query.setFilterById(mLatestUpdateDownloadId);
 
-		if (cursor.moveToFirst()) {
-			int columnIndex = cursor
-					.getColumnIndex(DownloadManager.COLUMN_STATUS);
-			int status = cursor.getInt(columnIndex);
+        Cursor cursor = mDownloadManager.query(query);
 
-			switch (status) {
-			case DownloadManager.STATUS_SUCCESSFUL:
-				changeState(UpdaterState.PREINSTALL);
-				break;
-			case DownloadManager.STATUS_RUNNING:
-				break;
-			case DownloadManager.STATUS_FAILED:
-			case DownloadManager.STATUS_PAUSED:
-			default:
-				changeState(UpdaterState.NORMAL);
+        if (cursor.moveToFirst()) {
+            int columnIndex = cursor.getColumnIndex(DownloadManager.COLUMN_STATUS);
+            int status = cursor.getInt(columnIndex);
 
-				mLatestUpdateDownloadId = 0;
-				savePreference(PREFERENCE_DOWNLOAD_ID, mLatestUpdateDownloadId);
+            switch (status) {
+                case DownloadManager.STATUS_SUCCESSFUL:
+                    changeState(UpdaterState.PREINSTALL);
+                    break;
+                case DownloadManager.STATUS_RUNNING:
+                    startDownloadProgressUpdateThread();
+                    break;
+                case DownloadManager.STATUS_FAILED:
+                    changeState(UpdaterState.NORMAL);
+                    break;
+            }
+        }
 
-				break;
-			}
-		} else {
-			changeState(UpdaterState.NORMAL);
-		}
-		
-		cursor.close();
-	}
+        cursor.close();
+    }
 
-	private void setupInstallationReceivers() {
-		mDownloadManager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
+    private void startDownloadProgressUpdateThread() {
+        new Thread(new Runnable() {
 
-		mDownloadBroadCastReceiver = new DownloadBroadCastReceiver();
-	}
+            @Override
+            public void run() {
 
-	private void registerBroadCastReceiver() {
-		registerReceiver(mDownloadBroadCastReceiver, new IntentFilter(
-				DownloadManager.ACTION_DOWNLOAD_COMPLETE));
-		
-		registerReceiver(newVersionbroadcastReceiver, new IntentFilter(FairphoneUpdater.FAIRPHONE_UPDATER_NEW_VERSION_RECEIVED));
-	}
+                boolean downloading = true;
 
-	private void unregisterBroadCastReceiver() {
-		unregisterReceiver(mDownloadBroadCastReceiver);
-		unregisterReceiver(newVersionbroadcastReceiver);
-	}
+                while (mLatestUpdateDownloadId != 0 && downloading) {
 
-	private class DownloadBroadCastReceiver extends BroadcastReceiver {
+                    DownloadManager.Query q = new DownloadManager.Query();
+                    q.setFilterById(mLatestUpdateDownloadId);
 
-		@Override
-		public void onReceive(Context context, Intent intent) {
+                    Cursor cursor = mDownloadManager.query(q);
+                    if (cursor != null) {
+                        cursor.moveToFirst();
+                        try {
+                            int bytes_downloaded = cursor.getInt(cursor
+                                    .getColumnIndex(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR));
+                            int bytes_total = cursor.getInt(cursor
+                                    .getColumnIndex(DownloadManager.COLUMN_TOTAL_SIZE_BYTES));
 
-			if (mLatestUpdateDownloadId == 0) {
-				mLatestUpdateDownloadId = getLongPreference(PREFERENCE_DOWNLOAD_ID);
-			}
+                            if (cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS)) == DownloadManager.STATUS_SUCCESSFUL) {
+                                downloading = false;
 
-			updateDownloadFile();
+                                bytes_downloaded = 0;
+                                bytes_total = 0;
+                            }
 
-		}
-	}
+                            mUpdateVersionDownloadProgressBar.setProgress(bytes_downloaded);
+                            mUpdateVersionDownloadProgressBar.setMax(bytes_total);
+                        } catch (Exception e) {
+                            downloading = false;
+                        }
 
-	// **************************************************************************************************************
-	// HELPERS
-	// **************************************************************************************************************
+                        cursor.close();
+                        try {
+                            Thread.sleep(3000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+        }).start();
+    }
 
-	public static boolean checkMD5(String md5, File updateFile) {
+    private void setupInstallationReceivers() {
+        mDownloadManager = (DownloadManager)getSystemService(Context.DOWNLOAD_SERVICE);
 
-		if (!updateFile.exists()) {
-			return false;
-		}
+        mDownloadBroadCastReceiver = new DownloadBroadCastReceiver();
+    }
 
-		if (md5 == null || md5.equals("") || updateFile == null) {
-			Log.e(TAG, "MD5 String NULL or UpdateFile NULL");
-			return false;
-		}
+    private void registerBroadCastReceiver() {
+        registerReceiver(mDownloadBroadCastReceiver, new IntentFilter(
+                DownloadManager.ACTION_DOWNLOAD_COMPLETE));
 
-		String calculatedDigest = calculateMD5(updateFile);
-		if (calculatedDigest == null) {
-			Log.e(TAG, "calculatedDigest NULL");
-			return false;
-		}
+        IntentFilter iFilter = new IntentFilter();
+        iFilter.addAction(FairphoneUpdater.FAIRPHONE_UPDATER_NEW_VERSION_RECEIVED);
+        iFilter.addAction(FairphoneUpdater.FAIRPHONE_UPDATER_VERSION_SELECTED);
 
-		return calculatedDigest.equalsIgnoreCase(md5);
-	}
+        registerReceiver(newVersionbroadcastReceiver, iFilter);
+    }
 
-	public static String calculateMD5(File updateFile) {
-		MessageDigest digest;
-		try {
-			digest = MessageDigest.getInstance("MD5");
-		} catch (NoSuchAlgorithmException e) {
-			Log.e(TAG, "Exception while getting Digest", e);
-			return null;
-		}
+    private void unregisterBroadCastReceiver() {
+        unregisterReceiver(mDownloadBroadCastReceiver);
+        // unregisterReceiver(newVersionbroadcastReceiver);
+    }
 
-		InputStream is;
-		try {
-			is = new FileInputStream(updateFile);
-		} catch (FileNotFoundException e) {
-			Log.e(TAG, "Exception while getting FileInputStream", e);
-			return null;
-		}
+    private class DownloadBroadCastReceiver extends BroadcastReceiver {
 
-		byte[] buffer = new byte[8192];
-		int read;
-		try {
-			while ((read = is.read(buffer)) > 0) {
-				digest.update(buffer, 0, read);
-			}
-			byte[] md5sum = digest.digest();
-			BigInteger bigInt = new BigInteger(1, md5sum);
-			String output = bigInt.toString(16);
-			// Fill to 32 chars
-			output = String.format("%32s", output).replace(' ', '0');
-			return output;
-		} catch (IOException e) {
-			throw new RuntimeException("Unable to process file for MD5", e);
-		} finally {
-			try {
-				is.close();
-			} catch (IOException e) {
-				Log.e(TAG, "Exception on closing MD5 input stream", e);
-			}
-		}
-	}
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            if (mLatestUpdateDownloadId == 0) {
+                mLatestUpdateDownloadId = getLongPreference(PREFERENCE_DOWNLOAD_ID);
+            }
+
+            updateDownloadFile();
+
+        }
+    }
+
+    // **************************************************************************************************************
+    // HELPERS
+    // **************************************************************************************************************
+
+    public static boolean checkMD5(String md5, File updateFile) {
+
+        if (!updateFile.exists()) {
+            return false;
+        }
+
+        if (md5 == null || md5.equals("") || updateFile == null) {
+            Log.e(TAG, "MD5 String NULL or UpdateFile NULL");
+            return false;
+        }
+
+        String calculatedDigest = calculateMD5(updateFile);
+        if (calculatedDigest == null) {
+            Log.e(TAG, "calculatedDigest NULL");
+            return false;
+        }
+
+        return calculatedDigest.equalsIgnoreCase(md5);
+    }
+
+    public static String calculateMD5(File updateFile) {
+        MessageDigest digest;
+        try {
+            digest = MessageDigest.getInstance("MD5");
+        } catch (NoSuchAlgorithmException e) {
+            Log.e(TAG, "Exception while getting Digest", e);
+            return null;
+        }
+
+        InputStream is;
+        try {
+            is = new FileInputStream(updateFile);
+        } catch (FileNotFoundException e) {
+            Log.e(TAG, "Exception while getting FileInputStream", e);
+            return null;
+        }
+
+        byte[] buffer = new byte[8192];
+        int read;
+        try {
+            while ((read = is.read(buffer)) > 0) {
+                digest.update(buffer, 0, read);
+            }
+            byte[] md5sum = digest.digest();
+            BigInteger bigInt = new BigInteger(1, md5sum);
+            String output = bigInt.toString(16);
+            // Fill to 32 chars
+            output = String.format("%32s", output).replace(' ', '0');
+            return output;
+        } catch (IOException e) {
+            throw new RuntimeException("Unable to process file for MD5", e);
+        } finally {
+            try {
+                is.close();
+            } catch (IOException e) {
+                Log.e(TAG, "Exception on closing MD5 input stream", e);
+            }
+        }
+    }
 }

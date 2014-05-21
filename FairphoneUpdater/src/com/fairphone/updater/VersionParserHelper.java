@@ -22,6 +22,7 @@ import org.xmlpull.v1.XmlPullParserFactory;
 
 import android.content.Context;
 import android.os.Environment;
+import android.text.TextUtils;
 import android.util.Log;
 
 import java.io.File;
@@ -39,136 +40,228 @@ public class VersionParserHelper {
 	public static final String RECOVERY_PATH = "sdcard";
 	public static final String UPDATER_FOLDER = "/updater/";
 	
-	private static final String CURRENT_FAIRPHONE_VERSION_NAME = "fairphone.ota.version.name";
-	private static final String CURRENT_FAIRPHONE_VERSION = "fairphone.ota.version";
-	private static final String CURRENT_ANDROID_VERSION = "fairphone.ota.android";
-	
+    private static final String CURRENT_VERSION_NUMBER = "fairphone.ota.version.number";
+	private static final String CURRENT_VERSION_NAME = "fairphone.ota.version.name";
+	private static final String CURRENT_VERSION_BUILD_NUMBER = "fairphone.ota.version.build_number";
+	private static final String CURRENT_ANDROID_VERSION = "fairphone.ota.android_version";
+	private static final String CURRENT_VERSION_IMAGE_TYPE = "fairphone.ota.image_type";
+	private static final String CURRENT_DEVICE_TYPE = "fairphone.device.type";
+    
 	public static String getNameFromVersion(Version version) {
 		return "fp_update_" + version.getNumber() + ".zip";
 	}
 	
-	public static Version getDeviceVersion(Context context) {
+    public static Version getDeviceVersion(Context context) {
 
-		Version version = new Version();
-		version.setNumber(getSystemData(context, CURRENT_FAIRPHONE_VERSION));
-		version.setName(getSystemData(context, CURRENT_FAIRPHONE_VERSION_NAME));
-		version.setAndroid(getSystemData(context, CURRENT_ANDROID_VERSION));
+        Version version = new Version();
 
-		return version;
-	}
+        try {
+            version.setNumber(Integer.valueOf(getSystemData(context, CURRENT_VERSION_NUMBER)));
+        } catch (NumberFormatException e) {
+            version.setNumber(context.getResources().getInteger(R.integer.defaultVersionNumber));
+        }
+        version.setName(getSystemData(context, CURRENT_VERSION_NAME));
+        version.setBuildNumber(getSystemData(context, CURRENT_VERSION_BUILD_NUMBER));
+        version.setAndroidVersion(getSystemData(context, CURRENT_ANDROID_VERSION));
+        version.setImageType(getSystemData(context, CURRENT_VERSION_IMAGE_TYPE));
+
+        Version versionData = UpdaterData.getInstance().getVersion(version.getImageType(),
+                version.getNumber());
+        version.setThumbnailLink(versionData != null ? versionData.getThumbnailLink() : null);
+
+        return version;
+    }
 	
+    public static String getDeviceType(Context context) {
+        return getSystemData(context, CURRENT_DEVICE_TYPE);
+    }
+    
 	public static String getSystemData(Context context, String property) {
 
-		if (property.equals(CURRENT_FAIRPHONE_VERSION)){
-			return getprop(CURRENT_FAIRPHONE_VERSION, context.getResources().getString(R.string.defaultVersionNumber));
-		}
-		if (property.equals(CURRENT_FAIRPHONE_VERSION_NAME)){
-			return getprop(CURRENT_FAIRPHONE_VERSION_NAME, context.getResources().getString(R.string.defaultVersionName));
-		}
-		if (property.equals(CURRENT_ANDROID_VERSION)){
-			return getprop(CURRENT_ANDROID_VERSION, context.getResources().getString(R.string.defaultAndroidVersionNumber));
-		}
+        if (property.equals(CURRENT_VERSION_NUMBER)) {
+            return getprop(CURRENT_VERSION_NUMBER, String.valueOf(context.getResources()
+                    .getInteger(R.integer.defaultVersionNumber)));
+        } else if (property.equals(CURRENT_VERSION_NAME)) {
+            return getprop(CURRENT_VERSION_NAME,
+                    context.getResources().getString(R.string.defaultVersionName));
+        } else if (property.equals(CURRENT_ANDROID_VERSION)) {
+            return getprop(CURRENT_ANDROID_VERSION,
+                    context.getResources().getString(R.string.defaultAndroidVersionNumber));
+        } else if (property.equals(CURRENT_VERSION_BUILD_NUMBER)) {
+            return getprop(CURRENT_VERSION_BUILD_NUMBER,
+                    context.getResources().getString(R.string.defaultBuildNumber));
+        } else if (property.equals(CURRENT_VERSION_IMAGE_TYPE)) {
+            return getprop(CURRENT_VERSION_IMAGE_TYPE,
+                    context.getResources().getString(R.string.defaultImageType));
+        } else if (property.equals(CURRENT_DEVICE_TYPE)) {
+            return getprop(CURRENT_DEVICE_TYPE,
+                    context.getResources().getString(R.string.defaultDeviceType));
+        }
 
 		return null;
 	}
 	
-	public static void removeLatestVersionFile(Context context){
-		File file = new File(Environment.getExternalStorageDirectory() + UPDATER_FOLDER + context.getResources().getString(R.string.versionFilename));
-		
-		if(file.exists()){
-			file.delete();
-		}
-	}
-	
-	public static Version getLastestVersion(Context context) {
+    public static Version getLatestVersion(Context context) {
 
-		Version latest = Version.getVersionFromSharedPreferences(context);
+        Version latest = null;
+
+        String filePath = Environment.getExternalStorageDirectory()
+                + VersionParserHelper.UPDATER_FOLDER
+                + context.getResources().getString(R.string.versionFilename);
+        File file = new File(filePath
+                + context.getResources().getString(R.string.versionFilename_xml));
+
+        if (file.exists()) {
+            try {
+                latest = parseLatestXML(context, file);
+            } catch (XmlPullParserException e) {
+                Log.e(TAG, "Could not start the XML parser", e);
+            } catch (IOException e) {
+                Log.e(TAG, "Invalid data in File", e);
+                // remove the files
+                removeFiles(context);
+            }
+        }
         
-		if(latest == null){
-		    
-		    String filePath = Environment.getExternalStorageDirectory()
-	                + VersionParserHelper.UPDATER_FOLDER
-	                + context.getResources().getString(R.string.versionFilename);
-    		// check the /storage/sdcard0/updater/latest.xml
-    		File file = new File(filePath + context.getResources().getString(R.string.versionFilename_xml));
-    
-    		if (file.exists()) {
-    			try {
-    				latest = parseLatestXML(context, file);
-    			} catch (XmlPullParserException e) {
-    				Log.e(TAG, "Could not start the XML parser", e);
-    			} catch (IOException e) {
-    				Log.e(TAG, "Invalid data in File", e);
-    				// remove the files
-    				removeFiles(context);
-    			}
-    		}
-		}
+        removeZipContents(context);
 
-		return latest;
-	}
+        return latest;
+    }
 	
-	private static Version parseLatestXML(Context context, File latestFile)
-			throws XmlPullParserException, IOException {
+    // @formatter:off
+    public enum XML_LEVEL_TAGS {
+        NONE, AOSP, FAIRPHONE
+    }
 
-		Version version = null;
+    public enum XML_TAGS {
+        RELEASES, AOSP, FAIRPHONE, VERSION, NAME, BUILD_NUMBER, ANDROID_VERSION, RELEASE_NOTES, RELEASE_DATE, MD5SUM, THUMBNAIL_LINK, UPDATE_LINK, DEPENDENCIES;
+    }
 
-		XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
-		factory.setNamespaceAware(true);
+    // @formatter:on
 
-		FileInputStream fis = new FileInputStream(latestFile);
+    private static Version parseLatestXML(Context context, File latestFile)
+            throws XmlPullParserException, IOException {
 
-		XmlPullParser xpp = factory.newPullParser();
+        Version version = null;
 
-		xpp.setInput(new InputStreamReader(fis));
+        UpdaterData update = UpdaterData.getInstance();
+        update.resetUpdaterData();
 
-		int eventType = xpp.getEventType();
+        XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
+        factory.setNamespaceAware(true);
 
-		while (eventType != XmlPullParser.END_DOCUMENT) {
-			String tagName = null;
-			switch (eventType) {
-			case XmlPullParser.START_DOCUMENT:
-				break;
-			case XmlPullParser.START_TAG:
-				tagName = xpp.getName();
+        FileInputStream fis = new FileInputStream(latestFile);
 
-				if (tagName.equalsIgnoreCase("version")) {
-					version = new Version();
-					version.setNumber(xpp.getAttributeValue(0));
-				} else if (version != null) {
-					if (tagName.equalsIgnoreCase("name")) {
-						version.setName(xpp.nextText());
-					} else if (tagName.equalsIgnoreCase("android")) {
-						version.setAndroid(xpp.nextText());
-					} else if (tagName.equalsIgnoreCase("md5sum")) {
-						version.setMd5Sum(xpp.nextText());
-					} else if (tagName.equalsIgnoreCase("link")) {
-						version.setDownloadLink(xpp.nextText());
-					}
-				}
+        XmlPullParser xpp = factory.newPullParser();
 
-				break;
-			}
-			
-			eventType = xpp.next();
-		}
+        xpp.setInput(new InputStreamReader(fis));
 
-		if (version == null 
-				|| version.getNumber() == null
-				|| version.getName() == null
-				|| version.getAndroid() == null
-				|| version.getDownloadLink() == null) {
-			
-			Log.i(TAG, "Invalid data in version file");
-			
-			version = null;
-		}else {
-		    version.saveToSharedPreferences(context);
-		}
+        int eventType = xpp.getEventType();
 
-		return version;
-	}
+        XML_LEVEL_TAGS currentTag = XML_LEVEL_TAGS.NONE;
+
+        while (eventType != XmlPullParser.END_DOCUMENT) {
+            String tagName = null;
+            switch (eventType) {
+                case XmlPullParser.START_DOCUMENT:
+                    break;
+                case XmlPullParser.START_TAG:
+                    tagName = xpp.getName();
+                    currentTag = getCurrentXmlElement(tagName, currentTag);
+                    switch (currentTag) {
+                        case AOSP:
+                            if (tagName.equalsIgnoreCase(XML_TAGS.AOSP.name())) {
+                                update.setLatestAOSPVersionNumber(xpp.getAttributeValue(0));
+                            }
+                            version = readVersion(version, xpp, tagName);
+                            if (TextUtils.isEmpty(version.getImageType())) {
+                                version.setImageType(Version.IMAGE_TYPE_AOSP);
+                            }
+                            break;
+                        case FAIRPHONE:
+                            if (tagName.equalsIgnoreCase(XML_TAGS.FAIRPHONE.name())) {
+                                update.setLatestFairphoneVersionNumber(xpp.getAttributeValue(0));
+                            }
+                            version = readVersion(version, xpp, tagName);
+                            if (TextUtils.isEmpty(version.getImageType())) {
+                                version.setImageType(Version.IMAGE_TYPE_FAIRPHONE);
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+                case XmlPullParser.END_TAG:
+                    tagName = xpp.getName();
+                    currentTag = getCurrentXmlElement(tagName, currentTag);
+                    switch (currentTag) {
+                        case AOSP:
+                            if (tagName.equalsIgnoreCase(XML_TAGS.VERSION.name())) {
+                                update.addAOSPVersion(version);
+                                version = null;
+                            }
+                            break;
+                        case FAIRPHONE:
+                            if (tagName.equalsIgnoreCase(XML_TAGS.VERSION.name())) {
+                                update.addFairphoneVersion(version);
+                                version = null;
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+            }
+
+            eventType = xpp.next();
+        }
+        removeZipContents(context);
+        return update.getLatestVersion(getSystemData(context, CURRENT_VERSION_IMAGE_TYPE));
+    }
 	
+    public static Version readVersion(Version version, XmlPullParser xpp, String tagName)
+            throws XmlPullParserException, IOException {
+        
+        if (version == null) {
+            version = new Version();
+        }
+
+        if (tagName.equalsIgnoreCase(XML_TAGS.VERSION.name())) {
+            version.setNumber(xpp.getAttributeValue(0));
+        } else if (tagName.equalsIgnoreCase(XML_TAGS.NAME.name())) {
+            version.setName(xpp.nextText());
+        } else if (tagName.equalsIgnoreCase(XML_TAGS.BUILD_NUMBER.name())) {
+            version.setBuildNumber(xpp.nextText());
+        } else if (tagName.equalsIgnoreCase(XML_TAGS.ANDROID_VERSION.name())) {
+            version.setAndroidVersion(xpp.nextText());
+        } else if (tagName.equalsIgnoreCase(XML_TAGS.DEPENDENCIES.name())) {
+            version.setVersionDependencies(xpp.nextText());
+        } else if (tagName.equalsIgnoreCase(XML_TAGS.RELEASE_NOTES.name())) {
+            version.setReleaseNotes(xpp.nextText());
+        } else if (tagName.equalsIgnoreCase(XML_TAGS.RELEASE_DATE.name())) {
+            version.setReleaseDate(xpp.nextText());
+        } else if (tagName.equalsIgnoreCase(XML_TAGS.MD5SUM.name())) {
+            version.setMd5Sum(xpp.nextText());
+        } else if (tagName.equalsIgnoreCase(XML_TAGS.THUMBNAIL_LINK.name())) {
+            version.setThumbnailLink(xpp.nextText());
+        } else if (tagName.equalsIgnoreCase(XML_TAGS.UPDATE_LINK.name())) {
+            version.setDownloadLink(xpp.nextText());
+        }
+
+        return version;
+    }
+
+    private static XML_LEVEL_TAGS getCurrentXmlElement(String tagName, XML_LEVEL_TAGS current) {
+        XML_LEVEL_TAGS retval = current;
+
+        if (tagName.equalsIgnoreCase(XML_LEVEL_TAGS.AOSP.name())) {
+            retval = XML_LEVEL_TAGS.AOSP;
+        } else if (tagName.equalsIgnoreCase(XML_LEVEL_TAGS.FAIRPHONE.name())) {
+            retval = XML_LEVEL_TAGS.FAIRPHONE;
+        }
+        return retval;
+    }
+
 	private static String getprop(String name, String defaultValue) {
         ProcessBuilder pb = new ProcessBuilder("/system/bin/getprop", name);
         pb.redirectErrorStream(true);
@@ -191,8 +284,10 @@ public class VersionParserHelper {
             e.printStackTrace();
         } finally {
             if (is != null) {
-                try { is.close(); }
-                catch (Exception e) { }
+                try {
+                    is.close();
+                } catch (Exception e) {
+                }
             }
         }
         return defaultValue;
@@ -204,6 +299,14 @@ public class VersionParserHelper {
                 + context.getResources().getString(R.string.versionFilename);
 
         removeFile(filePath + context.getResources().getString(R.string.versionFilename_zip));
+        removeZipContents(context);
+    }
+
+    public static void removeZipContents(Context context) {
+        String filePath = Environment.getExternalStorageDirectory()
+                + VersionParserHelper.UPDATER_FOLDER
+                + context.getResources().getString(R.string.versionFilename);
+        
         removeFile(filePath + context.getResources().getString(R.string.versionFilename_xml));
         removeFile(filePath + context.getResources().getString(R.string.versionFilename_sig));
     }
@@ -214,7 +317,5 @@ public class VersionParserHelper {
             file.delete();
         }
     }
-    
-    
     
 }

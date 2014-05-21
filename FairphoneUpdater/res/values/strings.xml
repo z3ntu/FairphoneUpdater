@@ -1,16 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <string name="app_name">Fairphone Updater</string>
-    <string name="downloadUrl">http://www.fairphone.com/ota/latest.zip</string>
-    <string name="versionFilename">latest</string>
-    <string name="versionFilename_zip">.zip</string>
-	<string name="versionFilename_xml">.xml</string>
-	<string name="versionFilename_sig">.sig</string>
-	
-    <string name="defaultVersionNumber">1.0</string>
-    <string name="defaultVersionName">Almond</string>
-    <string name="defaultAndroidVersionNumber">4.2.2</string>
-    
     <string name="updaterService">Updater Service</string>
     <string name="currentVersion">Current Version</string>
     <string name="newVersion">New Version</string>
@@ -22,5 +13,25 @@
     <string name="downloadMessage">Downloading version, please wait&#8230;</string>
     <string name="downloadUpdateTitle">New Fairphone update</string>
     <string name="wifiDiscaimerTitle">Wi-Fi disabled</string>
-	<string name="wifiDiscaimerMessage">The file you’re trying to download is too large for mobile connections (~200MB). Please enable Wi-Fi connection and try again.</string> 
+    <string name="wifiDiscaimerMessage">The file you’re trying to download is too large for mobile connections (~200MB). Please enable Wi-Fi connection and try again.</string>
+
+    <string name="mainFeatures">Main features</string>
+    <string name="releasedIn">Released in</string>
+    <string name="releaseNotes">Release Notes:</string>
+    <string name="moreInfo">More Info</string>
+    <string name="lessInfo">Less Info</string>
+    <string name="noUpdatesAvailable">There are no updates available</string>
+    <string name="newVersionAvailable">New version available</string>
+    <string name="youAreRunning">You are running</string>
+    <string name="fairphoneOS">Fairphone OS</string>
+    <string name="aospOS">Android AOSP OS</string>
+    <string name="fairphone">Fairphone</string>
+    <string name="android">Android</string>
+    <string name="updateVersionBtn">Update</string>
+    <string name="downloadAndUpdateVersionBtn">Download and Update</string>
+    <string name="downloadAndInstallVersionBtn">Download and Install</string>
+    <string name="installBtn">Install</string>
+    <string name="downloading">Downloading</string>
+    <string name="versionsAvailable">versions available</string>
+
 </resources>

@@ -23,179 +23,275 @@ import android.content.res.Resources;
 import android.text.TextUtils;
 import android.util.Log;
 
-public class Version {
-	public static final String FAIRPHONE_UPDATE_VERSION_NUMBER = "FairphoneUpdateVersionNumber";
-	public static final String FAIRPHONE_UPDATE_VERSION_NAME = "FairphoneUpdateVersionName";
-	public static final String FAIRPHONE_UPDATE_VERSION_ANDROID = "FairphoneUpdateVersionAndroid";
-	public static final String FAIRPHONE_UPDATE_VERSION_DOWNLOAD_LINK = "FairphoneUpdateVersionDownloadLink";
-	public static final String FAIRPHONE_UPDATE_VERSION_MD5 = "FairphoneUpdateVersionMD5";
+import java.util.ArrayList;
 
-	private String mNumber;
-	private String mName;
-	private String mAndroid;
-	private String mDownloadLink;
-	private String mMd5Sum;
-	private String mChangeLog;
+public class Version implements Comparable<Version> {
 
-	public static Version getVersionFromSharedPreferences(Context context) {
-		Version version = new Version();
-		SharedPreferences sharedPrefs = context.getSharedPreferences(
-				FairphoneUpdater.FAIRPHONE_UPDATER_PREFERENCES,
-				Context.MODE_PRIVATE);
-		Resources resources = context.getResources();
+    private static final String TAG = Version.class.getSimpleName();
 
-		String defaultVersionNumber = resources
-				.getString(R.string.defaultVersionNumber);
-		version.setNumber(sharedPrefs.getString(
-				FAIRPHONE_UPDATE_VERSION_NUMBER, defaultVersionNumber));
+    private static final String DEPENDENCY_SEPARATOR = ",";
 
-		String defaultVersionName = resources
-				.getString(R.string.defaultVersionName);
-		version.setName(sharedPrefs.getString(FAIRPHONE_UPDATE_VERSION_NAME,
-				defaultVersionName));
+    public static final String FAIRPHONE_VERSION_NUMBER = "FairphoneUpdateVersionNumber";
 
-		String defaultVersionAndroid = resources
-				.getString(R.string.defaultAndroidVersionNumber);
-		version.setAndroid(sharedPrefs.getString(
-				FAIRPHONE_UPDATE_VERSION_ANDROID, defaultVersionAndroid));
+    public static final String FAIRPHONE_VERSION_NAME = "FairphoneUpdateVersionName";
 
-		version.setDownloadLink(sharedPrefs.getString(
-				FAIRPHONE_UPDATE_VERSION_DOWNLOAD_LINK, ""));
-		version.setMd5Sum(sharedPrefs.getString(FAIRPHONE_UPDATE_VERSION_MD5,
-				""));
+    public static final String FAIRPHONE_VERSION_BUILD_NUMBER = "FairphoneUpdateVersionBuildNumber";
 
-		if (TextUtils.isEmpty(version.getMd5Sum())
-				|| TextUtils.isEmpty(version.getMd5Sum())) {
-			return null;
-		}
-		return version;
-	}
+    public static final String FAIRPHONE_ANDROID_VERSION = "FairphoneUpdateAndroidVersion";
 
-	public void saveToSharedPreferences(Context context) {
-		SharedPreferences sharedPrefs = context.getSharedPreferences(
-				FairphoneUpdater.FAIRPHONE_UPDATER_PREFERENCES,
-				Context.MODE_PRIVATE);
+    public static final String FAIRPHONE_VERSION_OTA_DOWNLOAD_LINK = "FairphoneUpdateVersionOTADownloadLink";
 
-		Editor editor = sharedPrefs.edit();
-		editor.putString(FAIRPHONE_UPDATE_VERSION_NUMBER, getNumber());
-		editor.putString(FAIRPHONE_UPDATE_VERSION_NAME, getName());
-		editor.putString(FAIRPHONE_UPDATE_VERSION_ANDROID, getAndroid());
-		editor.putString(FAIRPHONE_UPDATE_VERSION_DOWNLOAD_LINK,
-				getDownloadLink());
-		editor.putString(FAIRPHONE_UPDATE_VERSION_MD5, getMd5Sum());
-		editor.commit();
-	}
+    public static final String FAIRPHONE_VERSION_THUMBNAIL_DOWNLOAD_LINK = "FairphoneUpdateVersionThumbnailDownloadLink";
 
-	public String getNumber() {
-		return mNumber;
-	}
+    public static final String FAIRPHONE_VERSION_OTA_MD5 = "FairphoneUpdateVersionOTAMD5";
 
-	public void setNumber(String number) {
-		this.mNumber = number;
-	}
+    public static final String IMAGE_TYPE_AOSP = "AOSP";
 
-	public String getName() {
-		return mName;
-	}
+    public static final String IMAGE_TYPE_FAIRPHONE = "FAIRPHONE";
 
-	public void setName(String mName) {
-		this.mName = mName;
-	}
+    private int mNumber;
 
-	public String getDownloadLink() {
-		return mDownloadLink;
-	}
+    private String mName;
 
-	public void setDownloadLink(String mDownloadLink) {
-		this.mDownloadLink = mDownloadLink;
-	}
+    private String mAndroidVersion;
 
-	public String getMd5Sum() {
-		return mMd5Sum;
-	}
+    private String mOTADownloadLink;
 
-	public void setMd5Sum(String mMd5Sum) {
-		this.mMd5Sum = mMd5Sum;
-	}
+    private String mOTAMd5Sum;
 
-	public String getChangeLog() {
-		return mChangeLog;
-	}
+    private String mBuildNumber;
 
-	public void setChangeLog(String mChangeLog) {
-		this.mChangeLog = mChangeLog;
-	}
+    private String mReleaseNotes;
 
-	public String getAndroid() {
-		return mAndroid;
-	}
+    private String mReleaseDate;
 
-	public void setAndroid(String mAndroid) {
-		this.mAndroid = mAndroid;
-	}
+    private String mThumbnailImageLink;
 
-	public boolean isNewerVersionThan(Version version) {
+    private ArrayList<Integer> mDependencies;
 
-		boolean result = false;
+    private String mImageType;
 
-		try {
-			result = Version
-					.isNewVersion(version.getNumber(), this.getNumber());
-		} catch (Throwable t) {
-			Log.e(Version.class.getSimpleName(), "Invalid Number for Version",
-					t);
-		}
+    public Version() {
+        mDependencies = new ArrayList<Integer>();
+    }
 
-		return result;
-	}
+    public static Version getVersionFromSharedPreferences(Context context) {
+        Version version = new Version();
+        SharedPreferences sharedPrefs = context.getSharedPreferences(
+                FairphoneUpdater.FAIRPHONE_UPDATER_PREFERENCES, Context.MODE_PRIVATE);
+        Resources resources = context.getResources();
 
-	private static boolean isNewVersion(String versionA, String versionB)
-			throws IllegalArgumentException {
+        int defaultVersionNumber = resources.getInteger(R.integer.defaultVersionNumber);
+        version.setNumber(sharedPrefs.getInt(FAIRPHONE_VERSION_NUMBER, defaultVersionNumber));
 
-		int[] versionAints = getVersionInt(versionA);
-		int[] versionBints = getVersionInt(versionB);
+        String defaultVersionName = resources.getString(R.string.defaultVersionName);
+        version.setName(sharedPrefs.getString(FAIRPHONE_VERSION_NAME, defaultVersionName));
 
-		if (versionAints[0] == versionBints[0]) {
-			return versionAints[1] < versionBints[1];
-		}
+        String defaultVersionBuildNumber = resources.getString(R.string.defaultBuildNumber);
+        version.setBuildNumber(sharedPrefs.getString(FAIRPHONE_VERSION_BUILD_NUMBER,
+                defaultVersionBuildNumber));
 
-		return versionAints[0] < versionBints[0];
-	}
+        String defaultVersionAndroid = resources.getString(R.string.defaultAndroidVersionNumber);
+        version.setAndroidVersion(sharedPrefs.getString(FAIRPHONE_ANDROID_VERSION,
+                defaultVersionAndroid));
 
-	private static int[] getVersionInt(String version) {
+        version.setDownloadLink(sharedPrefs.getString(FAIRPHONE_VERSION_OTA_DOWNLOAD_LINK, ""));
 
-		if (version == null) {
-			throw new IllegalArgumentException("String is null");
-		}
+        version.setThumbnailLink(sharedPrefs.getString(FAIRPHONE_VERSION_THUMBNAIL_DOWNLOAD_LINK,
+                ""));
 
-		String[] intStrs = version.split("\\.");
+        version.setMd5Sum(sharedPrefs.getString(FAIRPHONE_VERSION_OTA_MD5, ""));
 
-		if (intStrs == null || intStrs.length != 2) {
-			throw new IllegalArgumentException("String " + version
-					+ " not have the correct format [X.Y]");
-		}
+        if (TextUtils.isEmpty(version.getMd5Sum()) || TextUtils.isEmpty(version.getMd5Sum())) {
+            return null;
+        }
+        return version;
+    }
 
-		int[] ints = new int[2];
+    public void saveToSharedPreferences(Context context) {
+        SharedPreferences sharedPrefs = context.getSharedPreferences(
+                FairphoneUpdater.FAIRPHONE_UPDATER_PREFERENCES, Context.MODE_PRIVATE);
 
-		try {
-			ints[0] = Integer.parseInt(intStrs[0]);
-			ints[1] = Integer.parseInt(intStrs[1]);
-		} catch (Throwable t) {
-			throw new IllegalArgumentException(
-					"String "
-							+ version
-							+ " should contain numbers separated by a dot [ReleaseNumber.VersionNumber]");
-		}
+        Editor editor = sharedPrefs.edit();
+        editor.putInt(FAIRPHONE_VERSION_NUMBER, getNumber());
+        editor.putString(FAIRPHONE_VERSION_NAME, getName());
+        editor.putString(FAIRPHONE_ANDROID_VERSION, getAndroidVersion());
+        editor.putString(FAIRPHONE_VERSION_BUILD_NUMBER, getBuildNumber());
+        editor.putString(FAIRPHONE_VERSION_OTA_DOWNLOAD_LINK, getDownloadLink());
+        editor.putString(FAIRPHONE_VERSION_THUMBNAIL_DOWNLOAD_LINK, getThumbnailLink());
+        editor.putString(FAIRPHONE_VERSION_OTA_MD5, getMd5Sum());
+        editor.commit();
+    }
 
-		return ints;
-	}
+    public int getNumber() {
+        return mNumber;
+    }
+
+    public void setNumber(String number) {
+        try {
+            this.mNumber = Integer.valueOf(number);
+        } catch (NumberFormatException e) {
+            this.mNumber = 0;
+        }
+    }
+
+    public void setNumber(int number) {
+        this.mNumber = number;
+    }
+
+    public String getName() {
+        return mName;
+    }
+
+    public void setName(String mName) {
+        this.mName = mName;
+    }
+
+    public String getDownloadLink() {
+        return mOTADownloadLink;
+    }
+
+    public void setDownloadLink(String mDownloadLink) {
+        this.mOTADownloadLink = mDownloadLink;
+    }
+
+    public String getMd5Sum() {
+        return mOTAMd5Sum;
+    }
+
+    public void setMd5Sum(String mMd5Sum) {
+        this.mOTAMd5Sum = mMd5Sum;
+    }
+
+    public String getAndroidVersion() {
+        return mAndroidVersion;
+    }
+
+    public void setAndroidVersion(String mAndroid) {
+        this.mAndroidVersion = mAndroid;
+    }
+
+    public boolean isNewerVersionThan(Version version) {
+
+        boolean result = false;
+
+        try {
+            result = this.getNumber() > version.getNumber();
+        } catch (Throwable t) {
+            Log.e(Version.class.getSimpleName(), "Invalid Number for Version", t);
+        }
+
+        return result;
+    }
 
     public void deleteFromSharedPreferences(Context context) {
-        setNumber(null);
+        setNumber(1);
         setName(null);
-        setAndroid(null);
-        setDownloadLink(null);
+        setBuildNumber(null);
+        setAndroidVersion(null);
+        setReleaseNotes(null);
+        setReleaseDate(null);
         setMd5Sum(null);
+        setThumbnailLink(null);
+        setDownloadLink(null);
         saveToSharedPreferences(context);
+    }
+
+    public void setBuildNumber(String buildNumber) {
+        mBuildNumber = buildNumber;
+    }
+
+    public String getBuildNumber() {
+        return mBuildNumber;
+    }
+
+    public void setReleaseNotes(String releaseNotes) {
+        mReleaseNotes = releaseNotes;
+    }
+
+    public String getReleaseNotes() {
+        return mReleaseNotes;
+    }
+
+    public void setReleaseDate(String releaseDate) {
+        mReleaseDate = releaseDate;
+    }
+
+    public String getReleaseDate() {
+        return mReleaseDate;
+    }
+
+    public void setThumbnailLink(String thumbnailImageLink) {
+        mThumbnailImageLink = thumbnailImageLink;
+    }
+
+    public String getThumbnailLink() {
+        return mThumbnailImageLink;
+    }
+
+    public void setVersionDependencies(String dependencyList) {
+        if (TextUtils.isEmpty(dependencyList)) {
+            mDependencies.clear();
+        } else {
+            String[] dependencies = dependencyList.split(DEPENDENCY_SEPARATOR);
+            for (String dependency : dependencies) {
+                try {
+                    mDependencies.add(Integer.valueOf(dependency));
+                } catch (NumberFormatException e) {
+                    Log.e(TAG, "Invalid dependency");
+                }
+            }
+        }
+    }
+
+    public ArrayList<Integer> getVersionDependencies() {
+        return mDependencies;
+    }
+
+    public void setImageType(String imageType) {
+        mImageType = imageType;
+    }
+
+    public String getImageType() {
+        return mImageType;
+    }
+    
+    public String getImageTypeDescription(Resources resources) {
+        String description = resources.getString(R.string.fairphone);
+        if(mImageType.equalsIgnoreCase(IMAGE_TYPE_AOSP)){
+            description = resources.getString(R.string.android);
+        }
+        if(mImageType.equalsIgnoreCase(IMAGE_TYPE_FAIRPHONE)){
+            description = resources.getString(R.string.fairphone);
+        }
+        return description;
+    }
+    
+    public static String getImageTypeDescription(String imageType, Resources resources) {
+        String description = resources.getString(R.string.fairphone);
+        if(imageType.equalsIgnoreCase(IMAGE_TYPE_AOSP)){
+            description = resources.getString(R.string.android);
+        }
+        if(imageType.equalsIgnoreCase(IMAGE_TYPE_FAIRPHONE)){
+            description = resources.getString(R.string.fairphone);
+        }
+        return description;
+    }
+
+    @Override
+    public int compareTo(Version another) {
+        int retVal;
+        if (another != null) {
+            if (this.getNumber() < another.getNumber()) {
+                retVal = 1;
+            } else if (this.getNumber() == another.getNumber()) {
+                retVal = 0;
+            } else {
+                retVal = -1;
+            }
+        } else {
+            retVal = 1;
+        }
+        return retVal;
     }
 }

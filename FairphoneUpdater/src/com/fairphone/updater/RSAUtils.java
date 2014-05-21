@@ -50,7 +50,6 @@ public class RSAUtils {
         PublicKey pubKey = cert.getPublicKey();
         Log.i(TAG, "Public Key Info: ");
         Log.i(TAG, "Algorithm = " + pubKey.getAlgorithm());
-        Log.i(TAG, "toString = " + pubKey.toString());
         return pubKey;
     }
     
@@ -76,7 +75,6 @@ public class RSAUtils {
         if (line == null) {
             throw new IOException("PUBLIC KEY" + " not found");
         }
-        Log.i("PUBLIC KEY: ", "PEM content = : " + content.toString());
 
         KeyFactory keyFactory = KeyFactory.getInstance("RSA");
         

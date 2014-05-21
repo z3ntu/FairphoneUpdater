@@ -16,13 +16,8 @@
 
 package com.fairphone.updater;
 
-import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Locale;
-import java.util.concurrent.TimeoutException;
+import com.stericson.RootTools.execution.CommandCapture;
+import com.stericson.RootTools.execution.Shell;
 
 import android.app.DownloadManager;
 import android.app.DownloadManager.Request;
@@ -47,25 +42,25 @@ import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
-import com.stericson.RootTools.RootTools;
-import com.stericson.RootTools.exceptions.RootDeniedException;
-import com.stericson.RootTools.execution.CommandCapture;
-import com.stericson.RootTools.execution.Shell;
+import java.io.File;
+import java.io.IOException;
+import java.util.concurrent.TimeoutException;
 
 public class UpdaterService extends Service {
 
 	private static final String TAG = UpdaterService.class.getSimpleName();
-	private static final String PREFERENCE_DATE_LAST_TIME_CHECKED = "LastTimeUpdateChecked";
+	
+	private static final String PREFERENCE_LAST_CONFIG_DOWNLOAD_ID = "LastConfigDownloadId";
 	private DownloadManager mDownloadManager;
 	private DownloadBroadCastReceiver mDownloadBroadCastReceiver;
 
+    private static final int MAX_DOWNLOAD_RETRIES = 3;
+    private int mDownloadRetries;
 	private long mLatestFileDownloadId;
 
 	private SharedPreferences mSharedPreferences;
-	private SimpleDateFormat mDateFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss", Locale.getDefault());
 	
 	final static long DAY_IN_MILLIS = 1000 * 60 * 60 * 24;
-	private static final int MAX_DAYS_BEFORE_CHECKING = 8;
 	
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
@@ -75,23 +70,26 @@ public class UpdaterService extends Service {
 	    
 		mSharedPreferences = getApplicationContext().getSharedPreferences(FairphoneUpdater.FAIRPHONE_UPDATER_PREFERENCES, MODE_PRIVATE);
 
+		mLatestFileDownloadId = mSharedPreferences.getLong(PREFERENCE_LAST_CONFIG_DOWNLOAD_ID, 0);
+		
 	    if(hasInternetConnection() ){
+			
+	        setupDownloadManager();
+	
 			// remove the old file if its still there for some reason
-			removeLatestFile(getApplicationContext());
-	
-			setupDownloadManager();
-	
+            removeLatestFileDownload(getApplicationContext());
+            
 			// start the download of the latest file
 			startDownloadLatest();
 		}
 		
 		return Service.START_NOT_STICKY;
 	}
-	
+
     protected void clearDataLogs(){
         try
         {
-            Log.d(UpdaterService.class.getSimpleName(), "Clearing dump log data...");
+            Log.d(TAG, "Clearing dump log data...");
             Shell.runCommand(new CommandCapture(0, "rm /data/log_other_mode/*_log"));
         } catch (IOException e)
         {
@@ -103,37 +101,6 @@ public class UpdaterService extends Service {
             e.printStackTrace();
         }
     }
-
-	private void removeLatestFile(Context context) {
-        VersionParserHelper.removeFiles(context);
-        
-		updateLastChecked("2013.01.01 00:00:00");
-	}
-
-	private boolean isFileStillValid() {
-		Date lastTimeChecked = getLastTimeCheckedDate();
-		
-		int diffInDays = (int) ((System.currentTimeMillis() - lastTimeChecked.getTime())/ DAY_IN_MILLIS );
-		
-		return diffInDays < MAX_DAYS_BEFORE_CHECKING;
-	}
-
-	private Date getLastTimeCheckedDate() {
-		
-		String lastTimeDatePreference = mSharedPreferences.getString(PREFERENCE_DATE_LAST_TIME_CHECKED, "2013.01.01 00:00:00");
-		
-		Date lastTimeDate = null;
-		try {
-			lastTimeDate = mDateFormat.parse(lastTimeDatePreference);
-		} catch (ParseException e) {
-			Calendar cal = Calendar.getInstance();
-			cal.add(Calendar.YEAR, -1);
-			
-			lastTimeDate = cal.getTime();
-		}
-		
-		return lastTimeDate;
-	}
 
 	@Override
 	public IBinder onBind(Intent intent) {
@@ -147,6 +114,10 @@ public class UpdaterService extends Service {
 			// set the download for the latest version on the download manager
 			Request request = createDownloadRequest(resources.getString(R.string.downloadUrl), resources.getString(R.string.versionFilename) + resources.getString(R.string.versionFilename_zip));
 			mLatestFileDownloadId = mDownloadManager.enqueue(request);
+			
+			Editor editor = mSharedPreferences.edit();
+	        editor.putLong(PREFERENCE_LAST_CONFIG_DOWNLOAD_ID, mLatestFileDownloadId);
+	        editor.commit();
 		}
 	}
 
@@ -165,9 +136,9 @@ public class UpdaterService extends Service {
 		return isWifi;
 	}
 
-	private void setNotification() {
+	private static void setNotification(Context currentContext) {
 
-		Context context = getApplicationContext();
+		Context context = currentContext.getApplicationContext();
 
 		NotificationManager manager = (NotificationManager) context
 				.getSystemService(Context.NOTIFICATION_SERVICE);
@@ -175,10 +146,10 @@ public class UpdaterService extends Service {
 		NotificationCompat.Builder builder = new NotificationCompat.Builder(
 				context)
 				.setSmallIcon(R.drawable.fairphone_updater_tray_icon_small)
-				.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.fairphone_updater_tray_icon))
+				.setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.drawable.fairphone_updater_tray_icon))
 				.setContentTitle(
 						context.getResources().getString(R.string.app_name))
-				.setContentText(getResources().getString(R.string.fairphoneUpdateMessage));
+				.setContentText(context.getResources().getString(R.string.fairphoneUpdateMessage));
 
 		Intent resultIntent = new Intent(context, FairphoneUpdater.class);
 		TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
@@ -198,7 +169,7 @@ public class UpdaterService extends Service {
 		
 		//to update the activity
 		Intent updateIntent = new Intent(FairphoneUpdater.FAIRPHONE_UPDATER_NEW_VERSION_RECEIVED);
-        sendBroadcast(updateIntent);
+        context.sendBroadcast(updateIntent);
 	}
 
 	private Request createDownloadRequest(String url, String fileName) {
@@ -246,47 +217,40 @@ public class UpdaterService extends Service {
 		getApplicationContext().unregisterReceiver(mDownloadBroadCastReceiver);
 	}
 	
-	private void checkVersionValidation(Context context){
+	private static void checkVersionValidation(Context context){
 	    
 		Version latestVersion = VersionParserHelper
-				.getLastestVersion(getApplicationContext());
+				.getLatestVersion(context.getApplicationContext());
 		Version currentVersion = VersionParserHelper
-				.getDeviceVersion(getApplicationContext());
+				.getDeviceVersion(context.getApplicationContext());
 		
 		if(latestVersion != null){
-			
-			String versionName = null;
-			String versionNumber = null;
-			String versionUrl = null;
-			String versionMd5 = null;
-			String versionAndroid = null;
-			
-			if(latestVersion.isNewerVersionThan(currentVersion)){
-				// save the version in the share preferences
-				versionName = latestVersion.getName();
-				versionNumber = latestVersion.getNumber();
-				versionUrl = latestVersion.getDownloadLink();
-				versionMd5 = latestVersion.getMd5Sum();
-				versionAndroid = latestVersion.getAndroid();
-				
-				setNotification();
-			} else {
-				VersionParserHelper.removeLatestVersionFile(getApplicationContext());
-			}
-			
-			Editor editor = mSharedPreferences.edit();
-			
-			editor.putString(FairphoneUpdater.PREFERENCE_NEW_VERSION_NAME, versionName);
-			editor.putString(FairphoneUpdater.PREFERENCE_NEW_VERSION_NUMBER, versionNumber);
-			editor.putString(FairphoneUpdater.PREFERENCE_NEW_VERSION_MD5_SUM, versionMd5);
-			editor.putString(FairphoneUpdater.PREFERENCE_NEW_VERSION_URL, versionUrl);
-			editor.putString(FairphoneUpdater.PREFERENCE_NEW_VERSION_ANDROID, versionAndroid);
-			
-			editor.commit();
-    		
-    		removeLatestFileDownload(context);
+		    
+			if(latestVersion.isNewerVersionThan(currentVersion)){			
+				setNotification(context);
+			} 
 		}
 	}
+	
+    public static boolean readUpdaterData(Context context) {
+
+        boolean retVal = false;
+        Resources resources = context.getApplicationContext().getResources();
+        String targetPath = Environment.getExternalStorageDirectory()
+                + VersionParserHelper.UPDATER_FOLDER;
+
+        String filePath = targetPath + resources.getString(R.string.versionFilename)
+                + resources.getString(R.string.versionFilename_zip);
+
+        File file = new File(filePath);
+
+        if (file.exists() && RSAUtils.checkFileSignature(context, filePath, targetPath)) {
+            checkVersionValidation(context);
+            retVal = true;
+        }
+
+        return retVal;
+    }
 
     private void removeLatestFileDownload(Context context) {
         if(mLatestFileDownloadId != 0){
@@ -296,22 +260,13 @@ public class UpdaterService extends Service {
         VersionParserHelper.removeFiles(context);
     }
 
-	private float parseVersion(String number) {
-		String finalNumber = number.replaceAll("\\.", "");
-		return Float.parseFloat(finalNumber);
-	}
-
-	private void updateLastChecked(String date) {
-        Editor editor = mSharedPreferences.edit();
-        editor.putString(PREFERENCE_DATE_LAST_TIME_CHECKED, date);
-        
-        editor.commit();
-    }
-
     private class DownloadBroadCastReceiver extends BroadcastReceiver {
 
-		@Override
+        @Override
 		public void onReceive(Context context, Intent intent) {
+		    
+		    boolean removeReceiver = false;
+		    
 			DownloadManager.Query query = new DownloadManager.Query();
 
 			query.setFilterById(mLatestFileDownloadId);
@@ -331,18 +286,24 @@ public class UpdaterService extends Service {
 		                    + VersionParserHelper.UPDATER_FOLDER;
                     
 				    if(RSAUtils.checkFileSignature(context, filePath, targetPath)){
-    				    updateLastChecked(mDateFormat.format(Calendar.getInstance().getTime()));
     					checkVersionValidation(context);
 					}else{
 					    //invalid file
 					    removeLatestFileDownload(context);
+					    if(mDownloadRetries < MAX_DOWNLOAD_RETRIES){
+    					    startDownloadLatest();
+    				        mDownloadRetries++;
+    					    removeReceiver = false;
+					    }
 					}
 				}
 			}
 
 			cursor.close();
 
-			removeBroadcastReceiver();
+			if(removeReceiver){
+			    removeBroadcastReceiver();
+			}
 		}
 	}
 }
