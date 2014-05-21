@@ -8,25 +8,25 @@
     <TextView
         android:id="@+id/versionListTitleText"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
+        android:layout_height="75dp"
+        android:background="#888"
         android:drawableLeft="@android:drawable/ic_media_previous"
         android:drawablePadding="10dp"
-        android:gravity="center_vertical"
+        android:fontFamily="sans-serif-light"
+        android:gravity="center"
         android:text="@string/app_name"
         android:textColor="#fff"
-        android:textSize="20sp" />
+        android:textSize="26sp" />
 
     <View
         android:layout_width="match_parent"
         android:layout_height="2dp"
-        android:background="#33b5e5" />
+        android:background="#000" />
 
     <ScrollView
         android:id="@+id/versionListScroll"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_margin="15dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:clickable="true"
         android:orientation="vertical" >
 
@@ -34,7 +34,6 @@
             android:id="@+id/versionListContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#000"
             android:clickable="true"
             android:orientation="vertical" />
     </ScrollView>
@@ -43,14 +42,14 @@
         android:id="@+id/selectedVersionContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="15dp"
         android:orientation="vertical"
         android:visibility="gone" >
 
         <ImageView
             android:id="@+id/selectedVersionImage"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="93dp"
+            android:scaleType="centerCrop" />
 
         <include layout="@layout/version_detailed_info" />
     </LinearLayout>
