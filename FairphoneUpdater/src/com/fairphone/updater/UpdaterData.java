@@ -107,4 +107,12 @@ public class UpdaterData {
 
         return version;
     }
+
+	public boolean isAOSPVersionListEmpty() {
+		return mAOSPVersionMap.isEmpty();
+	}
+	
+	public boolean isFairphoneVersionListEmpty() {
+		return mAOSPVersionMap.isEmpty();
+	}
 }

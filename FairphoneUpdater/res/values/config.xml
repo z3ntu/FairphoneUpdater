@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="downloadUrl">http://192.168.1.108:8080/download/updater.zip</string>
+    <string name="downloadUrl">http://192.168.1.108:8080/download/</string>
     <string name="versionFilename">updater</string>
     <string name="versionFilename_zip">.zip</string>
 	<string name="versionFilename_xml">.xml</string>
@@ -11,5 +11,6 @@
     <string name="defaultBuildNumber">1.0</string>
     <string name="defaultAndroidVersionNumber">4.2.2</string>
     <string name="defaultImageType">fairphone</string>
-    <string name="defaultDeviceType">FP1</string>      
+    <string name="defaultDeviceType">FP1</string>
+    <string name="supportedDevices">FP1;FP2</string>      
 </resources>

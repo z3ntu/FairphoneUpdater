@@ -212,9 +212,10 @@ public class VersionListActivity extends Activity {
                 editor.putInt(FairphoneUpdater.PREFERENCE_SELECTED_VERSION_NUMBER, versionNumber);
                 editor.putString(FairphoneUpdater.PREFERENCE_SELECTED_VERSION_TYPE,
                         versionImageType);
+                editor.putBoolean(FairphoneUpdater.PREFERENCE_SELECTED_VERSION_BEGIN_DOWNLOAD,
+                        true);
                 editor.commit();
 
-                sendBroadcast(new Intent(FairphoneUpdater.FAIRPHONE_UPDATER_VERSION_SELECTED));
                 finish();
             }
         });

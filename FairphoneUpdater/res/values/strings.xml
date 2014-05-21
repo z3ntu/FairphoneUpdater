@@ -33,5 +33,6 @@
     <string name="installBtn">Install</string>
     <string name="downloading">Downloading</string>
     <string name="versionsAvailable">versions available</string>
+    <string name="deviceNotSupported">Device not supported</string>
 
 </resources>

@@ -16,8 +16,9 @@
 
 package com.fairphone.updater;
 
-import com.stericson.RootTools.execution.CommandCapture;
-import com.stericson.RootTools.execution.Shell;
+import java.io.File;
+import java.io.IOException;
+import java.util.concurrent.TimeoutException;
 
 import android.app.DownloadManager;
 import android.app.DownloadManager.Request;
@@ -37,14 +38,14 @@ import android.database.Cursor;
 import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.concurrent.TimeoutException;
+import com.stericson.RootTools.execution.CommandCapture;
+import com.stericson.RootTools.execution.Shell;
 
 public class UpdaterService extends Service {
 
@@ -110,15 +111,26 @@ public class UpdaterService extends Service {
 	public void startDownloadLatest() {
 		if(hasConnection()){
 			Resources resources = getApplicationContext().getResources();
-	            
+	        String downloadLink = getConfigDownloadLink(resources);
 			// set the download for the latest version on the download manager
-			Request request = createDownloadRequest(resources.getString(R.string.downloadUrl), resources.getString(R.string.versionFilename) + resources.getString(R.string.versionFilename_zip));
+			Request request = createDownloadRequest(downloadLink, resources.getString(R.string.versionFilename) + resources.getString(R.string.versionFilename_zip));
 			mLatestFileDownloadId = mDownloadManager.enqueue(request);
 			
 			Editor editor = mSharedPreferences.edit();
 	        editor.putLong(PREFERENCE_LAST_CONFIG_DOWNLOAD_ID, mLatestFileDownloadId);
 	        editor.commit();
 		}
+	}
+
+	private String getConfigDownloadLink(Resources resources) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(resources.getString(R.string.downloadUrl));
+		sb.append(Build.MODEL);
+		sb.append("/");
+		sb.append(resources.getString(R.string.versionFilename));
+		sb.append(resources.getString(R.string.versionFilename_zip));
+		String downloadLink = sb.toString();
+		return downloadLink;
 	}
 
 	private boolean hasConnection() {

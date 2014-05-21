@@ -16,7 +16,15 @@
 
 package com.fairphone.updater;
 
-import com.squareup.picasso.Picasso;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 import android.app.Activity;
 import android.app.ActivityManager;
@@ -35,6 +43,7 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.PowerManager;
@@ -48,23 +57,13 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.math.BigInteger;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+import com.squareup.picasso.Picasso;
 
 public class FairphoneUpdater extends Activity {
 
     private static final String TAG = FairphoneUpdater.class.getSimpleName();
 
     public static final String FAIRPHONE_UPDATER_NEW_VERSION_RECEIVED = "FairphoneUpdater.NEW.VERSION.RECEIVED";
-
-    public static final String FAIRPHONE_UPDATER_VERSION_SELECTED = "FairphoneUpdater.VERSION.SELECTED";
 
     private static final String PREFERENCE_CURRENT_UPDATER_STATE = "CurrentUpdaterState";
 
@@ -77,6 +76,8 @@ public class FairphoneUpdater extends Activity {
     public static final String PREFERENCE_SELECTED_VERSION_NUMBER = "SelectedVersionNumber";
 
     public static final String PREFERENCE_SELECTED_VERSION_TYPE = "SelectedVersionImageType";
+
+	protected static final String PREFERENCE_SELECTED_VERSION_BEGIN_DOWNLOAD = "SelectedVersionBeginDownload";
 
     public static enum UpdaterState {
         NORMAL, DOWNLOAD, PREINSTALL
@@ -142,6 +143,7 @@ public class FairphoneUpdater extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fairphone_updater);
 
+        isDeviceSupported();
         mSharedPreferences = getSharedPreferences(FAIRPHONE_UPDATER_PREFERENCES, MODE_PRIVATE);
 
         boolean isConfigLoaded = UpdaterService.readUpdaterData(this);
@@ -168,7 +170,19 @@ public class FairphoneUpdater extends Activity {
         }
     }
 
-    public void startUpdaterService() {
+    private void isDeviceSupported() {
+		Resources resources = getResources();
+		String[] suportedDevices = resources.getString(R.string.supportedDevices).split(";");
+		for (String device : suportedDevices) {
+			if(Build.MODEL.equalsIgnoreCase(device)){
+				return;
+			}
+		}
+		Toast.makeText(this, R.string.deviceNotSupported, Toast.LENGTH_LONG).show();
+		finish();
+	}
+
+	public void startUpdaterService() {
         boolean isRunning = false;
         ActivityManager manager = (ActivityManager)this.getSystemService(Context.ACTIVITY_SERVICE);
         for (RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
@@ -197,11 +211,6 @@ public class FairphoneUpdater extends Activity {
                     if (mCurrentState == UpdaterState.NORMAL) {
                         setupState(mCurrentState);
                     }
-                }
-
-                if (FairphoneUpdater.FAIRPHONE_UPDATER_VERSION_SELECTED.equals(action)) {
-                    getSelectedVersionFromSharedPreferences();
-                    startUpdateDownload();
                 }
             }
         };
@@ -236,7 +245,7 @@ public class FairphoneUpdater extends Activity {
         mOtherVersionsLayout = (LinearLayout)findViewById(R.id.otherVersionsLayout);
         mFairphoneVersionsButton = (Button)findViewById(R.id.fairphoneVersionsButton);
         mAOSPVersionsButton = (Button)findViewById(R.id.aospVersionsButton);
-
+        
         mFairphoneVersionsButton.setOnClickListener(new OnClickListener() {
 
             @Override
@@ -244,6 +253,7 @@ public class FairphoneUpdater extends Activity {
                 startFairphoneVersionsActivity();
             }
         });
+
 
         mAOSPVersionsButton.setOnClickListener(new OnClickListener() {
 
@@ -441,7 +451,16 @@ public class FairphoneUpdater extends Activity {
 
         getSelectedVersionFromSharedPreferences();
 
-        setupState(mCurrentState);
+		if (mSharedPreferences.getBoolean(
+				FairphoneUpdater.PREFERENCE_SELECTED_VERSION_BEGIN_DOWNLOAD, false)) {
+			Editor editor = mSharedPreferences.edit();
+			editor.putBoolean(
+					FairphoneUpdater.PREFERENCE_SELECTED_VERSION_BEGIN_DOWNLOAD, false);
+			editor.commit();
+			startUpdateDownload();
+		} else {
+			setupState(mCurrentState);
+		}
     }
 
     private void setupState(UpdaterState state) {
@@ -476,6 +495,12 @@ public class FairphoneUpdater extends Activity {
 
         unregisterBroadCastReceiver();
     }
+    
+    @Override
+    protected void onStop() {
+    	super.onStop();
+    	
+    }
 
     private void setupNormalState() {
 
@@ -494,7 +519,22 @@ public class FairphoneUpdater extends Activity {
         mMoreInfoLayout.setVisibility(View.GONE);
 
         setupCurrentVersionInfoLayout(UpdaterState.NORMAL);
+        setupOtherVersionsLayout(UpdaterState.NORMAL);
     }
+
+	private void setupOtherVersionsLayout(UpdaterState state) {
+		switch (state) {
+		case NORMAL:
+			mFairphoneVersionsButton.setEnabled(!UpdaterData.getInstance()
+					.isFairphoneVersionListEmpty());
+			mAOSPVersionsButton.setEnabled(!UpdaterData.getInstance()
+					.isAOSPVersionListEmpty());
+			break;
+		case DOWNLOAD:
+		case PREINSTALL:
+			break;
+		}
+	}
 
     private void setupCurrentVersionInfoLayout(UpdaterState state) {
         Resources resources = getResources();
@@ -859,16 +899,12 @@ public class FairphoneUpdater extends Activity {
         registerReceiver(mDownloadBroadCastReceiver, new IntentFilter(
                 DownloadManager.ACTION_DOWNLOAD_COMPLETE));
 
-        IntentFilter iFilter = new IntentFilter();
-        iFilter.addAction(FairphoneUpdater.FAIRPHONE_UPDATER_NEW_VERSION_RECEIVED);
-        iFilter.addAction(FairphoneUpdater.FAIRPHONE_UPDATER_VERSION_SELECTED);
-
-        registerReceiver(newVersionbroadcastReceiver, iFilter);
+        registerReceiver(newVersionbroadcastReceiver, new IntentFilter(FairphoneUpdater.FAIRPHONE_UPDATER_NEW_VERSION_RECEIVED));
     }
 
     private void unregisterBroadCastReceiver() {
         unregisterReceiver(mDownloadBroadCastReceiver);
-        // unregisterReceiver(newVersionbroadcastReceiver);
+        unregisterReceiver(newVersionbroadcastReceiver);
     }
 
     private class DownloadBroadCastReceiver extends BroadcastReceiver {
