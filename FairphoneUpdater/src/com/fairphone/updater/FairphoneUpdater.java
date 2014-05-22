@@ -79,6 +79,10 @@ public class FairphoneUpdater extends Activity {
 
 	protected static final String PREFERENCE_SELECTED_VERSION_BEGIN_DOWNLOAD = "SelectedVersionBeginDownload";
 
+	public static final String FAIRPHONE_UPDATER_CONFIG_DOWNLOAD_FAILED = "FairphoneUpdater.Config.File.Download.FAILED";
+
+	public static final String FAIRPHONE_UPDATER_CONFIG_DOWNLOAD_LINK = "FairphoneUpdater.ConfigFile.Download.LINK";
+
     public static enum UpdaterState {
         NORMAL, DOWNLOAD, PREINSTALL
     };
@@ -171,10 +175,11 @@ public class FairphoneUpdater extends Activity {
     }
 
     private void isDeviceSupported() {
+    	
 		Resources resources = getResources();
 		String[] suportedDevices = resources.getString(R.string.supportedDevices).split(";");
 		for (String device : suportedDevices) {
-			if(Build.MODEL.equalsIgnoreCase(device)){
+			if(Build.MODEL.equalsIgnoreCase(device)){			    
 				return;
 			}
 		}
@@ -211,6 +216,9 @@ public class FairphoneUpdater extends Activity {
                     if (mCurrentState == UpdaterState.NORMAL) {
                         setupState(mCurrentState);
                     }
+                }else if (FairphoneUpdater.FAIRPHONE_UPDATER_CONFIG_DOWNLOAD_FAILED.equals(action)) {
+                    String link = intent.getStringExtra(FairphoneUpdater.FAIRPHONE_UPDATER_CONFIG_DOWNLOAD_LINK);
+                    Toast.makeText(context.getApplicationContext(), context.getResources().getString(R.string.configFileDownloadError) + " " + link, Toast.LENGTH_LONG).show();
                 }
             }
         };
@@ -606,8 +614,9 @@ public class FairphoneUpdater extends Activity {
         return UpdaterState.valueOf(currentState);
     }
 
-    private static String getVersionDownloadPath(Version version) {
-        return Environment.getExternalStorageDirectory() + VersionParserHelper.UPDATER_FOLDER
+    private String getVersionDownloadPath(Version version) {
+    	Resources resources = getResources();
+        return Environment.getExternalStorageDirectory() + resources.getString(R.string.updaterFolder)
                 + VersionParserHelper.getNameFromVersion(version);
     }
 
@@ -617,6 +626,7 @@ public class FairphoneUpdater extends Activity {
 
     private void setupPreInstallState() {
 
+    	Resources resources = getResources();
         // the latest version data must exist
         if (mSelectedVersion != null) {
 
@@ -639,7 +649,7 @@ public class FairphoneUpdater extends Activity {
 
                     savePreference(PREFERENCE_DOWNLOAD_ID, mLatestUpdateDownloadId);
 
-                    Toast.makeText(this, getResources().getString(R.string.invalidDownloadMessage),
+                    Toast.makeText(this, resources.getString(R.string.invalidDownloadMessage),
                             Toast.LENGTH_SHORT).show();
                 }
             }
@@ -647,7 +657,7 @@ public class FairphoneUpdater extends Activity {
 
         // remove the updater directory
         File fileDir = new File(Environment.getExternalStorageDirectory()
-                + VersionParserHelper.UPDATER_FOLDER);
+                + resources.getString(R.string.updaterFolder));
         fileDir.delete();
 
         // else if the perfect case does not happen, reset the download
@@ -656,6 +666,7 @@ public class FairphoneUpdater extends Activity {
 
     private void startPreInstall() {
         // set the command for the recovery
+    	Resources resources = getResources();
         Process p;
         try {
             p = Runtime.getRuntime().exec("su");
@@ -666,8 +677,8 @@ public class FairphoneUpdater extends Activity {
 
             os.writeBytes("echo '--wipe_cache' >> /cache/recovery/command\n");
 
-            os.writeBytes("echo '--update_package=/" + VersionParserHelper.RECOVERY_PATH
-                    + VersionParserHelper.UPDATER_FOLDER
+            os.writeBytes("echo '--update_package=/" + resources.getString(R.string.recoveryPath)
+                    + resources.getString(R.string.updaterFolder)
                     + VersionParserHelper.getNameFromVersion(mLatestVersion)
                     + "' >> /cache/recovery/command\n");
 
@@ -700,20 +711,28 @@ public class FairphoneUpdater extends Activity {
     private void startUpdateDownload() {
         // use only on WiFi
         if (isWiFiEnabled()) {
-            // set the download for the latest version on the download manager
-            String fileName = VersionParserHelper.getNameFromVersion(mSelectedVersion);
-            Request request = createDownloadRequest(
-                    mSelectedVersion.getDownloadLink(),
-                    fileName,
-                    mSelectedVersion.getName()
-                            + " " +  mSelectedVersion.getImageTypeDescription(getResources()) + " Update");
-            mLatestUpdateDownloadId = mDownloadManager.enqueue(request);
+			// set the download for the latest version on the download manager
+			String fileName = VersionParserHelper
+					.getNameFromVersion(mSelectedVersion);
+			String downloadTitle = mSelectedVersion.getName() + " "
+					+ mSelectedVersion.getImageTypeDescription(getResources())
+					+ " Update";
+			Request request = createDownloadRequest(
+					mSelectedVersion.getDownloadLink(), fileName, downloadTitle);
+			if (request != null) {
+				mLatestUpdateDownloadId = mDownloadManager.enqueue(request);
 
-            // save it on the shared preferences
-            savePreference(PREFERENCE_DOWNLOAD_ID, mLatestUpdateDownloadId);
+				// save it on the shared preferences
+				savePreference(PREFERENCE_DOWNLOAD_ID, mLatestUpdateDownloadId);
 
-            // change state to download
-            changeState(UpdaterState.DOWNLOAD);
+				// change state to download
+				changeState(UpdaterState.DOWNLOAD);
+			} else {
+				Toast.makeText(
+						this,
+						getResources().getString(R.string.updateDownloadError)
+								+ " " + downloadTitle, Toast.LENGTH_LONG).show();
+			}
         } else {
             Resources resources = this.getResources();
 
@@ -734,21 +753,30 @@ public class FairphoneUpdater extends Activity {
         }
     }
 
-    private Request createDownloadRequest(String url, String fileName, String downloadTitle) {
+	private Request createDownloadRequest(String url, String fileName,
+			String downloadTitle) {
 
-        Request request = new Request(Uri.parse(url));
-        Environment.getExternalStoragePublicDirectory(
-                Environment.getExternalStorageDirectory() + VersionParserHelper.UPDATER_FOLDER)
-                .mkdirs();
+		Resources resources = getResources();
+		Request request;
+		try {
+			request = new Request(Uri.parse(url));
+			Environment.getExternalStoragePublicDirectory(
+					Environment.getExternalStorageDirectory()
+							+ resources.getString(R.string.updaterFolder))
+					.mkdirs();
 
-        request.setDestinationInExternalPublicDir(VersionParserHelper.UPDATER_FOLDER, fileName);
-        request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI);
-        request.setAllowedOverRoaming(false);
+			request.setDestinationInExternalPublicDir(
+					resources.getString(R.string.updaterFolder), fileName);
+			request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI);
+			request.setAllowedOverRoaming(false);
 
-        request.setTitle(downloadTitle);
+			request.setTitle(downloadTitle);
+		} catch (Exception e) {
+			request = null;
+		}
 
-        return request;
-    }
+		return request;
+	}
 
     private boolean isWiFiEnabled() {
 
@@ -763,9 +791,11 @@ public class FairphoneUpdater extends Activity {
     private void setupDownloadState() {
         // setup the download state views
         if (mSelectedVersion == null) {
-            // we don't have the lastest.xml so get back to initial state
+        	Resources resources = getResources();
+            
+        	// we don't have the lastest.xml so get back to initial state
             File updateDir = new File(Environment.getExternalStorageDirectory()
-                    + VersionParserHelper.UPDATER_FOLDER);
+                    + resources.getString(R.string.updaterFolder));
 
             updateDir.delete();
 
@@ -875,6 +905,7 @@ public class FairphoneUpdater extends Activity {
                             mUpdateVersionDownloadProgressBar.setMax(bytes_total);
                         } catch (Exception e) {
                             downloading = false;
+                            Log.e(TAG, "Error updating download progress: " + e.getMessage());
                         }
 
                         cursor.close();
@@ -899,7 +930,10 @@ public class FairphoneUpdater extends Activity {
         registerReceiver(mDownloadBroadCastReceiver, new IntentFilter(
                 DownloadManager.ACTION_DOWNLOAD_COMPLETE));
 
-        registerReceiver(newVersionbroadcastReceiver, new IntentFilter(FairphoneUpdater.FAIRPHONE_UPDATER_NEW_VERSION_RECEIVED));
+        IntentFilter iFilter = new IntentFilter();
+        iFilter.addAction(FairphoneUpdater.FAIRPHONE_UPDATER_NEW_VERSION_RECEIVED);
+        iFilter.addAction(FairphoneUpdater.FAIRPHONE_UPDATER_CONFIG_DOWNLOAD_FAILED);
+        registerReceiver(newVersionbroadcastReceiver, iFilter);
     }
 
     private void unregisterBroadCastReceiver() {

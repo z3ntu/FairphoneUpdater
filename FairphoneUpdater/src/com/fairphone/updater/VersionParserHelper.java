@@ -16,15 +16,6 @@
 
 package com.fairphone.updater;
 
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
-import org.xmlpull.v1.XmlPullParserFactory;
-
-import android.content.Context;
-import android.os.Environment;
-import android.text.TextUtils;
-import android.util.Log;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -33,19 +24,25 @@ import java.io.InputStreamReader;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
+import org.xmlpull.v1.XmlPullParserFactory;
+
+import android.content.Context;
+import android.content.res.Resources;
+import android.os.Environment;
+import android.text.TextUtils;
+import android.util.Log;
+
 public class VersionParserHelper {
 
 	private static final String TAG = VersionParserHelper.class.getSimpleName();
-	
-	public static final String RECOVERY_PATH = "sdcard";
-	public static final String UPDATER_FOLDER = "/updater/";
 	
     private static final String CURRENT_VERSION_NUMBER = "fairphone.ota.version.number";
 	private static final String CURRENT_VERSION_NAME = "fairphone.ota.version.name";
 	private static final String CURRENT_VERSION_BUILD_NUMBER = "fairphone.ota.version.build_number";
 	private static final String CURRENT_ANDROID_VERSION = "fairphone.ota.android_version";
 	private static final String CURRENT_VERSION_IMAGE_TYPE = "fairphone.ota.image_type";
-	private static final String CURRENT_DEVICE_TYPE = "fairphone.device.type";
     
 	public static String getNameFromVersion(Version version) {
 		return "fp_update_" + version.getNumber() + ".zip";
@@ -71,11 +68,7 @@ public class VersionParserHelper {
 
         return version;
     }
-	
-    public static String getDeviceType(Context context) {
-        return getSystemData(context, CURRENT_DEVICE_TYPE);
-    }
-    
+	   
 	public static String getSystemData(Context context, String property) {
 
         if (property.equals(CURRENT_VERSION_NUMBER)) {
@@ -93,9 +86,6 @@ public class VersionParserHelper {
         } else if (property.equals(CURRENT_VERSION_IMAGE_TYPE)) {
             return getprop(CURRENT_VERSION_IMAGE_TYPE,
                     context.getResources().getString(R.string.defaultImageType));
-        } else if (property.equals(CURRENT_DEVICE_TYPE)) {
-            return getprop(CURRENT_DEVICE_TYPE,
-                    context.getResources().getString(R.string.defaultDeviceType));
         }
 
 		return null;
@@ -104,12 +94,12 @@ public class VersionParserHelper {
     public static Version getLatestVersion(Context context) {
 
         Version latest = null;
-
+        Resources resources = context.getResources();
         String filePath = Environment.getExternalStorageDirectory()
-                + VersionParserHelper.UPDATER_FOLDER
-                + context.getResources().getString(R.string.versionFilename);
+                + resources.getString(R.string.updaterFolder)
+                + resources.getString(R.string.configFilename);
         File file = new File(filePath
-                + context.getResources().getString(R.string.versionFilename_xml));
+                + resources.getString(R.string.config_xml));
 
         if (file.exists()) {
             try {
@@ -294,21 +284,23 @@ public class VersionParserHelper {
     }
 	
 	public static void removeFiles(Context context) {
+		Resources resources = context.getResources();
         String filePath = Environment.getExternalStorageDirectory()
-                + VersionParserHelper.UPDATER_FOLDER
-                + context.getResources().getString(R.string.versionFilename);
+                + resources.getString(R.string.updaterFolder)
+                + resources.getString(R.string.configFilename);
 
-        removeFile(filePath + context.getResources().getString(R.string.versionFilename_zip));
+        removeFile(filePath + resources.getString(R.string.config_zip));
         removeZipContents(context);
     }
 
     public static void removeZipContents(Context context) {
+    	Resources resources = context.getResources();
         String filePath = Environment.getExternalStorageDirectory()
-                + VersionParserHelper.UPDATER_FOLDER
-                + context.getResources().getString(R.string.versionFilename);
+                + resources.getString(R.string.updaterFolder)
+                + resources.getString(R.string.configFilename);
         
-        removeFile(filePath + context.getResources().getString(R.string.versionFilename_xml));
-        removeFile(filePath + context.getResources().getString(R.string.versionFilename_sig));
+        removeFile(filePath + resources.getString(R.string.config_xml));
+        removeFile(filePath + resources.getString(R.string.config_sig));
     }
 
     private static void removeFile(String filePath) {

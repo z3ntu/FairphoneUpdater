@@ -34,5 +34,8 @@
     <string name="downloading">Downloading</string>
     <string name="versionsAvailable">versions available</string>
     <string name="deviceNotSupported">Device not supported</string>
+    <string name="configFileDownloadError">Error downloading config file. Link used:</string>
+    <string name="updateDownloadError">Error downloading</string>
+    
 
 </resources>

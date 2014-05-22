@@ -1,16 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="downloadUrl">http://192.168.1.108:8080/download/</string>
-    <string name="versionFilename">updater</string>
-    <string name="versionFilename_zip">.zip</string>
-	<string name="versionFilename_xml">.xml</string>
-	<string name="versionFilename_sig">.sig</string>
+    <string name="downloadUrl">__CONFIG_FILE_URL__</string>
+    <string name="configFilename">updater</string>
+    <string name="config_zip">.zip</string>
+	<string name="config_xml">.xml</string>
+	<string name="config_sig">.sig</string>
 	
     <integer name="defaultVersionNumber">1</integer>
     <string name="defaultVersionName">Almond</string>
     <string name="defaultBuildNumber">1.0</string>
     <string name="defaultAndroidVersionNumber">4.2.2</string>
     <string name="defaultImageType">fairphone</string>
-    <string name="defaultDeviceType">FP1</string>
-    <string name="supportedDevices">FP1;FP2</string>      
+    
+    <!-- Device Model numbers separated by semicolon. Ex: FP1;FP1U;FP2 -->
+    <string name="supportedDevices">FP1</string>
+    
+    <string name="oneGBDataPartition">/originalPartition</string>
+	<string name="unifiedDataPartition">/unifiedPartition</string>
+	<string name="FP1Model">FP1</string>
+	<string name="recoveryPath">sdcard</string>
+	<string name="updaterFolder">/updater/</string>
+	   
 </resources>

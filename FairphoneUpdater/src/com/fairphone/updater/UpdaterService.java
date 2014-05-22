@@ -109,28 +109,62 @@ public class UpdaterService extends Service {
 	}
 
 	public void startDownloadLatest() {
-		if(hasConnection()){
+		if (hasConnection()) {
 			Resources resources = getApplicationContext().getResources();
-	        String downloadLink = getConfigDownloadLink(resources);
+			String downloadLink = getConfigDownloadLink(resources);
 			// set the download for the latest version on the download manager
-			Request request = createDownloadRequest(downloadLink, resources.getString(R.string.versionFilename) + resources.getString(R.string.versionFilename_zip));
-			mLatestFileDownloadId = mDownloadManager.enqueue(request);
+			Request request = createDownloadRequest(
+					downloadLink,
+					resources.getString(R.string.configFilename)
+							+ resources.getString(R.string.config_zip));
 			
-			Editor editor = mSharedPreferences.edit();
-	        editor.putLong(PREFERENCE_LAST_CONFIG_DOWNLOAD_ID, mLatestFileDownloadId);
-	        editor.commit();
+			if (request != null) {
+				mLatestFileDownloadId = mDownloadManager.enqueue(request);
+
+				Editor editor = mSharedPreferences.edit();
+				editor.putLong(PREFERENCE_LAST_CONFIG_DOWNLOAD_ID,
+						mLatestFileDownloadId);
+				editor.commit();
+			} else {
+				Log.e(TAG, "Invalid request for link " + downloadLink);
+				Intent i = new Intent(FairphoneUpdater.FAIRPHONE_UPDATER_CONFIG_DOWNLOAD_FAILED);
+				i.putExtra(FairphoneUpdater.FAIRPHONE_UPDATER_CONFIG_DOWNLOAD_LINK, downloadLink);
+				sendBroadcast(i);
+			}
 		}
 	}
 
 	private String getConfigDownloadLink(Resources resources) {
+		
 		StringBuilder sb = new StringBuilder();
 		sb.append(resources.getString(R.string.downloadUrl));
 		sb.append(Build.MODEL);
+		sb.append(getPartitionDownloadPath(resources));
 		sb.append("/");
-		sb.append(resources.getString(R.string.versionFilename));
-		sb.append(resources.getString(R.string.versionFilename_zip));
+		sb.append(resources.getString(R.string.configFilename));
+		sb.append(resources.getString(R.string.config_zip));
 		String downloadLink = sb.toString();
+		Log.d(TAG, "Download link: " + downloadLink);
 		return downloadLink;
+	}
+
+	private String getPartitionDownloadPath(Resources resources) {
+		String downloadPath = "";
+		if (Build.MODEL.equals(resources.getString(R.string.FP1Model))) {
+			File path = Environment.getDataDirectory();
+			android.os.StatFs stat = new android.os.StatFs(path.getPath());
+			long blockSize = stat.getBlockSize();
+			long availableBlocks = stat.getBlockCount() * blockSize;
+			double sizeInGB = (((double) availableBlocks / 1024d) / 1024d) / 1024d;
+			double roundedSize = (double) Math.ceil(sizeInGB * 100d) / 100d;
+			Log.d(TAG, "/data size: " + roundedSize + "Gb");
+			
+			//Add a little buffer to the 1gb default just in case
+			downloadPath = roundedSize <= 1.1d ? resources
+					.getString(R.string.oneGBDataPartition) : resources
+					.getString(R.string.unifiedDataPartition);
+		}
+		return downloadPath;
 	}
 
 	private boolean hasConnection() {
@@ -186,19 +220,25 @@ public class UpdaterService extends Service {
 
 	private Request createDownloadRequest(String url, String fileName) {
 
-	    
-		Request request = new Request(Uri.parse(url));
-		Environment.getExternalStoragePublicDirectory(
-				Environment.getExternalStorageDirectory()
-						+ VersionParserHelper.UPDATER_FOLDER).mkdirs();
-
-		request.setDestinationInExternalPublicDir(
-				VersionParserHelper.UPDATER_FOLDER, fileName);
-		request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI);
-		request.setAllowedOverRoaming(false);
-		
 		Resources resources = getApplicationContext().getResources();
-		request.setTitle(resources.getString(R.string.downloadUpdateTitle));
+		Request request;
+		
+		try {
+			request = new Request(Uri.parse(url));
+			Environment.getExternalStoragePublicDirectory(
+					Environment.getExternalStorageDirectory()
+							+ resources.getString(R.string.updaterFolder))
+					.mkdirs();
+
+			request.setDestinationInExternalPublicDir(
+					resources.getString(R.string.updaterFolder), fileName);
+			request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI);
+			request.setAllowedOverRoaming(false);
+			request.setTitle(resources.getString(R.string.downloadUpdateTitle));
+		} catch (Exception e) {
+			Log.e(TAG, "Error creating request: " + e.getMessage());
+			request = null;
+		}
 
 		return request;
 	}
@@ -249,10 +289,10 @@ public class UpdaterService extends Service {
         boolean retVal = false;
         Resources resources = context.getApplicationContext().getResources();
         String targetPath = Environment.getExternalStorageDirectory()
-                + VersionParserHelper.UPDATER_FOLDER;
+                + resources.getString(R.string.updaterFolder);
 
-        String filePath = targetPath + resources.getString(R.string.versionFilename)
-                + resources.getString(R.string.versionFilename_zip);
+        String filePath = targetPath + resources.getString(R.string.configFilename)
+                + resources.getString(R.string.config_zip);
 
         File file = new File(filePath);
 
@@ -291,11 +331,12 @@ public class UpdaterService extends Service {
 
 				if (status == DownloadManager.STATUS_SUCCESSFUL) {
 				    
+					Resources resources = context.getApplicationContext().getResources();
 				    String filePath = mDownloadManager.getUriForDownloadedFile(
 				            mLatestFileDownloadId).getPath();
 				    
 				    String targetPath = Environment.getExternalStorageDirectory()
-		                    + VersionParserHelper.UPDATER_FOLDER;
+		                    + resources.getString(R.string.updaterFolder);
                     
 				    if(RSAUtils.checkFileSignature(context, filePath, targetPath)){
     					checkVersionValidation(context);

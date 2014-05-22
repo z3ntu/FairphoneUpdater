@@ -1,8 +1,20 @@
-package com.fairphone.updater;
+/*
+ * Copyright (C) 2013 Fairphone Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
-import android.content.Context;
-import android.util.Base64;
-import android.util.Log;
+package com.fairphone.updater;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -24,6 +36,11 @@ import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+
+import android.content.Context;
+import android.content.res.Resources;
+import android.util.Base64;
+import android.util.Log;
 
 public class RSAUtils {
 
@@ -105,7 +122,6 @@ public class RSAUtils {
         sg.update(buff);
 
         boolean ok = sg.verify(sign);
-        Log.i(TAG, "Verify Processing Info: ");
         Log.i(TAG, "Verification result = "+ok);
         return ok;
     }
@@ -115,10 +131,11 @@ public class RSAUtils {
 
         unzip(filePath, targetPath);
         
+        Resources resources = context.getResources();
         try {
-            String filename = context.getResources().getString(R.string.versionFilename);
-            String fileXmlExt = context.getResources().getString(R.string.versionFilename_xml);
-            String fileSigExt = context.getResources().getString(R.string.versionFilename_sig);
+            String filename = resources.getString(R.string.configFilename);
+            String fileXmlExt = resources.getString(R.string.config_xml);
+            String fileSigExt = resources.getString(R.string.config_sig);
             
             PublicKey pubKey = RSAUtils.readPublicKeyFromPemFormat(context, R.raw.public_key);
             byte[] sign = RSAUtils.readSignature(targetPath + filename + fileSigExt);
@@ -165,7 +182,7 @@ public class RSAUtils {
             zin.close();
             fin.close();
         } catch (Exception e) {
-            Log.e("Decompress", "unzip", e);
+            Log.e(TAG, "unzip", e);
         }
     }
     
