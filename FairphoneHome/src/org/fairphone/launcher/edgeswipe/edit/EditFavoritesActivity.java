@@ -75,7 +75,7 @@ public class EditFavoritesActivity extends Activity implements
 
 		setContentView(R.layout.fp_edit_favorites);
 
-		mAllApps = AppDiscoverer.getInstance().getPackages();
+		mAllApps = EdgeSwipeAppDiscoverer.getInstance().getPackages();
 
 		mSelectedApps = FavoritesStorageHelper.loadSelectedApps(this, 4);
 

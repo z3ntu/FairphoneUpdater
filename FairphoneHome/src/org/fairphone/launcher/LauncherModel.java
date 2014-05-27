@@ -63,7 +63,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.fairphone.launcher.InstallWidgetReceiver.WidgetMimeTypeHandlerData;
-import org.fairphone.launcher.edgeswipe.edit.AppDiscoverer;
+import org.fairphone.launcher.edgeswipe.edit.EdgeSwipeAppDiscoverer;
 
 /**
  * Maintains in-memory state of the Launcher. It is expected that there should be only one
@@ -1942,7 +1942,7 @@ public class LauncherModel extends BroadcastReceiver {
                         + (mAllAppsLoadDelay > 0 ? " (including delay)" : ""));
             }
             
-            AppDiscoverer.getInstance().loadAllApps(mBgAllAppsList.data);
+            EdgeSwipeAppDiscoverer.getInstance().loadAllApps(mBgAllAppsList.data);
         }
 
         public void dumpState() {
@@ -2077,7 +2077,7 @@ public class LauncherModel extends BroadcastReceiver {
             });
             
             // update the new data
-            AppDiscoverer.getInstance().loadAllApps(mBgAllAppsList.data);
+            EdgeSwipeAppDiscoverer.getInstance().loadAllApps(mBgAllAppsList.data);
         }
     }
 

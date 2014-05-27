@@ -17,8 +17,29 @@
 
 package org.fairphone.launcher;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.FileDescriptor;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.fairphone.launcher.DropTarget.DragObject;
 import org.fairphone.launcher.edgeswipe.EdgeSwipeAppMenuHelper;
+import org.fairphone.launcher.edgeswipe.edit.EdgeSwipeAppDiscoverer;
 import org.fairphone.launcher.edgeswipe.edit.EditFavoritesActivity;
 import org.fairphone.launcher.edgeswipe.edit.FavoritesStorageHelper;
 import org.fairphone.launcher.edgeswipe.ui.EdgeSwipeInterceptorViewListener;
@@ -111,26 +132,6 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.FileDescriptor;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * Default launcher application.
@@ -2443,7 +2444,11 @@ public final class Launcher extends Activity implements View.OnClickListener,
 
 			AppDiscoverer.getInstance().applicationRemoved(
 					appInfo.componentName);
-
+			
+			EdgeSwipeAppDiscoverer.getInstance().removeUninstalledApp(appInfo.componentName);
+			
+			saveAppSwitcherData();
+			
 			updateAppSwitcherWidgets();
 		}
 	}
@@ -4102,6 +4107,7 @@ public final class Launcher extends Activity implements View.OnClickListener,
 					appToRemove.getComponentName());
 			
 			FavoritesStorageHelper.updateFavorites(this, appToRemove.getComponentName());
+			EdgeSwipeAppDiscoverer.getInstance().removeUninstalledApp(appToRemove.getComponentName());
         }
         
         if(!appsToRemove.isEmpty()){

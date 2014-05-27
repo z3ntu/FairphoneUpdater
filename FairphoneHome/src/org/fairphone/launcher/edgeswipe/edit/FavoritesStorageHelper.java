@@ -73,7 +73,7 @@ public abstract class FavoritesStorageHelper
             	ApplicationInfo applicationInfo = null;
                 ComponentName currentComponentName = componentNames.get(i);
                 if(currentComponentName != null){
-                	applicationInfo = AppDiscoverer.getInstance().getApplicationFromComponentName(currentComponentName);
+                	applicationInfo = EdgeSwipeAppDiscoverer.getInstance().getApplicationFromComponentName(currentComponentName);
                 }
                 
                 selectedAppArray[i] = applicationInfo;
