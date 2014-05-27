@@ -39,3 +39,4 @@ local.properties
 proguard/
 
 FairphoneHome/res/values/com_crashlytics_export_strings.xml
+FairphoneHome/assets/crashlytics-build.properties
