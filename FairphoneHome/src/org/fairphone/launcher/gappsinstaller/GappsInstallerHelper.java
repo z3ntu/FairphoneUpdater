@@ -15,10 +15,22 @@
  */
 package org.fairphone.launcher.gappsinstaller;
 
-import com.stericson.RootTools.RootTools;
-import com.stericson.RootTools.exceptions.RootDeniedException;
-import com.stericson.RootTools.execution.CommandCapture;
-import com.stericson.RootTools.execution.Shell;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.PublicKey;
+import java.security.cert.CertificateException;
+import java.util.concurrent.TimeoutException;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import org.fairphone.launcher.R;
 import org.fairphone.launcher.rsa.utils.RSAUtils;
@@ -41,27 +53,13 @@ import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Environment;
-import android.os.PowerManager;
 import android.util.Log;
 import android.widget.Toast;
 
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.math.BigInteger;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.security.PublicKey;
-import java.security.cert.CertificateException;
-import java.util.concurrent.TimeoutException;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
+import com.stericson.RootTools.RootTools;
+import com.stericson.RootTools.exceptions.RootDeniedException;
+import com.stericson.RootTools.execution.CommandCapture;
+import com.stericson.RootTools.execution.Shell;
 
 public class GappsInstallerHelper {
 
@@ -155,7 +153,7 @@ public class GappsInstallerHelper {
 	        return true;
 		}
 		
-		updateInstallerState(GAPPS_STATES_INITIAL);
+	    updateWidgetState(GAPPS_STATES_INITIAL);
 		return false;
 	}
 
@@ -240,8 +238,9 @@ public class GappsInstallerHelper {
 		return isWifi;
 	}
 
-	private boolean hasAlreadyDownloadedZipFile(String mMD5hash, String filename) {
-
+	private boolean hasAlreadyDownloadedZipFile(String mMD5hash) {
+		String filename = mContext.getResources().getString(
+				R.string.gapps_installer_filename);
 		File file = new File(DOWNLOAD_PATH + "/" + filename);
 		return GappsInstallerHelper.checkMD5(mMD5hash, file);
 	}
@@ -682,29 +681,44 @@ public class GappsInstallerHelper {
 					Cursor cursor = mDownloadManager.query(q);
 					if (cursor != null) {
 						cursor.moveToFirst();
-						int bytes_downloaded = cursor.getInt(cursor
-								.getColumnIndex(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR));
-						int bytes_total = cursor.getInt(cursor
-								.getColumnIndex(DownloadManager.COLUMN_TOTAL_SIZE_BYTES));
-
-						if (cursor.getInt(cursor
-								.getColumnIndex(DownloadManager.COLUMN_STATUS)) == DownloadManager.STATUS_SUCCESSFUL) {
+						try {
+							int bytes_downloaded = cursor.getInt(cursor
+									.getColumnIndex(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR));
+							int bytes_total = cursor.getInt(cursor
+									.getColumnIndex(DownloadManager.COLUMN_TOTAL_SIZE_BYTES));
+	
+							if (cursor.getInt(cursor
+									.getColumnIndex(DownloadManager.COLUMN_STATUS)) == DownloadManager.STATUS_SUCCESSFUL) {
+								downloading = false;
+	
+								bytes_downloaded = 0;
+								bytes_total = 0;
+							}
+	
+							SharedPreferences.Editor prefEdit = mSharedPrefs.edit();
+							prefEdit.putInt(
+									GappsInstallerHelper.GOOGLE_APPS_INSTALLER_PROGRESS,
+									bytes_downloaded);
+							prefEdit.putInt(
+									GappsInstallerHelper.GOOGLE_APPS_INSTALLER_PROGRESS_MAX,
+									bytes_total);
+							prefEdit.commit();
+	
+							updateGoogleAppsIntallerWidgets();
+						}catch(Exception e){
 							downloading = false;
-
-							bytes_downloaded = 0;
-							bytes_total = 0;
+							updateWidgetState(GAPPS_STATES_INITIAL);
+							mDownloadManager.remove(download_id);
+							SharedPreferences.Editor prefEdit = mSharedPrefs.edit();
+							prefEdit.putInt(
+									GappsInstallerHelper.GOOGLE_APPS_INSTALLER_PROGRESS,
+									0);
+							prefEdit.putInt(
+									GappsInstallerHelper.GOOGLE_APPS_INSTALLER_PROGRESS_MAX,
+									0);
+							prefEdit.commit();
+							Log.e(TAG, "Error updating Gapps download progress: " + e.getMessage());
 						}
-
-						SharedPreferences.Editor prefEdit = mSharedPrefs.edit();
-						prefEdit.putInt(
-								GappsInstallerHelper.GOOGLE_APPS_INSTALLER_PROGRESS,
-								bytes_downloaded);
-						prefEdit.putInt(
-								GappsInstallerHelper.GOOGLE_APPS_INSTALLER_PROGRESS_MAX,
-								bytes_total);
-						prefEdit.commit();
-
-						updateGoogleAppsIntallerWidgets();
 
 						cursor.close();
 						try {
@@ -894,10 +908,6 @@ public class GappsInstallerHelper {
 				int reason = cursor.getInt(columnReason);
 
 				if (status == DownloadManager.STATUS_SUCCESSFUL) {
-					// file to where the download happened
-					String filePath = mDownloadManager.getUriForDownloadedFile(
-							downloadID).getPath();
-
 					// Retrieve the saved download id
 					if (downloadID == mConfigFileDownloadId) {
 					    
@@ -906,13 +916,20 @@ public class GappsInstallerHelper {
                         String fileCfgExt = mContext.getResources().getString(R.string.gapps_installer_cfg);
 					    
                         String cfgFile = targetPath + cfgFilename + fileCfgExt;
-					    
-                        if(!checkFileSignature(filePath, targetPath)){
+                        
+                        // file to where the download happened
+    					Uri filePath = mDownloadManager.getUriForDownloadedFile(
+    							downloadID);
+                        if(filePath!=null && !checkFileSignature(filePath.getPath(), targetPath)){
                             Toast.makeText(mContext,
                                     R.string.google_apps_download_error,
                                     Toast.LENGTH_LONG).show();
 
                             updateWidgetState(GAPPS_STATES_INITIAL);
+                            if(mConfigFileDownloadId!=0){
+                            	mDownloadManager.remove(mConfigFileDownloadId);
+                            }
+                            cursor.close();
                             return;
                         }
 
@@ -925,7 +942,10 @@ public class GappsInstallerHelper {
 									Toast.LENGTH_LONG).show();
 
 							updateWidgetState(GAPPS_STATES_INITIAL);
-
+							if(mConfigFileDownloadId!=0){
+                            	mDownloadManager.remove(mConfigFileDownloadId);
+                            }
+							cursor.close();
 							return;
 						}
                         
@@ -936,7 +956,7 @@ public class GappsInstallerHelper {
 						String filename = mContext.getResources().getString(
 								R.string.gapps_installer_filename);
 
-						if (hasAlreadyDownloadedZipFile(mMD5hash, filename)) {
+						if (hasAlreadyDownloadedZipFile(mMD5hash)) {
 							updateWidgetState(GAPPS_STATES_PERMISSION_CHECK);
 //							updateWidgetState(GAPPS_REBOOT_STATE);
 						} else {
@@ -972,9 +992,18 @@ public class GappsInstallerHelper {
 							updateGoogleAppsIntallerWidgets();
 							updateWidgetState(GAPPS_STATES_DOWNLOAD_GOOGLE_APPS_FILE);
 						}
-					} else {
+					} else if(hasAlreadyDownloadedZipFile(mMD5hash)){
 						updateWidgetState(GAPPS_STATES_PERMISSION_CHECK);
 //						updateWidgetState(GAPPS_REBOOT_STATE);
+					}else{
+						Toast.makeText(mContext,
+								R.string.google_apps_download_error,
+								Toast.LENGTH_LONG).show();
+
+						updateWidgetState(GAPPS_STATES_INITIAL);
+						if(mConfigFileDownloadId!=0){
+                        	mDownloadManager.remove(mConfigFileDownloadId);
+                        }
 					}
 				} else if (status == DownloadManager.STATUS_FAILED) {
 					Toast.makeText(mContext,
@@ -999,6 +1028,7 @@ public class GappsInstallerHelper {
 							.show();
 				}
 			}
+			cursor.close();
 		}
 	}
 	
