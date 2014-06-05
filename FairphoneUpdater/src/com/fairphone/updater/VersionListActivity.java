@@ -28,11 +28,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import com.squareup.picasso.Picasso;
 
 public class VersionListActivity extends Activity
 {
@@ -47,7 +46,7 @@ public class VersionListActivity extends Activity
 
     private List<Version> mVersionList;
 
-    private TextView mVersionListTitle;
+    private TextView mVersionListHeaderTitle;
 
     private View mScrollView;
 
@@ -69,6 +68,10 @@ public class VersionListActivity extends Activity
 
     private String mVersionListType;
 
+	private TextView mVersionListHeaderSubTitle;
+
+	private ImageButton mVersionListHeaderBackBtn;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -81,12 +84,14 @@ public class VersionListActivity extends Activity
         mVersionListType = i.getStringExtra(VERSION_LIST_TYPE);
 
         mVersionListContainer = (LinearLayout) findViewById(R.id.versionListContainer);
-        mVersionListTitle = (TextView) findViewById(R.id.titleText);
+        
+        mVersionListHeaderTitle = (TextView) findViewById(R.id.titleText);
+        mVersionListHeaderSubTitle = (TextView) findViewById(R.id.subtitleText);
+        mVersionListHeaderBackBtn = (ImageButton) findViewById(R.id.backButton);
         setupTitleBar();
 
-        mVersionListTitle.setOnClickListener(new OnClickListener()
+        mVersionListHeaderBackBtn.setOnClickListener(new OnClickListener()
         {
-
             @Override
             public void onClick(View v)
             {
@@ -104,7 +109,9 @@ public class VersionListActivity extends Activity
     public void setupTitleBar()
     {
         Resources resources = getResources();
-        mVersionListTitle.setText(Version.getImageTypeDescription(mVersionListType, resources) + " " + resources.getString(R.string.versionsAvailable));
+        mVersionListHeaderSubTitle.setText(Version.getImageTypeDescription(mVersionListType, resources));
+        mVersionListHeaderBackBtn.setVisibility(View.VISIBLE);
+        mVersionListHeaderSubTitle.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -126,36 +133,29 @@ public class VersionListActivity extends Activity
         LinearLayout versionLayout;
         LayoutInflater inflater = getLayoutInflater();
 
-        if (AOSP_VERSIONS.equalsIgnoreCase(mVersionListType))
+        int listItemLayoutId = R.layout.version_list_item_fairphone;
+		if (AOSP_VERSIONS.equalsIgnoreCase(mVersionListType))
         {
             mVersionList = UpdaterData.getInstance().getAOSPVersionList();
+            listItemLayoutId = R.layout.version_list_item_android;
         }
         else if (FAIRPHONE_VERSIONS.equalsIgnoreCase(mVersionListType))
         {
             mVersionList = UpdaterData.getInstance().getFairphoneVersionList();
+            listItemLayoutId = R.layout.version_list_item_fairphone;
         }
 
         for (Version version : mVersionList)
         {
-            versionLayout = (LinearLayout) inflater.inflate(R.layout.version_list_item_android, mVersionListContainer, false);
+            versionLayout = (LinearLayout) inflater.inflate(listItemLayoutId, mVersionListContainer, false);
             versionLayout.setTag(version);
             versionLayout.setClickable(true);
 
             TextView versionName = (TextView) versionLayout.findViewById(R.id.versionNameText);
             versionName.setText(version.getName());
 
-            //            TextView versionBuildNumber = (TextView)versionLayout
-            //                    .findViewById(R.id.versionBuildNumberText);
-            //            versionBuildNumber.setText(version.getBuildNumber());
-
-            //            TextView versionReleaseDate = (TextView)versionLayout
-            //                    .findViewById(R.id.versionReleaseDateText);
-            Resources resource = getResources();
-            //            versionReleaseDate.setText(resource.getString(R.string.releasedIn) + " "
-            //                    + version.getReleaseDate());
-
-            ImageView versionImage = (ImageView) versionLayout.findViewById(R.id.versionImage);
-            Picasso.with(this).load(version.getThumbnailLink()).placeholder(R.drawable.fairphone_updater_current_version).into(versionImage);
+            //ImageView versionImage = (ImageView) versionLayout.findViewById(R.id.versionImage);
+            //Picasso.with(this).load(version.getThumbnailLink()).placeholder(R.drawable.fairphone_updater_current_version).into(versionImage);
 
             versionLayout.setOnClickListener(new OnClickListener()
             {
@@ -169,10 +169,10 @@ public class VersionListActivity extends Activity
                     {
                         toggleVersionDetails();
 
-                        mVersionListTitle.setText(selectedVersion.getName() + " " + selectedVersion.getBuildNumber());
+                        mVersionListHeaderSubTitle.setText(selectedVersion.getName());
 
-                        Picasso.with(getApplicationContext()).load(selectedVersion.getThumbnailLink())
-                                .placeholder(R.drawable.fairphone_updater_current_version).into(mSelectedVersionImage);
+//                        Picasso.with(getApplicationContext()).load(selectedVersion.getThumbnailLink())
+//                                .placeholder(R.drawable.fairphone_updater_current_version).into(mSelectedVersionImage);
 
                         updateMoreInfoLayout(selectedVersion);
                     }
