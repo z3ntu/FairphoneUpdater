@@ -34,7 +34,8 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
-public class VersionListActivity extends Activity {
+public class VersionListActivity extends Activity
+{
 
     public static final String AOSP_VERSIONS = "AOSP";
 
@@ -69,100 +70,109 @@ public class VersionListActivity extends Activity {
     private String mVersionListType;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_version_list);
 
-        mSharedPreferences = getSharedPreferences(FairphoneUpdater.FAIRPHONE_UPDATER_PREFERENCES,
-                MODE_PRIVATE);
+        mSharedPreferences = getSharedPreferences(FairphoneUpdater.FAIRPHONE_UPDATER_PREFERENCES, MODE_PRIVATE);
 
         Intent i = getIntent();
         mVersionListType = i.getStringExtra(VERSION_LIST_TYPE);
 
-        mVersionListContainer = (LinearLayout)findViewById(R.id.versionListContainer);
-        mVersionListTitle = (TextView)findViewById(R.id.versionListTitleText);
+        mVersionListContainer = (LinearLayout) findViewById(R.id.versionListContainer);
+        mVersionListTitle = (TextView) findViewById(R.id.titleText);
         setupTitleBar();
 
-        mVersionListTitle.setOnClickListener(new OnClickListener() {
+        mVersionListTitle.setOnClickListener(new OnClickListener()
+        {
 
             @Override
-            public void onClick(View v) {
+            public void onClick(View v)
+            {
                 onBackPressed();
             }
         });
 
         mScrollView = findViewById(R.id.versionListScroll);
         mSelectedVersionLayout = findViewById(R.id.selectedVersionContainer);
-        mSelectedVersionImage = (ImageView)findViewById(R.id.selectedVersionImage);
+        mSelectedVersionImage = (ImageView) findViewById(R.id.selectedVersionImage);
         setupMoreInfoLayout();
         setupScrollList();
     }
 
-    public void setupTitleBar() {
+    public void setupTitleBar()
+    {
         Resources resources = getResources();
-        mVersionListTitle.setText(Version.getImageTypeDescription(mVersionListType, resources)
-                + " " + resources.getString(R.string.versionsAvailable));
+        mVersionListTitle.setText(Version.getImageTypeDescription(mVersionListType, resources) + " " + resources.getString(R.string.versionsAvailable));
     }
 
     @Override
-    public void onBackPressed() {
-        if (mScrollView.getVisibility() == View.VISIBLE) {
+    public void onBackPressed()
+    {
+        if (mScrollView.getVisibility() == View.VISIBLE)
+        {
             super.onBackPressed();
-        } else {
+        }
+        else
+        {
             setupTitleBar();
             toggleVersionDetails();
         }
     }
 
-    public void setupScrollList() {
+    public void setupScrollList()
+    {
         LinearLayout versionLayout;
         LayoutInflater inflater = getLayoutInflater();
 
-        if (AOSP_VERSIONS.equalsIgnoreCase(mVersionListType)) {
+        if (AOSP_VERSIONS.equalsIgnoreCase(mVersionListType))
+        {
             mVersionList = UpdaterData.getInstance().getAOSPVersionList();
-        } else if (FAIRPHONE_VERSIONS.equalsIgnoreCase(mVersionListType)) {
+        }
+        else if (FAIRPHONE_VERSIONS.equalsIgnoreCase(mVersionListType))
+        {
             mVersionList = UpdaterData.getInstance().getFairphoneVersionList();
         }
 
-        for (Version version : mVersionList) {
-            versionLayout = (LinearLayout)inflater.inflate(R.layout.version_list_item,
-                    mVersionListContainer, false);
+        for (Version version : mVersionList)
+        {
+            versionLayout = (LinearLayout) inflater.inflate(R.layout.version_list_item_android, mVersionListContainer, false);
             versionLayout.setTag(version);
             versionLayout.setClickable(true);
 
-            TextView versionName = (TextView)versionLayout.findViewById(R.id.versionNameText);
+            TextView versionName = (TextView) versionLayout.findViewById(R.id.versionNameText);
             versionName.setText(version.getName());
 
-            TextView versionBuildNumber = (TextView)versionLayout
-                    .findViewById(R.id.versionBuildNumberText);
-            versionBuildNumber.setText(version.getBuildNumber());
+            //            TextView versionBuildNumber = (TextView)versionLayout
+            //                    .findViewById(R.id.versionBuildNumberText);
+            //            versionBuildNumber.setText(version.getBuildNumber());
 
-            TextView versionReleaseDate = (TextView)versionLayout
-                    .findViewById(R.id.versionReleaseDateText);
+            //            TextView versionReleaseDate = (TextView)versionLayout
+            //                    .findViewById(R.id.versionReleaseDateText);
             Resources resource = getResources();
-            versionReleaseDate.setText(resource.getString(R.string.releasedIn) + " "
-                    + version.getReleaseDate());
+            //            versionReleaseDate.setText(resource.getString(R.string.releasedIn) + " "
+            //                    + version.getReleaseDate());
 
-            ImageView versionImage = (ImageView)versionLayout.findViewById(R.id.versionImage);
-            Picasso.with(this).load(version.getThumbnailLink())
-                    .placeholder(R.drawable.fairphone_updater_current_version).into(versionImage);
+            ImageView versionImage = (ImageView) versionLayout.findViewById(R.id.versionImage);
+            Picasso.with(this).load(version.getThumbnailLink()).placeholder(R.drawable.fairphone_updater_current_version).into(versionImage);
 
-            versionLayout.setOnClickListener(new OnClickListener() {
+            versionLayout.setOnClickListener(new OnClickListener()
+            {
 
                 @Override
-                public void onClick(View v) {
-                    Version selectedVersion = (Version)v.getTag();
+                public void onClick(View v)
+                {
+                    Version selectedVersion = (Version) v.getTag();
 
-                    if (selectedVersion != null) {
+                    if (selectedVersion != null)
+                    {
                         toggleVersionDetails();
 
-                        mVersionListTitle.setText(selectedVersion.getName() + " "
-                                + selectedVersion.getBuildNumber());
+                        mVersionListTitle.setText(selectedVersion.getName() + " " + selectedVersion.getBuildNumber());
 
-                        Picasso.with(getApplicationContext())
-                                .load(selectedVersion.getThumbnailLink())
-                                .placeholder(R.drawable.fairphone_updater_current_version)
-                                .into(mSelectedVersionImage);
+                        Picasso.with(getApplicationContext()).load(selectedVersion.getThumbnailLink())
+                                .placeholder(R.drawable.fairphone_updater_current_version).into(mSelectedVersionImage);
 
                         updateMoreInfoLayout(selectedVersion);
                     }
@@ -173,17 +183,18 @@ public class VersionListActivity extends Activity {
         }
     }
 
-    public void setupMoreInfoLayout() {
-        mMoreInfoLayout = (LinearLayout)mSelectedVersionLayout.findViewById(R.id.moreInfoLayout);
+    public void setupMoreInfoLayout()
+    {
+        mMoreInfoLayout = (LinearLayout) mSelectedVersionLayout.findViewById(R.id.moreInfoLayout);
         // releaseNotesTitle
-        mReleaseNotesText = (TextView)mSelectedVersionLayout.findViewById(R.id.releaseNotesText);
-        mMoreInfoButtonsLayout = (LinearLayout)mSelectedVersionLayout
-                .findViewById(R.id.actionButtonsContainer);
-        mMoreInfoCancelButton = (Button)mSelectedVersionLayout.findViewById(R.id.cancelButton);
-        mMoreInfoActionButton = (Button)mSelectedVersionLayout.findViewById(R.id.actionButton);
+        mReleaseNotesText = (TextView) mSelectedVersionLayout.findViewById(R.id.releaseNotesText);
+        mMoreInfoButtonsLayout = (LinearLayout) mSelectedVersionLayout.findViewById(R.id.actionButtonsContainer);
+        mMoreInfoCancelButton = (Button) mSelectedVersionLayout.findViewById(R.id.cancelButton);
+        mMoreInfoActionButton = (Button) mSelectedVersionLayout.findViewById(R.id.actionButton);
     }
 
-    public void updateMoreInfoLayout(Version selectedVersion) {
+    public void updateMoreInfoLayout(Version selectedVersion)
+    {
 
         mReleaseNotesText.setText(selectedVersion.getReleaseNotes() + "\n");
 
@@ -194,26 +205,26 @@ public class VersionListActivity extends Activity {
         updateMoreInfoActionButton(selectedVersion);
     }
 
-    public void updateMoreInfoActionButton(final Version selectedVersion) {
+    public void updateMoreInfoActionButton(final Version selectedVersion)
+    {
 
         mMoreInfoActionButton.setText(R.string.downloadAndUpdateVersionBtn);
         mMoreInfoActionButton.setEnabled(true);
 
-        mMoreInfoActionButton.setOnClickListener(new OnClickListener() {
+        mMoreInfoActionButton.setOnClickListener(new OnClickListener()
+        {
 
             @Override
-            public void onClick(View v) {
+            public void onClick(View v)
+            {
 
                 int versionNumber = selectedVersion != null ? selectedVersion.getNumber() : 0;
-                String versionImageType = selectedVersion != null ? selectedVersion.getImageType()
-                        : "";
+                String versionImageType = selectedVersion != null ? selectedVersion.getImageType() : "";
 
                 Editor editor = mSharedPreferences.edit();
                 editor.putInt(FairphoneUpdater.PREFERENCE_SELECTED_VERSION_NUMBER, versionNumber);
-                editor.putString(FairphoneUpdater.PREFERENCE_SELECTED_VERSION_TYPE,
-                        versionImageType);
-                editor.putBoolean(FairphoneUpdater.PREFERENCE_SELECTED_VERSION_BEGIN_DOWNLOAD,
-                        true);
+                editor.putString(FairphoneUpdater.PREFERENCE_SELECTED_VERSION_TYPE, versionImageType);
+                editor.putBoolean(FairphoneUpdater.PREFERENCE_SELECTED_VERSION_BEGIN_DOWNLOAD, true);
                 editor.commit();
 
                 finish();
@@ -221,13 +232,17 @@ public class VersionListActivity extends Activity {
         });
     }
 
-    public void toggleVersionDetails() {
-        if (mScrollView.getVisibility() == View.VISIBLE) {
+    public void toggleVersionDetails()
+    {
+        if (mScrollView.getVisibility() == View.VISIBLE)
+        {
             mScrollView.setVisibility(View.GONE);
             mSelectedVersionLayout.setVisibility(View.VISIBLE);
             mMoreInfoLayout.setVisibility(View.VISIBLE);
             mMoreInfoButtonsLayout.setVisibility(View.VISIBLE);
-        } else {
+        }
+        else
+        {
             mSelectedVersionLayout.setVisibility(View.GONE);
             mMoreInfoLayout.setVisibility(View.GONE);
             mMoreInfoButtonsLayout.setVisibility(View.GONE);

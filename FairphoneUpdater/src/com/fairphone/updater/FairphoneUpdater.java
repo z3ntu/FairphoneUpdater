@@ -118,7 +118,7 @@ public class FairphoneUpdater extends Activity {
 
     private BroadcastReceiver newVersionbroadcastReceiver;
 
-    private TextView mMoreInfoText;
+    private Button mMoreInfoText;
 
     private LinearLayout mOtherVersionsLayout;
 
@@ -287,7 +287,7 @@ public class FairphoneUpdater extends Activity {
         mCurrentVersionNameText = (TextView)findViewById(R.id.currentVersionNameText);
         mUpdateAvailableText = (TextView)findViewById(R.id.updateAvailableText);
         mCurrentVersionReleaseDateText = (TextView)findViewById(R.id.currentVersionReleaseDateText);
-        mMoreInfoText = (TextView)findViewById(R.id.moreInfoText);
+        mMoreInfoText = (Button)findViewById(R.id.moreInfoText);
     }
 
     public void updateMoreInfoLayout(boolean hasUpdate) {
@@ -340,7 +340,7 @@ public class FairphoneUpdater extends Activity {
 
                 if (mSelectedVersion != null) {
                     Picasso.with(getApplicationContext()).load(mSelectedVersion.getThumbnailLink())
-                            .placeholder(R.drawable.fairphone_updater_current_version)
+                            .placeholder(R.drawable.logo_fairphone)
                             .into(mCurrentVersionImage);
                 }
 
@@ -551,7 +551,7 @@ public class FairphoneUpdater extends Activity {
             case NORMAL:
 
                 Picasso.with(this).load(mDeviceVersion.getThumbnailLink())
-                        .placeholder(R.drawable.fairphone_updater_current_version)
+                        .placeholder(R.drawable.logo_fairphone)
                         .into(mCurrentVersionImage);
 
                 mCurrentVersionNameText.setText(mDeviceVersion.getImageTypeDescription(resources)
@@ -578,7 +578,7 @@ public class FairphoneUpdater extends Activity {
             case PREINSTALL:
                 if (mSelectedVersion != null) {
                     Picasso.with(getApplicationContext()).load(mSelectedVersion.getThumbnailLink())
-                            .placeholder(R.drawable.fairphone_updater_current_version)
+                            .placeholder(R.drawable.logo_fairphone)
                             .into(mCurrentVersionImage);
                 }
                 break;
