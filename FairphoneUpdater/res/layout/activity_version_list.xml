@@ -33,7 +33,8 @@
             android:id="@+id/selectedVersionImage"
             android:layout_width="match_parent"
             android:layout_height="93dp"
-            android:scaleType="centerCrop" />
+            android:scaleType="centerCrop"
+            android:visibility="gone" />
 
         <include layout="@layout/version_detailed_info" />
     </LinearLayout>

@@ -68,9 +68,7 @@ public class VersionListActivity extends Activity
 
     private String mVersionListType;
 
-	private TextView mVersionListHeaderSubTitle;
-
-	private ImageButton mVersionListHeaderBackBtn;
+    private TextView mVersionListHeaderSubTitle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -84,13 +82,12 @@ public class VersionListActivity extends Activity
         mVersionListType = i.getStringExtra(VERSION_LIST_TYPE);
 
         mVersionListContainer = (LinearLayout) findViewById(R.id.versionListContainer);
-        
+
         mVersionListHeaderTitle = (TextView) findViewById(R.id.titleText);
         mVersionListHeaderSubTitle = (TextView) findViewById(R.id.subtitleText);
-        mVersionListHeaderBackBtn = (ImageButton) findViewById(R.id.backButton);
         setupTitleBar();
 
-        mVersionListHeaderBackBtn.setOnClickListener(new OnClickListener()
+        mVersionListHeaderSubTitle.setOnClickListener(new OnClickListener()
         {
             @Override
             public void onClick(View v)
@@ -110,7 +107,6 @@ public class VersionListActivity extends Activity
     {
         Resources resources = getResources();
         mVersionListHeaderSubTitle.setText(Version.getImageTypeDescription(mVersionListType, resources));
-        mVersionListHeaderBackBtn.setVisibility(View.VISIBLE);
         mVersionListHeaderSubTitle.setVisibility(View.VISIBLE);
     }
 
@@ -134,7 +130,7 @@ public class VersionListActivity extends Activity
         LayoutInflater inflater = getLayoutInflater();
 
         int listItemLayoutId = R.layout.version_list_item_fairphone;
-		if (AOSP_VERSIONS.equalsIgnoreCase(mVersionListType))
+        if (AOSP_VERSIONS.equalsIgnoreCase(mVersionListType))
         {
             mVersionList = UpdaterData.getInstance().getAOSPVersionList();
             listItemLayoutId = R.layout.version_list_item_android;
@@ -171,8 +167,8 @@ public class VersionListActivity extends Activity
 
                         mVersionListHeaderSubTitle.setText(selectedVersion.getName());
 
-//                        Picasso.with(getApplicationContext()).load(selectedVersion.getThumbnailLink())
-//                                .placeholder(R.drawable.fairphone_updater_current_version).into(mSelectedVersionImage);
+                        //                        Picasso.with(getApplicationContext()).load(selectedVersion.getThumbnailLink())
+                        //                                .placeholder(R.drawable.fairphone_updater_current_version).into(mSelectedVersionImage);
 
                         updateMoreInfoLayout(selectedVersion);
                     }
