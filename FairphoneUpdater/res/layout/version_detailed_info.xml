@@ -35,23 +35,7 @@
             android:scaleType="centerInside"
             android:src="@drawable/logo_android"
             android:visibility="gone" />
-
-        <TextView
-            android:id="@+id/releaseNotesTitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:gravity="center"
-            android:text="@string/releaseNotes"
-            android:textColor="#fff" />
-
-        <TextView
-            android:id="@+id/releaseNotesText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:textColor="#fff" />
-
+        
         <LinearLayout
             android:id="@+id/updateDownloadInfo"
             android:layout_width="match_parent"
@@ -83,6 +67,22 @@
                 android:padding="0dp"
                 android:progress="1" />
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/releaseNotesTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:gravity="center"
+            android:text="@string/releaseNotes"
+            android:textColor="#fff" />
+
+        <TextView
+            android:id="@+id/releaseNotesText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textColor="#fff" />
 
         <View
             android:layout_width="match_parent"

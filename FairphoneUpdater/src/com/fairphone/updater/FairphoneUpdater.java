@@ -100,7 +100,7 @@ public class FairphoneUpdater extends Activity {
 
     private TextView mUpdateAvailableText;
 
-    private TextView mCurrentVersionReleaseDateText;
+    //private TextView mCurrentVersionReleaseDateText;
 
     private TextView mReleaseNotesText;
 
@@ -290,7 +290,7 @@ public class FairphoneUpdater extends Activity {
         // youAreRunningText
         mCurrentVersionNameText = (TextView)findViewById(R.id.currentVersionNameText);
         mUpdateAvailableText = (TextView)findViewById(R.id.updateAvailableText);
-        mCurrentVersionReleaseDateText = (TextView)findViewById(R.id.currentVersionReleaseDateText);
+        //mCurrentVersionReleaseDateText = (TextView)findViewById(R.id.currentVersionReleaseDateText);
         mMoreInfoText = (Button)findViewById(R.id.moreInfoText);
     }
 
@@ -622,12 +622,12 @@ public class FairphoneUpdater extends Activity {
     public void setupUpdateAvailable(Resources resources, final boolean isUpdateAvailable) {
         if (isUpdateAvailable) {
             mUpdateAvailableText.setText(R.string.newVersionAvailable);
-            mCurrentVersionReleaseDateText.setVisibility(View.GONE);
+            //mCurrentVersionReleaseDateText.setVisibility(View.GONE);
         } else {
             mUpdateAvailableText.setText(R.string.noUpdatesAvailable);
-            mCurrentVersionReleaseDateText.setText(resources.getString(R.string.releasedIn) + " "
-                    + mDeviceVersion.getReleaseDate());
-            mCurrentVersionReleaseDateText.setVisibility(View.VISIBLE);
+//            mCurrentVersionReleaseDateText.setText(resources.getString(R.string.releasedIn) + " "
+//                    + mDeviceVersion.getReleaseDate());
+//            mCurrentVersionReleaseDateText.setVisibility(View.VISIBLE);
         }
     }
 

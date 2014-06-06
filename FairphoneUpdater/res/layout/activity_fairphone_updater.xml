@@ -54,13 +54,13 @@
             android:textColor="#fff"
             android:textSize="13.3sp" />
 
-        <TextView
+        <!-- <TextView
             android:id="@+id/currentVersionReleaseDateText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="@string/releasedIn"
-            android:textColor="#fff" />
+            android:textColor="#fff" /> -->
 
         <View
             android:layout_width="0dp"
