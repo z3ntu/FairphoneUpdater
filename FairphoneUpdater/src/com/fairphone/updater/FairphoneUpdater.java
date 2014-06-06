@@ -57,8 +57,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.squareup.picasso.Picasso;
-
 public class FairphoneUpdater extends Activity {
 
     private static final String TAG = FairphoneUpdater.class.getSimpleName();
@@ -141,6 +139,10 @@ public class FairphoneUpdater extends Activity {
     private Version mSelectedVersion;
 
     private TextView mReleaseNotesTitleText;
+
+	private View mMoreInfoFairphoneLogo;
+
+	private View mMoreInfoAndroidLogo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -242,6 +244,8 @@ public class FairphoneUpdater extends Activity {
 
     public void setupMoreInfoLayout() {
         mMoreInfoLayout = (LinearLayout)findViewById(R.id.moreInfoLayout);
+        mMoreInfoFairphoneLogo = (ImageView)findViewById(R.id.updateLogoFairphone);
+        mMoreInfoAndroidLogo = (ImageView)findViewById(R.id.updateLogoAndroid);
         mReleaseNotesTitleText = (TextView)findViewById(R.id.releaseNotesTitle);
         mReleaseNotesText = (TextView)findViewById(R.id.releaseNotesText);
         mMoreInfoButtonsLayout = (LinearLayout)findViewById(R.id.actionButtonsContainer);
@@ -293,9 +297,9 @@ public class FairphoneUpdater extends Activity {
     public void updateMoreInfoLayout(boolean hasUpdate) {
 
         updateMoreInfoReleaseNotesText(hasUpdate);
-        mMoreInfoCancelButton
-                .setVisibility(hasUpdate && mCurrentState != UpdaterState.NORMAL ? View.VISIBLE
-                        : View.GONE);
+//        mMoreInfoCancelButton
+//                .setVisibility(hasUpdate && mCurrentState != UpdaterState.NORMAL ? View.VISIBLE
+//                        : View.GONE);
         mMoreInfoActionButton.setVisibility(hasUpdate ? View.VISIBLE : View.GONE);
 
         mMoreInfoCancelButton.setOnClickListener(new OnClickListener() {
@@ -320,14 +324,19 @@ public class FairphoneUpdater extends Activity {
             case NORMAL:
                 mMoreInfoActionButton.setText(R.string.downloadAndUpdateVersionBtn);
                 mMoreInfoActionButton.setEnabled(true);
+                mMoreInfoCancelButton.setText(R.string.lessInfo);
                 break;
             case DOWNLOAD:
+            	toggleMoreInfoLogo(false);
                 mMoreInfoActionButton.setText(R.string.installBtn);
                 mMoreInfoActionButton.setEnabled(false);
+                mMoreInfoCancelButton.setText(android.R.string.cancel);
                 break;
             case PREINSTALL:
+            	toggleMoreInfoLogo(false);
                 mMoreInfoActionButton.setText(R.string.installBtn);
                 mMoreInfoActionButton.setEnabled(true);
+                mMoreInfoCancelButton.setText(android.R.string.cancel);
                 break;
         }
 
@@ -339,9 +348,11 @@ public class FairphoneUpdater extends Activity {
                 setSelectedVersion(mLatestVersion);
 
                 if (mSelectedVersion != null) {
-                    Picasso.with(getApplicationContext()).load(mSelectedVersion.getThumbnailLink())
-                            .placeholder(R.drawable.logo_fairphone)
-                            .into(mCurrentVersionImage);
+//                    Picasso.with(getApplicationContext()).load(mSelectedVersion.getThumbnailLink())
+//                            .placeholder(R.drawable.logo_fairphone)
+//                            .into(mCurrentVersionImage);
+                    int logo = Version.IMAGE_TYPE_FAIRPHONE.equalsIgnoreCase(mSelectedVersion.getImageType())?R.drawable.logo_fairphone:R.drawable.logo_android;
+                	mCurrentVersionImage.setImageResource(logo);
                 }
 
                 if (mCurrentState == UpdaterState.NORMAL) {
@@ -352,6 +363,19 @@ public class FairphoneUpdater extends Activity {
             }
         });
     }
+
+	private void toggleMoreInfoLogo(boolean hideAll) {
+		if(hideAll){
+			mMoreInfoFairphoneLogo.setVisibility(View.GONE);
+		    mMoreInfoAndroidLogo.setVisibility(View.GONE);
+		}else if(Version.IMAGE_TYPE_FAIRPHONE.equalsIgnoreCase(mSelectedVersion.getImageType())){
+			mMoreInfoFairphoneLogo.setVisibility(View.VISIBLE);
+		    mMoreInfoAndroidLogo.setVisibility(View.GONE);
+		}else if(Version.IMAGE_TYPE_AOSP.equalsIgnoreCase(mSelectedVersion.getImageType())){
+			mMoreInfoFairphoneLogo.setVisibility(View.GONE);
+		    mMoreInfoAndroidLogo.setVisibility(View.VISIBLE);
+		}
+	}
 
     protected void setSelectedVersion(Version selectedVersion) {
         int versionNumber = selectedVersion != null ? selectedVersion.getNumber() : 0;
@@ -389,10 +413,14 @@ public class FairphoneUpdater extends Activity {
             mOtherVersionsLayout.setVisibility(View.GONE);
             mMoreInfoLayout.setVisibility(View.VISIBLE);
             mMoreInfoText.setText(R.string.lessInfo);
+            mMoreInfoText.setVisibility(View.GONE);
+            
         } else {
             mOtherVersionsLayout.setVisibility(View.VISIBLE);
             mMoreInfoLayout.setVisibility(View.GONE);
             mMoreInfoText.setText(R.string.moreInfo);
+            mMoreInfoText.setVisibility(View.VISIBLE);
+            toggleMoreInfoLogo(true);
         }
     }
 
@@ -550,9 +578,12 @@ public class FairphoneUpdater extends Activity {
         switch (state) {
             case NORMAL:
 
-                Picasso.with(this).load(mDeviceVersion.getThumbnailLink())
-                        .placeholder(R.drawable.logo_fairphone)
-                        .into(mCurrentVersionImage);
+//                Picasso.with(this).load(mDeviceVersion.getThumbnailLink())
+//                        .placeholder(R.drawable.logo_fairphone)
+//                        .into(mCurrentVersionImage);
+            	
+            	int logo = Version.IMAGE_TYPE_FAIRPHONE.equalsIgnoreCase(mDeviceVersion.getImageType())?R.drawable.logo_fairphone:R.drawable.logo_android;
+            	mCurrentVersionImage.setImageResource(logo);
 
                 mCurrentVersionNameText.setText(mDeviceVersion.getImageTypeDescription(resources)
                         + " " + mDeviceVersion.getName() + " " + mDeviceVersion.getBuildNumber());
@@ -562,7 +593,8 @@ public class FairphoneUpdater extends Activity {
                 mMoreInfoText
                         .setText(mMoreInfoLayout.getVisibility() == View.VISIBLE ? R.string.lessInfo
                                 : R.string.moreInfo);
-                mMoreInfoText.setVisibility(View.VISIBLE);
+                mMoreInfoText.setVisibility(mMoreInfoLayout.getVisibility() == View.VISIBLE ? View.GONE
+                        : View.VISIBLE);
 
                 mMoreInfoText.setOnClickListener(new OnClickListener() {
 
@@ -577,9 +609,11 @@ public class FairphoneUpdater extends Activity {
             case DOWNLOAD:
             case PREINSTALL:
                 if (mSelectedVersion != null) {
-                    Picasso.with(getApplicationContext()).load(mSelectedVersion.getThumbnailLink())
-                            .placeholder(R.drawable.logo_fairphone)
-                            .into(mCurrentVersionImage);
+//                    Picasso.with(getApplicationContext()).load(mSelectedVersion.getThumbnailLink())
+//                            .placeholder(R.drawable.logo_fairphone)
+//                            .into(mCurrentVersionImage);
+                    logo = Version.IMAGE_TYPE_FAIRPHONE.equalsIgnoreCase(mSelectedVersion.getImageType())?R.drawable.logo_fairphone:R.drawable.logo_android;
+                	mCurrentVersionImage.setImageResource(logo);
                 }
                 break;
         }

@@ -28,7 +28,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -69,6 +68,10 @@ public class VersionListActivity extends Activity
     private String mVersionListType;
 
     private TextView mVersionListHeaderSubTitle;
+
+	private ImageView mMoreInfoFairphoneLogo;
+
+	private ImageView mMoreInfoAndroidLogo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -182,7 +185,8 @@ public class VersionListActivity extends Activity
     public void setupMoreInfoLayout()
     {
         mMoreInfoLayout = (LinearLayout) mSelectedVersionLayout.findViewById(R.id.moreInfoLayout);
-        // releaseNotesTitle
+        mMoreInfoFairphoneLogo = (ImageView)findViewById(R.id.updateLogoFairphone);
+        mMoreInfoAndroidLogo = (ImageView)findViewById(R.id.updateLogoAndroid);
         mReleaseNotesText = (TextView) mSelectedVersionLayout.findViewById(R.id.releaseNotesText);
         mMoreInfoButtonsLayout = (LinearLayout) mSelectedVersionLayout.findViewById(R.id.actionButtonsContainer);
         mMoreInfoCancelButton = (Button) mSelectedVersionLayout.findViewById(R.id.cancelButton);
@@ -193,7 +197,13 @@ public class VersionListActivity extends Activity
     {
 
         mReleaseNotesText.setText(selectedVersion.getReleaseNotes() + "\n");
-
+        if(Version.IMAGE_TYPE_FAIRPHONE.equalsIgnoreCase(selectedVersion.getImageType())){
+        	mMoreInfoFairphoneLogo.setVisibility(View.VISIBLE);
+            mMoreInfoAndroidLogo.setVisibility(View.GONE);
+        }else if(Version.IMAGE_TYPE_AOSP.equalsIgnoreCase(selectedVersion.getImageType())){
+        	mMoreInfoFairphoneLogo.setVisibility(View.GONE);
+            mMoreInfoAndroidLogo.setVisibility(View.VISIBLE);
+        }
         mMoreInfoButtonsLayout.setVisibility(View.VISIBLE);
         mMoreInfoCancelButton.setVisibility(View.GONE);
         mMoreInfoActionButton.setVisibility(View.VISIBLE);
