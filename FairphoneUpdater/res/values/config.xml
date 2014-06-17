@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="downloadUrl">__CONFIG_FILE_URL__</string>
+    <string name="downloadUrl">http://www.fairphone.com/ota/</string>
     <string name="configFilename">updater</string>
     <string name="config_zip">.zip</string>
 	<string name="config_xml">.xml</string>
@@ -18,7 +18,7 @@
     <string name="oneGBDataPartition">/originalPartition</string>
 	<string name="unifiedDataPartition">/unifiedPartition</string>
 	<string name="FP1Model">FP1</string>
-	<string name="recoveryPath">sdcard</string>
+	<string name="recoveryPath">cache</string>
 	<string name="updaterFolder">/updater/</string>
 	   
 </resources>

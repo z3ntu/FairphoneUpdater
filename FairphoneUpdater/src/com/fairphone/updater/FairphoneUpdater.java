@@ -57,6 +57,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.stericson.RootTools.RootTools;
+
 public class FairphoneUpdater extends Activity {
 
     private static final String TAG = FairphoneUpdater.class.getSimpleName();
@@ -674,6 +676,16 @@ public class FairphoneUpdater extends Activity {
 
             if (file.exists()) {
                 if (FairphoneUpdater.checkMD5(mSelectedVersion.getMd5Sum(), file)) {
+                	
+					File OtaFileCache = new File(
+							Environment.getDownloadCacheDirectory()
+									+ "/"
+									+ VersionParserHelper
+											.getNameFromVersion(mSelectedVersion));
+					if(!OtaFileCache.exists()){
+						RootTools.copyFile(file.getPath(), OtaFileCache.getPath(),
+								false, false);
+					}
                     setupCurrentVersionInfoLayout(mCurrentState);
                     updateMoreInfoLayout(true);
                     return;
@@ -712,8 +724,8 @@ public class FairphoneUpdater extends Activity {
             os.writeBytes("echo '--wipe_cache' >> /cache/recovery/command\n");
 
             os.writeBytes("echo '--update_package=/" + resources.getString(R.string.recoveryPath)
-                    + resources.getString(R.string.updaterFolder)
-                    + VersionParserHelper.getNameFromVersion(mLatestVersion)
+                    + "/"
+                    + VersionParserHelper.getNameFromVersion(mSelectedVersion)
                     + "' >> /cache/recovery/command\n");
 
             os.writeBytes("sync\n");
