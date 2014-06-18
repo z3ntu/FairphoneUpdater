@@ -36,6 +36,7 @@
     <string name="deviceNotSupported">Device not supported</string>
     <string name="configFileDownloadError">Error downloading config file. Link used:</string>
     <string name="updateDownloadError">Error downloading</string>
+    <string name="checkDetails">Check details and installation options</string>
     
 
 </resources>

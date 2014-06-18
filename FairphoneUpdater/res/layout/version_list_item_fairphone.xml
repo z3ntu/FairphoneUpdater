@@ -23,7 +23,6 @@
         android:fontFamily="sans-serif-light"
         android:gravity="center"
         android:includeFontPadding="false"
-        android:text="4.4 KitKat"
         android:textColor="#FFF"
         android:textSize="26.6dp" />
 
@@ -32,7 +31,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="Check details and installation options"
+        android:text="@string/checkDetails"
         android:textColor="#FFF" />
 
 </LinearLayout>
