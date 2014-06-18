@@ -40,7 +40,7 @@ public class VersionParserHelper {
 	
     private static final String CURRENT_VERSION_NUMBER = "fairphone.ota.version.number";
 	private static final String CURRENT_VERSION_NAME = "fairphone.ota.version.name";
-	private static final String CURRENT_VERSION_BUILD_NUMBER = "fairphone.ota.version.build_number";
+	private static final String CURRENT_VERSION_BUILD_NUMBER = "fairphone.ota.build_number";
 	private static final String CURRENT_ANDROID_VERSION = "fairphone.ota.android_version";
 	private static final String CURRENT_VERSION_IMAGE_TYPE = "fairphone.ota.image_type";
     
