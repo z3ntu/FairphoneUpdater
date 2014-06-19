@@ -95,7 +95,7 @@
             android:layout_marginLeft="10dp"
             android:fontFamily="sans-serif-light"
             android:gravity="left"
-            android:text="Also Available"
+            android:text="@string/alsoAvailable"
             android:textAllCaps="true"
             android:textColor="#fff"
             android:textSize="16.6sp" />
