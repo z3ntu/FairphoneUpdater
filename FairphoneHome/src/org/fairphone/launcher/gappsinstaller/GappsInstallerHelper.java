@@ -52,6 +52,7 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
 import android.util.Log;
 import android.widget.Toast;
@@ -96,7 +97,7 @@ public class GappsInstallerHelper {
 			.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
 			.getAbsolutePath();
 
-	private static String RECOVERY_PATH = "sdcard/Download/";
+	private static String RECOVERY_PATH = "cache/";
 
 	private static String ZIP_CONTENT_PATH = "/googleapps/";
 
@@ -397,15 +398,14 @@ public class GappsInstallerHelper {
 				forceCleanConfigurationFile();
 
 				if (isWiFiEnabled()) {
-					String url = mContext.getResources().getString(
-							R.string.gapps_installer_download_url);
+					Resources resources = mContext.getResources();
 
-					String configFileName = mContext.getResources().getString(
+					String configFileName =resources.getString(
 							R.string.gapps_installer_config_file);
-					String configFileZip = mContext.getResources().getString(
+					String configFileZip = resources.getString(
 			                R.string.gapps_installer_zip);
 
-					Request request = createDownloadRequest(url, configFileName + configFileZip);
+					Request request = createDownloadRequest(getConfigDownloadLink(resources), configFileName + configFileZip);
 					mConfigFileDownloadId = mDownloadManager.enqueue(request);
 
 					updateWidgetState(GAPPS_STATES_DOWNLOAD_CONFIGURATION_FILE);
@@ -510,10 +510,45 @@ public class GappsInstallerHelper {
         mContext.registerReceiver(mBCastReinstallGapps, new IntentFilter(
                 GAPPS_REINSTALATION));
 	}
+	
+	private String getConfigDownloadLink(Resources resources) {
+		
+		StringBuilder sb = new StringBuilder();
+		sb.append(resources.getString(R.string.gapps_installer_download_url));
+		sb.append(Build.MODEL);
+		sb.append(getPartitionDownloadPath(resources));
+		sb.append("/");
+		sb.append(resources.getString(R.string.gapps_installer_config_file));
+		sb.append(resources.getString(R.string.gapps_installer_zip));
+		String downloadLink = sb.toString();
+		Log.d(TAG, "Download link: " + downloadLink);
+		return downloadLink;
+	}
+
+	private String getPartitionDownloadPath(Resources resources) {
+		String downloadPath = "";
+		if (Build.MODEL.equals(resources.getString(R.string.FP1Model))) {
+			File path = Environment.getDataDirectory();
+			android.os.StatFs stat = new android.os.StatFs(path.getPath());
+			long blockSize = stat.getBlockSize();
+			long availableBlocks = stat.getBlockCount() * blockSize;
+			double sizeInGB = (((double) availableBlocks / 1024d) / 1024d) / 1024d;
+			double roundedSize = (double) Math.ceil(sizeInGB * 100d) / 100d;
+			Log.d(TAG, "/data size: " + roundedSize + "Gb");
+			
+			//Add a little buffer to the 1gb default just in case
+			downloadPath = roundedSize <= 1.1d ? resources
+					.getString(R.string.oneGBDataPartition) : resources
+					.getString(R.string.unifiedDataPartition);
+		}
+		return downloadPath;
+	}
 
 	public void pushFileToRecovery(String fileName) {
 		if (RootTools.isAccessGiven()) {
 			// set the command for the recovery
+			
+			copyGappsToCache();
 			
 			try {
 			     Shell.runRootCommand(new CommandCapture(0,
@@ -562,6 +597,38 @@ public class GappsInstallerHelper {
 		}
 
 		updateWidgetState(GAPPS_REBOOT_STATE);
+	}
+
+	private void copyGappsToCache() {
+		clearCache();
+		String filename = mContext.getResources().getString(
+				R.string.gapps_installer_filename);
+		File file = new File(DOWNLOAD_PATH + "/" + filename);
+		File OtaFileCache = new File(
+				Environment.getDownloadCacheDirectory()
+						+ "/"
+						+ filename);
+		if(!OtaFileCache.exists()){
+			RootTools.copyFile(file.getPath(), OtaFileCache.getPath(),
+					false, false);
+		}
+	}
+	
+	private void clearCache() {
+		File f = Environment.getDownloadCacheDirectory();        
+		File files[] = f.listFiles();
+		if(files !=null){
+			Log.d(TAG, "Size: "+ files.length);
+			for (int i=0; i < files.length; i++)
+			{
+			    String filename = files[i].getName();
+			    
+			    if(filename.endsWith(".zip")){
+			    	files[i].delete();
+		    	    Log.d(TAG, "Deleted file " + filename);
+			    }
+			}
+		}
 	}
 
 	public void rebootToRecovery() {

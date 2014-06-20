@@ -94,10 +94,13 @@
 	<integer name="config_edgeMenuEditButtonTime">1000</integer>
 	
 <!-- Google Apps Instaler -->
-	<string name="gapps_installer_download_url">http://www.fairphone.com/externalcontent/fp_ga.zip</string>
+	<string name="gapps_installer_download_url">http://www.fairphone.com/externalcontent/</string>
 	<string name="gapps_installer_config_file">fairphonegapps</string>
 	<string name="gapps_installer_zip">.zip</string>
 	<string name="gapps_installer_cfg">.cfg</string>
 	<string name="gapps_installer_sig">.sig</string>
 	<string name="gapps_installer_filename">googleapps.zip</string>
+	<string name="oneGBDataPartition">/originalPartition</string>
+	<string name="unifiedDataPartition">/unifiedPartition</string>
+	<string name="FP1Model">FP1</string>
 </resources>
