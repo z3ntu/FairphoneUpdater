@@ -15,8 +15,6 @@
     <string name="wifiDiscaimerTitle">Wi-Fi disabled</string>
     <string name="wifiDiscaimerMessage">The file you’re trying to download is too large for mobile connections (~200MB). Please enable Wi-Fi connection and try again.</string>
 
-    <string name="mainFeatures">Main features</string>
-    <string name="releasedIn">Released in</string>
     <string name="releaseNotes">Release Notes:</string>
     <string name="moreInfo">More Info</string>
     <string name="lessInfo">Less Info</string>
@@ -27,12 +25,9 @@
     <string name="aospOS">Android AOSP OS</string>
     <string name="fairphone">Fairphone</string>
     <string name="android">Android</string>
-    <string name="updateVersionBtn">Update</string>
     <string name="downloadAndUpdateVersionBtn">Download and Update</string>
-    <string name="downloadAndInstallVersionBtn">Download and Install</string>
     <string name="installBtn">Install</string>
     <string name="downloading">Downloading</string>
-    <string name="versionsAvailable">versions available</string>
     <string name="deviceNotSupported">Device not supported</string>
     <string name="configFileDownloadError">Error downloading config file. Link used:</string>
     <string name="updateDownloadError">Error downloading</string>

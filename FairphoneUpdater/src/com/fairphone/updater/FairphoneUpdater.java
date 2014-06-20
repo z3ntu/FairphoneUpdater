@@ -347,7 +347,7 @@ public class FairphoneUpdater extends Activity {
             @Override
             public void onClick(View v) {
 
-                setSelectedVersion(mLatestVersion);
+                setSelectedVersion(mSelectedVersion!=null ? mSelectedVersion: mLatestVersion);
 
                 if (mSelectedVersion != null) {
 //                    Picasso.with(getApplicationContext()).load(mSelectedVersion.getThumbnailLink())
@@ -677,15 +677,9 @@ public class FairphoneUpdater extends Activity {
             if (file.exists()) {
                 if (FairphoneUpdater.checkMD5(mSelectedVersion.getMd5Sum(), file)) {
                 	
-					File OtaFileCache = new File(
-							Environment.getDownloadCacheDirectory()
-									+ "/"
-									+ VersionParserHelper
-											.getNameFromVersion(mSelectedVersion));
-					if(!OtaFileCache.exists()){
-						RootTools.copyFile(file.getPath(), OtaFileCache.getPath(),
-								false, false);
-					}
+                	clearCache();
+                	
+					copyUpdatetoCache(file);
                     setupCurrentVersionInfoLayout(mCurrentState);
                     updateMoreInfoLayout(true);
                     return;
@@ -709,6 +703,35 @@ public class FairphoneUpdater extends Activity {
         // else if the perfect case does not happen, reset the download
         changeState(UpdaterState.NORMAL);
     }
+
+	private void copyUpdatetoCache(File file) {
+		File OtaFileCache = new File(
+				Environment.getDownloadCacheDirectory()
+						+ "/"
+						+ VersionParserHelper
+								.getNameFromVersion(mSelectedVersion));
+		if(!OtaFileCache.exists()){
+			RootTools.copyFile(file.getPath(), OtaFileCache.getPath(),
+					false, false);
+		}
+	}
+
+	private void clearCache() {
+		File f = Environment.getDownloadCacheDirectory();        
+		File files[] = f.listFiles();
+		if(files !=null){
+			Log.d(TAG, "Size: "+ files.length);
+			for (int i=0; i < files.length; i++)
+			{
+			    String filename = files[i].getName();
+			    
+			    if(filename.endsWith(".zip")){
+			    	files[i].delete();
+		    	    Log.d(TAG, "Deleted file " + filename);
+			    }
+			}
+		}
+	}
 
     private void startPreInstall() {
         // set the command for the recovery
