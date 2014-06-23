@@ -35,9 +35,9 @@ import android.widget.TextView;
 public class VersionListActivity extends Activity
 {
 
-    public static final String AOSP_VERSIONS = "AOSP";
+    public static final String AOSP_VERSIONS = Version.IMAGE_TYPE_AOSP;
 
-    public static final String FAIRPHONE_VERSIONS = "FAIRPHONE";
+    public static final String FAIRPHONE_VERSIONS = Version.IMAGE_TYPE_FAIRPHONE;
 
     public static final String VERSION_LIST_TYPE = "VERSION_LIST_TYPE";
 
@@ -195,8 +195,8 @@ public class VersionListActivity extends Activity
 
     public void updateMoreInfoLayout(Version selectedVersion)
     {
-
-        mReleaseNotesText.setText(selectedVersion.getReleaseNotes() + "\n");
+    	
+        mReleaseNotesText.setText(selectedVersion.getReleaseNotes() + "\n" + selectedVersion.getAndroidVersion(getResources()));
         if(Version.IMAGE_TYPE_FAIRPHONE.equalsIgnoreCase(selectedVersion.getImageType())){
         	mMoreInfoFairphoneLogo.setVisibility(View.VISIBLE);
             mMoreInfoAndroidLogo.setVisibility(View.GONE);

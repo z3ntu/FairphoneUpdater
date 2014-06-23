@@ -68,13 +68,13 @@ public class UpdaterData {
     }
 
     public Version getLatestVersion(String imageType) {
-        Version version = null;
+        Version version = new Version();
         if (Version.IMAGE_TYPE_AOSP.equalsIgnoreCase(imageType)) {
             version = mAOSPVersionMap.get(mLatestAOSPVersionNumber);
         } else if (Version.IMAGE_TYPE_FAIRPHONE.equalsIgnoreCase(imageType)) {
             version = mFairphoneVersionMap.get(mLatestFairphoneVersionNumber);
         }
-
+        
         return version;
     }
 

@@ -403,10 +403,10 @@ public class FairphoneUpdater extends Activity {
         Resources resources = getResources();
         if (hasUpdate) {
             mReleaseNotesTitleText.setText(version.getName() + " " + version.getBuildNumber() + " " + resources.getString(R.string.releaseNotes));
-            mReleaseNotesText.setText(version.getReleaseNotes());
+            mReleaseNotesText.setText(version.getReleaseNotes() + "\n" + version.getAndroidVersion(resources));
         } else {
             mReleaseNotesTitleText.setText(mDeviceVersion.getName() + " " + mDeviceVersion.getBuildNumber() + " " + resources.getString(R.string.releaseNotes));
-            mReleaseNotesText.setText(mDeviceVersion.getReleaseNotes());
+            mReleaseNotesText.setText(mDeviceVersion.getReleaseNotes() + "\n" + mDeviceVersion.getAndroidVersion(resources));
         }
     }
 
@@ -678,8 +678,7 @@ public class FairphoneUpdater extends Activity {
                 if (FairphoneUpdater.checkMD5(mSelectedVersion.getMd5Sum(), file)) {
                 	
                 	clearCache();
-                	
-					copyUpdatetoCache(file);
+					copyUpdateToCache(file);
                     setupCurrentVersionInfoLayout(mCurrentState);
                     updateMoreInfoLayout(true);
                     return;
@@ -704,7 +703,7 @@ public class FairphoneUpdater extends Activity {
         changeState(UpdaterState.NORMAL);
     }
 
-	private void copyUpdatetoCache(File file) {
+	private void copyUpdateToCache(File file) {
 		File OtaFileCache = new File(
 				Environment.getDownloadCacheDirectory()
 						+ "/"

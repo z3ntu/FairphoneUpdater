@@ -16,14 +16,14 @@
 
 package com.fairphone.updater;
 
+import java.util.ArrayList;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.res.Resources;
 import android.text.TextUtils;
 import android.util.Log;
-
-import java.util.ArrayList;
 
 public class Version implements Comparable<Version> {
 
@@ -210,7 +210,7 @@ public class Version implements Comparable<Version> {
     }
 
     public String getReleaseNotes() {
-        return mReleaseNotes;
+        return TextUtils.isEmpty(mReleaseNotes) ? "" : mReleaseNotes;
     }
 
     public void setReleaseDate(String releaseDate) {
@@ -257,14 +257,7 @@ public class Version implements Comparable<Version> {
     }
     
     public String getImageTypeDescription(Resources resources) {
-        String description = resources.getString(R.string.fairphone);
-        if(mImageType.equalsIgnoreCase(IMAGE_TYPE_AOSP)){
-            description = resources.getString(R.string.android);
-        }
-        if(mImageType.equalsIgnoreCase(IMAGE_TYPE_FAIRPHONE)){
-            description = resources.getString(R.string.fairphone);
-        }
-        return description;
+        return Version.getImageTypeDescription(mImageType, resources);
     }
     
     public static String getImageTypeDescription(String imageType, Resources resources) {
@@ -276,6 +269,18 @@ public class Version implements Comparable<Version> {
             description = resources.getString(R.string.fairphone);
         }
         return description;
+    }
+    
+    public String getAndroidVersion(Resources resources) {
+    	String retVal = "";
+    	if(!TextUtils.isEmpty(mAndroidVersion)){
+    		StringBuilder sb = new StringBuilder();
+    		sb.append(resources.getString(R.string.android));
+    		sb.append(" ");
+    		sb.append(mAndroidVersion);
+    		retVal =  sb.toString();
+    	}
+    	return retVal;
     }
 
     @Override
