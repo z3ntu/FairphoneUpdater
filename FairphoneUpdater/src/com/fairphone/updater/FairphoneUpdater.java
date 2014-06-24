@@ -16,7 +16,6 @@
 
 package com.fairphone.updater;
 
-import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -48,7 +47,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.PowerManager;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -843,7 +841,7 @@ public class FairphoneUpdater extends Activity
 
                 Shell.runRootCommand(new CommandCapture(0, "echo '--wipe_cache' >> /cache/recovery/command"));
 
-                Shell.runRootCommand(new CommandCapture(0, "echo '--update_package=/" + resources.getString(R.string.recoveryPath)
+                Shell.runRootCommand(new CommandCapture(0, "echo '--update_package=/" + resources.getString(R.string.recoveryPath) + "/"
                         + VersionParserHelper.getNameFromVersion(mSelectedVersion) + "' >> /cache/recovery/command"));
 
                 // p = Runtime.getRuntime().exec("su");
