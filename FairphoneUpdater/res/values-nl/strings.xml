@@ -11,5 +11,20 @@
     <string name="downloadMessage">Downloaden update, een moment geduld&#8230;</string>
     <string name="downloadUpdateTitle">Nieuwe Fairphone update</string>
     <string name="wifiDiscaimerTitle">Wi-Fi niet beschikbaar</string>
-	<string name="wifiDiscaimerMessage">Het bestand dat je probeert te downloaden is te groot voor mobiele verbindingen (~200MB). Breng de Wi-Fi verbinding tot stand en probeer het opnieuw.</string>  
+	<string name="wifiDiscaimerMessage">Het bestand dat je probeert te downloaden is te groot voor mobiele verbindingen (~200MB). Breng de Wi-Fi verbinding tot stand en probeer het opnieuw.</string>
+	
+	<string name="releaseNotes">Versie-informatie:</string>
+    <string name="moreInfo">Meer informatie</string>
+    <string name="lessInfo">Minder informatie</string>
+    <string name="noUpdatesAvailable">Er zijn geen updates beschikbaar</string>
+    <string name="newVersionAvailable">Nieuwe versie beschikbaar</string>
+    <string name="youAreRunning">Je gebruikt</string>
+    <string name="downloadAndUpdateVersionBtn">Download en update</string>
+    <string name="installBtn">Installeer</string>
+    <string name="downloading">Aan het downloaden</string>
+    <string name="deviceNotSupported">Apparaat niet ondersteund</string>
+    <string name="configFileDownloadError">Fout tijdens downloaden configuratie bestand. Gebruikte link:</string>
+    <string name="updateDownloadError">Fout tijdens het downloaden</string>
+    <string name="checkDetails">Bekijk details en installatieopties</string>
+    <string name="alsoAvailable">Ook verkrijgbaar</string>
 </resources>

@@ -92,14 +92,14 @@
         <LinearLayout
             android:id="@+id/actionButtonsContainer"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
             android:layout_marginTop="20dp"
             android:orientation="horizontal" >
 
             <Button
                 android:id="@+id/cancelButton"
                 android:layout_width="0dp"
-                android:layout_height="40dp"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="#88000000"
                 android:fontFamily="sans-serif-light"
@@ -112,7 +112,7 @@
             <Button
                 android:id="@+id/actionButton"
                 android:layout_width="0dp"
-                android:layout_height="40dp"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="#88000000"
                 android:fontFamily="sans-serif-light"

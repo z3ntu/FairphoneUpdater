@@ -11,5 +11,20 @@
     <string name="downloadMessage">Lade Datei, bitte warten&#8230;</string>
     <string name="downloadUpdateTitle">Neue Fairphone Version</string>
     <string name="wifiDiscaimerTitle">WLAN deaktiviert</string>
-	<string name="wifiDiscaimerMessage">Die Datei, die Sie herunterladen möchten, ist zu groß für mobile Verbindungen (~200 MB). Bitte aktivieren Sie die WLAN-Verbindung und versuchen Sie es erneut.</string>    
+	<string name="wifiDiscaimerMessage">Die Datei, die Sie herunterladen möchten, ist zu groß für mobile Verbindungen (~200 MB). Bitte aktivieren Sie die WLAN-Verbindung und versuchen Sie es erneut.</string>
+	
+	<string name="releaseNotes">Information über die aktuelle Version:</string>
+    <string name="moreInfo">Mehr Informationen</string>
+    <string name="lessInfo">Weniger Informationen</string>
+    <string name="noUpdatesAvailable">Es sind keine Updates verfügbar</string>
+    <string name="newVersionAvailable">Neue Version verfügbar</string>
+    <string name="youAreRunning">Du benutzt</string>
+    <string name="downloadAndUpdateVersionBtn">Herunterladen und aktualisieren</string>
+    <string name="installBtn">Installieren</string>
+    <string name="downloading">Datei wird heruntergeladen</string>
+    <string name="deviceNotSupported">Gerät wird nicht unterstützt</string>
+    <string name="configFileDownloadError">Fehler beim Herunterladen der Konfigurationsdatei. Benutzter Link:</string>
+    <string name="updateDownloadError">Fehler beim Herunterladen</string>
+    <string name="checkDetails">Schau dir die Details und Installationsoptionen an</string>
+    <string name="alsoAvailable">Auch verfügbar</string>
 </resources>

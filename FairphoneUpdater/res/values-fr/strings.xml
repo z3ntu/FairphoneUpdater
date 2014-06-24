@@ -11,5 +11,20 @@
     <string name="downloadMessage">Téléchargement de la mise à jour, veuillez patienter&#8230;</string>
     <string name="downloadUpdateTitle">Nouvelle mise à jour de Fairphone</string>
     <string name="wifiDiscaimerTitle">Fonction Wi-Fi désactivée</string>
-	<string name="wifiDiscaimerMessage">Le fichier que vous essayez de télécharger est trop volumineux pour les connexions mobiles (~200 MB). Veuillez activer la connexion Wi-Fi et essayer à nouveau.</string>  
+	<string name="wifiDiscaimerMessage">Le fichier que vous essayez de télécharger est trop volumineux pour les connexions mobiles (~200 MB). Veuillez activer la connexion Wi-Fi et essayer à nouveau.</string>
+	
+	<string name="releaseNotes">Notes de mise à jour:</string>
+    <string name="moreInfo">Plus d\'infos</string>
+    <string name="lessInfo">Moins d\'infos</string>
+    <string name="noUpdatesAvailable">Aucune mise à jour disponible</string>
+    <string name="newVersionAvailable">Nouvelle version disponible</string>
+    <string name="youAreRunning">Vous utilisez</string>
+    <string name="downloadAndUpdateVersionBtn">Téléchargement et mise à jour</string>
+    <string name="installBtn">Installer</string>
+    <string name="downloading">Téléchargement</string>
+    <string name="deviceNotSupported">Appareil non supporté</string>
+    <string name="configFileDownloadError">Erreur de téléchargement de fichier de configuration. Lien utilisé:</string>
+    <string name="updateDownloadError">Erreur de téléchargement</string>
+    <string name="checkDetails">Vérifier les informations et les options d\'installation</string>
+    <string name="alsoAvailable">Aussi disponible</string>
 </resources>

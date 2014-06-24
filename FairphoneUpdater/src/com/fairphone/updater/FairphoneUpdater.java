@@ -402,10 +402,10 @@ public class FairphoneUpdater extends Activity {
         Version version = mSelectedVersion != null ? mSelectedVersion : mLatestVersion;
         Resources resources = getResources();
         if (hasUpdate) {
-            mReleaseNotesTitleText.setText(version.getName() + " " + version.getBuildNumber() + " " + resources.getString(R.string.releaseNotes));
+            mReleaseNotesTitleText.setText(resources.getString(R.string.releaseNotes));
             mReleaseNotesText.setText(version.getReleaseNotes() + "\n" + version.getAndroidVersion(resources));
         } else {
-            mReleaseNotesTitleText.setText(mDeviceVersion.getName() + " " + mDeviceVersion.getBuildNumber() + " " + resources.getString(R.string.releaseNotes));
+            mReleaseNotesTitleText.setText(resources.getString(R.string.releaseNotes));
             mReleaseNotesText.setText(mDeviceVersion.getReleaseNotes() + "\n" + mDeviceVersion.getAndroidVersion(resources));
         }
     }

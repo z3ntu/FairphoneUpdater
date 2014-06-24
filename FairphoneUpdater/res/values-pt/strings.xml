@@ -12,4 +12,19 @@
     <string name="downloadUpdateTitle">Nova actualização Fairphone</string>
     <string name="wifiDiscaimerTitle">Wi-Fi desligado</string>
 	<string name="wifiDiscaimerMessage">O ficheiro que está a tentar descarregar é muito grande para ligações móveis (~200mb). Por favor ligue-se ao Wi-Fi e tente outra vez.</string>
+	
+	<string name="releaseNotes">Novidades:</string>
+    <string name="moreInfo">Mais informação</string>
+    <string name="lessInfo">Menos informação</string>
+    <string name="noUpdatesAvailable">Não existem actualizações disponíveis</string>
+    <string name="newVersionAvailable">Nova actualização disponível</string>
+    <string name="youAreRunning">A versão actual é</string>
+    <string name="downloadAndUpdateVersionBtn">Descarregar e actualizar</string>
+    <string name="installBtn">Instalar</string>
+    <string name="downloading">A decarregar</string>
+    <string name="deviceNotSupported">Dispositivo não suportado</string>
+    <string name="configFileDownloadError">Erro ao descarregar o ficheiro de configuração. Link utilizado:</string>
+    <string name="updateDownloadError">Erro ao descarregar</string>
+    <string name="checkDetails">Ver detalhes e opções de instalação</string>
+    <string name="alsoAvailable">Também disponíveis</string>
 </resources>
