@@ -25,6 +25,7 @@ import java.io.InputStream;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.concurrent.TimeoutException;
 
 import android.app.Activity;
 import android.app.ActivityManager;
@@ -40,6 +41,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.res.Resources;
+import android.content.res.Resources.NotFoundException;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.Uri;
@@ -58,8 +60,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.stericson.RootTools.RootTools;
+import com.stericson.RootTools.exceptions.RootDeniedException;
+import com.stericson.RootTools.execution.CommandCapture;
+import com.stericson.RootTools.execution.Shell;
 
-public class FairphoneUpdater extends Activity {
+public class FairphoneUpdater extends Activity
+{
 
     private static final String TAG = FairphoneUpdater.class.getSimpleName();
 
@@ -77,13 +83,14 @@ public class FairphoneUpdater extends Activity {
 
     public static final String PREFERENCE_SELECTED_VERSION_TYPE = "SelectedVersionImageType";
 
-	protected static final String PREFERENCE_SELECTED_VERSION_BEGIN_DOWNLOAD = "SelectedVersionBeginDownload";
+    protected static final String PREFERENCE_SELECTED_VERSION_BEGIN_DOWNLOAD = "SelectedVersionBeginDownload";
 
-	public static final String FAIRPHONE_UPDATER_CONFIG_DOWNLOAD_FAILED = "FairphoneUpdater.Config.File.Download.FAILED";
+    public static final String FAIRPHONE_UPDATER_CONFIG_DOWNLOAD_FAILED = "FairphoneUpdater.Config.File.Download.FAILED";
 
-	public static final String FAIRPHONE_UPDATER_CONFIG_DOWNLOAD_LINK = "FairphoneUpdater.ConfigFile.Download.LINK";
+    public static final String FAIRPHONE_UPDATER_CONFIG_DOWNLOAD_LINK = "FairphoneUpdater.ConfigFile.Download.LINK";
 
-    public static enum UpdaterState {
+    public static enum UpdaterState
+    {
         NORMAL, DOWNLOAD, PREINSTALL
     };
 
@@ -102,7 +109,7 @@ public class FairphoneUpdater extends Activity {
 
     private TextView mUpdateAvailableText;
 
-    //private TextView mCurrentVersionReleaseDateText;
+    // private TextView mCurrentVersionReleaseDateText;
 
     private TextView mReleaseNotesText;
 
@@ -142,12 +149,13 @@ public class FairphoneUpdater extends Activity {
 
     private TextView mReleaseNotesTitleText;
 
-	private View mMoreInfoFairphoneLogo;
+    private View mMoreInfoFairphoneLogo;
 
-	private View mMoreInfoAndroidLogo;
+    private View mMoreInfoAndroidLogo;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fairphone_updater);
 
@@ -159,8 +167,7 @@ public class FairphoneUpdater extends Activity {
         // get system data
         mDeviceVersion = VersionParserHelper.getDeviceVersion(this);
 
-        mLatestVersion = isConfigLoaded ? UpdaterData.getInstance().getLatestVersion(
-                mDeviceVersion.getImageType()) : new Version();
+        mLatestVersion = isConfigLoaded ? UpdaterData.getInstance().getLatestVersion(mDeviceVersion.getImageType()) : new Version();
 
         getSelectedVersionFromSharedPreferences();
 
@@ -173,67 +180,85 @@ public class FairphoneUpdater extends Activity {
 
         setupBroadcastReceiver();
 
-        if (mCurrentState == UpdaterState.NORMAL) {
+        if (mCurrentState == UpdaterState.NORMAL)
+        {
             startUpdaterService();
         }
     }
 
-    private void isDeviceSupported() {
-    	
-		Resources resources = getResources();
-		String[] suportedDevices = resources.getString(R.string.supportedDevices).split(";");
-		for (String device : suportedDevices) {
-			if(Build.MODEL.equalsIgnoreCase(device)){			    
-				return;
-			}
-		}
-		Toast.makeText(this, R.string.deviceNotSupported, Toast.LENGTH_LONG).show();
-		finish();
-	}
+    private void isDeviceSupported()
+    {
 
-	public void startUpdaterService() {
+        Resources resources = getResources();
+        String[] suportedDevices = resources.getString(R.string.supportedDevices).split(";");
+        for (String device : suportedDevices)
+        {
+            if (Build.MODEL.equalsIgnoreCase(device))
+            {
+                return;
+            }
+        }
+        Toast.makeText(this, R.string.deviceNotSupported, Toast.LENGTH_LONG).show();
+        finish();
+    }
+
+    public void startUpdaterService()
+    {
         boolean isRunning = false;
-        ActivityManager manager = (ActivityManager)this.getSystemService(Context.ACTIVITY_SERVICE);
-        for (RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-            if (UpdaterService.class.getName().equals(service.service.getClassName())) {
+        ActivityManager manager = (ActivityManager) this.getSystemService(Context.ACTIVITY_SERVICE);
+        for (RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE))
+        {
+            if (UpdaterService.class.getName().equals(service.service.getClassName()))
+            {
                 isRunning = true;
                 break;
             }
         }
 
-        if (!isRunning) {
+        if (!isRunning)
+        {
             Log.e(TAG, "Starting Updater Service...");
             Intent i = new Intent(this, UpdaterService.class);
             startService(i);
         }
     }
 
-    protected void setupBroadcastReceiver() {
-        newVersionbroadcastReceiver = new BroadcastReceiver() {
+    protected void setupBroadcastReceiver()
+    {
+        newVersionbroadcastReceiver = new BroadcastReceiver()
+        {
 
             @Override
-            public void onReceive(Context context, Intent intent) {
+            public void onReceive(Context context, Intent intent)
+            {
                 String action = intent.getAction();
 
-                if (FairphoneUpdater.FAIRPHONE_UPDATER_NEW_VERSION_RECEIVED.equals(action)) {
+                if (FairphoneUpdater.FAIRPHONE_UPDATER_NEW_VERSION_RECEIVED.equals(action))
+                {
                     mLatestVersion = getLatestVersion();
-                    if (mCurrentState == UpdaterState.NORMAL) {
+                    if (mCurrentState == UpdaterState.NORMAL)
+                    {
                         setupState(mCurrentState);
                     }
-                }else if (FairphoneUpdater.FAIRPHONE_UPDATER_CONFIG_DOWNLOAD_FAILED.equals(action)) {
+                }
+                else if (FairphoneUpdater.FAIRPHONE_UPDATER_CONFIG_DOWNLOAD_FAILED.equals(action))
+                {
                     String link = intent.getStringExtra(FairphoneUpdater.FAIRPHONE_UPDATER_CONFIG_DOWNLOAD_LINK);
-                    Toast.makeText(context.getApplicationContext(), context.getResources().getString(R.string.configFileDownloadError) + " " + link, Toast.LENGTH_LONG).show();
+                    Toast.makeText(context.getApplicationContext(), context.getResources().getString(R.string.configFileDownloadError) + " " + link,
+                            Toast.LENGTH_LONG).show();
                 }
             }
         };
     }
 
-    private Version getLatestVersion() {
+    private Version getLatestVersion()
+    {
         Version latest = UpdaterData.getInstance().getLatestVersion(mDeviceVersion.getImageType());
         return latest;
     }
 
-    private void setupLayout() {
+    private void setupLayout()
+    {
 
         // title bar
         // titleText
@@ -244,73 +269,85 @@ public class FairphoneUpdater extends Activity {
         setupMoreInfoLayout();
     }
 
-    public void setupMoreInfoLayout() {
-        mMoreInfoLayout = (LinearLayout)findViewById(R.id.moreInfoLayout);
-        mMoreInfoFairphoneLogo = (ImageView)findViewById(R.id.updateLogoFairphone);
-        mMoreInfoAndroidLogo = (ImageView)findViewById(R.id.updateLogoAndroid);
-        mReleaseNotesTitleText = (TextView)findViewById(R.id.releaseNotesTitle);
-        mReleaseNotesText = (TextView)findViewById(R.id.releaseNotesText);
-        mMoreInfoButtonsLayout = (LinearLayout)findViewById(R.id.actionButtonsContainer);
-        mMoreInfoCancelButton = (Button)findViewById(R.id.cancelButton);
-        mMoreInfoActionButton = (Button)findViewById(R.id.actionButton);
+    public void setupMoreInfoLayout()
+    {
+        mMoreInfoLayout = (LinearLayout) findViewById(R.id.moreInfoLayout);
+        mMoreInfoFairphoneLogo = (ImageView) findViewById(R.id.updateLogoFairphone);
+        mMoreInfoAndroidLogo = (ImageView) findViewById(R.id.updateLogoAndroid);
+        mReleaseNotesTitleText = (TextView) findViewById(R.id.releaseNotesTitle);
+        mReleaseNotesText = (TextView) findViewById(R.id.releaseNotesText);
+        mMoreInfoButtonsLayout = (LinearLayout) findViewById(R.id.actionButtonsContainer);
+        mMoreInfoCancelButton = (Button) findViewById(R.id.cancelButton);
+        mMoreInfoActionButton = (Button) findViewById(R.id.actionButton);
     }
 
-    public void setupOtherVersionsLayout() {
-        mOtherVersionsLayout = (LinearLayout)findViewById(R.id.otherVersionsLayout);
-        mFairphoneVersionsButton = (Button)findViewById(R.id.fairphoneVersionsButton);
-        mAOSPVersionsButton = (Button)findViewById(R.id.aospVersionsButton);
-        
-        mFairphoneVersionsButton.setOnClickListener(new OnClickListener() {
+    public void setupOtherVersionsLayout()
+    {
+        mOtherVersionsLayout = (LinearLayout) findViewById(R.id.otherVersionsLayout);
+        mFairphoneVersionsButton = (Button) findViewById(R.id.fairphoneVersionsButton);
+        mAOSPVersionsButton = (Button) findViewById(R.id.aospVersionsButton);
+
+        mFairphoneVersionsButton.setOnClickListener(new OnClickListener()
+        {
 
             @Override
-            public void onClick(View v) {
+            public void onClick(View v)
+            {
                 startFairphoneVersionsActivity();
             }
         });
 
-
-        mAOSPVersionsButton.setOnClickListener(new OnClickListener() {
+        mAOSPVersionsButton.setOnClickListener(new OnClickListener()
+        {
 
             @Override
-            public void onClick(View v) {
+            public void onClick(View v)
+            {
                 startAOSPVersionActivity();
             }
         });
     }
 
-    public void setupUpdateDownloadInfoLayout() {
-        mUpdateDownloadInfoLayout = (LinearLayout)findViewById(R.id.updateDownloadInfo);
-        mDownloadingVersionText = (TextView)findViewById(R.id.downloadingText);
-        mUpdateVersionDownloadProgressBar = (ProgressBar)findViewById(R.id.updateDownloadProgressBar);
+    public void setupUpdateDownloadInfoLayout()
+    {
+        mUpdateDownloadInfoLayout = (LinearLayout) findViewById(R.id.updateDownloadInfo);
+        mDownloadingVersionText = (TextView) findViewById(R.id.downloadingText);
+        mUpdateVersionDownloadProgressBar = (ProgressBar) findViewById(R.id.updateDownloadProgressBar);
     }
 
-    public void setupCurrentVersionInfoLayout() {
+    public void setupCurrentVersionInfoLayout()
+    {
         // top layout part
-        mCurrentVersionImage = (ImageView)findViewById(R.id.currentVersionImage);
+        mCurrentVersionImage = (ImageView) findViewById(R.id.currentVersionImage);
         // currentVersionInfo layout
-        mCurrentVersionInfoLayout = (LinearLayout)findViewById(R.id.currentVersionInfo);
+        mCurrentVersionInfoLayout = (LinearLayout) findViewById(R.id.currentVersionInfo);
         // youAreRunningText
-        mCurrentVersionNameText = (TextView)findViewById(R.id.currentVersionNameText);
-        mUpdateAvailableText = (TextView)findViewById(R.id.updateAvailableText);
-        //mCurrentVersionReleaseDateText = (TextView)findViewById(R.id.currentVersionReleaseDateText);
-        mMoreInfoText = (Button)findViewById(R.id.moreInfoText);
+        mCurrentVersionNameText = (TextView) findViewById(R.id.currentVersionNameText);
+        mUpdateAvailableText = (TextView) findViewById(R.id.updateAvailableText);
+        // mCurrentVersionReleaseDateText =
+        // (TextView)findViewById(R.id.currentVersionReleaseDateText);
+        mMoreInfoText = (Button) findViewById(R.id.moreInfoText);
     }
 
-    public void updateMoreInfoLayout(boolean hasUpdate) {
+    public void updateMoreInfoLayout(boolean hasUpdate)
+    {
 
         updateMoreInfoReleaseNotesText(hasUpdate);
-//        mMoreInfoCancelButton
-//                .setVisibility(hasUpdate && mCurrentState != UpdaterState.NORMAL ? View.VISIBLE
-//                        : View.GONE);
+        // mMoreInfoCancelButton
+        // .setVisibility(hasUpdate && mCurrentState != UpdaterState.NORMAL ?
+        // View.VISIBLE
+        // : View.GONE);
         mMoreInfoActionButton.setVisibility(hasUpdate ? View.VISIBLE : View.GONE);
 
-        mMoreInfoCancelButton.setOnClickListener(new OnClickListener() {
+        mMoreInfoCancelButton.setOnClickListener(new OnClickListener()
+        {
 
             @Override
-            public void onClick(View v) {
+            public void onClick(View v)
+            {
                 toggleReleaseInfoOtherVersions();
-                if (mCurrentState == UpdaterState.DOWNLOAD
-                        || mCurrentState == UpdaterState.PREINSTALL) {
+                if (mCurrentState == UpdaterState.DOWNLOAD || mCurrentState == UpdaterState.PREINSTALL)
+                {
 
                     changeState(UpdaterState.NORMAL);
                 }
@@ -320,66 +357,83 @@ public class FairphoneUpdater extends Activity {
         updateMoreInfoActionButton();
     }
 
-    public void updateMoreInfoActionButton() {
+    public void updateMoreInfoActionButton()
+    {
         // set button text
-        switch (mCurrentState) {
+        switch (mCurrentState)
+        {
             case NORMAL:
                 mMoreInfoActionButton.setText(R.string.downloadAndUpdateVersionBtn);
                 mMoreInfoActionButton.setEnabled(true);
                 mMoreInfoCancelButton.setText(R.string.lessInfo);
                 break;
             case DOWNLOAD:
-            	toggleMoreInfoLogo(false);
+                toggleMoreInfoLogo(false);
                 mMoreInfoActionButton.setText(R.string.installBtn);
                 mMoreInfoActionButton.setEnabled(false);
                 mMoreInfoCancelButton.setText(android.R.string.cancel);
                 break;
             case PREINSTALL:
-            	toggleMoreInfoLogo(false);
+                toggleMoreInfoLogo(false);
                 mMoreInfoActionButton.setText(R.string.installBtn);
                 mMoreInfoActionButton.setEnabled(true);
                 mMoreInfoCancelButton.setText(android.R.string.cancel);
                 break;
         }
 
-        mMoreInfoActionButton.setOnClickListener(new OnClickListener() {
+        mMoreInfoActionButton.setOnClickListener(new OnClickListener()
+        {
 
             @Override
-            public void onClick(View v) {
+            public void onClick(View v)
+            {
 
-                setSelectedVersion(mSelectedVersion!=null ? mSelectedVersion: mLatestVersion);
+                setSelectedVersion(mSelectedVersion != null ? mSelectedVersion : mLatestVersion);
 
-                if (mSelectedVersion != null) {
-//                    Picasso.with(getApplicationContext()).load(mSelectedVersion.getThumbnailLink())
-//                            .placeholder(R.drawable.logo_fairphone)
-//                            .into(mCurrentVersionImage);
-                    int logo = Version.IMAGE_TYPE_FAIRPHONE.equalsIgnoreCase(mSelectedVersion.getImageType())?R.drawable.logo_fairphone:R.drawable.logo_android;
-                	mCurrentVersionImage.setImageResource(logo);
+                if (mSelectedVersion != null)
+                {
+                    // Picasso.with(getApplicationContext()).load(mSelectedVersion.getThumbnailLink())
+                    // .placeholder(R.drawable.logo_fairphone)
+                    // .into(mCurrentVersionImage);
+                    int logo =
+                            Version.IMAGE_TYPE_FAIRPHONE.equalsIgnoreCase(mSelectedVersion.getImageType()) ? R.drawable.logo_fairphone
+                                    : R.drawable.logo_android;
+                    mCurrentVersionImage.setImageResource(logo);
                 }
 
-                if (mCurrentState == UpdaterState.NORMAL) {
+                if (mCurrentState == UpdaterState.NORMAL)
+                {
                     startUpdateDownload();
-                } else if (mCurrentState == UpdaterState.PREINSTALL) {
+                }
+                else if (mCurrentState == UpdaterState.PREINSTALL)
+                {
                     startPreInstall();
                 }
             }
         });
     }
 
-	private void toggleMoreInfoLogo(boolean hideAll) {
-		if(hideAll){
-			mMoreInfoFairphoneLogo.setVisibility(View.GONE);
-		    mMoreInfoAndroidLogo.setVisibility(View.GONE);
-		}else if(Version.IMAGE_TYPE_FAIRPHONE.equalsIgnoreCase(mSelectedVersion.getImageType())){
-			mMoreInfoFairphoneLogo.setVisibility(View.VISIBLE);
-		    mMoreInfoAndroidLogo.setVisibility(View.GONE);
-		}else if(Version.IMAGE_TYPE_AOSP.equalsIgnoreCase(mSelectedVersion.getImageType())){
-			mMoreInfoFairphoneLogo.setVisibility(View.GONE);
-		    mMoreInfoAndroidLogo.setVisibility(View.VISIBLE);
-		}
-	}
+    private void toggleMoreInfoLogo(boolean hideAll)
+    {
+        if (hideAll)
+        {
+            mMoreInfoFairphoneLogo.setVisibility(View.GONE);
+            mMoreInfoAndroidLogo.setVisibility(View.GONE);
+        }
+        else if (Version.IMAGE_TYPE_FAIRPHONE.equalsIgnoreCase(mSelectedVersion.getImageType()))
+        {
+            mMoreInfoFairphoneLogo.setVisibility(View.VISIBLE);
+            mMoreInfoAndroidLogo.setVisibility(View.GONE);
+        }
+        else if (Version.IMAGE_TYPE_AOSP.equalsIgnoreCase(mSelectedVersion.getImageType()))
+        {
+            mMoreInfoFairphoneLogo.setVisibility(View.GONE);
+            mMoreInfoAndroidLogo.setVisibility(View.VISIBLE);
+        }
+    }
 
-    protected void setSelectedVersion(Version selectedVersion) {
+    protected void setSelectedVersion(Version selectedVersion)
+    {
         int versionNumber = selectedVersion != null ? selectedVersion.getNumber() : 0;
         String versionImageType = selectedVersion != null ? selectedVersion.getImageType() : "";
 
@@ -391,33 +445,41 @@ public class FairphoneUpdater extends Activity {
         mSelectedVersion = UpdaterData.getInstance().getVersion(versionImageType, versionNumber);
     }
 
-    protected void getSelectedVersionFromSharedPreferences() {
-        String versionImageType = mSharedPreferences
-                .getString(PREFERENCE_SELECTED_VERSION_TYPE, "");
+    protected void getSelectedVersionFromSharedPreferences()
+    {
+        String versionImageType = mSharedPreferences.getString(PREFERENCE_SELECTED_VERSION_TYPE, "");
         int versionNumber = mSharedPreferences.getInt(PREFERENCE_SELECTED_VERSION_NUMBER, 0);
         mSelectedVersion = UpdaterData.getInstance().getVersion(versionImageType, versionNumber);
     }
 
-    private void updateMoreInfoReleaseNotesText(boolean hasUpdate) {
+    private void updateMoreInfoReleaseNotesText(boolean hasUpdate)
+    {
         Version version = mSelectedVersion != null ? mSelectedVersion : mLatestVersion;
         Resources resources = getResources();
-        if (hasUpdate) {
+        if (hasUpdate)
+        {
             mReleaseNotesTitleText.setText(resources.getString(R.string.releaseNotes));
             mReleaseNotesText.setText(version.getReleaseNotes() + "\n" + version.getAndroidVersion(resources));
-        } else {
+        }
+        else
+        {
             mReleaseNotesTitleText.setText(resources.getString(R.string.releaseNotes));
             mReleaseNotesText.setText(mDeviceVersion.getReleaseNotes() + "\n" + mDeviceVersion.getAndroidVersion(resources));
         }
     }
 
-    public void toggleReleaseInfoOtherVersions() {
-        if (mOtherVersionsLayout.getVisibility() == View.VISIBLE) {
+    public void toggleReleaseInfoOtherVersions()
+    {
+        if (mOtherVersionsLayout.getVisibility() == View.VISIBLE)
+        {
             mOtherVersionsLayout.setVisibility(View.GONE);
             mMoreInfoLayout.setVisibility(View.VISIBLE);
             mMoreInfoText.setText(R.string.lessInfo);
             mMoreInfoText.setVisibility(View.GONE);
-            
-        } else {
+
+        }
+        else
+        {
             mOtherVersionsLayout.setVisibility(View.VISIBLE);
             mMoreInfoLayout.setVisibility(View.GONE);
             mMoreInfoText.setText(R.string.moreInfo);
@@ -426,31 +488,37 @@ public class FairphoneUpdater extends Activity {
         }
     }
 
-    protected void startAOSPVersionActivity() {
+    protected void startAOSPVersionActivity()
+    {
         Intent i = new Intent(this, VersionListActivity.class);
         i.putExtra(VersionListActivity.VERSION_LIST_TYPE, VersionListActivity.AOSP_VERSIONS);
         startActivity(i);
     }
 
-    protected void startFairphoneVersionsActivity() {
+    protected void startFairphoneVersionsActivity()
+    {
         Intent i = new Intent(this, VersionListActivity.class);
         i.putExtra(VersionListActivity.VERSION_LIST_TYPE, VersionListActivity.FAIRPHONE_VERSIONS);
         startActivity(i);
     }
 
-    public String getStringPreference(String key) {
+    public String getStringPreference(String key)
+    {
         return mSharedPreferences.getString(key, null);
     }
 
-    public long getLongPreference(String key) {
+    public long getLongPreference(String key)
+    {
         return mSharedPreferences.getLong(key, 0);
     }
 
-    public boolean getBooleanPreference(String key) {
+    public boolean getBooleanPreference(String key)
+    {
         return mSharedPreferences.getBoolean(key, false);
     }
 
-    public void savePreference(String key, String value) {
+    public void savePreference(String key, String value)
+    {
         Editor editor = mSharedPreferences.edit();
 
         editor.putString(key, value);
@@ -458,7 +526,8 @@ public class FairphoneUpdater extends Activity {
         editor.commit();
     }
 
-    public void savePreference(String key, boolean value) {
+    public void savePreference(String key, boolean value)
+    {
         Editor editor = mSharedPreferences.edit();
 
         editor.putBoolean(key, value);
@@ -466,7 +535,8 @@ public class FairphoneUpdater extends Activity {
         editor.commit();
     }
 
-    public void savePreference(String key, long value) {
+    public void savePreference(String key, long value)
+    {
         Editor editor = mSharedPreferences.edit();
 
         editor.putLong(key, value);
@@ -475,7 +545,8 @@ public class FairphoneUpdater extends Activity {
     }
 
     @Override
-    protected void onResume() {
+    protected void onResume()
+    {
         super.onResume();
 
         registerBroadCastReceiver();
@@ -484,25 +555,27 @@ public class FairphoneUpdater extends Activity {
 
         boolean isConfigLoaded = UpdaterService.readUpdaterData(this);
         mDeviceVersion = VersionParserHelper.getDeviceVersion(this);
-        mLatestVersion = isConfigLoaded ? UpdaterData.getInstance().getLatestVersion(
-                mDeviceVersion.getImageType()) : new Version();
+        mLatestVersion = isConfigLoaded ? UpdaterData.getInstance().getLatestVersion(mDeviceVersion.getImageType()) : new Version();
 
         getSelectedVersionFromSharedPreferences();
 
-		if (mSharedPreferences.getBoolean(
-				FairphoneUpdater.PREFERENCE_SELECTED_VERSION_BEGIN_DOWNLOAD, false)) {
-			Editor editor = mSharedPreferences.edit();
-			editor.putBoolean(
-					FairphoneUpdater.PREFERENCE_SELECTED_VERSION_BEGIN_DOWNLOAD, false);
-			editor.commit();
-			startUpdateDownload();
-		} else {
-			setupState(mCurrentState);
-		}
+        if (mSharedPreferences.getBoolean(FairphoneUpdater.PREFERENCE_SELECTED_VERSION_BEGIN_DOWNLOAD, false))
+        {
+            Editor editor = mSharedPreferences.edit();
+            editor.putBoolean(FairphoneUpdater.PREFERENCE_SELECTED_VERSION_BEGIN_DOWNLOAD, false);
+            editor.commit();
+            startUpdateDownload();
+        }
+        else
+        {
+            setupState(mCurrentState);
+        }
     }
 
-    private void setupState(UpdaterState state) {
-        switch (state) {
+    private void setupState(UpdaterState state)
+    {
+        switch (state)
+        {
             case NORMAL:
                 setupNormalState();
                 break;
@@ -515,7 +588,8 @@ public class FairphoneUpdater extends Activity {
         }
     }
 
-    private void changeState(UpdaterState newState) {
+    private void changeState(UpdaterState newState)
+    {
         mCurrentState = newState;
 
         Editor editor = mSharedPreferences.edit();
@@ -528,21 +602,25 @@ public class FairphoneUpdater extends Activity {
     }
 
     @Override
-    protected void onPause() {
+    protected void onPause()
+    {
         super.onPause();
 
         unregisterBroadCastReceiver();
     }
-    
+
     @Override
-    protected void onStop() {
-    	super.onStop();
-    	
+    protected void onStop()
+    {
+        super.onStop();
+
     }
 
-    private void setupNormalState() {
+    private void setupNormalState()
+    {
 
-        if (mLatestUpdateDownloadId != 0) {
+        if (mLatestUpdateDownloadId != 0)
+        {
             // residue download ID
             mDownloadManager.remove(mLatestUpdateDownloadId);
 
@@ -560,48 +638,49 @@ public class FairphoneUpdater extends Activity {
         setupOtherVersionsLayout(UpdaterState.NORMAL);
     }
 
-	private void setupOtherVersionsLayout(UpdaterState state) {
-		switch (state) {
-		case NORMAL:
-			mFairphoneVersionsButton.setEnabled(!UpdaterData.getInstance()
-					.isFairphoneVersionListEmpty());
-			mAOSPVersionsButton.setEnabled(!UpdaterData.getInstance()
-					.isAOSPVersionListEmpty());
-			break;
-		case DOWNLOAD:
-		case PREINSTALL:
-			break;
-		}
-	}
+    private void setupOtherVersionsLayout(UpdaterState state)
+    {
+        switch (state)
+        {
+            case NORMAL:
+                mFairphoneVersionsButton.setEnabled(!UpdaterData.getInstance().isFairphoneVersionListEmpty());
+                mAOSPVersionsButton.setEnabled(!UpdaterData.getInstance().isAOSPVersionListEmpty());
+                break;
+            case DOWNLOAD:
+            case PREINSTALL:
+                break;
+        }
+    }
 
-    private void setupCurrentVersionInfoLayout(UpdaterState state) {
+    private void setupCurrentVersionInfoLayout(UpdaterState state)
+    {
         Resources resources = getResources();
         final boolean isUpdateAvailable = mLatestVersion.isNewerVersionThan(mDeviceVersion);
-        switch (state) {
+        switch (state)
+        {
             case NORMAL:
 
-//                Picasso.with(this).load(mDeviceVersion.getThumbnailLink())
-//                        .placeholder(R.drawable.logo_fairphone)
-//                        .into(mCurrentVersionImage);
-            	
-            	int logo = Version.IMAGE_TYPE_FAIRPHONE.equalsIgnoreCase(mDeviceVersion.getImageType())?R.drawable.logo_fairphone:R.drawable.logo_android;
-            	mCurrentVersionImage.setImageResource(logo);
+                // Picasso.with(this).load(mDeviceVersion.getThumbnailLink())
+                // .placeholder(R.drawable.logo_fairphone)
+                // .into(mCurrentVersionImage);
 
-                mCurrentVersionNameText.setText(mDeviceVersion.getImageTypeDescription(resources)
-                        + " " + mDeviceVersion.getName() + " " + mDeviceVersion.getBuildNumber());
+                int logo = Version.IMAGE_TYPE_FAIRPHONE.equalsIgnoreCase(mDeviceVersion.getImageType()) ? R.drawable.logo_fairphone : R.drawable.logo_android;
+                mCurrentVersionImage.setImageResource(logo);
+
+                mCurrentVersionNameText.setText(mDeviceVersion.getImageTypeDescription(resources) + " " + mDeviceVersion.getName() + " "
+                        + mDeviceVersion.getBuildNumber());
 
                 setupUpdateAvailable(resources, isUpdateAvailable);
 
-                mMoreInfoText
-                        .setText(mMoreInfoLayout.getVisibility() == View.VISIBLE ? R.string.lessInfo
-                                : R.string.moreInfo);
-                mMoreInfoText.setVisibility(mMoreInfoLayout.getVisibility() == View.VISIBLE ? View.GONE
-                        : View.VISIBLE);
+                mMoreInfoText.setText(mMoreInfoLayout.getVisibility() == View.VISIBLE ? R.string.lessInfo : R.string.moreInfo);
+                mMoreInfoText.setVisibility(mMoreInfoLayout.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
 
-                mMoreInfoText.setOnClickListener(new OnClickListener() {
+                mMoreInfoText.setOnClickListener(new OnClickListener()
+                {
 
                     @Override
-                    public void onClick(View v) {
+                    public void onClick(View v)
+                    {
                         updateMoreInfoLayout(isUpdateAvailable);
                         toggleReleaseInfoOtherVersions();
                     }
@@ -610,34 +689,42 @@ public class FairphoneUpdater extends Activity {
                 break;
             case DOWNLOAD:
             case PREINSTALL:
-                if (mSelectedVersion != null) {
-//                    Picasso.with(getApplicationContext()).load(mSelectedVersion.getThumbnailLink())
-//                            .placeholder(R.drawable.logo_fairphone)
-//                            .into(mCurrentVersionImage);
-                    logo = Version.IMAGE_TYPE_FAIRPHONE.equalsIgnoreCase(mSelectedVersion.getImageType())?R.drawable.logo_fairphone:R.drawable.logo_android;
-                	mCurrentVersionImage.setImageResource(logo);
+                if (mSelectedVersion != null)
+                {
+                    // Picasso.with(getApplicationContext()).load(mSelectedVersion.getThumbnailLink())
+                    // .placeholder(R.drawable.logo_fairphone)
+                    // .into(mCurrentVersionImage);
+                    logo = Version.IMAGE_TYPE_FAIRPHONE.equalsIgnoreCase(mSelectedVersion.getImageType()) ? R.drawable.logo_fairphone : R.drawable.logo_android;
+                    mCurrentVersionImage.setImageResource(logo);
                 }
                 break;
         }
     }
 
-    public void setupUpdateAvailable(Resources resources, final boolean isUpdateAvailable) {
-        if (isUpdateAvailable) {
+    public void setupUpdateAvailable(Resources resources, final boolean isUpdateAvailable)
+    {
+        if (isUpdateAvailable)
+        {
             mUpdateAvailableText.setText(R.string.newVersionAvailable);
-            //mCurrentVersionReleaseDateText.setVisibility(View.GONE);
-        } else {
+            // mCurrentVersionReleaseDateText.setVisibility(View.GONE);
+        }
+        else
+        {
             mUpdateAvailableText.setText(R.string.noUpdatesAvailable);
-//            mCurrentVersionReleaseDateText.setText(resources.getString(R.string.releasedIn) + " "
-//                    + mDeviceVersion.getReleaseDate());
-//            mCurrentVersionReleaseDateText.setVisibility(View.VISIBLE);
+            // mCurrentVersionReleaseDateText.setText(resources.getString(R.string.releasedIn)
+            // + " "
+            // + mDeviceVersion.getReleaseDate());
+            // mCurrentVersionReleaseDateText.setVisibility(View.VISIBLE);
         }
     }
 
-    private UpdaterState getCurrentUpdaterState() {
+    private UpdaterState getCurrentUpdaterState()
+    {
 
         String currentState = getStringPreference(PREFERENCE_CURRENT_UPDATER_STATE);
 
-        if (currentState == null || currentState.isEmpty()) {
+        if (currentState == null || currentState.isEmpty())
+        {
             currentState = UpdaterState.NORMAL.name();
 
             Editor editor = mSharedPreferences.edit();
@@ -650,21 +737,23 @@ public class FairphoneUpdater extends Activity {
         return UpdaterState.valueOf(currentState);
     }
 
-    private String getVersionDownloadPath(Version version) {
-    	Resources resources = getResources();
-        return Environment.getExternalStorageDirectory() + resources.getString(R.string.updaterFolder)
-                + VersionParserHelper.getNameFromVersion(version);
+    private String getVersionDownloadPath(Version version)
+    {
+        Resources resources = getResources();
+        return Environment.getExternalStorageDirectory() + resources.getString(R.string.updaterFolder) + VersionParserHelper.getNameFromVersion(version);
     }
 
     // ************************************************************************************
     // PRE INSTALL
     // ************************************************************************************
 
-    private void setupPreInstallState() {
+    private void setupPreInstallState()
+    {
 
-    	Resources resources = getResources();
+        Resources resources = getResources();
         // the latest version data must exist
-        if (mSelectedVersion != null) {
+        if (mSelectedVersion != null)
+        {
 
             mCurrentVersionInfoLayout.setVisibility(View.GONE);
             mOtherVersionsLayout.setVisibility(View.GONE);
@@ -674,134 +763,189 @@ public class FairphoneUpdater extends Activity {
             // check the md5 of the file
             File file = new File(getVersionDownloadPath(mSelectedVersion));
 
-            if (file.exists()) {
-                if (FairphoneUpdater.checkMD5(mSelectedVersion.getMd5Sum(), file)) {
-                	
-                	clearCache();
-					copyUpdateToCache(file);
+            if (file.exists())
+            {
+                if (FairphoneUpdater.checkMD5(mSelectedVersion.getMd5Sum(), file))
+                {
+
+                    clearCache();
+                    copyUpdateToCache(file);
                     setupCurrentVersionInfoLayout(mCurrentState);
                     updateMoreInfoLayout(true);
                     return;
-                } else {
+                }
+                else
+                {
                     mDownloadManager.remove(mLatestUpdateDownloadId);
                     mLatestUpdateDownloadId = 0;
 
                     savePreference(PREFERENCE_DOWNLOAD_ID, mLatestUpdateDownloadId);
 
-                    Toast.makeText(this, resources.getString(R.string.invalidDownloadMessage),
-                            Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, resources.getString(R.string.invalidDownloadMessage), Toast.LENGTH_SHORT).show();
                 }
             }
         }
 
         // remove the updater directory
-        File fileDir = new File(Environment.getExternalStorageDirectory()
-                + resources.getString(R.string.updaterFolder));
+        File fileDir = new File(Environment.getExternalStorageDirectory() + resources.getString(R.string.updaterFolder));
         fileDir.delete();
 
         // else if the perfect case does not happen, reset the download
         changeState(UpdaterState.NORMAL);
     }
 
-	private void copyUpdateToCache(File file) {
-		File OtaFileCache = new File(
-				Environment.getDownloadCacheDirectory()
-						+ "/"
-						+ VersionParserHelper
-								.getNameFromVersion(mSelectedVersion));
-		if(!OtaFileCache.exists()){
-			RootTools.copyFile(file.getPath(), OtaFileCache.getPath(),
-					false, false);
-		}
-	}
+    private void copyUpdateToCache(File file)
+    {
+        if (RootTools.isAccessGiven())
+        {
+            File OtaFileCache = new File(Environment.getDownloadCacheDirectory() + "/" + VersionParserHelper.getNameFromVersion(mSelectedVersion));
+            if (!OtaFileCache.exists())
+            {
+                RootTools.copyFile(file.getPath(), OtaFileCache.getPath(), false, false);
+            }
+        }
+    }
 
-	private void clearCache() {
-		File f = Environment.getDownloadCacheDirectory();        
-		File files[] = f.listFiles();
-		if(files !=null){
-			Log.d(TAG, "Size: "+ files.length);
-			for (int i=0; i < files.length; i++)
-			{
-			    String filename = files[i].getName();
-			    
-			    if(filename.endsWith(".zip")){
-			    	files[i].delete();
-		    	    Log.d(TAG, "Deleted file " + filename);
-			    }
-			}
-		}
-	}
+    private void clearCache()
+    {
+        File f = Environment.getDownloadCacheDirectory();
+        File files[] = f.listFiles();
+        if (files != null)
+        {
+            Log.d(TAG, "Size: " + files.length);
+            for (int i = 0; i < files.length; i++)
+            {
+                String filename = files[i].getName();
 
-    private void startPreInstall() {
-        // set the command for the recovery
-    	Resources resources = getResources();
-        Process p;
-        try {
-            p = Runtime.getRuntime().exec("su");
+                if (filename.endsWith(".zip"))
+                {
+                    files[i].delete();
+                    Log.d(TAG, "Deleted file " + filename);
+                }
+            }
+        }
+    }
 
-            DataOutputStream os = new DataOutputStream(p.getOutputStream());
-            os.writeBytes("rm -f /cache/recovery/command\n");
-            os.writeBytes("rm -f /cache/recovery/extendedcommand\n");
+    private void startPreInstall()
+    {
 
-            os.writeBytes("echo '--wipe_cache' >> /cache/recovery/command\n");
+        if (RootTools.isAccessGiven())
+        {
+            // set the command for the recovery
+            Resources resources = getResources();
+            // Process p;
+            try
+            {
 
-            os.writeBytes("echo '--update_package=/" + resources.getString(R.string.recoveryPath)
-                    + "/"
-                    + VersionParserHelper.getNameFromVersion(mSelectedVersion)
-                    + "' >> /cache/recovery/command\n");
+                Shell.runRootCommand(new CommandCapture(0, "rm -f /cache/recovery/command"));
 
-            os.writeBytes("sync\n");
-            os.writeBytes("exit\n");
-            os.flush();
-            p.waitFor();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+                Shell.runRootCommand(new CommandCapture(0, "rm -f /cache/recovery/extendedcommand"));
+
+                Shell.runRootCommand(new CommandCapture(0, "echo '--wipe_cache' >> /cache/recovery/command"));
+
+                Shell.runRootCommand(new CommandCapture(0, "echo '--update_package=/" + resources.getString(R.string.recoveryPath)
+                        + VersionParserHelper.getNameFromVersion(mSelectedVersion) + "' >> /cache/recovery/command"));
+
+                // p = Runtime.getRuntime().exec("su");
+                //
+                // DataOutputStream os = new
+                // DataOutputStream(p.getOutputStream());
+                // os.writeBytes("rm -f /cache/recovery/command\n");
+                // os.writeBytes("rm -f /cache/recovery/extendedcommand\n");
+                //
+                // os.writeBytes("echo '--wipe_cache' >> /cache/recovery/command\n");
+                //
+                // os.writeBytes("echo '--update_package=/" +
+                // resources.getString(R.string.recoveryPath) + "/"
+                // + VersionParserHelper.getNameFromVersion(mSelectedVersion) +
+                // "' >> /cache/recovery/command\n");
+                //
+                // os.writeBytes("sync\n");
+                // os.writeBytes("exit\n");
+                // os.flush();
+                // p.waitFor();
+            } catch (IOException e)
+            {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (NotFoundException e)
+            {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (TimeoutException e)
+            {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (RootDeniedException e)
+            {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
+            // send broadcast intent
+            Intent broadcastIntent = new Intent();
+            broadcastIntent.setAction(FairphoneUpdater.GAPPS_REINSTALATION);
+            this.sendBroadcast(broadcastIntent);
+
+            setSelectedVersion(null);
+            // reboot the device into recovery
+
+            // ((PowerManager)
+            // getSystemService(POWER_SERVICE)).reboot("recovery");
+            try
+            {
+                Shell.runRootCommand(new CommandCapture(0, "reboot recovery"));
+            } catch (IOException e)
+            {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (TimeoutException e)
+            {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (RootDeniedException e)
+            {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+        else
+        {
+            // TODO: show warning
         }
 
-        // send broadcast intent
-        Intent broadcastIntent = new Intent();
-        broadcastIntent.setAction(FairphoneUpdater.GAPPS_REINSTALATION);
-        this.sendBroadcast(broadcastIntent);
-
-        setSelectedVersion(null);
-        // reboot the device into recovery
-        ((PowerManager)getSystemService(POWER_SERVICE)).reboot("recovery");
     }
 
     // ************************************************************************************
     // DOWNLOAD UPDATE
     // ************************************************************************************
 
-    private void startUpdateDownload() {
+    private void startUpdateDownload()
+    {
         // use only on WiFi
-        if (isWiFiEnabled()) {
-			// set the download for the latest version on the download manager
-			String fileName = VersionParserHelper
-					.getNameFromVersion(mSelectedVersion);
-			String downloadTitle = mSelectedVersion.getName() + " "
-					+ mSelectedVersion.getImageTypeDescription(getResources())
-					+ " Update";
-			Request request = createDownloadRequest(
-					mSelectedVersion.getDownloadLink(), fileName, downloadTitle);
-			if (request != null) {
-				mLatestUpdateDownloadId = mDownloadManager.enqueue(request);
+        if (isWiFiEnabled())
+        {
+            // set the download for the latest version on the download manager
+            String fileName = VersionParserHelper.getNameFromVersion(mSelectedVersion);
+            String downloadTitle = mSelectedVersion.getName() + " " + mSelectedVersion.getImageTypeDescription(getResources()) + " Update";
+            Request request = createDownloadRequest(mSelectedVersion.getDownloadLink(), fileName, downloadTitle);
+            if (request != null)
+            {
+                mLatestUpdateDownloadId = mDownloadManager.enqueue(request);
 
-				// save it on the shared preferences
-				savePreference(PREFERENCE_DOWNLOAD_ID, mLatestUpdateDownloadId);
+                // save it on the shared preferences
+                savePreference(PREFERENCE_DOWNLOAD_ID, mLatestUpdateDownloadId);
 
-				// change state to download
-				changeState(UpdaterState.DOWNLOAD);
-			} else {
-				Toast.makeText(
-						this,
-						getResources().getString(R.string.updateDownloadError)
-								+ " " + downloadTitle, Toast.LENGTH_LONG).show();
-			}
-        } else {
+                // change state to download
+                changeState(UpdaterState.DOWNLOAD);
+            }
+            else
+            {
+                Toast.makeText(this, getResources().getString(R.string.updateDownloadError) + " " + downloadTitle, Toast.LENGTH_LONG).show();
+            }
+        }
+        else
+        {
             Resources resources = this.getResources();
 
             AlertDialog.Builder disclaimerDialog = new AlertDialog.Builder(this);
@@ -810,60 +954,60 @@ public class FairphoneUpdater extends Activity {
 
             // Setting Dialog Message
             disclaimerDialog.setMessage(resources.getString(R.string.wifiDiscaimerMessage));
-            disclaimerDialog.setPositiveButton(resources.getString(android.R.string.ok),
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            // do nothing, since the state is still the same
-                        }
-                    });
+            disclaimerDialog.setPositiveButton(resources.getString(android.R.string.ok), new DialogInterface.OnClickListener()
+            {
+                public void onClick(DialogInterface dialog, int id)
+                {
+                    // do nothing, since the state is still the same
+                }
+            });
             disclaimerDialog.create();
             disclaimerDialog.show();
         }
     }
 
-	private Request createDownloadRequest(String url, String fileName,
-			String downloadTitle) {
+    private Request createDownloadRequest(String url, String fileName, String downloadTitle)
+    {
 
-		Resources resources = getResources();
-		Request request;
-		try {
-			request = new Request(Uri.parse(url));
-			Environment.getExternalStoragePublicDirectory(
-					Environment.getExternalStorageDirectory()
-							+ resources.getString(R.string.updaterFolder))
-					.mkdirs();
+        Resources resources = getResources();
+        Request request;
+        try
+        {
+            request = new Request(Uri.parse(url));
+            Environment.getExternalStoragePublicDirectory(Environment.getExternalStorageDirectory() + resources.getString(R.string.updaterFolder)).mkdirs();
 
-			request.setDestinationInExternalPublicDir(
-					resources.getString(R.string.updaterFolder), fileName);
-			request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI);
-			request.setAllowedOverRoaming(false);
+            request.setDestinationInExternalPublicDir(resources.getString(R.string.updaterFolder), fileName);
+            request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI);
+            request.setAllowedOverRoaming(false);
 
-			request.setTitle(downloadTitle);
-		} catch (Exception e) {
-			request = null;
-		}
+            request.setTitle(downloadTitle);
+        } catch (Exception e)
+        {
+            request = null;
+        }
 
-		return request;
-	}
+        return request;
+    }
 
-    private boolean isWiFiEnabled() {
+    private boolean isWiFiEnabled()
+    {
 
-        ConnectivityManager manager = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+        ConnectivityManager manager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 
-        boolean isWifi = manager.getNetworkInfo(ConnectivityManager.TYPE_WIFI)
-                .isConnectedOrConnecting();
+        boolean isWifi = manager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).isConnectedOrConnecting();
 
         return isWifi;
     }
 
-    private void setupDownloadState() {
+    private void setupDownloadState()
+    {
         // setup the download state views
-        if (mSelectedVersion == null) {
-        	Resources resources = getResources();
-            
-        	// we don't have the lastest.xml so get back to initial state
-            File updateDir = new File(Environment.getExternalStorageDirectory()
-                    + resources.getString(R.string.updaterFolder));
+        if (mSelectedVersion == null)
+        {
+            Resources resources = getResources();
+
+            // we don't have the lastest.xml so get back to initial state
+            File updateDir = new File(Environment.getExternalStorageDirectory() + resources.getString(R.string.updaterFolder));
 
             updateDir.delete();
 
@@ -873,11 +1017,13 @@ public class FairphoneUpdater extends Activity {
         }
 
         // if there is a download ID on the shared preferences
-        if (mLatestUpdateDownloadId == 0) {
+        if (mLatestUpdateDownloadId == 0)
+        {
             mLatestUpdateDownloadId = getLongPreference(PREFERENCE_DOWNLOAD_ID);
 
             // invalid download Id
-            if (mLatestUpdateDownloadId == 0) {
+            if (mLatestUpdateDownloadId == 0)
+            {
                 changeState(UpdaterState.NORMAL);
                 return;
             }
@@ -896,23 +1042,25 @@ public class FairphoneUpdater extends Activity {
 
     }
 
-    private void setupUpdateDownloadInfoLayout(UpdaterState state) {
+    private void setupUpdateDownloadInfoLayout(UpdaterState state)
+    {
 
         Resources resources = getResources();
-        switch (state) {
+        switch (state)
+        {
             case NORMAL:
                 break;
             case DOWNLOAD:
-                mDownloadingVersionText.setText(resources.getString(R.string.downloading) + " "
-                        + mSelectedVersion.getName() + " " + mSelectedVersion.getBuildNumber()
-                        + ":");
+                mDownloadingVersionText.setText(resources.getString(R.string.downloading) + " " + mSelectedVersion.getName() + " "
+                        + mSelectedVersion.getBuildNumber() + ":");
                 break;
             case PREINSTALL:
                 break;
         }
     }
 
-    private void updateDownloadFile() {
+    private void updateDownloadFile()
+    {
 
         DownloadManager.Query query = new DownloadManager.Query();
 
@@ -920,11 +1068,13 @@ public class FairphoneUpdater extends Activity {
 
         Cursor cursor = mDownloadManager.query(query);
 
-        if (cursor.moveToFirst()) {
+        if (cursor.moveToFirst())
+        {
             int columnIndex = cursor.getColumnIndex(DownloadManager.COLUMN_STATUS);
             int status = cursor.getInt(columnIndex);
 
-            switch (status) {
+            switch (status)
+            {
                 case DownloadManager.STATUS_SUCCESSFUL:
                     changeState(UpdaterState.PREINSTALL);
                     break;
@@ -940,29 +1090,34 @@ public class FairphoneUpdater extends Activity {
         cursor.close();
     }
 
-    private void startDownloadProgressUpdateThread() {
-        new Thread(new Runnable() {
+    private void startDownloadProgressUpdateThread()
+    {
+        new Thread(new Runnable()
+        {
 
             @Override
-            public void run() {
+            public void run()
+            {
 
                 boolean downloading = true;
 
-                while (mLatestUpdateDownloadId != 0 && downloading) {
+                while (mLatestUpdateDownloadId != 0 && downloading)
+                {
 
                     DownloadManager.Query q = new DownloadManager.Query();
                     q.setFilterById(mLatestUpdateDownloadId);
 
                     Cursor cursor = mDownloadManager.query(q);
-                    if (cursor != null) {
+                    if (cursor != null)
+                    {
                         cursor.moveToFirst();
-                        try {
-                            int bytes_downloaded = cursor.getInt(cursor
-                                    .getColumnIndex(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR));
-                            int bytes_total = cursor.getInt(cursor
-                                    .getColumnIndex(DownloadManager.COLUMN_TOTAL_SIZE_BYTES));
+                        try
+                        {
+                            int bytes_downloaded = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR));
+                            int bytes_total = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_TOTAL_SIZE_BYTES));
 
-                            if (cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS)) == DownloadManager.STATUS_SUCCESSFUL) {
+                            if (cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS)) == DownloadManager.STATUS_SUCCESSFUL)
+                            {
                                 downloading = false;
 
                                 bytes_downloaded = 0;
@@ -971,15 +1126,18 @@ public class FairphoneUpdater extends Activity {
 
                             mUpdateVersionDownloadProgressBar.setProgress(bytes_downloaded);
                             mUpdateVersionDownloadProgressBar.setMax(bytes_total);
-                        } catch (Exception e) {
+                        } catch (Exception e)
+                        {
                             downloading = false;
                             Log.e(TAG, "Error updating download progress: " + e.getMessage());
                         }
 
                         cursor.close();
-                        try {
+                        try
+                        {
                             Thread.sleep(3000);
-                        } catch (InterruptedException e) {
+                        } catch (InterruptedException e)
+                        {
                             e.printStackTrace();
                         }
                     }
@@ -988,15 +1146,16 @@ public class FairphoneUpdater extends Activity {
         }).start();
     }
 
-    private void setupInstallationReceivers() {
-        mDownloadManager = (DownloadManager)getSystemService(Context.DOWNLOAD_SERVICE);
+    private void setupInstallationReceivers()
+    {
+        mDownloadManager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
 
         mDownloadBroadCastReceiver = new DownloadBroadCastReceiver();
     }
 
-    private void registerBroadCastReceiver() {
-        registerReceiver(mDownloadBroadCastReceiver, new IntentFilter(
-                DownloadManager.ACTION_DOWNLOAD_COMPLETE));
+    private void registerBroadCastReceiver()
+    {
+        registerReceiver(mDownloadBroadCastReceiver, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
 
         IntentFilter iFilter = new IntentFilter();
         iFilter.addAction(FairphoneUpdater.FAIRPHONE_UPDATER_NEW_VERSION_RECEIVED);
@@ -1004,17 +1163,21 @@ public class FairphoneUpdater extends Activity {
         registerReceiver(newVersionbroadcastReceiver, iFilter);
     }
 
-    private void unregisterBroadCastReceiver() {
+    private void unregisterBroadCastReceiver()
+    {
         unregisterReceiver(mDownloadBroadCastReceiver);
         unregisterReceiver(newVersionbroadcastReceiver);
     }
 
-    private class DownloadBroadCastReceiver extends BroadcastReceiver {
+    private class DownloadBroadCastReceiver extends BroadcastReceiver
+    {
 
         @Override
-        public void onReceive(Context context, Intent intent) {
+        public void onReceive(Context context, Intent intent)
+        {
 
-            if (mLatestUpdateDownloadId == 0) {
+            if (mLatestUpdateDownloadId == 0)
+            {
                 mLatestUpdateDownloadId = getLongPreference(PREFERENCE_DOWNLOAD_ID);
             }
 
@@ -1027,19 +1190,23 @@ public class FairphoneUpdater extends Activity {
     // HELPERS
     // **************************************************************************************************************
 
-    public static boolean checkMD5(String md5, File updateFile) {
+    public static boolean checkMD5(String md5, File updateFile)
+    {
 
-        if (!updateFile.exists()) {
+        if (!updateFile.exists())
+        {
             return false;
         }
 
-        if (md5 == null || md5.equals("") || updateFile == null) {
+        if (md5 == null || md5.equals("") || updateFile == null)
+        {
             Log.e(TAG, "MD5 String NULL or UpdateFile NULL");
             return false;
         }
 
         String calculatedDigest = calculateMD5(updateFile);
-        if (calculatedDigest == null) {
+        if (calculatedDigest == null)
+        {
             Log.e(TAG, "calculatedDigest NULL");
             return false;
         }
@@ -1047,27 +1214,34 @@ public class FairphoneUpdater extends Activity {
         return calculatedDigest.equalsIgnoreCase(md5);
     }
 
-    public static String calculateMD5(File updateFile) {
+    public static String calculateMD5(File updateFile)
+    {
         MessageDigest digest;
-        try {
+        try
+        {
             digest = MessageDigest.getInstance("MD5");
-        } catch (NoSuchAlgorithmException e) {
+        } catch (NoSuchAlgorithmException e)
+        {
             Log.e(TAG, "Exception while getting Digest", e);
             return null;
         }
 
         InputStream is;
-        try {
+        try
+        {
             is = new FileInputStream(updateFile);
-        } catch (FileNotFoundException e) {
+        } catch (FileNotFoundException e)
+        {
             Log.e(TAG, "Exception while getting FileInputStream", e);
             return null;
         }
 
         byte[] buffer = new byte[8192];
         int read;
-        try {
-            while ((read = is.read(buffer)) > 0) {
+        try
+        {
+            while ((read = is.read(buffer)) > 0)
+            {
                 digest.update(buffer, 0, read);
             }
             byte[] md5sum = digest.digest();
@@ -1076,12 +1250,16 @@ public class FairphoneUpdater extends Activity {
             // Fill to 32 chars
             output = String.format("%32s", output).replace(' ', '0');
             return output;
-        } catch (IOException e) {
+        } catch (IOException e)
+        {
             throw new RuntimeException("Unable to process file for MD5", e);
-        } finally {
-            try {
+        } finally
+        {
+            try
+            {
                 is.close();
-            } catch (IOException e) {
+            } catch (IOException e)
+            {
                 Log.e(TAG, "Exception on closing MD5 input stream", e);
             }
         }
