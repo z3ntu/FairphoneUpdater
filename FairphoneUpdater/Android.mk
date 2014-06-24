@@ -30,4 +30,10 @@ LOCAL_CERTIFICATE := platform
 
 include $(BUILD_PACKAGE)
 
+include $(CLEAR_VARS)
+
+LOCAL_PREBUILT_STATIC_JAVA_LIBRARIES := roottoolslib:libs/RootTools-3.3.jar
+
+include $(BUILD_MULTI_PREBUILT)
+
 include $(call all-makefiles-under,$(LOCAL_PATH))
