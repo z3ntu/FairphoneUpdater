@@ -49,7 +49,6 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.AsyncTask.Status;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -155,7 +154,6 @@ public class FairphoneUpdater extends Activity
 
     private View mMoreInfoAndroidLogo;
 
-    private CopyFileToCacheTask mCopyTask;
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -163,8 +161,6 @@ public class FairphoneUpdater extends Activity
         Crashlytics.start(this);
         
         setContentView(R.layout.activity_fairphone_updater);
-
-        mCopyTask = new CopyFileToCacheTask();
         
         isDeviceSupported();
         mSharedPreferences = getSharedPreferences(FAIRPHONE_UPDATER_PREFERENCES, MODE_PRIVATE);
@@ -779,8 +775,6 @@ public class FairphoneUpdater extends Activity
             {
                 if (FairphoneUpdater.checkMD5(mSelectedVersion.getMd5Sum(), file))
                 {
-
-                    clearCache();
                     copyUpdateToCache(file);
                     setupCurrentVersionInfoLayout(mCurrentState);
                     updateMoreInfoLayout(true);
@@ -804,9 +798,9 @@ public class FairphoneUpdater extends Activity
 
     private void copyUpdateToCache(File file)
     {
-        if ( mCopyTask.getStatus() != Status.RUNNING ){
-            mCopyTask.execute(file.getAbsolutePath(), Environment.getDownloadCacheDirectory() + "/" + VersionParserHelper.getNameFromVersion(mSelectedVersion));
-        }
+    	CopyFileToCacheTask copyTask = new CopyFileToCacheTask();
+    	copyTask.execute(file.getPath(), Environment.getDownloadCacheDirectory() + "/" + VersionParserHelper.getNameFromVersion(mSelectedVersion));
+    	
         // put the animation 
 //        if (RootTools.isAccessGiven())
 //        {
@@ -1303,6 +1297,8 @@ public class FairphoneUpdater extends Activity
             
             if (RootTools.isAccessGiven())
             {
+            	clearCache();
+            	
                 File otaFilePath = new File(originalFilePath);
                 File otaFileCache = new File(destinyFilePath);
                 
