@@ -370,6 +370,7 @@ public class FairphoneUpdater extends Activity
         switch (mCurrentState)
         {
             case NORMAL:
+            	toggleMoreInfoLogo(true);
                 mMoreInfoActionButton.setText(R.string.downloadAndUpdateVersionBtn);
                 mMoreInfoActionButton.setEnabled(true);
                 mMoreInfoCancelButton.setText(R.string.lessInfo);
@@ -940,7 +941,7 @@ public class FairphoneUpdater extends Activity
         {
             // set the download for the latest version on the download manager
             String fileName = VersionParserHelper.getNameFromVersion(mSelectedVersion);
-            String downloadTitle = mSelectedVersion.getName() + " " + mSelectedVersion.getImageTypeDescription(getResources()) + " Update";
+            String downloadTitle = mSelectedVersion.getName() + " " + mSelectedVersion.getImageTypeDescription(getResources());
             Request request = createDownloadRequest(mSelectedVersion.getDownloadLink(), fileName, downloadTitle);
             if (request != null)
             {
@@ -1095,6 +1096,13 @@ public class FairphoneUpdater extends Activity
                     startDownloadProgressUpdateThread();
                     break;
                 case DownloadManager.STATUS_FAILED:
+                	Resources resources = getResources();
+                	if(mSelectedVersion != null){
+                		String downloadTitle = mSelectedVersion.getName() + " " + mSelectedVersion.getImageTypeDescription(resources);
+                		Toast.makeText(this, resources.getString(R.string.updateDownloadError) + " " + downloadTitle, Toast.LENGTH_LONG).show();
+                	}else{
+                		Toast.makeText(this, resources.getString(R.string.updateDownloadError), Toast.LENGTH_LONG).show();
+                	}
                     changeState(UpdaterState.NORMAL);
                     break;
             }
