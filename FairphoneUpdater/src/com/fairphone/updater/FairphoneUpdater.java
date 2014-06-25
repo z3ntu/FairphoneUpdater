@@ -57,6 +57,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
 import com.stericson.RootTools.RootTools;
 import com.stericson.RootTools.exceptions.RootDeniedException;
 import com.stericson.RootTools.execution.CommandCapture;
@@ -155,6 +156,8 @@ public class FairphoneUpdater extends Activity
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+        Crashlytics.start(this);
+        
         setContentView(R.layout.activity_fairphone_updater);
 
         isDeviceSupported();
