@@ -32,6 +32,7 @@ import android.app.ActivityManager.RunningServiceInfo;
 import android.app.AlertDialog;
 import android.app.DownloadManager;
 import android.app.DownloadManager.Request;
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -44,9 +45,11 @@ import android.content.res.Resources.NotFoundException;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.AsyncTask.Status;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -152,6 +155,7 @@ public class FairphoneUpdater extends Activity
 
     private View mMoreInfoAndroidLogo;
 
+    private CopyFileToCacheTask mCopyTask;
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -160,6 +164,8 @@ public class FairphoneUpdater extends Activity
         
         setContentView(R.layout.activity_fairphone_updater);
 
+        mCopyTask = new CopyFileToCacheTask();
+        
         isDeviceSupported();
         mSharedPreferences = getSharedPreferences(FAIRPHONE_UPDATER_PREFERENCES, MODE_PRIVATE);
 
@@ -797,14 +803,20 @@ public class FairphoneUpdater extends Activity
 
     private void copyUpdateToCache(File file)
     {
-        if (RootTools.isAccessGiven())
-        {
-            File OtaFileCache = new File(Environment.getDownloadCacheDirectory() + "/" + VersionParserHelper.getNameFromVersion(mSelectedVersion));
-            if (!OtaFileCache.exists())
-            {
-                RootTools.copyFile(file.getPath(), OtaFileCache.getPath(), false, false);
-            }
+        if ( mCopyTask.getStatus() != Status.RUNNING ){
+            mCopyTask.execute(file.getAbsolutePath(), Environment.getDownloadCacheDirectory() + "/" + VersionParserHelper.getNameFromVersion(mSelectedVersion));
         }
+        // put the animation 
+//        if (RootTools.isAccessGiven())
+//        {
+//            
+//            File OtaFileCache = new File(Environment.getDownloadCacheDirectory() + "/" + VersionParserHelper.getNameFromVersion(mSelectedVersion));
+//            if (!OtaFileCache.exists())
+//            {
+//                // TODO: ASYNC_TASK
+//                RootTools.copyFile(file.getPath(), OtaFileCache.getPath(), false, false);
+//            }
+//        }
     }
 
     private void clearCache()
@@ -1264,5 +1276,59 @@ public class FairphoneUpdater extends Activity
                 Log.e(TAG, "Exception on closing MD5 input stream", e);
             }
         }
+    }
+    
+    private class CopyFileToCacheTask extends AsyncTask<String, Integer, Integer>{
+
+        ProgressDialog mProgress;
+        @Override
+        protected Integer doInBackground(String... params)
+        {
+            // check the correct number of 
+            if(params.length != 2){
+                return -1;
+            }
+            
+            String originalFilePath = params[0];
+            String destinyFilePath = params[1];
+            
+            if (RootTools.isAccessGiven())
+            {
+                File otaFilePath = new File(originalFilePath);
+                File otaFileCache = new File(destinyFilePath);
+                
+                if (!otaFileCache.exists())
+                {
+                    RootTools.copyFile(otaFilePath.getPath(), otaFileCache.getPath(), false, false);
+                }
+            }
+            
+            return 1;
+        }
+        
+        protected void onProgressUpdate(Integer... progress) {
+            
+        }
+        
+        protected void onPreExecute() {
+            //mProgress = new ProgressDialog(FairphoneUpdater.this, ProgressDialog.STYLE_SPINNER);
+            
+            if(mProgress == null){
+//                mProgress.setTitle("Loading");
+//                mProgress.setMessage("Wait while loading...");
+                String title = "";
+                String message = FairphoneUpdater.this.getResources().getString(R.string.pleaseWait);
+                mProgress = ProgressDialog.show(FairphoneUpdater.this, title, message, true, false);
+            }
+        }
+
+        protected void onPostExecute(Integer result) {
+            // disable the spinner
+            if(mProgress != null){
+                mProgress.dismiss();
+                mProgress = null;
+            }
+        }
+        
     }
 }

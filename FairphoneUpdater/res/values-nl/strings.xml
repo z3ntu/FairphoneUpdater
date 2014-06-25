@@ -27,4 +27,6 @@
     <string name="updateDownloadError">Fout tijdens het downloaden</string>
     <string name="checkDetails">Bekijk details en installatieopties</string>
     <string name="alsoAvailable">Ook verkrijgbaar</string>
+    
+    <string name="pleaseWait">Even geduld ...</string>
 </resources>

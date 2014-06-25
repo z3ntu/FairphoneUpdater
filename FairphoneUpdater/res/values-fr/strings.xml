@@ -27,4 +27,6 @@
     <string name="updateDownloadError">Erreur de téléchargement</string>
     <string name="checkDetails">Vérifier les informations et les options d\'installation</string>
     <string name="alsoAvailable">Aussi disponible</string>
+    
+    <string name="pleaseWait">S\'il vous plaît patienter ...</string>
 </resources>

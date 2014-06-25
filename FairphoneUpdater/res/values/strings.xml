@@ -34,5 +34,6 @@
     <string name="checkDetails">Check details and installation options</string>
     <string name="alsoAvailable">Also Available</string>
     
+    <string name="pleaseWait">Please wait...</string>
 
 </resources>
