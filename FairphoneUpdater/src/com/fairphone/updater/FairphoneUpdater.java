@@ -627,15 +627,7 @@ public class FairphoneUpdater extends Activity
     private void setupNormalState()
     {
 
-        if (mLatestUpdateDownloadId != 0)
-        {
-            // residue download ID
-            mDownloadManager.remove(mLatestUpdateDownloadId);
-
-            mLatestUpdateDownloadId = 0;
-            savePreference(PREFERENCE_DOWNLOAD_ID, mLatestUpdateDownloadId);
-            setSelectedVersion(null);
-        }
+        removeLastUpdateDownload();
 
         mCurrentVersionInfoLayout.setVisibility(View.VISIBLE);
         mOtherVersionsLayout.setVisibility(View.VISIBLE);
@@ -645,6 +637,18 @@ public class FairphoneUpdater extends Activity
         setupCurrentVersionInfoLayout(UpdaterState.NORMAL);
         setupOtherVersionsLayout(UpdaterState.NORMAL);
     }
+
+	private void removeLastUpdateDownload() {
+		if (mLatestUpdateDownloadId != 0)
+        {
+            // residue download ID
+            mDownloadManager.remove(mLatestUpdateDownloadId);
+
+            mLatestUpdateDownloadId = 0;
+            savePreference(PREFERENCE_DOWNLOAD_ID, mLatestUpdateDownloadId);
+            setSelectedVersion(null);
+        }
+	}
 
     private void setupOtherVersionsLayout(UpdaterState state)
     {
@@ -784,11 +788,7 @@ public class FairphoneUpdater extends Activity
                 }
                 else
                 {
-                    mDownloadManager.remove(mLatestUpdateDownloadId);
-                    mLatestUpdateDownloadId = 0;
-
-                    savePreference(PREFERENCE_DOWNLOAD_ID, mLatestUpdateDownloadId);
-
+                    removeLastUpdateDownload();
                     Toast.makeText(this, resources.getString(R.string.invalidDownloadMessage), Toast.LENGTH_SHORT).show();
                 }
             }
@@ -901,6 +901,7 @@ public class FairphoneUpdater extends Activity
             broadcastIntent.setAction(FairphoneUpdater.GAPPS_REINSTALATION);
             this.sendBroadcast(broadcastIntent);
 
+            removeLastUpdateDownload();
             setSelectedVersion(null);
             // reboot the device into recovery
 
