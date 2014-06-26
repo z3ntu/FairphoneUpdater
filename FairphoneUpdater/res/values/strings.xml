@@ -36,4 +36,6 @@
     
     <string name="pleaseWait">Please wait&#8230;</string>
 
+    <string name="eraseAllPartitionsWarning">This update will erase all your data.\nDo you want to continue?</string>
+    
 </resources>

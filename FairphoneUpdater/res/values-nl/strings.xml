@@ -29,4 +29,5 @@
     <string name="alsoAvailable">Ook verkrijgbaar</string>
     
     <string name="pleaseWait">Even geduld&#8230;</string>
+    <string name="eraseAllPartitionsWarning">Deze update zal al uw gegevens gewist.\nWil je doorgaan?</string>
 </resources>

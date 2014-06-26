@@ -70,6 +70,8 @@ public class Version implements Comparable<Version> {
     private ArrayList<Integer> mDependencies;
 
     private String mImageType;
+    
+    private boolean mErasePartitionsWarning;
 
     public Version() {
         mDependencies = new ArrayList<Integer>();
@@ -105,6 +107,9 @@ public class Version implements Comparable<Version> {
         if (TextUtils.isEmpty(version.getMd5Sum()) || TextUtils.isEmpty(version.getMd5Sum())) {
             return null;
         }
+        
+        version.setEraseAllPartitionWarning(false);
+        
         return version;
     }
 
@@ -123,6 +128,14 @@ public class Version implements Comparable<Version> {
         editor.commit();
     }
 
+    public boolean hasEraseAllPartitionWarning(){
+        return mErasePartitionsWarning;
+    }
+    
+    public void setEraseAllPartitionWarning(boolean erasePartitionsWarning){
+        mErasePartitionsWarning = erasePartitionsWarning;
+    }
+    
     public int getNumber() {
         return mNumber;
     }

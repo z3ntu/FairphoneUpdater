@@ -29,4 +29,5 @@
     <string name="alsoAvailable">También disponible</string>
     
     <string name="pleaseWait">Por favor espere&#8230;</string>
+    <string name="eraseAllPartitionsWarning">Esta actualización borrará todos sus datos.\n¿Quiere continuar?</string>
 </resources>

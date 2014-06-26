@@ -65,6 +65,8 @@ public class VersionParserHelper {
         Version versionData = UpdaterData.getInstance().getVersion(version.getImageType(),
                 version.getNumber());
         version.setThumbnailLink(versionData != null ? versionData.getThumbnailLink() : null);
+        
+        
 
         return version;
     }
@@ -124,7 +126,7 @@ public class VersionParserHelper {
     }
 
     public enum XML_TAGS {
-        RELEASES, AOSP, FAIRPHONE, VERSION, NAME, BUILD_NUMBER, ANDROID_VERSION, RELEASE_NOTES, RELEASE_DATE, MD5SUM, THUMBNAIL_LINK, UPDATE_LINK, DEPENDENCIES;
+        RELEASES, AOSP, FAIRPHONE, VERSION, NAME, BUILD_NUMBER, ANDROID_VERSION, RELEASE_NOTES, RELEASE_DATE, MD5SUM, THUMBNAIL_LINK, UPDATE_LINK, ERASE_DATA_WARNING, DEPENDENCIES;
     }
 
     // @formatter:on
@@ -236,6 +238,8 @@ public class VersionParserHelper {
             version.setThumbnailLink(xpp.nextText());
         } else if (tagName.equalsIgnoreCase(XML_TAGS.UPDATE_LINK.name())) {
             version.setDownloadLink(xpp.nextText());
+        } else if (tagName.equalsIgnoreCase(XML_TAGS.ERASE_DATA_WARNING.name())) {
+            version.setEraseAllPartitionWarning(true);
         }
 
         return version;
