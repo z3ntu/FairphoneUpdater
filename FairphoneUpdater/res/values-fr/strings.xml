@@ -28,5 +28,5 @@
     <string name="checkDetails">Vérifier les informations et les options d\'installation</string>
     <string name="alsoAvailable">Aussi disponible</string>
     
-    <string name="pleaseWait">S\'il vous plaît patienter ...</string>
+    <string name="pleaseWait">S\'il vous plaît patienter&#8230;</string>
 </resources>
