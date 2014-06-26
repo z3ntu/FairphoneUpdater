@@ -915,7 +915,6 @@ public class FairphoneUpdater extends Activity
             	removeLastUpdateDownload();
             }
             
-            setSelectedVersion(null);
             // reboot the device into recovery
 
             // ((PowerManager)
