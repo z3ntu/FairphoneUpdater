@@ -197,5 +197,5 @@
 	<string name="google_apps_reinstall_request_title">Kleine Erinnerungshilfe</string>
     <string name="google_apps_reinstall_description">Um den Play Store auf deinem Telefon neu zu installieren, musst du zu all deinen Apps gehen, dort den Reiter Widgets anwählen, um von dort den Google Apps-Installer wieder auf dein Startfeld zu ziehen.</string>
 	
-	
+	<string name="pleaseWait">Bitte warten&#8230;</string>
 </resources>

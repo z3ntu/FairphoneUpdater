@@ -186,4 +186,5 @@
 	<string name="google_apps_connection_title">Fonction Wi-Fi désactivée</string>
 	<string name="google_apps_connection_description">Le fichier que vous essayez de télécharger est trop volumineux pour les connexions mobiles (~100 MB). Veuillez activer la connexion Wi-Fi et essayer à nouveau.</string>
 	
+	<string name="pleaseWait">S\'il vous plaît patienter&#8230;</string>
 </resources>

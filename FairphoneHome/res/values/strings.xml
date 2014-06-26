@@ -417,6 +417,7 @@ s
 	<string name="updatingSystem">Updating System #8230;</string>
 	<string name="google_apps_reinstall_request_title">Remember</string>
     <string name="google_apps_reinstall_description">To reinstall the Play store on your phone, you must go to All Apps, Widgets, then drag the Google Apps Installer widget to your Home panel and select it.</string>
-	
+    
+    <string name="pleaseWait">Please wait&#8230;</string>
 	
 </resources>

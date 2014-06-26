@@ -34,11 +34,13 @@ import java.util.zip.ZipInputStream;
 
 import org.fairphone.launcher.R;
 import org.fairphone.launcher.rsa.utils.RSAUtils;
+import org.fairphone.launcher.util.Utils;
 import org.fairphone.widgets.gapps.GoogleAppsInstallerWidget;
 
 import android.app.AlertDialog;
 import android.app.DownloadManager;
 import android.app.DownloadManager.Request;
+import android.app.ProgressDialog;
 import android.appwidget.AppWidgetManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -52,6 +54,7 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Environment;
 import android.util.Log;
@@ -97,7 +100,8 @@ public class GappsInstallerHelper {
 			.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
 			.getAbsolutePath();
 
-	private static String RECOVERY_PATH = "cache/";
+	private static String RECOVERY_CACHE_PATH = "cache/";
+	private static String RECOVERY_SDCARD_PATH = "sdcard/";
 
 	private static String ZIP_CONTENT_PATH = "/googleapps/";
 
@@ -145,12 +149,14 @@ public class GappsInstallerHelper {
 	    
 	    if (mSharedPrefs.getBoolean(GAPPS_REINSTALL_FLAG, false)) {
 	        showReinstallAlert();
+			forceCleanGappsZipFile();
         }
         
 		File f = new File("/system/app/OneTimeInitializer.apk");
 
 		if (f.exists()) {
 		    updateWidgetState(GAPPS_INSTALLED_STATE);
+		    forceCleanGappsZipFile();
 	        return true;
 		}
 		
@@ -314,6 +320,14 @@ public class GappsInstallerHelper {
 
 		if (downloadID != 0) {
 			mDownloadManager.remove(downloadID);
+			
+			SharedPreferences.Editor prefEdit = mSharedPrefs.edit();
+			// Save the download id
+			prefEdit.putLong(GOOGLE_APPS_DOWNLOAD_ID, 0);
+			prefEdit.putInt(GappsInstallerHelper.GOOGLE_APPS_INSTALLER_PROGRESS, 0);
+			prefEdit.putInt(GappsInstallerHelper.GOOGLE_APPS_INSTALLER_PROGRESS_MAX, 0);
+
+			prefEdit.commit();
 		}
 
 		String gappsFileName = mContext.getResources().getString(
@@ -529,15 +543,13 @@ public class GappsInstallerHelper {
 		String downloadPath = "";
 		if (Build.MODEL.equals(resources.getString(R.string.FP1Model))) {
 			File path = Environment.getDataDirectory();
-			android.os.StatFs stat = new android.os.StatFs(path.getPath());
-			long blockSize = stat.getBlockSize();
-			long availableBlocks = stat.getBlockCount() * blockSize;
-			double sizeInGB = (((double) availableBlocks / 1024d) / 1024d) / 1024d;
+			double sizeInGB = Utils.getPartitionSizeInGBytes(path);
 			double roundedSize = (double) Math.ceil(sizeInGB * 100d) / 100d;
 			Log.d(TAG, "/data size: " + roundedSize + "Gb");
 			
+			double fp1DataPartitionSize = (double)resources.getInteger(R.integer.FP1DataPartitionSizeMb) / 100d;
 			//Add a little buffer to the 1gb default just in case
-			downloadPath = roundedSize <= 1.1d ? resources
+			downloadPath = roundedSize <= fp1DataPartitionSize ? resources
 					.getString(R.string.oneGBDataPartition) : resources
 					.getString(R.string.unifiedDataPartition);
 		}
@@ -561,8 +573,9 @@ public class GappsInstallerHelper {
 	                     "echo '--wipe_cache' >> /cache/recovery/command"));
 	             
 	             Shell.runRootCommand(new CommandCapture(0,
-	                     "echo '--update_package=/" + RECOVERY_PATH
+	                     "echo '--update_package=/" + (canCopyToCache() ? RECOVERY_CACHE_PATH : RECOVERY_SDCARD_PATH)
 	                        + fileName + "' >> /cache/recovery/command"));
+	             
 				
 	             /*p = Runtime.getRuntime().exec("su");
 
@@ -600,19 +613,23 @@ public class GappsInstallerHelper {
 	}
 
 	private void copyGappsToCache() {
-		clearCache();
-		String filename = mContext.getResources().getString(
-				R.string.gapps_installer_filename);
-		File file = new File(DOWNLOAD_PATH + "/" + filename);
-		File OtaFileCache = new File(
-				Environment.getDownloadCacheDirectory()
-						+ "/"
-						+ filename);
-		if(!OtaFileCache.exists()){
-			RootTools.copyFile(file.getPath(), OtaFileCache.getPath(),
-					false, false);
+		if (canCopyToCache()) {
+			String filename = mContext.getResources().getString(
+					R.string.gapps_installer_filename);
+			File file = new File(DOWNLOAD_PATH + "/" + filename);
+			CopyFileToCacheTask copyTask = new CopyFileToCacheTask();
+			copyTask.execute(file.getPath(), Environment.getDownloadCacheDirectory() + "/" + filename);
+		} else{
+			Log.d(TAG, "No space on cache. Defaulting to Sdcard");
 		}
 	}
+	
+	public boolean canCopyToCache(){
+    	Resources resources = mContext.getResources();
+		double cacheSize = Utils.getPartitionSizeInMBytes(Environment.getDownloadCacheDirectory());
+		return cacheSize > resources.getInteger(R.integer.FP1CachePartitionSizeMb) && 
+				cacheSize > resources.getInteger(R.integer.minimalCachePartitionSizeMb);
+    }
 	
 	private void clearCache() {
 		File f = Environment.getDownloadCacheDirectory();        
@@ -1164,5 +1181,56 @@ public class GappsInstallerHelper {
         if (!f.isDirectory()) {
             f.mkdirs();
         }
+    }
+    
+    private class CopyFileToCacheTask extends AsyncTask<String, Integer, Integer>{
+
+        ProgressDialog mProgress;
+        @Override
+        protected Integer doInBackground(String... params)
+        {
+            // check the correct number of params
+            if(params.length != 2){
+                return -1;
+            }
+            
+            String originalFilePath = params[0];
+            String destinyFilePath = params[1];
+            
+            if (RootTools.isAccessGiven())
+            {
+            	clearCache();
+            	
+                File otaFilePath = new File(originalFilePath);
+                File otaFileCache = new File(destinyFilePath);
+                
+                if (!otaFileCache.exists())
+                {
+                    RootTools.copyFile(otaFilePath.getPath(), otaFileCache.getPath(), false, false);
+                }
+            }
+            
+            return 1;
+        }
+        
+        protected void onProgressUpdate(Integer... progress) {
+            
+        }
+        
+        protected void onPreExecute() {            
+            if(mProgress == null){
+                String title = "";
+                String message = mContext.getResources().getString(R.string.pleaseWait);
+                mProgress = ProgressDialog.show(mContext, title, message, true, false);
+            }
+        }
+
+        protected void onPostExecute(Integer result) {
+            // disable the spinner
+            if(mProgress != null){
+                mProgress.dismiss();
+                mProgress = null;
+            }
+        }     
     }
 }

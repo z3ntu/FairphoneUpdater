@@ -210,5 +210,5 @@
 	<string name="google_apps_reinstall_request_title">Não esquecer</string>
     <string name="google_apps_reinstall_description">Para voltar a instalar a Play store no seu telefone, deve ir ao All Apps, Widgets, e depois arrastar o Instalador das Google Apps para o painel do Home e selecioná-lo.</string>
 	
-	
+	<string name="pleaseWait">Por favor aguarde&#8230;</string>
 </resources>

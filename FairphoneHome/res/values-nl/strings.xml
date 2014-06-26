@@ -197,4 +197,5 @@
 	<string name="google_apps_reinstall_request_title">Herinnering</string>
     <string name="google_apps_reinstall_description">Om de Play store te herinstalleren, ga naar All Apps, Widgets en sleep de Google App Installer widget naar je startpaneel en selecteer deze.</string>
 	
+    <string name="pleaseWait">Even geduld&#8230;</string>
 </resources>
