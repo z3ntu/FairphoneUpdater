@@ -18,7 +18,11 @@
     <string name="oneGBDataPartition">/originalPartition</string>
 	<string name="unifiedDataPartition">/unifiedPartition</string>
 	<string name="FP1Model">FP1</string>
-	<string name="recoveryPath">cache</string>
+	<string name="recoveryCachePath">cache</string>
+	<string name="recoverySdCardPath">sdcard</string>
 	<string name="updaterFolder">/updater/</string>
+	<integer name="FP1CachePartitionSizeMb">130</integer>
+	<integer name="minimalCachePartitionSizeMb">300</integer>
+	<integer name="FP1DataPartitionSizeMb">1100</integer>
 	   
 </resources>

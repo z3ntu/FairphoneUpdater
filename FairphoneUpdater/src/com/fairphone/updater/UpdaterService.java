@@ -44,6 +44,8 @@ import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import com.fairphone.updater.tools.RSAUtils;
+import com.fairphone.updater.tools.Utils;
 import com.stericson.RootTools.execution.CommandCapture;
 import com.stericson.RootTools.execution.Shell;
 
@@ -152,15 +154,13 @@ public class UpdaterService extends Service {
 		String downloadPath = "";
 		if (Build.MODEL.equals(resources.getString(R.string.FP1Model))) {
 			File path = Environment.getDataDirectory();
-			android.os.StatFs stat = new android.os.StatFs(path.getPath());
-			long blockSize = stat.getBlockSize();
-			long availableBlocks = stat.getBlockCount() * blockSize;
-			double sizeInGB = (((double) availableBlocks / 1024d) / 1024d) / 1024d;
+			double sizeInGB = Utils.getPartitionSizeInGBytes(path);
 			double roundedSize = (double) Math.ceil(sizeInGB * 100d) / 100d;
-			Log.d(TAG, "/data size: " + roundedSize + "Gb");
+			Log.d(TAG, path.getPath() + " size: " + roundedSize + "Gb");
 			
+			double fp1DataPartitionSize = (double)resources.getInteger(R.integer.FP1DataPartitionSizeMb) / 100d;
 			//Add a little buffer to the 1gb default just in case
-			downloadPath = roundedSize <= 1.1d ? resources
+			downloadPath = roundedSize <= fp1DataPartitionSize ? resources
 					.getString(R.string.oneGBDataPartition) : resources
 					.getString(R.string.unifiedDataPartition);
 		}

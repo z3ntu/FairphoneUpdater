@@ -60,6 +60,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
+import com.fairphone.updater.tools.Utils;
 import com.stericson.RootTools.RootTools;
 import com.stericson.RootTools.exceptions.RootDeniedException;
 import com.stericson.RootTools.execution.CommandCapture;
@@ -798,20 +799,19 @@ public class FairphoneUpdater extends Activity
 
     private void copyUpdateToCache(File file)
     {
-    	CopyFileToCacheTask copyTask = new CopyFileToCacheTask();
-    	copyTask.execute(file.getPath(), Environment.getDownloadCacheDirectory() + "/" + VersionParserHelper.getNameFromVersion(mSelectedVersion));
-    	
-        // put the animation 
-//        if (RootTools.isAccessGiven())
-//        {
-//            
-//            File OtaFileCache = new File(Environment.getDownloadCacheDirectory() + "/" + VersionParserHelper.getNameFromVersion(mSelectedVersion));
-//            if (!OtaFileCache.exists())
-//            {
-//                // TODO: ASYNC_TASK
-//                RootTools.copyFile(file.getPath(), OtaFileCache.getPath(), false, false);
-//            }
-//        }
+		if (canCopyToCache()) {
+			CopyFileToCacheTask copyTask = new CopyFileToCacheTask();
+			copyTask.execute(file.getPath(), Environment.getDownloadCacheDirectory()+ "/" + VersionParserHelper.getNameFromVersion(mSelectedVersion));
+		} else{
+			Log.d(TAG, "No space on cache. Defaulting to Sdcard");
+		}
+    }
+    
+    public boolean canCopyToCache(){
+    	Resources resources = getResources();
+		double cacheSize = Utils.getPartitionSizeInMBytes(Environment.getDownloadCacheDirectory());
+		return cacheSize > resources.getInteger(R.integer.FP1CachePartitionSizeMb) && 
+				cacheSize > resources.getInteger(R.integer.minimalCachePartitionSizeMb);
     }
 
     private void clearCache()
@@ -851,27 +851,15 @@ public class FairphoneUpdater extends Activity
 
                 Shell.runRootCommand(new CommandCapture(0, "echo '--wipe_cache' >> /cache/recovery/command"));
 
-                Shell.runRootCommand(new CommandCapture(0, "echo '--update_package=/" + resources.getString(R.string.recoveryPath) + "/"
-                        + VersionParserHelper.getNameFromVersion(mSelectedVersion) + "' >> /cache/recovery/command"));
-
-                // p = Runtime.getRuntime().exec("su");
-                //
-                // DataOutputStream os = new
-                // DataOutputStream(p.getOutputStream());
-                // os.writeBytes("rm -f /cache/recovery/command\n");
-                // os.writeBytes("rm -f /cache/recovery/extendedcommand\n");
-                //
-                // os.writeBytes("echo '--wipe_cache' >> /cache/recovery/command\n");
-                //
-                // os.writeBytes("echo '--update_package=/" +
-                // resources.getString(R.string.recoveryPath) + "/"
-                // + VersionParserHelper.getNameFromVersion(mSelectedVersion) +
-                // "' >> /cache/recovery/command\n");
-                //
-                // os.writeBytes("sync\n");
-                // os.writeBytes("exit\n");
-                // os.flush();
-                // p.waitFor();
+                if(canCopyToCache()){
+	                Shell.runRootCommand(new CommandCapture(0, "echo '--update_package=/" + resources.getString(R.string.recoveryCachePath) + "/"
+	                        + VersionParserHelper.getNameFromVersion(mSelectedVersion) + "' >> /cache/recovery/command"));
+                }else{
+                	Shell.runRootCommand(new CommandCapture(0, "echo '--update_package=/" + resources.getString(R.string.recoverySdCardPath)
+                			+ resources.getString(R.string.updaterFolder) + 
+                			VersionParserHelper.getNameFromVersion(mSelectedVersion) + 
+                			"' >> /cache/recovery/command"));
+                }
             } catch (IOException e)
             {
                 // TODO Auto-generated catch block
@@ -895,7 +883,10 @@ public class FairphoneUpdater extends Activity
             broadcastIntent.setAction(FairphoneUpdater.GAPPS_REINSTALATION);
             this.sendBroadcast(broadcastIntent);
 
-            removeLastUpdateDownload();
+            if(canCopyToCache()){
+            	removeLastUpdateDownload();
+            }
+            
             setSelectedVersion(null);
             // reboot the device into recovery
 
