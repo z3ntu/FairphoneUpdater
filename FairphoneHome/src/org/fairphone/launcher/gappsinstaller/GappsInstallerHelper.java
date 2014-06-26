@@ -101,7 +101,8 @@ public class GappsInstallerHelper {
 			.getAbsolutePath();
 
 	private static String RECOVERY_CACHE_PATH = "cache/";
-	private static String RECOVERY_SDCARD_PATH = "sdcard/";
+    private static String RECOVERY_SDCARD_PATH = "sdcard/Download/";
+
 
 	private static String ZIP_CONTENT_PATH = "/googleapps/";
 
