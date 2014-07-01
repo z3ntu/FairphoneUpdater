@@ -333,7 +333,7 @@ public class FairphoneUpdater extends Activity
         mMoreInfoText = (Button) findViewById(R.id.moreInfoText);
     }
 
-    public void updateMoreInfoLayout(boolean hasUpdate)
+    public void updateMoreInfoLayout(final boolean hasUpdate)
     {
 
         updateMoreInfoReleaseNotesText(hasUpdate);
@@ -349,7 +349,7 @@ public class FairphoneUpdater extends Activity
             @Override
             public void onClick(View v)
             {
-                toggleReleaseInfoOtherVersions();
+                toggleReleaseInfoOtherVersions(hasUpdate);
                 if (mCurrentState == UpdaterState.DOWNLOAD || mCurrentState == UpdaterState.PREINSTALL)
                 {
 
@@ -358,10 +358,10 @@ public class FairphoneUpdater extends Activity
             }
         });
 
-        updateMoreInfoActionButton();
+        updateMoreInfoActionButton(hasUpdate);
     }
 
-    public void updateMoreInfoActionButton()
+    public void updateMoreInfoActionButton(boolean hasUpdate)
     {
         // set button text
         switch (mCurrentState)
@@ -370,7 +370,7 @@ public class FairphoneUpdater extends Activity
             	toggleMoreInfoLogo(true);
                 mMoreInfoActionButton.setText(R.string.downloadAndUpdateVersionBtn);
                 mMoreInfoActionButton.setEnabled(true);
-                mMoreInfoCancelButton.setText(R.string.lessInfo);
+                mMoreInfoCancelButton.setText(hasUpdate ? android.R.string.cancel : R.string.lessInfo);
                 break;
             case DOWNLOAD:
                 toggleMoreInfoLogo(false);
@@ -501,7 +501,7 @@ public class FairphoneUpdater extends Activity
         }
     }
 
-    public void toggleReleaseInfoOtherVersions()
+    public void toggleReleaseInfoOtherVersions(boolean hasUpdate)
     {
         if (mOtherVersionsLayout.getVisibility() == View.VISIBLE)
         {
@@ -515,7 +515,7 @@ public class FairphoneUpdater extends Activity
         {
             mOtherVersionsLayout.setVisibility(View.VISIBLE);
             mMoreInfoLayout.setVisibility(View.GONE);
-            mMoreInfoText.setText(R.string.moreInfo);
+            mMoreInfoText.setText(hasUpdate ? R.string.installVersion : R.string.moreInfo);
             mMoreInfoText.setVisibility(View.VISIBLE);
             toggleMoreInfoLogo(true);
         }
@@ -709,7 +709,11 @@ public class FairphoneUpdater extends Activity
 
                 setupUpdateAvailable(resources, isUpdateAvailable);
 
-                mMoreInfoText.setText(mMoreInfoLayout.getVisibility() == View.VISIBLE ? R.string.lessInfo : R.string.moreInfo);
+                if(isUpdateAvailable){
+                	mMoreInfoText.setText(mMoreInfoLayout.getVisibility() == View.VISIBLE ? R.string.lessInfo : R.string.installVersion);
+                } else {
+                	mMoreInfoText.setText(mMoreInfoLayout.getVisibility() == View.VISIBLE ? R.string.lessInfo : R.string.moreInfo);
+                }
                 mMoreInfoText.setVisibility(mMoreInfoLayout.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
 
                 mMoreInfoText.setOnClickListener(new OnClickListener()
@@ -719,7 +723,7 @@ public class FairphoneUpdater extends Activity
                     public void onClick(View v)
                     {
                         updateMoreInfoLayout(isUpdateAvailable);
-                        toggleReleaseInfoOtherVersions();
+                        toggleReleaseInfoOtherVersions(isUpdateAvailable);
                     }
                 });
 

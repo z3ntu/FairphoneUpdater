@@ -26,7 +26,7 @@
     <string name="configFileDownloadError">Fout tijdens downloaden configuratie bestand. Gebruikte link:</string>
     <string name="updateDownloadError">Fout tijdens het downloaden</string>
     <string name="checkDetails">Bekijk details en installatieopties</string>
-    <string name="alsoAvailable">Ook verkrijgbaar</string>
+    <string name="alsoAvailable">Besturingssysteem bibliotheek</string>
     
     <string name="pleaseWait">Even geduld&#8230;</string>
     <string name="eraseAllPartitionsWarning">Deze update zal al uw gegevens gewist.\nWil je doorgaan?</string>

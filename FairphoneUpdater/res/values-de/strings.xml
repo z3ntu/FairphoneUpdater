@@ -26,7 +26,7 @@
     <string name="configFileDownloadError">Fehler beim Herunterladen der Konfigurationsdatei. Benutzter Link:</string>
     <string name="updateDownloadError">Fehler beim Herunterladen</string>
     <string name="checkDetails">Schau dir die Details und Installationsoptionen an</string>
-    <string name="alsoAvailable">Auch verfügbar</string>
+    <string name="alsoAvailable">Betriebssystems Datenbank</string>
     
     <string name="pleaseWait">Bitte warten&#8230;</string>
     <string name="eraseAllPartitionsWarning">Dieses Update wird alle Ihre Daten löschen.\nWollen Sie fortfahren?</string>

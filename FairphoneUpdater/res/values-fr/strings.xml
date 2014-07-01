@@ -26,7 +26,7 @@
     <string name="configFileDownloadError">Erreur de téléchargement de fichier de configuration. Lien utilisé:</string>
     <string name="updateDownloadError">Erreur de téléchargement</string>
     <string name="checkDetails">Vérifier les informations et les options d\'installation</string>
-    <string name="alsoAvailable">Aussi disponible</string>
+    <string name="alsoAvailable">Bibliotheque de système d\'exploitation</string>
     
     <string name="pleaseWait">S\'il vous plaît patienter&#8230;</string>
     <string name="eraseAllPartitionsWarning">Cette mise à jour effacera toutes vos données.\nVoulez-vous continuer?</string>

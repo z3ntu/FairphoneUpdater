@@ -65,7 +65,7 @@ public class VersionParserHelper {
         Version versionData = UpdaterData.getInstance().getVersion(version.getImageType(),
                 version.getNumber());
         version.setThumbnailLink(versionData != null ? versionData.getThumbnailLink() : null);
-        
+        version.setReleaseNotes(versionData != null ? versionData.getReleaseNotes() : "");
         
 
         return version;

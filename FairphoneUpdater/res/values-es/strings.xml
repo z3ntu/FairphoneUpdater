@@ -26,7 +26,7 @@
     <string name="configFileDownloadError">Error descargando archivo de configuración. Link usado:</string>
     <string name="updateDownloadError">Error de descarga</string>
     <string name="checkDetails">Verifica los detalles y opciones de instalación</string>
-    <string name="alsoAvailable">También disponible</string>
+    <string name="alsoAvailable">Librería del sistema operativo</string>
     
     <string name="pleaseWait">Por favor espere&#8230;</string>
     <string name="eraseAllPartitionsWarning">Esta actualización borrará todos sus datos.\n¿Quiere continuar?</string>

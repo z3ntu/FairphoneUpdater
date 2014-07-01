@@ -26,7 +26,7 @@
     <string name="configFileDownloadError">Erro ao descarregar o ficheiro de configuração. Link utilizado:</string>
     <string name="updateDownloadError">Erro ao descarregar</string>
     <string name="checkDetails">Ver detalhes e opções de instalação</string>
-    <string name="alsoAvailable">Também disponíveis</string>
+    <string name="alsoAvailable">Biblioteca de sistemas operativos</string>
     
     <string name="pleaseWait">Por favor aguarde&#8230;</string>
     <string name="eraseAllPartitionsWarning">Este update irá apagar todos os seus dados.\nDeseja continuar?</string>

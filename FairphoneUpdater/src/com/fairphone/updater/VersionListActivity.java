@@ -151,7 +151,7 @@ public class VersionListActivity extends Activity
             versionLayout.setClickable(true);
 
             TextView versionName = (TextView) versionLayout.findViewById(R.id.versionNameText);
-            versionName.setText(version.getName());
+            versionName.setText(version.getName() + " " + version.getBuildNumber());
 
             //ImageView versionImage = (ImageView) versionLayout.findViewById(R.id.versionImage);
             //Picasso.with(this).load(version.getThumbnailLink()).placeholder(R.drawable.fairphone_updater_current_version).into(versionImage);
@@ -168,7 +168,7 @@ public class VersionListActivity extends Activity
                     {
                         toggleVersionDetails();
 
-                        mVersionListHeaderSubTitle.setText(selectedVersion.getName());
+                        mVersionListHeaderSubTitle.setText(selectedVersion.getName() + " " + selectedVersion.getBuildNumber());
 
                         //                        Picasso.with(getApplicationContext()).load(selectedVersion.getThumbnailLink())
                         //                                .placeholder(R.drawable.fairphone_updater_current_version).into(mSelectedVersionImage);

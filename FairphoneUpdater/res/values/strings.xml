@@ -22,7 +22,7 @@
     <string name="newVersionAvailable">New version available</string>
     <string name="youAreRunning">You are running</string>
     <string name="fairphoneOS">Fairphone OS</string>
-    <string name="aospOS">Android AOSP OS</string>
+    <string name="aospOS">Stock Android</string>
     <string name="fairphone">Fairphone</string>
     <string name="android">Android</string>
     <string name="downloadAndUpdateVersionBtn">Download and Update</string>
@@ -32,7 +32,7 @@
     <string name="configFileDownloadError">Error downloading config file. Link used:</string>
     <string name="updateDownloadError">Error downloading</string>
     <string name="checkDetails">Check details and installation options</string>
-    <string name="alsoAvailable">Also Available</string>
+    <string name="alsoAvailable">OS Library</string>
     
     <string name="pleaseWait">Please wait&#8230;</string>
 
