@@ -29,11 +29,11 @@
             android:id="@+id/updateLogoAndroid"
             android:layout_width="match_parent"
             android:layout_height="100dp"
-            android:background="#b6c55d"
+            android:background="#a3c539"
             android:paddingBottom="10dp"
             android:paddingTop="10dp"
             android:scaleType="centerInside"
-            android:src="@drawable/logo_android"
+            android:src="@drawable/aosp_versions_button_logo"
             android:visibility="gone" />
         
         <LinearLayout

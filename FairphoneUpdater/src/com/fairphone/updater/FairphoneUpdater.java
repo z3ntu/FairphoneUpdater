@@ -402,7 +402,7 @@ public class FairphoneUpdater extends Activity
                     // .into(mCurrentVersionImage);
                     int logo =
                             Version.IMAGE_TYPE_FAIRPHONE.equalsIgnoreCase(mSelectedVersion.getImageType()) ? R.drawable.logo_fairphone
-                                    : R.drawable.logo_android;
+                                    : R.drawable.aosp_versions_button_logo;
                     mCurrentVersionImage.setImageResource(logo);
                 }
                 
@@ -701,7 +701,7 @@ public class FairphoneUpdater extends Activity
                 // .placeholder(R.drawable.logo_fairphone)
                 // .into(mCurrentVersionImage);
 
-                int logo = Version.IMAGE_TYPE_FAIRPHONE.equalsIgnoreCase(mDeviceVersion.getImageType()) ? R.drawable.logo_fairphone : R.drawable.logo_android;
+                int logo = Version.IMAGE_TYPE_FAIRPHONE.equalsIgnoreCase(mDeviceVersion.getImageType()) ? R.drawable.logo_fairphone : R.drawable.aosp_versions_button_logo;
                 mCurrentVersionImage.setImageResource(logo);
 
                 mCurrentVersionNameText.setText(mDeviceVersion.getImageTypeDescription(resources) + " " + mDeviceVersion.getName() + " "
@@ -735,7 +735,7 @@ public class FairphoneUpdater extends Activity
                     // Picasso.with(getApplicationContext()).load(mSelectedVersion.getThumbnailLink())
                     // .placeholder(R.drawable.logo_fairphone)
                     // .into(mCurrentVersionImage);
-                    logo = Version.IMAGE_TYPE_FAIRPHONE.equalsIgnoreCase(mSelectedVersion.getImageType()) ? R.drawable.logo_fairphone : R.drawable.logo_android;
+                    logo = Version.IMAGE_TYPE_FAIRPHONE.equalsIgnoreCase(mSelectedVersion.getImageType()) ? R.drawable.logo_fairphone : R.drawable.aosp_versions_button_logo;
                     mCurrentVersionImage.setImageResource(logo);
                 }
                 break;
