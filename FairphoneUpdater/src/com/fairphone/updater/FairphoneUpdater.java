@@ -919,8 +919,10 @@ public class FairphoneUpdater extends Activity
             	removeLastUpdateDownload();
             }
             
+            setSelectedVersion(null);
+            // remove the update files from data
+            removeUpdateFilesFromData();
             // reboot the device into recovery
-
             // ((PowerManager)
             // getSystemService(POWER_SERVICE)).reboot("recovery");
             try
@@ -947,10 +949,57 @@ public class FairphoneUpdater extends Activity
 
     }
 
+    
+    
+    // ************************************************************************************
+    // Update Removal
+    // ************************************************************************************
+    private void removeUpdateFilesFromData()
+    {
+        try
+        {
+            Shell.runRootCommand(new CommandCapture(0, getResources().getString(R.string.removePlayStoreCommand),
+                                                       getResources().getString(R.string.removeGooglePlusCommand),
+                                                       getResources().getString(R.string.removeSoundSearchCommand),
+                                                       getResources().getString(R.string.removeGmailCommand),
+                                                       getResources().getString(R.string.removePlayServicesCommand),
+                                                       getResources().getString(R.string.removeQuicksearchCommand),
+                                                       getResources().getString(R.string.removeTalkbackCommand),
+                                                       getResources().getString(R.string.removeText2SpeechCommand)));
+        } catch (IOException e)
+        {
+            e.printStackTrace();
+        } catch (TimeoutException e)
+        {
+            e.printStackTrace();
+        } catch (RootDeniedException e)
+        {
+            e.printStackTrace();
+        }
+    }
+
     // ************************************************************************************
     // DOWNLOAD UPDATE
     // ************************************************************************************
 
+    private String getModelAndOS()
+    {
+        StringBuilder sb = new StringBuilder();
+        
+        // attach the model and the os
+        sb.append("?");
+        sb.append("model="+Build.MODEL);
+        Version currentVersion = VersionParserHelper
+                .getDeviceVersion(this);
+        
+        if(currentVersion != null){
+            sb.append("&");
+            sb.append("os="+currentVersion.getAndroidVersion());
+        }
+        
+        return sb.toString();
+    }
+    
     private void startUpdateDownload()
     {
         // use only on WiFi
@@ -959,7 +1008,7 @@ public class FairphoneUpdater extends Activity
             // set the download for the latest version on the download manager
             String fileName = VersionParserHelper.getNameFromVersion(mSelectedVersion);
             String downloadTitle = mSelectedVersion.getName() + " " + mSelectedVersion.getImageTypeDescription(getResources());
-            Request request = createDownloadRequest(mSelectedVersion.getDownloadLink(), fileName, downloadTitle);
+            Request request = createDownloadRequest(mSelectedVersion.getDownloadLink() + getModelAndOS(), fileName, downloadTitle);
             if (request != null)
             {
                 mLatestUpdateDownloadId = mDownloadManager.enqueue(request);

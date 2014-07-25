@@ -113,7 +113,7 @@ public class UpdaterService extends Service {
 	public void startDownloadLatest() {
 		if (hasConnection()) {
 			Resources resources = getApplicationContext().getResources();
-			String downloadLink = getConfigDownloadLink(resources);
+			String downloadLink = getConfigDownloadLink(getApplicationContext());
 			// set the download for the latest version on the download manager
 			Request request = createDownloadRequest(
 					downloadLink,
@@ -136,8 +136,10 @@ public class UpdaterService extends Service {
 		}
 	}
 
-	private String getConfigDownloadLink(Resources resources) {
+	private String getConfigDownloadLink(Context context) {
 		
+	    Resources resources = context.getResources();
+	    
 		StringBuilder sb = new StringBuilder();
 		sb.append(resources.getString(R.string.downloadUrl));
 		sb.append(Build.MODEL);
@@ -145,10 +147,29 @@ public class UpdaterService extends Service {
 		sb.append("/");
 		sb.append(resources.getString(R.string.configFilename));
 		sb.append(resources.getString(R.string.config_zip));
+		
+		addModelAndOS(context, sb);
+		
 		String downloadLink = sb.toString();
+		
 		Log.d(TAG, "Download link: " + downloadLink);
+		
 		return downloadLink;
 	}
+
+    private void addModelAndOS(Context context, StringBuilder sb)
+    {
+        // attach the model and the os
+		sb.append("?");
+		sb.append("model="+Build.MODEL);
+		Version currentVersion = VersionParserHelper
+                .getDeviceVersion(context.getApplicationContext());
+        
+		if(currentVersion != null){
+		    sb.append("&");
+		    sb.append("os="+currentVersion.getAndroidVersion());
+		}
+    }
 
 	private String getPartitionDownloadPath(Resources resources) {
 		String downloadPath = "";
