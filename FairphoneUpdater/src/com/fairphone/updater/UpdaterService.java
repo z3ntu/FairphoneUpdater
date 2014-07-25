@@ -141,11 +141,17 @@ public class UpdaterService extends Service {
 	    Resources resources = context.getResources();
 	    
 		StringBuilder sb = new StringBuilder();
-		sb.append(resources.getString(R.string.downloadUrl));
+		if(FairphoneUpdater.DEV_MODE_ENABLED){
+		    sb.append(resources.getString(R.string.downloadDevUrl));
+		} else {
+		    sb.append(resources.getString(R.string.downloadUrl));
+		}
 		sb.append(Build.MODEL);
 		sb.append(getPartitionDownloadPath(resources));
 		sb.append("/");
+		
 		sb.append(resources.getString(R.string.configFilename));
+		
 		sb.append(resources.getString(R.string.config_zip));
 		
 		addModelAndOS(context, sb);
