@@ -438,13 +438,13 @@ public class FairphoneUpdater extends Activity
                 break;
             case DOWNLOAD:
                 toggleMoreInfoLogo(false);
-                mMoreInfoActionButton.setText(R.string.installBtn);
+                mMoreInfoActionButton.setText(R.string.rebootDevice);
                 mMoreInfoActionButton.setEnabled(false);
                 mMoreInfoCancelButton.setText(android.R.string.cancel);
                 break;
             case PREINSTALL:
                 toggleMoreInfoLogo(false);
-                mMoreInfoActionButton.setText(R.string.installBtn);
+                mMoreInfoActionButton.setText(R.string.rebootDevice);
                 mMoreInfoActionButton.setEnabled(true);
                 mMoreInfoCancelButton.setText(android.R.string.cancel);
                 break;
