@@ -155,7 +155,7 @@ public class FairphoneUpdater extends Activity
 
     private View mMoreInfoAndroidLogo;
     
-    public static Boolean DEV_MODE_ENABLED;
+    public static boolean DEV_MODE_ENABLED;
     private int mIsDevModeCounter;
 
     @Override
@@ -358,10 +358,23 @@ public class FairphoneUpdater extends Activity
                 if(!DEV_MODE_ENABLED){
                     mIsDevModeCounter--;
                     
+                    Log.d(TAG, "Developper mode in " + mIsDevModeCounter + " Clicks...");
+                    
                     if(mIsDevModeCounter <= 0){
                         DEV_MODE_ENABLED = true;
                         
                         Toast.makeText(FairphoneUpdater.this, "Developer mode enabled for this session", Toast.LENGTH_SHORT).show();
+                        
+                        Log.d(TAG, "Developer mode enabled for this session");
+                        
+                        try
+                        {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e1)
+                        {
+                            // TODO Auto-generated catch block
+                            e1.printStackTrace();
+                        }
                         
                         FairphoneUpdater.this.stopUpdaterService();
                         
@@ -975,7 +988,7 @@ public class FairphoneUpdater extends Activity
             	removeLastUpdateDownload();
             }
             
-            setSelectedVersion(null);
+            // setSelectedVersion(null);
             // remove the update files from data
             removeUpdateFilesFromData();
             // reboot the device into recovery

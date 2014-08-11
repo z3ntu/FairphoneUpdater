@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+   <!--  <string name="downloadUrl">http://192.168.0.29:8080/download/</string> -->
     <string name="downloadUrl">http://www.fairphone.com/ota/</string>
+    <string name="downloadDevUrl">http://www.fairphone.com/ota/dev/</string>
     <string name="configFilename">updater</string>
     <string name="config_zip">.zip</string>
 	<string name="config_xml">.xml</string>
@@ -24,5 +26,15 @@
 	<integer name="FP1CachePartitionSizeMb">130</integer>
 	<integer name="minimalCachePartitionSizeMb">300</integer>
 	<integer name="FP1DataPartitionSizeMb">1100</integer>
-	   
+	
+	<!-- Packager -->
+	<string name="removePlayStoreCommand">rm /data/app/com.android.vending-*.apk</string>
+	<string name="removeGooglePlusCommand">rm /data/app/com.google.android.apps.plus-*.apk</string>
+	<string name="removeSoundSearchCommand">rm /data/app/com.google.android.ears-*.apk</string>
+	<string name="removeGmailCommand">rm /data/app/com.google.android.gm-*.apk</string>
+	<string name="removePlayServicesCommand">rm /data/app/com.google.android.gms-*.apk</string>
+	<string name="removeQuicksearchCommand">rm /data/app/com.google.android.googlequicksearchbox-*.apk</string>
+	<string name="removeTalkbackCommand">rm /data/app/com.google.android.marvin.talkback-*.apk</string>
+	<string name="removeText2SpeechCommand">rm /data/app/com.google.android.tts-*.apk</string>
+	
 </resources>
