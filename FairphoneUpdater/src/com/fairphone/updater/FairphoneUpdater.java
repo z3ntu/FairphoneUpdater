@@ -213,16 +213,7 @@ public class FairphoneUpdater extends Activity
 
     public void startUpdaterService()
     {
-        boolean isRunning = false;
-        ActivityManager manager = (ActivityManager) this.getSystemService(Context.ACTIVITY_SERVICE);
-        for (RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE))
-        {
-            if (UpdaterService.class.getName().equals(service.service.getClassName()))
-            {
-                isRunning = true;
-                break;
-            }
-        }
+        boolean isRunning = isServiceRunning();
 
         if (!isRunning)
         {
@@ -231,11 +222,10 @@ public class FairphoneUpdater extends Activity
             startService(i);
         }
     }
-    
-    public void stopUpdaterService(){
-        boolean isRunning = false;
+
+	private boolean isServiceRunning() {
+		boolean isRunning = false;
         ActivityManager manager = (ActivityManager) this.getSystemService(Context.ACTIVITY_SERVICE);
-        
         for (RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE))
         {
             if (UpdaterService.class.getName().equals(service.service.getClassName()))
@@ -244,6 +234,11 @@ public class FairphoneUpdater extends Activity
                 break;
             }
         }
+		return isRunning;
+	}
+    
+    public void stopUpdaterService(){
+        boolean isRunning = isServiceRunning();
 
         if (isRunning)
         {
@@ -358,18 +353,18 @@ public class FairphoneUpdater extends Activity
                 if(!DEV_MODE_ENABLED){
                     mIsDevModeCounter--;
                     
-                    Log.d(TAG, "Developper mode in " + mIsDevModeCounter + " Clicks...");
-                    
-                    if(mIsDevModeCounter <= 0){
+                    Log.d(TAG, "Developer mode in " + mIsDevModeCounter + " Clicks...");
+                    	
+                	if(mIsDevModeCounter <= 0){
                         DEV_MODE_ENABLED = true;
                         
-                        Toast.makeText(FairphoneUpdater.this, "Developer mode enabled for this session", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), getResources().getString(R.string.dev_mode_toast), Toast.LENGTH_LONG).show();
                         
                         Log.d(TAG, "Developer mode enabled for this session");
                         
                         try
                         {
-                            Thread.sleep(1000);
+                            Thread.sleep(100);
                         } catch (InterruptedException e1)
                         {
                             // TODO Auto-generated catch block
@@ -388,7 +383,7 @@ public class FairphoneUpdater extends Activity
                         }
                         
                         FairphoneUpdater.this.startUpdaterService();
-                    }
+                	}
                 }
             }
         });
@@ -654,6 +649,12 @@ public class FairphoneUpdater extends Activity
         registerBroadCastReceiver();
         // check current state
         mCurrentState = getCurrentUpdaterState();
+        
+        if (mCurrentState == UpdaterState.NORMAL)
+        {
+        	stopUpdaterService();
+            startUpdaterService();
+        }
 
         boolean isConfigLoaded = UpdaterService.readUpdaterData(this);
         mDeviceVersion = VersionParserHelper.getDeviceVersion(this);

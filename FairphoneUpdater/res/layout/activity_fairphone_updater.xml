@@ -113,10 +113,10 @@
             android:layout_height="85dp"
             android:layout_gravity="right"
             android:layout_marginBottom="13.3dp"
-            android:background="#2aa8e0"
+            android:background="@drawable/fp_versions_btn_background_color"
             android:fontFamily="sans-serif-light"
             android:text="@string/fairphoneOS"
-            android:textColor="#000"
+            android:textColor="@color/versions_button_color_text"
             android:textSize="20sp" />
 		
 		    <ImageView
@@ -142,10 +142,10 @@
             android:layout_width="match_parent"
             android:layout_height="85dp"
             android:layout_gravity="right"
-            android:background="#a3c539"
+            android:background="@drawable/aosp_versions_btn_background_color"
             android:fontFamily="sans-serif-light"
             android:text="@string/aospOS"
-            android:textColor="#000"
+            android:textColor="@color/versions_button_color_text"
             android:textSize="20sp" />
 		
 		    <ImageView
@@ -162,6 +162,8 @@
     </LinearLayout>
 
     <include
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_weight="1"
         layout="@layout/version_detailed_info" />
 
