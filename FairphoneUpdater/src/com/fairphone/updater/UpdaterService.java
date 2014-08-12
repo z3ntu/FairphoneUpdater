@@ -43,6 +43,7 @@ import android.os.Environment;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.fairphone.updater.tools.RSAUtils;
 import com.fairphone.updater.tools.Utils;
@@ -239,10 +240,6 @@ public class UpdaterService extends Service {
 		
 		// Add notification
 		manager.notify(0, notificationWhileRunnig);
-		
-		//to update the activity
-		Intent updateIntent = new Intent(FairphoneUpdater.FAIRPHONE_UPDATER_NEW_VERSION_RECEIVED);
-        context.sendBroadcast(updateIntent);
 	}
 
 	private Request createDownloadRequest(String url, String fileName) {
@@ -304,10 +301,12 @@ public class UpdaterService extends Service {
 				.getDeviceVersion(context.getApplicationContext());
 		
 		if(latestVersion != null){
-		    
 			if(latestVersion.isNewerVersionThan(currentVersion)){			
 				setNotification(context);
 			} 
+			//to update the activity
+			Intent updateIntent = new Intent(FairphoneUpdater.FAIRPHONE_UPDATER_NEW_VERSION_RECEIVED);
+	        context.sendBroadcast(updateIntent);
 		}
 	}
 	
@@ -323,10 +322,16 @@ public class UpdaterService extends Service {
 
         File file = new File(filePath);
 
-        if (file.exists() && RSAUtils.checkFileSignature(context, filePath, targetPath)) {
-            checkVersionValidation(context);
-            retVal = true;
-        }
+        if (file.exists()){
+        	if(RSAUtils.checkFileSignature(context, filePath, targetPath)) {
+	            checkVersionValidation(context);
+	            retVal = true;
+        	}
+        	else {
+        		Toast.makeText(context, resources.getString(R.string.invalidSignatureDownloadMessage), Toast.LENGTH_LONG).show();
+        		file.delete();
+            }
+        } 
 
         return retVal;
     }
@@ -339,7 +344,22 @@ public class UpdaterService extends Service {
         VersionParserHelper.removeFiles(context);
     }
 
-    private class DownloadBroadCastReceiver extends BroadcastReceiver {
+    private boolean retryDownload(Context context) {
+		//invalid file
+    	boolean removeReceiver = true;
+		removeLatestFileDownload(context);
+		if(mDownloadRetries < MAX_DOWNLOAD_RETRIES){
+		    startDownloadLatest();
+		    mDownloadRetries++;
+		    removeReceiver = false;
+		}
+		if(removeReceiver){
+			Toast.makeText(getApplicationContext(), getResources().getString(R.string.configFileDownloadError), Toast.LENGTH_LONG).show();
+		}
+		return removeReceiver;
+	}
+
+	private class DownloadBroadCastReceiver extends BroadcastReceiver {
 
         @Override
 		public void onReceive(Context context, Intent intent) {
@@ -355,30 +375,32 @@ public class UpdaterService extends Service {
 				int columnIndex = cursor
 						.getColumnIndex(DownloadManager.COLUMN_STATUS);
 				int status = cursor.getInt(columnIndex);
-
-				if (status == DownloadManager.STATUS_SUCCESSFUL) {
-				    
-					Resources resources = context.getApplicationContext().getResources();
-				    String filePath = mDownloadManager.getUriForDownloadedFile(
-				            mLatestFileDownloadId).getPath();
-				    
-				    String targetPath = Environment.getExternalStorageDirectory()
-		                    + resources.getString(R.string.updaterFolder);
-                    
-				    if(RSAUtils.checkFileSignature(context, filePath, targetPath)){
-    					checkVersionValidation(context);
-					}else{
-					    //invalid file
-					    removeLatestFileDownload(context);
-					    if(mDownloadRetries < MAX_DOWNLOAD_RETRIES){
-    					    startDownloadLatest();
-    				        mDownloadRetries++;
-    					    removeReceiver = false;
-					    }
+				Resources resources = context.getApplicationContext().getResources();
+				
+				switch (status) {
+					case DownloadManager.STATUS_SUCCESSFUL:
+					{
+					    String filePath = mDownloadManager.getUriForDownloadedFile(
+					            mLatestFileDownloadId).getPath();
+					    
+					    String targetPath = Environment.getExternalStorageDirectory()
+			                    + resources.getString(R.string.updaterFolder);
+	                    
+					    if(RSAUtils.checkFileSignature(context, filePath, targetPath)){
+	    					checkVersionValidation(context);
+						}else{
+							Toast.makeText(getApplicationContext(), resources.getString(R.string.invalidSignatureDownloadMessage), Toast.LENGTH_LONG).show();
+						    removeReceiver = retryDownload(context);
+						}
+					    break;
+					}
+					case DownloadManager.STATUS_FAILED:
+					{
+	            		removeReceiver = retryDownload(context);
+		                break;
 					}
 				}
 			}
-
 			cursor.close();
 
 			if(removeReceiver){

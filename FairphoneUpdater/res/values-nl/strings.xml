@@ -6,7 +6,6 @@
     <string name="installVersion">Installeer nieuwe versie</string>
     <string name="rebootDevice">Herstart apparaat</string>   
     <string name="messageReadyToInstall">Nieuwe versie staat klaar om te installeren&#8230;</string>
-    <string name="invalidDownloadMessage">Gedownloade bestand is ongeldig</string>
     <string name="fairphoneUpdateMessage">Nieuwe Fairphone update beschikbaar</string>
     <string name="downloadMessage">Downloaden update, een moment geduld&#8230;</string>
     <string name="downloadUpdateTitle">Nieuwe Fairphone update</string>
@@ -23,7 +22,8 @@
     <string name="installBtn">Installeer</string>
     <string name="downloading">Aan het downloaden</string>
     <string name="deviceNotSupported">Apparaat niet ondersteund</string>
-    <string name="configFileDownloadError">Fout tijdens downloaden configuratie bestand. Gebruikte link:</string>
+    <string name="configFileDownloadError">Fout tijdens downloaden configuratie bestand.</string>
+    <string name="configFileDownloadLinkError">Fout tijdens downloaden configuratie bestand. Gebruikte link:</string>
     <string name="updateDownloadError">Fout tijdens het downloaden</string>
     <string name="checkDetails">Bekijk details en installatieopties</string>
     <string name="alsoAvailable">Besturingssysteem bibliotheek</string>

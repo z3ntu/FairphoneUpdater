@@ -6,7 +6,6 @@
     <string name="installVersion">Installer la nouvelle version</string>
     <string name="rebootDevice">Redémarrer l\'appareil</string>
     <string name="messageReadyToInstall">Une nouvelle version est prête à installer&#8230;</string>
-    <string name="invalidDownloadMessage">Fichier téléchargé invalide</string>
     <string name="fairphoneUpdateMessage">Nouvelle mise à jour de Fairphone disponible</string>
     <string name="downloadMessage">Téléchargement de la mise à jour, veuillez patienter&#8230;</string>
     <string name="downloadUpdateTitle">Nouvelle mise à jour de Fairphone</string>
@@ -23,7 +22,8 @@
     <string name="installBtn">Installer</string>
     <string name="downloading">Téléchargement</string>
     <string name="deviceNotSupported">Appareil non supporté</string>
-    <string name="configFileDownloadError">Erreur de téléchargement de fichier de configuration. Lien utilisé:</string>
+    <string name="configFileDownloadError">Erreur de téléchargement de fichier de configuration.</string>
+    <string name="configFileDownloadLinkError">Erreur de téléchargement de fichier de configuration. Lien utilisé:</string>
     <string name="updateDownloadError">Erreur de téléchargement</string>
     <string name="checkDetails">Vérifier les informations et les options d\'installation</string>
     <string name="alsoAvailable">Bibliotheque de système d\'exploitation</string>

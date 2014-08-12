@@ -44,4 +44,11 @@ public class Utils {
 		long availableBlocks = stat.getBlockCount() * blockSize;
 		return availableBlocks;
 	}
+	
+	public static long getAvailablePartitionSizeInBytes(File path) {
+		android.os.StatFs stat = new android.os.StatFs(path.getPath());
+		long blockSize = stat.getBlockSize();
+		long availableBlocks = stat.getAvailableBlocks() * blockSize;
+		return availableBlocks;
+	}
 }

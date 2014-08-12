@@ -184,15 +184,7 @@ public class FairphoneUpdater extends Activity
         mCurrentState = getCurrentUpdaterState();
 
         setupLayout();
-
-        setupInstallationReceivers();
-
-        setupBroadcastReceiver();
-
-        if (mCurrentState == UpdaterState.NORMAL)
-        {
-            startUpdaterService();
-        }
+        
     }
 
     private void isDeviceSupported()
@@ -220,6 +212,12 @@ public class FairphoneUpdater extends Activity
             Log.e(TAG, "Starting Updater Service...");
             Intent i = new Intent(this, UpdaterService.class);
             startService(i);
+            try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
         }
     }
 
@@ -245,6 +243,12 @@ public class FairphoneUpdater extends Activity
             Log.e(TAG, "Stoping Updater Service...");
             Intent i = new Intent(this, UpdaterService.class);
             stopService(i);
+            try {
+				Thread.sleep(200);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
         }
     }
 
@@ -269,7 +273,7 @@ public class FairphoneUpdater extends Activity
                 else if (FairphoneUpdater.FAIRPHONE_UPDATER_CONFIG_DOWNLOAD_FAILED.equals(action))
                 {
                     String link = intent.getStringExtra(FairphoneUpdater.FAIRPHONE_UPDATER_CONFIG_DOWNLOAD_LINK);
-                    Toast.makeText(context.getApplicationContext(), context.getResources().getString(R.string.configFileDownloadError) + " " + link,
+                    Toast.makeText(context.getApplicationContext(), context.getResources().getString(R.string.configFileDownloadLinkError) + " " + link,
                             Toast.LENGTH_LONG).show();
                 }
             }
@@ -646,6 +650,10 @@ public class FairphoneUpdater extends Activity
     {
         super.onResume();
         
+        setupInstallationReceivers();
+
+        setupBroadcastReceiver();
+        
         registerBroadCastReceiver();
         // check current state
         mCurrentState = getCurrentUpdaterState();
@@ -885,8 +893,8 @@ public class FairphoneUpdater extends Activity
                 }
                 else
                 {
+                	Toast.makeText(this, resources.getString(R.string.invalidMD5DownloadMessage), Toast.LENGTH_LONG).show();
                     removeLastUpdateDownload();
-                    Toast.makeText(this, resources.getString(R.string.invalidDownloadMessage), Toast.LENGTH_SHORT).show();
                 }
             }
         }
@@ -906,6 +914,7 @@ public class FairphoneUpdater extends Activity
 			copyTask.execute(file.getPath(), Environment.getDownloadCacheDirectory()+ "/" + VersionParserHelper.getNameFromVersion(mSelectedVersion));
 		} else{
 			Log.d(TAG, "No space on cache. Defaulting to Sdcard");
+			Toast.makeText(getApplicationContext(), getResources().getString(R.string.noSpaceAvailableCache), Toast.LENGTH_LONG).show();
 		}
     }
     
@@ -989,7 +998,6 @@ public class FairphoneUpdater extends Activity
             	removeLastUpdateDownload();
             }
             
-            // setSelectedVersion(null);
             // remove the update files from data
             removeUpdateFilesFromData();
             // reboot the device into recovery
@@ -1235,9 +1243,9 @@ public class FairphoneUpdater extends Activity
                 	Resources resources = getResources();
                 	if(mSelectedVersion != null){
                 		String downloadTitle = mSelectedVersion.getName() + " " + mSelectedVersion.getImageTypeDescription(resources);
-                		Toast.makeText(this, resources.getString(R.string.updateDownloadError) + " " + downloadTitle, Toast.LENGTH_LONG).show();
+                		Toast.makeText(getApplicationContext(), resources.getString(R.string.updateDownloadError) + " " + downloadTitle, Toast.LENGTH_LONG).show();
                 	}else{
-                		Toast.makeText(this, resources.getString(R.string.updateDownloadError), Toast.LENGTH_LONG).show();
+                		Toast.makeText(getApplicationContext(), resources.getString(R.string.updateDownloadError), Toast.LENGTH_LONG).show();
                 	}
                     changeState(UpdaterState.NORMAL);
                     break;
@@ -1272,6 +1280,13 @@ public class FairphoneUpdater extends Activity
                         {
                             int bytes_downloaded = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR));
                             int bytes_total = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_TOTAL_SIZE_BYTES));
+                            
+                            if(bytes_total <= Utils.getAvailablePartitionSizeInBytes(Environment.getExternalStorageDirectory()))
+                            {
+                            	downloading = false;
+                            	Toast.makeText(getApplicationContext(), getResources().getString(R.string.noSpaceAvailableSdcard), Toast.LENGTH_LONG).show();
+                            	changeState(UpdaterState.NORMAL);
+                            }
 
                             if (cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS)) == DownloadManager.STATUS_SUCCESSFUL)
                             {

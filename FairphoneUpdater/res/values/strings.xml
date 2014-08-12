@@ -8,7 +8,6 @@
     <string name="installVersion">Install new version</string>
     <string name="rebootDevice">Reboot device</string>
     <string name="messageReadyToInstall">New version ready to install&#8230;</string>
-    <string name="invalidDownloadMessage">Invalid file downloaded</string>
     <string name="fairphoneUpdateMessage">New Fairphone update available</string>
     <string name="downloadMessage">Downloading version, please wait&#8230;</string>
     <string name="downloadUpdateTitle">New Fairphone update</string>
@@ -29,7 +28,8 @@
     <string name="installBtn">Install</string>
     <string name="downloading">Downloading</string>
     <string name="deviceNotSupported">Device not supported</string>
-    <string name="configFileDownloadError">Error downloading config file. Link used:</string>
+    <string name="configFileDownloadError">Error downloading config file.</string>
+    <string name="configFileDownloadLinkError">Error downloading config file. Link used:</string>
     <string name="updateDownloadError">Error downloading</string>
     <string name="checkDetails">Check details and installation options</string>
     <string name="alsoAvailable">OS Library</string>
@@ -38,5 +38,9 @@
 
     <string name="eraseAllPartitionsWarning">This update will erase all your data.\nDo you want to continue?</string>
     <string name="dev_mode_toast">Developer mode enabled for this session</string>
+    <string name="noSpaceAvailableCache">No space available on /cache. Aborting&#8230;</string>
+    <string name="noSpaceAvailableSdcard">No space available on memory. Aborting&#8230;</string>
+    <string name="invalidMD5DownloadMessage">Invalid file downloaded: Wrong MD5</string>
+    <string name="invalidSignatureDownloadMessage">Invalid file downloaded: Bad signature</string>
     
 </resources>

@@ -6,7 +6,6 @@
     <string name="installVersion">Neue Version installieren</string>
     <string name="rebootDevice">Gerät neustarten</string>
     <string name="messageReadyToInstall">Neue Version bereit zur Installation&#8230;</string>
-    <string name="invalidDownloadMessage">Ungültige Datei runtergeladen</string>
     <string name="fairphoneUpdateMessage">Neues Fairphone Update verfügbar</string>
     <string name="downloadMessage">Lade Datei, bitte warten&#8230;</string>
     <string name="downloadUpdateTitle">Neue Fairphone Version</string>
@@ -23,7 +22,8 @@
     <string name="installBtn">Installieren</string>
     <string name="downloading">Datei wird heruntergeladen</string>
     <string name="deviceNotSupported">Gerät wird nicht unterstützt</string>
-    <string name="configFileDownloadError">Fehler beim Herunterladen der Konfigurationsdatei. Benutzter Link:</string>
+    <string name="configFileDownloadError">Fehler beim Herunterladen der Konfigurationsdatei</string>
+    <string name="configFileDownloadLinkError">Fehler beim Herunterladen der Konfigurationsdatei. Benutzter Link:</string>
     <string name="updateDownloadError">Fehler beim Herunterladen</string>
     <string name="checkDetails">Schau dir die Details und Installationsoptionen an</string>
     <string name="alsoAvailable">Betriebssystems Datenbank</string>

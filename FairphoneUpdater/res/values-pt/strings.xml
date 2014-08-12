@@ -6,7 +6,6 @@
     <string name="installVersion">Instalar nova versão</string>
     <string name="rebootDevice">Reiniciar dispositivo</string>
     <string name="messageReadyToInstall">Nova versão pronta para instalar&#8230;</string>
-    <string name="invalidDownloadMessage">Ficheiro descarregado inválido</string>
     <string name="fairphoneUpdateMessage">Nova actualização Fairphone disponível</string>
     <string name="downloadMessage">A descarregar nova versão, por favor aguarde&#8230;</string>
     <string name="downloadUpdateTitle">Nova actualização Fairphone</string>
@@ -23,7 +22,8 @@
     <string name="installBtn">Instalar</string>
     <string name="downloading">A decarregar</string>
     <string name="deviceNotSupported">Dispositivo não suportado</string>
-    <string name="configFileDownloadError">Erro ao descarregar o ficheiro de configuração. Link utilizado:</string>
+    <string name="configFileDownloadError">Erro ao descarregar o ficheiro de configuração.</string>
+    <string name="configFileDownloadLinkError">Erro ao descarregar o ficheiro de configuração. Link utilizado:</string>
     <string name="updateDownloadError">Erro ao descarregar</string>
     <string name="checkDetails">Ver detalhes e opções de instalação</string>
     <string name="alsoAvailable">Biblioteca de sistemas operativos</string>
