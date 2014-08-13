@@ -17,6 +17,8 @@
 package com.fairphone.updater;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -27,7 +29,9 @@ import android.util.Log;
 
 public class Version implements Comparable<Version> {
 
-    private static final String TAG = Version.class.getSimpleName();
+    public static final String DEFAULT_RELEASE_NOTES_LANG = "en";
+
+	private static final String TAG = Version.class.getSimpleName();
 
     private static final String DEPENDENCY_SEPARATOR = ",";
 
@@ -61,7 +65,7 @@ public class Version implements Comparable<Version> {
 
     private String mBuildNumber;
 
-    private String mReleaseNotes;
+    private Map<String,String> mReleaseNotesMap;
 
     private String mReleaseDate;
 
@@ -75,6 +79,7 @@ public class Version implements Comparable<Version> {
 
     public Version() {
         mDependencies = new ArrayList<Integer>();
+        mReleaseNotesMap = new HashMap<String, String>();
     }
 
     public static Version getVersionFromSharedPreferences(Context context) {
@@ -202,7 +207,7 @@ public class Version implements Comparable<Version> {
         setName(null);
         setBuildNumber(null);
         setAndroidVersion(null);
-        setReleaseNotes(null);
+        resetReleaseNotes();
         setReleaseDate(null);
         setMd5Sum(null);
         setThumbnailLink(null);
@@ -218,12 +223,23 @@ public class Version implements Comparable<Version> {
         return mBuildNumber;
     }
 
-    public void setReleaseNotes(String releaseNotes) {
-        mReleaseNotes = releaseNotes;
+    public void setReleaseNotes(String language, String releaseNotes) {
+        mReleaseNotesMap.put(language.toLowerCase(), releaseNotes);
     }
 
-    public String getReleaseNotes() {
-        return TextUtils.isEmpty(mReleaseNotes) ? "" : mReleaseNotes;
+    public String getReleaseNotes(String language) {
+    	String releaseNotes = "";
+    	
+    	if(mReleaseNotesMap.containsKey(language)){
+    		releaseNotes = mReleaseNotesMap.get(language);
+    	}else if(mReleaseNotesMap.containsKey(DEFAULT_RELEASE_NOTES_LANG)){
+    		releaseNotes = mReleaseNotesMap.get(DEFAULT_RELEASE_NOTES_LANG);
+    	}
+        return TextUtils.isEmpty(releaseNotes) ? "" : releaseNotes;
+    }
+    
+    public void resetReleaseNotes(){
+    	mReleaseNotesMap.clear();
     }
 
     public void setReleaseDate(String releaseDate) {

@@ -17,6 +17,7 @@
 package com.fairphone.updater;
 
 import java.util.List;
+import java.util.Locale;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -196,7 +197,7 @@ public class VersionListActivity extends Activity
     public void updateMoreInfoLayout(Version selectedVersion)
     {
     	
-        mReleaseNotesText.setText(selectedVersion.getReleaseNotes() + "\n" + selectedVersion.getAndroidVersion(getResources()));
+        mReleaseNotesText.setText(selectedVersion.getReleaseNotes(Locale.getDefault().getLanguage()) + "\n" + selectedVersion.getAndroidVersion(getResources()));
         if(Version.IMAGE_TYPE_FAIRPHONE.equalsIgnoreCase(selectedVersion.getImageType())){
         	mMoreInfoFairphoneLogo.setVisibility(View.VISIBLE);
             mMoreInfoAndroidLogo.setVisibility(View.GONE);

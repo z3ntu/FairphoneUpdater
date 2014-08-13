@@ -21,6 +21,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Locale;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
@@ -65,7 +66,7 @@ public class VersionParserHelper {
         Version versionData = UpdaterData.getInstance().getVersion(version.getImageType(),
                 version.getNumber());
         version.setThumbnailLink(versionData != null ? versionData.getThumbnailLink() : null);
-        version.setReleaseNotes(versionData != null ? versionData.getReleaseNotes() : "");
+        version.setReleaseNotes(Locale.getDefault().getLanguage(), versionData != null ? versionData.getReleaseNotes(Locale.getDefault().getLanguage()) : "");
         
 
         return version;
@@ -229,8 +230,10 @@ public class VersionParserHelper {
         } else if (tagName.equalsIgnoreCase(XML_TAGS.DEPENDENCIES.name())) {
             version.setVersionDependencies(xpp.nextText());
         } else if (tagName.equalsIgnoreCase(XML_TAGS.RELEASE_NOTES.name())) {
-            version.setReleaseNotes(xpp.nextText());
-        } else if (tagName.equalsIgnoreCase(XML_TAGS.RELEASE_DATE.name())) {
+            version.setReleaseNotes(Version.DEFAULT_RELEASE_NOTES_LANG, xpp.nextText());
+        } else if (tagName.equalsIgnoreCase(XML_TAGS.RELEASE_NOTES.name() + "_" + Locale.getDefault().getLanguage())) {
+            version.setReleaseNotes(Locale.getDefault().getLanguage(), xpp.nextText());
+        }else if (tagName.equalsIgnoreCase(XML_TAGS.RELEASE_DATE.name())) {
             version.setReleaseDate(xpp.nextText());
         } else if (tagName.equalsIgnoreCase(XML_TAGS.MD5SUM.name())) {
             version.setMd5Sum(xpp.nextText());

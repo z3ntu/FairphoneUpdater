@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Locale;
 import java.util.concurrent.TimeoutException;
 
 import android.app.Activity;
@@ -560,12 +561,12 @@ public class FairphoneUpdater extends Activity
         if (hasUpdate)
         {
             mReleaseNotesTitleText.setText(resources.getString(R.string.releaseNotes));
-            mReleaseNotesText.setText(version.getReleaseNotes() + "\n" + version.getAndroidVersion(resources));
+            mReleaseNotesText.setText(version.getReleaseNotes(Locale.getDefault().getLanguage()) + "\n" + version.getAndroidVersion(resources));
         }
         else
         {
             mReleaseNotesTitleText.setText(resources.getString(R.string.releaseNotes));
-            mReleaseNotesText.setText(mDeviceVersion.getReleaseNotes() + "\n" + mDeviceVersion.getAndroidVersion(resources));
+            mReleaseNotesText.setText(mDeviceVersion.getReleaseNotes(Locale.getDefault().getLanguage()) + "\n" + mDeviceVersion.getAndroidVersion(resources));
         }
     }
 
