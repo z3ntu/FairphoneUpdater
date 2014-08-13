@@ -1282,7 +1282,7 @@ public class FairphoneUpdater extends Activity
                             int bytes_downloaded = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR));
                             int bytes_total = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_TOTAL_SIZE_BYTES));
                             
-                            if(bytes_total <= Utils.getAvailablePartitionSizeInBytes(Environment.getExternalStorageDirectory()))
+                            if((bytes_total + 10000) > Utils.getAvailablePartitionSizeInBytes(Environment.getExternalStorageDirectory()))
                             {
                             	downloading = false;
                             	Toast.makeText(getApplicationContext(), getResources().getString(R.string.noSpaceAvailableSdcard), Toast.LENGTH_LONG).show();
