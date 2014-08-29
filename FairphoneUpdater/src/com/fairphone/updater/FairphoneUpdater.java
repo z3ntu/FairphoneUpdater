@@ -193,9 +193,10 @@ public class FairphoneUpdater extends Activity
 
         Resources resources = getResources();
         String[] suportedDevices = resources.getString(R.string.supportedDevices).split(";");
+        String modelWithoutSpaces = Build.MODEL.replaceAll("\\s","");
         for (String device : suportedDevices)
         {
-            if (Build.MODEL.equalsIgnoreCase(device))
+            if (modelWithoutSpaces.equalsIgnoreCase(device))
             {
                 return;
             }
@@ -1067,7 +1068,7 @@ public class FairphoneUpdater extends Activity
         
         // attach the model and the os
         sb.append("?");
-        sb.append("model="+Build.MODEL);
+        sb.append("model="+Build.MODEL.replaceAll("\\s",""));
         Version currentVersion = VersionParserHelper
                 .getDeviceVersion(this);
         

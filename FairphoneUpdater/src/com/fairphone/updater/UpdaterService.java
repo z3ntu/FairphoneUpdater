@@ -147,7 +147,7 @@ public class UpdaterService extends Service {
 		} else {
 		    sb.append(resources.getString(R.string.downloadUrl));
 		}
-		sb.append(Build.MODEL);
+		sb.append(Build.MODEL.replaceAll("\\s",""));
 		sb.append(getPartitionDownloadPath(resources));
 		sb.append("/");
 		
@@ -168,7 +168,7 @@ public class UpdaterService extends Service {
     {
         // attach the model and the os
 		sb.append("?");
-		sb.append("model="+Build.MODEL);
+		sb.append("model="+Build.MODEL.replaceAll("\\s",""));
 		Version currentVersion = VersionParserHelper
                 .getDeviceVersion(context.getApplicationContext());
         
@@ -180,7 +180,8 @@ public class UpdaterService extends Service {
 
 	private String getPartitionDownloadPath(Resources resources) {
 		String downloadPath = "";
-		if (Build.MODEL.equals(resources.getString(R.string.FP1Model))) {
+		String modelWithoutSpaces = Build.MODEL.replaceAll("\\s","");
+		if (modelWithoutSpaces.equals(resources.getString(R.string.FP1Model))) {
 			File path = Environment.getDataDirectory();
 			double sizeInGB = Utils.getPartitionSizeInGBytes(path);
 			double roundedSize = (double) Math.ceil(sizeInGB * 100d) / 100d;
