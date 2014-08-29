@@ -30,4 +30,9 @@
     
     <string name="pleaseWait">Bitte warten&#8230;</string>
     <string name="eraseAllPartitionsWarning">Dieses Update wird alle Ihre Daten löschen.\nWollen Sie fortfahren?</string>
+    <string name="dev_mode_toast">Entwicklermodus aktiviert für diese Sitzung</string>
+    <string name="noSpaceAvailableCache">Kein Speicherplatz mehr verfühgbar im Cache. Abrechen&#8230;</string>
+    <string name="noSpaceAvailableSdcard">Kein Speicherplatz mehr verfühgbar im Datenspeicher. Abrechen&#8230;</string>
+    <string name="invalidMD5DownloadMessage">Ungültige Datei herruntergeladen: Flasche MD5-Datei</string>
+    <string name="invalidSignatureDownloadMessage">Ungültige Datei herruntergeladen: Falsche Authentifikation</string>
 </resources>

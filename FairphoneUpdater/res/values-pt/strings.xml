@@ -30,4 +30,9 @@
     
     <string name="pleaseWait">Por favor aguarde&#8230;</string>
     <string name="eraseAllPartitionsWarning">Este update irá apagar todos os seus dados.\nDeseja continuar?</string>
+    <string name="dev_mode_toast">Modo de desenvolvimento activo para esta sessão</string>
+    <string name="noSpaceAvailableCache">Sem espaço disponível em /cache. A abortar&#8230;</string>
+    <string name="noSpaceAvailableSdcard">Sem espaço disponível na memória. A abortar&#8230;</string>
+    <string name="invalidMD5DownloadMessage">Ficheiro inválido descarregado: MD5 errado</string>
+    <string name="invalidSignatureDownloadMessage">Ficheiro inválido descarregado: Assinatura errada</string>
 </resources>

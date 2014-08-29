@@ -30,5 +30,10 @@
     
     <string name="pleaseWait">S\'il vous plaît patienter&#8230;</string>
     <string name="eraseAllPartitionsWarning">Cette mise à jour effacera toutes vos données.\nVoulez-vous continuer?</string>
+    <string name="dev_mode_toast">Mode développeur activé pour cette session</string>
+    <string name="noSpaceAvailableCache">Pas d\'espace disponible dans /cache. Telechargement abandonné&#8230;</string>
+    <string name="noSpaceAvailableSdcard">Pas d\'espace disponible dans /data. Telechargement abandonné&#8230;</string>
+    <string name="invalidMD5DownloadMessage">Fichier téléchargé non valide: Mauvaise somme MD5</string>
+    <string name="invalidSignatureDownloadMessage">Fichier téléchargé non valide: Signature invalide</string>
     
 </resources>

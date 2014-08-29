@@ -30,4 +30,9 @@
     
     <string name="pleaseWait">Even geduld&#8230;</string>
     <string name="eraseAllPartitionsWarning">Deze update zal al uw gegevens gewist.\nWil je doorgaan?</string>
+    <string name="dev_mode_toast">Ontwikkelaarsmodus geactiveerd voor deze sessie</string>
+    <string name="noSpaceAvailableCache">Geen ruimte beschikbaar op /cache. Afbreken&#8230;</string>
+    <string name="noSpaceAvailableSdcard">Geen ruimte beschikbaar in geheugen. Afbreken&#8230;</string>
+    <string name="invalidMD5DownloadMessage">Ongeldig bestand gedownload: MD5 verkeerd</string>
+    <string name="invalidSignatureDownloadMessage">Ongeldig bestand gedownload: Ondertekening verkeerd</string>
 </resources>
