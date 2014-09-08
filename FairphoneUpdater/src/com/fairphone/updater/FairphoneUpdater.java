@@ -475,43 +475,7 @@ public class FairphoneUpdater extends Activity
                                     : R.drawable.aosp_versions_button_logo;
                     mCurrentVersionImage.setImageResource(logo);
                 }
-                
-                
-                if(mSelectedVersion.hasEraseAllPartitionWarning()){
-                    new AlertDialog.Builder(FairphoneUpdater.this)
-                    .setTitle(android.R.string.dialog_alert_title)
-                    .setMessage(R.string.eraseAllPartitionsWarning)
-                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener()
-                    {
-                        
-                        @Override
-                        public void onClick(DialogInterface dialog, int which)
-                        {
-                            if (mCurrentState == UpdaterState.NORMAL)
-                            {
-                                startUpdateDownload();
-                            } else if (mCurrentState == UpdaterState.PREINSTALL)
-                            {
-                                startPreInstall();
-                            }
-                        }
-                    })
-                    .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) { 
-                            // do nothing
-                        }
-                     })
-                    .setIcon(android.R.drawable.ic_dialog_alert)
-                     .show();
-                }else{
-                    if (mCurrentState == UpdaterState.NORMAL)
-                    {
-                        startUpdateDownload();
-                    } else if (mCurrentState == UpdaterState.PREINSTALL)
-                    {
-                        startPreInstall();
-                    } 
-                }
+                showEraseAllDataWarning();
             }
         });
     }
@@ -1343,7 +1307,45 @@ public class FairphoneUpdater extends Activity
         unregisterReceiver(newVersionbroadcastReceiver);
     }
 
-    private class DownloadBroadCastReceiver extends BroadcastReceiver
+    private void showEraseAllDataWarning() {
+		if(mSelectedVersion.hasEraseAllPartitionWarning()){
+		    new AlertDialog.Builder(FairphoneUpdater.this)
+		    .setTitle(android.R.string.dialog_alert_title)
+		    .setMessage(R.string.eraseAllPartitionsWarning)
+		    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener()
+		    {
+		        
+		        @Override
+		        public void onClick(DialogInterface dialog, int which)
+		        {
+		            if (mCurrentState == UpdaterState.NORMAL)
+		            {
+		                startUpdateDownload();
+		            } else if (mCurrentState == UpdaterState.PREINSTALL)
+		            {
+		                startPreInstall();
+		            }
+		        }
+		    })
+		    .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+		        public void onClick(DialogInterface dialog, int which) { 
+		            // do nothing
+		        }
+		     })
+		    .setIcon(android.R.drawable.ic_dialog_alert)
+		     .show();
+		}else{
+		    if (mCurrentState == UpdaterState.NORMAL)
+		    {
+		        startUpdateDownload();
+		    } else if (mCurrentState == UpdaterState.PREINSTALL)
+		    {
+		        startPreInstall();
+		    } 
+		}
+	}
+
+	private class DownloadBroadCastReceiver extends BroadcastReceiver
     {
 
         @Override

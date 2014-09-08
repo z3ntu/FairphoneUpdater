@@ -20,6 +20,8 @@ import java.util.List;
 import java.util.Locale;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -224,17 +226,28 @@ public class VersionListActivity extends Activity
             @Override
             public void onClick(View v)
             {
-
-                int versionNumber = selectedVersion != null ? selectedVersion.getNumber() : 0;
-                String versionImageType = selectedVersion != null ? selectedVersion.getImageType() : "";
-
-                Editor editor = mSharedPreferences.edit();
-                editor.putInt(FairphoneUpdater.PREFERENCE_SELECTED_VERSION_NUMBER, versionNumber);
-                editor.putString(FairphoneUpdater.PREFERENCE_SELECTED_VERSION_TYPE, versionImageType);
-                editor.putBoolean(FairphoneUpdater.PREFERENCE_SELECTED_VERSION_BEGIN_DOWNLOAD, true);
-                editor.commit();
-
-                finish();
+            	if(selectedVersion != null && selectedVersion.hasEraseAllPartitionWarning()){
+            	    new AlertDialog.Builder(VersionListActivity.this)
+            	    .setTitle(android.R.string.dialog_alert_title)
+            	    .setMessage(R.string.eraseAllPartitionsWarning)
+            	    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener()
+            	    {
+            	        @Override
+            	        public void onClick(DialogInterface dialog, int which)
+            	        {
+            	        	startVersionDownload(selectedVersion); 
+            	        }
+            	    })
+            	    .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+            	        public void onClick(DialogInterface dialog, int which) { 
+            	        	//Do nothing
+            	        }
+            	     })
+            	    .setIcon(android.R.drawable.ic_dialog_alert)
+            	     .show();
+            	}else{
+            		startVersionDownload(selectedVersion); 
+            	}
             }
         });
     }
@@ -256,5 +269,18 @@ public class VersionListActivity extends Activity
             mScrollView.setVisibility(View.VISIBLE);
         }
     }
+
+	private void startVersionDownload(final Version selectedVersion) {
+		int versionNumber = selectedVersion != null ? selectedVersion.getNumber() : 0;
+		String versionImageType = selectedVersion != null ? selectedVersion.getImageType() : "";
+
+		Editor editor = mSharedPreferences.edit();
+		editor.putInt(FairphoneUpdater.PREFERENCE_SELECTED_VERSION_NUMBER, versionNumber);
+		editor.putString(FairphoneUpdater.PREFERENCE_SELECTED_VERSION_TYPE, versionImageType);
+		editor.putBoolean(FairphoneUpdater.PREFERENCE_SELECTED_VERSION_BEGIN_DOWNLOAD, true);
+		editor.commit();
+
+		finish();
+	}
 
 }
