@@ -42,5 +42,7 @@
     <string name="noSpaceAvailableSdcard">No space available on memory. Aborting&#8230;</string>
     <string name="invalidMD5DownloadMessage">Invalid file downloaded: Wrong MD5</string>
     <string name="invalidSignatureDownloadMessage">Invalid file downloaded: Bad signature</string>
+    <string name="osChangeWarning">You\'re about to change your OS.\nYou can lose some features and apps with this change.\nAre you sure you want to continue?</string>
+    <string name="osChangeCheckboxWarning">Yes, I want to continue</string>
     
 </resources>

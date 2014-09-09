@@ -31,6 +31,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -43,6 +46,8 @@ public class VersionListActivity extends Activity
     public static final String FAIRPHONE_VERSIONS = Version.IMAGE_TYPE_FAIRPHONE;
 
     public static final String VERSION_LIST_TYPE = "VERSION_LIST_TYPE";
+
+	public static final String OS_VERSION_CHANGE = "OS_VERSION_CHANGE";
 
     private LinearLayout mVersionListContainer;
 
@@ -76,6 +81,8 @@ public class VersionListActivity extends Activity
 
 	private ImageView mMoreInfoAndroidLogo;
 
+	private boolean mIsOSChange;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -86,6 +93,7 @@ public class VersionListActivity extends Activity
 
         Intent i = getIntent();
         mVersionListType = i.getStringExtra(VERSION_LIST_TYPE);
+        mIsOSChange = i.getBooleanExtra(OS_VERSION_CHANGE, false);
 
         mVersionListContainer = (LinearLayout) findViewById(R.id.versionListContainer);
 
@@ -226,11 +234,14 @@ public class VersionListActivity extends Activity
             @Override
             public void onClick(View v)
             {
-            	if(selectedVersion != null && selectedVersion.hasEraseAllPartitionWarning()){
-            	    new AlertDialog.Builder(VersionListActivity.this)
-            	    .setTitle(android.R.string.dialog_alert_title)
-            	    .setMessage(R.string.eraseAllPartitionsWarning)
-            	    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener()
+            	if(mIsOSChange){
+            		View checkBoxView = View.inflate(VersionListActivity.this, R.layout.fp_alert_checkbox, null);
+            		
+            		AlertDialog.Builder builder = new AlertDialog.Builder(VersionListActivity.this)
+            		.setTitle(android.R.string.dialog_alert_title)
+            	    .setMessage(R.string.osChangeWarning)
+            	    .setView(checkBoxView)
+            	    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener()
             	    {
             	        @Override
             	        public void onClick(DialogInterface dialog, int which)
@@ -238,20 +249,60 @@ public class VersionListActivity extends Activity
             	        	startVersionDownload(selectedVersion); 
             	        }
             	    })
-            	    .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+            	    .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
             	        public void onClick(DialogInterface dialog, int which) { 
             	        	//Do nothing
             	        }
             	     })
-            	    .setIcon(android.R.drawable.ic_dialog_alert)
-            	     .show();
+            	    .setIcon(android.R.drawable.ic_dialog_alert);
+            		
+            		final AlertDialog dialog = builder.create();
+            		
+            		CheckBox checkBox = (CheckBox) checkBoxView.findViewById(R.id.agree_checkbox);
+            		checkBox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+
+            		    @Override
+            		    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            		    	dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(isChecked);
+            		    }
+
+            		});
+            		checkBox.setText(R.string.osChangeCheckboxWarning);
+            		
+            		dialog.show();
+            		dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
             	}else{
-            		startVersionDownload(selectedVersion); 
+            		showEraseAllDataWarning(selectedVersion);
             	}
             }
         });
     }
 
+    private void showEraseAllDataWarning(final Version selectedVersion) {
+		if(selectedVersion != null && selectedVersion.hasEraseAllPartitionWarning()){
+    	    new AlertDialog.Builder(VersionListActivity.this)
+    	    .setTitle(android.R.string.dialog_alert_title)
+    	    .setMessage(R.string.eraseAllPartitionsWarning)
+    	    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener()
+    	    {
+    	        @Override
+    	        public void onClick(DialogInterface dialog, int which)
+    	        {
+    	        	startVersionDownload(selectedVersion); 
+    	        }
+    	    })
+    	    .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+    	        public void onClick(DialogInterface dialog, int which) { 
+    	        	//Do nothing
+    	        }
+    	     })
+    	    .setIcon(android.R.drawable.ic_dialog_alert)
+    	    .show();
+    	}else{
+    		startVersionDownload(selectedVersion); 
+    	}
+	}
+    
     public void toggleVersionDetails()
     {
         if (mScrollView.getVisibility() == View.VISIBLE)

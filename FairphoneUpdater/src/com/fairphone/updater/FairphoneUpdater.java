@@ -559,6 +559,7 @@ public class FairphoneUpdater extends Activity
     {
         Intent i = new Intent(this, VersionListActivity.class);
         i.putExtra(VersionListActivity.VERSION_LIST_TYPE, VersionListActivity.AOSP_VERSIONS);
+        i.putExtra(VersionListActivity.OS_VERSION_CHANGE, !VersionListActivity.AOSP_VERSIONS.equalsIgnoreCase(mDeviceVersion.getImageType()));
         startActivity(i);
     }
 
@@ -566,6 +567,7 @@ public class FairphoneUpdater extends Activity
     {
         Intent i = new Intent(this, VersionListActivity.class);
         i.putExtra(VersionListActivity.VERSION_LIST_TYPE, VersionListActivity.FAIRPHONE_VERSIONS);
+        i.putExtra(VersionListActivity.OS_VERSION_CHANGE, !VersionListActivity.FAIRPHONE_VERSIONS.equalsIgnoreCase(mDeviceVersion.getImageType()));
         startActivity(i);
     }
 
