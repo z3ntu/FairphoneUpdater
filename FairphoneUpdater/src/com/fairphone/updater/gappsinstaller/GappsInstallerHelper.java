@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.fairphone.launcher.gappsinstaller;
+package com.fairphone.updater.gappsinstaller;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -31,11 +31,6 @@ import java.security.cert.CertificateException;
 import java.util.concurrent.TimeoutException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-
-import org.fairphone.launcher.R;
-import org.fairphone.launcher.rsa.utils.RSAUtils;
-import org.fairphone.launcher.util.Utils;
-import org.fairphone.widgets.gapps.GoogleAppsInstallerWidget;
 
 import android.app.AlertDialog;
 import android.app.DownloadManager;
@@ -60,6 +55,10 @@ import android.os.Environment;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.fairphone.updater.R;
+import com.fairphone.updater.tools.RSAUtils;
+import com.fairphone.updater.tools.Utils;
+import com.fairphone.updater.widgets.gapps.GoogleAppsInstallerWidget;
 import com.stericson.RootTools.RootTools;
 import com.stericson.RootTools.exceptions.RootDeniedException;
 import com.stericson.RootTools.execution.CommandCapture;
@@ -67,18 +66,18 @@ import com.stericson.RootTools.execution.Shell;
 
 public class GappsInstallerHelper {
 
-    private static final String GOOGLE_APPS_DOWNLOAD_ID = "org.fairphone.launcher.gapps.DOWNLOAD_ID";
+    private static final String GOOGLE_APPS_DOWNLOAD_ID = "com.fairphone.updater.gapps.DOWNLOAD_ID";
 
-	public static final String GAPPS_ACTION_DISCLAIMER = "org.fairphone.launcher.gapps.DISCLAIMER";
-	public static final String GAPPS_ACTION_DOWNLOAD_CONFIGURATION_FILE = "org.fairphone.launcher.gapps.START_DONWLOAD_CONFIGURATION";
-	public static final String GOOGLE_APPS_INSTALL_DOWNLOAD_CANCEL = "org.fairphone.launcher.gapps.START_DOWNLOAD_CANCEL";
-	public static final String GOOGLE_APPS_INSTALL_REBOOT = "org.fairphone.launcher.gapps.REBOOT";
+	public static final String GAPPS_ACTION_DISCLAIMER = "com.fairphone.updater.gapps.DISCLAIMER";
+	public static final String GAPPS_ACTION_DOWNLOAD_CONFIGURATION_FILE = "com.fairphone.updater.gapps.START_DONWLOAD_CONFIGURATION";
+	public static final String GOOGLE_APPS_INSTALL_DOWNLOAD_CANCEL = "com.fairphone.updater.gapps.START_DOWNLOAD_CANCEL";
+	public static final String GOOGLE_APPS_INSTALL_REBOOT = "com.fairphone.updater.gapps.REBOOT";
 
 	public static final String PREFS_GOOGLE_APPS_INSTALLER_DATA = "FAIRPHONE_GOOGLE_APPS_INSTALLER_DATA";
-	public static final String GOOGLE_APPS_INSTALLER_STATE = "org.fairphone.launcher.gapps.WIDGET_STATE";
-	public static final String GOOGLE_APPS_INSTALLER_PROGRESS = "org.fairphone.launcher.gapps.WIDGET_SEEKBAR_PROGRESS";
-	public static final String GOOGLE_APPS_INSTALLER_PROGRESS_MAX = "org.fairphone.launcher.gapps.WIDGET_SEEKBAR_PROGRESS_MAX";
-	public static final String GAPPS_ACTION_GO_PERMISSIONS = "org.fairphone.launcher.gaps.GAPPS_ACTION_GO_PERMISSIONS";
+	public static final String GOOGLE_APPS_INSTALLER_STATE = "com.fairphone.updater.gapps.WIDGET_STATE";
+	public static final String GOOGLE_APPS_INSTALLER_PROGRESS = "com.fairphone.updater.gapps.WIDGET_SEEKBAR_PROGRESS";
+	public static final String GOOGLE_APPS_INSTALLER_PROGRESS_MAX = "com.fairphone.updater.gapps.WIDGET_SEEKBAR_PROGRESS_MAX";
+	public static final String GAPPS_ACTION_GO_PERMISSIONS = "com.fairphone.updater.gapps.GAPPS_ACTION_GO_PERMISSIONS";
 	public static final String GAPPS_REINSTALATION = "GAPPS_REINSTALATION_REQUEST";
     public static final String GAPPS_REINSTALL_FLAG = "GAPPS_REINSTALL_FLAG";
 
@@ -116,7 +115,7 @@ public class GappsInstallerHelper {
 	private String mMD5hash;
 
 	public GappsInstallerHelper(Context context) {
-		mContext = context;
+		mContext = context.getApplicationContext();
 
 		mSharedPrefs = mContext.getSharedPreferences(
 				PREFS_GOOGLE_APPS_INSTALLER_DATA, Context.MODE_PRIVATE);

@@ -146,18 +146,6 @@
 	                 android:resource="@xml/widget_provider" />
 	    </receiver>
 	    
-	    <receiver android:icon="@drawable/all_apps_button_icon"
-	              android:label="@string/google_apps_installer_name"
-	              android:name="org.fairphone.widgets.gapps.GoogleAppsInstallerWidget">
-	      
-	       <intent-filter>
-	        <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-	      </intent-filter>
-	      
-	      <meta-data android:name="android.appwidget.provider"
-	                 android:resource="@xml/google_apps_widget" />
-	    </receiver>
-	    
 	    <!-- Service 
 	    <service android:name="org.fairphone.widgets.appswitcher.TimerService" 
 	        	 android:permission="android.permission.BIND_REMOTEVIEWS" />

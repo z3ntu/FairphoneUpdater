@@ -92,18 +92,5 @@
 	<string name="edge_swipe_default_apps">com.android.contacts,com.android.contacts.activities.DialtactsActivity;com.android.mms,com.android.mms.ui.BootActivity;com.android.gallery3d,com.android.camera.CameraLauncher;com.android.browser,com.android.browser.BrowserActivity</string>
 	<integer name="config_edgeMenuQuickTime">130</integer>
 	<integer name="config_edgeMenuEditButtonTime">1000</integer>
-	
-<!-- Google Apps Instaler -->
-	<string name="gapps_installer_download_url">http://www.fairphone.com/externalcontent/</string>
-	<string name="gapps_installer_config_file">fairphonegapps</string>
-	<string name="gapps_installer_zip">.zip</string>
-	<string name="gapps_installer_cfg">.cfg</string>
-	<string name="gapps_installer_sig">.sig</string>
-	<string name="gapps_installer_filename">googleapps.zip</string>
-	<string name="oneGBDataPartition">/originalPartition</string>
-	<string name="unifiedDataPartition">/unifiedPartition</string>
-	<string name="FP1Model">FP1</string>
-	<integer name="FP1CachePartitionSizeMb">130</integer>
-	<integer name="minimalCachePartitionSizeMb">300</integer>
-	<integer name="FP1DataPartitionSizeMb">1100</integer>
+
 </resources>

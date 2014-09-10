@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.fairphone.launcher.gappsinstaller;
+package com.fairphone.updater.gappsinstaller;
 
 import java.io.DataOutputStream;
 import java.io.IOException;

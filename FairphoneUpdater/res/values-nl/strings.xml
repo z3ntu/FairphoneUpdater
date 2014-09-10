@@ -35,4 +35,32 @@
     <string name="noSpaceAvailableSdcard">Geen ruimte beschikbaar in geheugen. Afbreken&#8230;</string>
     <string name="invalidMD5DownloadMessage">Ongeldig bestand gedownload: MD5 verkeerd</string>
     <string name="invalidSignatureDownloadMessage">Ongeldig bestand gedownload: Ondertekening verkeerd</string>
+    
+    <!-- Google Apps Install Widget -->
+    <string name="google_apps_installer_name">Google Apps Installer</string>
+	<string name="google_apps_initial_title">Installeer\nGoogle Apps</string>
+	<string name="google_apps_disclaimer_title">Installeer Google Apps</string>
+	<string name="google_apps_disclaimer_description">Voor de volledige Android en Google mobile toepassingen, zoals de Google Play store, heeft je telefoon extra inhoud en software nodig. Omdat Fairphone nog geen licentie heeft kunnen we die inhoud jammer genoeg niet van tevoren installeren en we kunnen het ook niet rechtstreeks ter beschikking stellen. We zijn hierover in overleg met de eigenaar van de inhoud.\nDruk op “Accepteren” hieronder om de inhoud te downloaden van een externe, veilige bron. Het installeren van deze inhoud is voor eigen verantwoordelijkheid.\nAls je hier niet mee akkoord gaat, zal je telefoon natuurlijk nog werken met de basis apps voor Android, maar je zult een aantal diensten van Google niet kunnen gebruiken.</string>
+	<string name="google_apps_disclaimer_agree">Accepteren</string>
+	<string name="google_apps_denied_permissions_title">Geen toestemming</string>
+	<string name="google_apps_denied_permissions_description">Fairphone OS heeft geen toestemming voor het installeren van Google Apps. Als je NEGEREN kiest, start dan de installer opnieuw en geef TOESTEMMING.</string>
+	<string name="google_apps_reboot_failed_title">Herstarten mislukt</string>
+	<string name="google_apps_reboot_failed_description">Google Apps zijn geïnstalleerd. Herstart van het apparaat niet gelukt, a.u.b. handmatige herstarten.</string>
+	<string name="google_apps_download_title">Bezig met de download van\nGoogle Apps</string>
+	<string name="google_apps_unzip_title">Bezig met het uitpakken van\nGoogle Apps</string>
+	<string name="google_apps_install_title">Bezig met het installeren van\nGoogle Apps</string>
+	<string name="google_apps_reboot_title">Apparaat aan het herstarten</string>
+	<string name="google_apps_permissions_description">Fairphone OS vraagt nu om toegang als Superuser. We verzekeren je dat het helemaal veilig is. Kies TOESTAAN als daarom wordt gevraagd.</string>
+	<string name="google_apps_permissions_title">Toegangsrechten tot het systeem</string>
+	<string name="google_apps_reboot_description">Het systeem moet opnieuw worden gestart om de installatie af te ronden.\nVolg na het herstarten de stappen voor het opzetten van Google Apps.</string>
+	<string name="google_apps_uninstall_title">Google Apps geïnstalleerd</string>
+	<string name="google_apps_uninstall_description">Deze installer\nverwijderen</string>
+	<string name="google_apps_failed_download_title">Downloaden mislukt</string>
+	<string name="google_apps_failed_download_description">De gedownloade bestanden zijn corrupt. Opnieuw proberen?</string>
+	<string name="google_apps_download_error">Fout bij het downloaden van de bestanden. Probeer het opnieuw.</string>
+	<string name="google_apps_connection_title">Wi-Fi niet beschikbaar</string>
+	<string name="google_apps_connection_description">Het bestand dat je probeert te downloaden is te groot voor mobiele verbindingen (~100MB). Breng de Wi-Fi verbinding tot stand en probeer het opnieuw.</string>
+	<string name="google_apps_reinstall_request_title">Herinnering</string>
+    <string name="google_apps_reinstall_description">Om de Play store te herinstalleren, ga naar All Apps, Widgets en sleep de Google App Installer widget naar je startpaneel en selecteer deze.</string>
+	
 </resources>

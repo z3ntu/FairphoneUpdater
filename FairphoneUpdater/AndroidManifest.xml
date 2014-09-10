@@ -53,6 +53,18 @@
             android:screenOrientation="portrait"/>
 
         <meta-data android:name="com.crashlytics.ApiKey" android:value="743d6f60e29372e7b75de8137a5585979710dd7a"/>
+        
+        <receiver android:icon="@drawable/fairphone_updater_app_icon"
+	              android:label="@string/google_apps_installer_name"
+	              android:name="com.fairphone.updater.widgets.gapps.GoogleAppsInstallerWidget">
+	      
+	       <intent-filter>
+	        <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+	      </intent-filter>
+	      
+	      <meta-data android:name="android.appwidget.provider"
+	                 android:resource="@xml/google_apps_widget" />
+	    </receiver>
 
     </application>
 

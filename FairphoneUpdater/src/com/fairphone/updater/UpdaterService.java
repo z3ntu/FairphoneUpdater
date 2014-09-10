@@ -27,7 +27,9 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.app.TaskStackBuilder;
+import android.appwidget.AppWidgetManager;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -45,8 +47,10 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.fairphone.updater.gappsinstaller.GappsInstallerHelper;
 import com.fairphone.updater.tools.RSAUtils;
 import com.fairphone.updater.tools.Utils;
+import com.fairphone.updater.widgets.gapps.GoogleAppsInstallerWidget;
 import com.stericson.RootTools.execution.CommandCapture;
 import com.stericson.RootTools.execution.Shell;
 
@@ -66,6 +70,8 @@ public class UpdaterService extends Service {
 	
 	final static long DAY_IN_MILLIS = 1000 * 60 * 60 * 24;
 	
+    private GappsInstallerHelper mGappsInstaller;
+    
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		
@@ -87,9 +93,21 @@ public class UpdaterService extends Service {
 			startDownloadLatest();
 		}
 		
+	    // setup the gapps installer
+     	mGappsInstaller = new GappsInstallerHelper(this);
+     	
 		return Service.START_NOT_STICKY;
 	}
 
+    public void updateGoogleAppsIntallerWidgets() {
+		AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
+		int[] appWidgetIds = appWidgetManager
+				.getAppWidgetIds(new ComponentName(this, GoogleAppsInstallerWidget.class));
+		if (appWidgetIds.length > 0) {
+			new GoogleAppsInstallerWidget().onUpdate(this, appWidgetManager, appWidgetIds);
+		}
+	}
+    
     protected void clearDataLogs(){
         try
         {

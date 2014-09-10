@@ -36,4 +36,12 @@
 	<string name="removeTalkbackCommand">rm /data/app/com.google.android.marvin.talkback-*.apk</string>
 	<string name="removeText2SpeechCommand">rm /data/app/com.google.android.tts-*.apk</string>
 	
+	<!-- Google Apps Instaler -->
+	<string name="gapps_installer_download_url">http://www.fairphone.com/externalcontent/</string>
+	<string name="gapps_installer_config_file">fairphonegapps</string>
+	<string name="gapps_installer_zip">.zip</string>
+	<string name="gapps_installer_cfg">.cfg</string>
+	<string name="gapps_installer_sig">.sig</string>
+	<string name="gapps_installer_filename">googleapps.zip</string>
+	
 </resources>
