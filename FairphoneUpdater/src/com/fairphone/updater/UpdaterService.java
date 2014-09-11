@@ -94,7 +94,7 @@ public class UpdaterService extends Service {
 		}
 		
 	    // setup the gapps installer
-     	mGappsInstaller = new GappsInstallerHelper(this);
+     	mGappsInstaller = new GappsInstallerHelper(getApplicationContext());
      	
 		return Service.START_NOT_STICKY;
 	}

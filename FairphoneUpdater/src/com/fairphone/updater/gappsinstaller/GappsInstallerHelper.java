@@ -35,7 +35,6 @@ import java.util.zip.ZipInputStream;
 import android.app.AlertDialog;
 import android.app.DownloadManager;
 import android.app.DownloadManager.Request;
-import android.app.ProgressDialog;
 import android.appwidget.AppWidgetManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -115,7 +114,7 @@ public class GappsInstallerHelper {
 	private String mMD5hash;
 
 	public GappsInstallerHelper(Context context) {
-		mContext = context.getApplicationContext();
+		mContext = context;
 
 		mSharedPrefs = mContext.getSharedPreferences(
 				PREFS_GOOGLE_APPS_INSTALLER_DATA, Context.MODE_PRIVATE);
@@ -163,39 +162,25 @@ public class GappsInstallerHelper {
 	    updateWidgetState(GAPPS_STATES_INITIAL);
 		return false;
 	}
+	
+	public void setReinstallAlertFlag() {
 
-    public void showReinstallAlert() {
-        Resources resources = mContext.getResources();
+		SharedPreferences.Editor editor = mSharedPrefs.edit();
+		editor.putBoolean(GAPPS_REINSTALL_FLAG, false);
+		editor.commit();
+	}
 
-        AlertDialog reinstallDialog = new AlertDialog.Builder(mContext)
-                .create();
+	public void showReinstallAlert() {
+		showDialogOnTransparentActivity(TransparentActivity.SHOW_GAPPS_REINSTALL_DIALOG);	
+	}
 
-        reinstallDialog.setTitle(resources
-                .getText(R.string.google_apps_reinstall_request_title));
-
-        // Setting Dialog Message
-        reinstallDialog.setMessage(resources
-                .getText(R.string.google_apps_reinstall_description));
-
-        reinstallDialog
-                .setButton(
-                        AlertDialog.BUTTON_POSITIVE,
-                        resources
-                                .getString(android.R.string.ok),
-                        new DialogInterface.OnClickListener() {
-
-                            @Override
-                            public void onClick(DialogInterface dialog,
-                                    int which) {
-
-                                SharedPreferences.Editor editor = mSharedPrefs.edit();
-                                editor.putBoolean(GAPPS_REINSTALL_FLAG, false);
-                                editor.commit();
-                            }
-                        });
-
-        reinstallDialog.show();
-    }
+	private void showDialogOnTransparentActivity(String dialogToShow) {
+		Intent i = new Intent(mContext, TransparentActivity.class);
+		i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		i.setAction(dialogToShow);
+		
+		mContext.startActivity(i);
+	}
 
 	public void resume() {
 		// setup the download manager
@@ -346,6 +331,8 @@ public class GappsInstallerHelper {
 	private BroadcastReceiver mBCastGoPermissions;
 	private BroadcastReceiver mBCastGappsInstallReboot;
 	private BroadcastReceiver mBCastReinstallGapps;
+	private BroadcastReceiver mBCastSetReinstallGappsFlag;
+	private BroadcastReceiver mBCastChangeGappsStateToInitial;
 
 	private void setupTheStatesBroadCasts() {
 		// launching the application
@@ -354,50 +341,7 @@ public class GappsInstallerHelper {
 
 			@Override
 			public void onReceive(Context context, Intent intent) {
-				Resources resources = mContext.getResources();
-
-				AlertDialog disclaimerDialog = new AlertDialog.Builder(mContext)
-						.create();
-
-				disclaimerDialog.setTitle(resources
-						.getText(R.string.google_apps_disclaimer_title));
-
-				// Setting Dialog Message
-				disclaimerDialog.setMessage(resources
-						.getText(R.string.google_apps_disclaimer_description));
-
-				disclaimerDialog
-						.setButton(
-								AlertDialog.BUTTON_POSITIVE,
-								resources
-										.getString(R.string.google_apps_disclaimer_agree),
-								new DialogInterface.OnClickListener() {
-
-									@Override
-									public void onClick(DialogInterface dialog,
-											int which) {
-
-										Intent startDownloadOkIntent = new Intent();
-										startDownloadOkIntent
-												.setAction(GappsInstallerHelper.GAPPS_ACTION_DOWNLOAD_CONFIGURATION_FILE);
-
-										mContext.sendBroadcast(startDownloadOkIntent);
-									}
-								});
-
-				disclaimerDialog.setButton(AlertDialog.BUTTON_NEGATIVE,
-						resources.getString(android.R.string.cancel),
-						new DialogInterface.OnClickListener() {
-
-							@Override
-							public void onClick(DialogInterface dialog,
-									int which) {
-								updateWidgetState(GAPPS_STATES_INITIAL);
-							}
-						});
-
-				disclaimerDialog.show();
-
+				showDisclaimer();
 			}
 		};
 
@@ -424,33 +368,7 @@ public class GappsInstallerHelper {
 
 					updateWidgetState(GAPPS_STATES_DOWNLOAD_CONFIGURATION_FILE);
 				} else {
-
-					AlertDialog disclaimerDialog = new AlertDialog.Builder(
-							mContext).create();
-
-					Resources resources = mContext.getResources();
-
-					disclaimerDialog.setTitle(resources
-							.getText(R.string.google_apps_connection_title));
-
-					// Setting Dialog Message
-					disclaimerDialog
-							.setMessage(resources
-									.getText(R.string.google_apps_connection_description));
-
-					disclaimerDialog.setButton(AlertDialog.BUTTON_POSITIVE,
-							resources.getString(android.R.string.ok),
-							new DialogInterface.OnClickListener() {
-
-								@Override
-								public void onClick(DialogInterface dialog,
-										int which) {
-									updateWidgetState(GAPPS_STATES_INITIAL);
-								}
-							});
-
-					disclaimerDialog.show();
-
+					showWifiWarning();
 				}
 			}
 		};
@@ -523,6 +441,28 @@ public class GappsInstallerHelper {
 
         mContext.registerReceiver(mBCastReinstallGapps, new IntentFilter(
                 GAPPS_REINSTALATION));
+        
+        mBCastSetReinstallGappsFlag = new BroadcastReceiver() {
+
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                setReinstallAlertFlag();
+            }
+        };
+
+        mContext.registerReceiver(mBCastSetReinstallGappsFlag, new IntentFilter(
+                TransparentActivity.ACTION_SET_GAPPS_REINSTALL_FLAG));
+        
+        mBCastChangeGappsStateToInitial = new BroadcastReceiver() {
+
+            @Override
+            public void onReceive(Context context, Intent intent) {
+            	updateWidgetState(GAPPS_STATES_INITIAL);
+            }
+        };
+
+        mContext.registerReceiver(mBCastChangeGappsStateToInitial, new IntentFilter(
+                TransparentActivity.ACTION_CHANGE_GAPPS_STATE_TO_INITIAL));
 	}
 	
 	private String getConfigDownloadLink(Resources resources) {
@@ -717,6 +657,8 @@ public class GappsInstallerHelper {
 		mContext.unregisterReceiver(mBCastGappsInstallReboot);
 		mContext.unregisterReceiver(mBCastInstallDownloadCancel);
 		mContext.unregisterReceiver(mBCastReinstallGapps);
+		mContext.unregisterReceiver(mBCastSetReinstallGappsFlag);
+		mContext.unregisterReceiver(mBCastChangeGappsStateToInitial);
 	}
 
 	private void updateGoogleAppsIntallerWidgets() {
@@ -1183,9 +1125,17 @@ public class GappsInstallerHelper {
         }
     }
     
-    private class CopyFileToCacheTask extends AsyncTask<String, Integer, Integer>{
+    private void showDisclaimer() {
+    	showDialogOnTransparentActivity(TransparentActivity.SHOW_GAPPS_DISCLAIMER_DIALOG);
+	}
 
-        ProgressDialog mProgress;
+	private void showWifiWarning() {
+		showDialogOnTransparentActivity(TransparentActivity.SHOW_GAPPS_WIFI_WARNING_DIALOG);
+	}
+
+	private class CopyFileToCacheTask extends AsyncTask<String, Integer, Integer>{
+
+        boolean isProgressShowing = false;
         @Override
         protected Integer doInBackground(String... params)
         {
@@ -1218,19 +1168,20 @@ public class GappsInstallerHelper {
         }
         
         protected void onPreExecute() {            
-            if(mProgress == null){
-                String title = "";
-                String message = mContext.getResources().getString(R.string.pleaseWait);
-                mProgress = ProgressDialog.show(mContext, title, message, true, false);
+            if(!isProgressShowing){
+            	showDialogOnTransparentActivity(TransparentActivity.SHOW_GAPPS_PROGRESS_SPINNER);
+            	isProgressShowing = true;
             }
         }
 
-        protected void onPostExecute(Integer result) {
-            // disable the spinner
-            if(mProgress != null){
-                mProgress.dismiss();
-                mProgress = null;
-            }
-        }     
+		protected void onPostExecute(Integer result) {
+			// disable the spinner
+			if (isProgressShowing) {
+				Intent i = new Intent();
+				i.setAction(TransparentActivity.HIDE_GAPPS_PROGRESS_SPINNER);
+				mContext.sendBroadcast(i);
+				isProgressShowing = false;
+			}
+		}    
     }
 }
