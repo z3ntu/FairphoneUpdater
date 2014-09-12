@@ -43,7 +43,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
@@ -609,14 +608,6 @@ public class GappsInstallerHelper {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
-			// reboot
-//			try {
-//				((PowerManager) mContext
-//						.getSystemService(Context.POWER_SERVICE))
-//						.reboot("recovery");
-//			} catch (Throwable t) {
-//				Log.e(TAG, "Could not access files", t);
-//			}
 		} else {
 			Resources resources = mContext.getResources();
 
@@ -758,74 +749,6 @@ public class GappsInstallerHelper {
 		}).start();
 	}
 
-	boolean unzipped = false;
-
-	private void installAppsToLocations() {
-
-		Thread thread = new Thread(new Runnable() {
-
-			@Override
-			public void run() {
-				try {
-					updateInstallerState(GAPPS_STATE_INSTALLATION);
-
-					runCommandsAsRoot(GappsInstallationAssets.install_files);
-
-				} catch (Throwable t) {
-					Log.e(TAG, "Error while installing the files", t);
-				}
-			}
-		});
-
-		thread.start();
-	}
-
-	private void runCommandsAsRoot(String[] files) throws IOException,
-			TimeoutException, RootDeniedException {
-
-		String downloadPath = DOWNLOAD_PATH + ZIP_CONTENT_PATH;
-
-		int maxFiles = files.length;
-		int currentCount = 0;
-
-		Shell.runRootCommand(new CommandCapture(0,
-				GappsInstallationAssets.MOUNT_SYSTEM_RW));
-
-		for (String filePath : files) {
-			Log.d(this.getClass().getSimpleName(), "[INST]installing file :"
-					+ downloadPath + filePath + " to " + filePath);
-
-			Shell.runRootCommand(new CommandCapture(0, "cat " + downloadPath
-					+ filePath + " > /" + filePath));
-			currentCount++;
-
-			// update progress bar
-			Editor editor = mSharedPrefs.edit();
-
-			editor.putInt(GappsInstallerHelper.GOOGLE_APPS_INSTALLER_PROGRESS,
-					currentCount);
-			editor.putInt(
-					GappsInstallerHelper.GOOGLE_APPS_INSTALLER_PROGRESS_MAX,
-					maxFiles);
-
-			editor.commit();
-
-			updateGoogleAppsIntallerWidgets();
-		}
-
-		// update the status of the files
-
-		for (String filePath : files) {
-			Log.d(this.getClass().getSimpleName(),
-					"[CHMOD]changing permissions for file :" + filePath);
-
-			Shell.runRootCommand(new CommandCapture(0, "chmod 644 /" + filePath));
-		}
-
-		Shell.runRootCommand(new CommandCapture(0,
-				GappsInstallationAssets.MOUNT_SYSTEM_RO));
-	}
-
 	private void updateInstallerState(int state) {
 		// alter State
 		SharedPreferences.Editor prefEdit = mSharedPrefs.edit();
@@ -921,140 +844,134 @@ public class GappsInstallerHelper {
 			default:
 				downloadID = mSharedPrefs.getLong(GOOGLE_APPS_DOWNLOAD_ID, 0);
 			}
-
-			Cursor cursor = mDownloadManager.query(query);
-			query.setFilterById(downloadID);
-
-			if (cursor.moveToFirst()) {
-				int columnIndex = cursor
-						.getColumnIndex(DownloadManager.COLUMN_STATUS);
-				int status = cursor.getInt(columnIndex);
-				int columnReason = cursor
-						.getColumnIndex(DownloadManager.COLUMN_REASON);
-				int reason = cursor.getInt(columnReason);
-
-				if (status == DownloadManager.STATUS_SUCCESSFUL) {
-					// Retrieve the saved download id
-					if (downloadID == mConfigFileDownloadId) {
-					    
-					    String targetPath = DOWNLOAD_PATH + ZIP_CONTENT_PATH;
-					    String cfgFilename = mContext.getResources().getString(R.string.gapps_installer_config_file);
-                        String fileCfgExt = mContext.getResources().getString(R.string.gapps_installer_cfg);
-					    
-                        String cfgFile = targetPath + cfgFilename + fileCfgExt;
-                        
-                        // file to where the download happened
-    					Uri filePath = mDownloadManager.getUriForDownloadedFile(
-    							downloadID);
-                        if(filePath!=null && !checkFileSignature(filePath.getPath(), targetPath)){
-                            Toast.makeText(mContext,
-                                    R.string.google_apps_download_error,
-                                    Toast.LENGTH_LONG).show();
-
-                            updateWidgetState(GAPPS_STATES_INITIAL);
-                            if(mConfigFileDownloadId!=0){
-                            	mDownloadManager.remove(mConfigFileDownloadId);
-                            }
-                            cursor.close();
-                            return;
-                        }
-
-						// read the gapps url
-						String[] downloadData = getGappsUrlFromConfigFile(cfgFile);
-
-						if (downloadData == null) {
+			
+			if(downloadID != 0) {
+				Cursor cursor = mDownloadManager.query(query);
+				query.setFilterById(downloadID);
+	
+				if (cursor.moveToFirst()) {
+					int columnIndex = cursor
+							.getColumnIndex(DownloadManager.COLUMN_STATUS);
+					int status = cursor.getInt(columnIndex);
+					int columnReason = cursor
+							.getColumnIndex(DownloadManager.COLUMN_REASON);
+					int reason = cursor.getInt(columnReason);
+	
+					if (status == DownloadManager.STATUS_SUCCESSFUL) {
+						// Retrieve the saved download id
+						if (downloadID == mConfigFileDownloadId) {
+						    
+						    String targetPath = DOWNLOAD_PATH + ZIP_CONTENT_PATH;
+						    String cfgFilename = mContext.getResources().getString(R.string.gapps_installer_config_file);
+	                        String fileCfgExt = mContext.getResources().getString(R.string.gapps_installer_cfg);
+						    
+	                        String cfgFile = targetPath + cfgFilename + fileCfgExt;
+	                        
+	                        // file to where the download happened
+	    					Uri filePath = mDownloadManager.getUriForDownloadedFile(
+	    							downloadID);
+	                        if(filePath!=null && !checkFileSignature(filePath.getPath(), targetPath)){
+	                            Toast.makeText(mContext,
+	                                    R.string.google_apps_download_error,
+	                                    Toast.LENGTH_LONG).show();
+	
+	                            updateWidgetState(GAPPS_STATES_INITIAL);
+	                            if(mConfigFileDownloadId!=0){
+	                            	mDownloadManager.remove(mConfigFileDownloadId);
+	                            }
+	                            cursor.close();
+	                            return;
+	                        }
+	
+							// read the gapps url
+							String[] downloadData = getGappsUrlFromConfigFile(cfgFile);
+	
+							if (downloadData == null) {
+								Toast.makeText(mContext,
+										R.string.google_apps_download_error,
+										Toast.LENGTH_LONG).show();
+	
+								updateWidgetState(GAPPS_STATES_INITIAL);
+								if(mConfigFileDownloadId!=0){
+	                            	mDownloadManager.remove(mConfigFileDownloadId);
+	                            }
+								cursor.close();
+								return;
+							}
+	                        
+	
+							// read the md5
+							mMD5hash = downloadData[1];
+	
+							String filename = mContext.getResources().getString(
+									R.string.gapps_installer_filename);
+	
+							if (hasAlreadyDownloadedZipFile(mMD5hash)) {
+								updateWidgetState(GAPPS_STATES_PERMISSION_CHECK);
+	//							updateWidgetState(GAPPS_REBOOT_STATE);
+							} else {
+								Log.d(TAG, "GAPPS> file does not match");
+	
+								forceCleanGappsZipFile();
+	
+								// enqueue of gapps request
+								Request request = createDownloadRequest(
+										downloadData[0], filename);
+	
+								mGappsFileDownloadId = mDownloadManager
+										.enqueue(request);
+	
+								SharedPreferences.Editor prefEdit = mSharedPrefs
+										.edit();
+								// Save the download id
+								prefEdit.putLong(GOOGLE_APPS_DOWNLOAD_ID,
+										mGappsFileDownloadId);
+	
+								startDownloadProgressUpdateThread(mGappsFileDownloadId);
+	
+								prefEdit.putInt(
+										GappsInstallerHelper.GOOGLE_APPS_INSTALLER_PROGRESS,
+										0);
+								prefEdit.putInt(
+										GappsInstallerHelper.GOOGLE_APPS_INSTALLER_PROGRESS_MAX,
+										0);
+	
+								prefEdit.commit();
+	
+								// alter Widget State
+								updateGoogleAppsIntallerWidgets();
+								updateWidgetState(GAPPS_STATES_DOWNLOAD_GOOGLE_APPS_FILE);
+							}
+						} else if(hasAlreadyDownloadedZipFile(mMD5hash)){
+							updateWidgetState(GAPPS_STATES_PERMISSION_CHECK);
+	//						updateWidgetState(GAPPS_REBOOT_STATE);
+						}else{
 							Toast.makeText(mContext,
 									R.string.google_apps_download_error,
 									Toast.LENGTH_LONG).show();
-
+	
 							updateWidgetState(GAPPS_STATES_INITIAL);
-							if(mConfigFileDownloadId!=0){
-                            	mDownloadManager.remove(mConfigFileDownloadId);
-                            }
-							cursor.close();
-							return;
+							if(mConfigFileDownloadId != 0){
+	                        	mDownloadManager.remove(mConfigFileDownloadId);
+	                        }
 						}
-                        
-
-						// read the md5
-						mMD5hash = downloadData[1];
-
-						String filename = mContext.getResources().getString(
-								R.string.gapps_installer_filename);
-
-						if (hasAlreadyDownloadedZipFile(mMD5hash)) {
-							updateWidgetState(GAPPS_STATES_PERMISSION_CHECK);
-//							updateWidgetState(GAPPS_REBOOT_STATE);
-						} else {
-							Log.d(TAG, "GAPPS> file does not match");
-
-							forceCleanGappsZipFile();
-
-							// enqueue of gapps request
-							Request request = createDownloadRequest(
-									downloadData[0], filename);
-
-							mGappsFileDownloadId = mDownloadManager
-									.enqueue(request);
-
-							SharedPreferences.Editor prefEdit = mSharedPrefs
-									.edit();
-							// Save the download id
-							prefEdit.putLong(GOOGLE_APPS_DOWNLOAD_ID,
-									mGappsFileDownloadId);
-
-							startDownloadProgressUpdateThread(mGappsFileDownloadId);
-
-							prefEdit.putInt(
-									GappsInstallerHelper.GOOGLE_APPS_INSTALLER_PROGRESS,
-									0);
-							prefEdit.putInt(
-									GappsInstallerHelper.GOOGLE_APPS_INSTALLER_PROGRESS_MAX,
-									0);
-
-							prefEdit.commit();
-
-							// alter Widget State
-							updateGoogleAppsIntallerWidgets();
-							updateWidgetState(GAPPS_STATES_DOWNLOAD_GOOGLE_APPS_FILE);
-						}
-					} else if(hasAlreadyDownloadedZipFile(mMD5hash)){
-						updateWidgetState(GAPPS_STATES_PERMISSION_CHECK);
-//						updateWidgetState(GAPPS_REBOOT_STATE);
-					}else{
+					} else if (status == DownloadManager.STATUS_FAILED) {
 						Toast.makeText(mContext,
-								R.string.google_apps_download_error,
+								"FAILED!\n" + "reason of " + reason,
 								Toast.LENGTH_LONG).show();
-
+	
+						forceCleanConfigurationFile();
+	
+						forceCleanUnzipDirectory();
+	
 						updateWidgetState(GAPPS_STATES_INITIAL);
-						if(mConfigFileDownloadId!=0){
-                        	mDownloadManager.remove(mConfigFileDownloadId);
-                        }
-					}
-				} else if (status == DownloadManager.STATUS_FAILED) {
-					Toast.makeText(mContext,
-							"FAILED!\n" + "reason of " + reason,
-							Toast.LENGTH_LONG).show();
-
-					forceCleanConfigurationFile();
-
-					forceCleanUnzipDirectory();
-
-					updateWidgetState(GAPPS_STATES_INITIAL);
-
-				} else if (status == DownloadManager.STATUS_PAUSED) {
-					Toast.makeText(mContext,
-							"PAUSED!\n" + "reason of " + reason,
-							Toast.LENGTH_LONG).show();
-				} else if (status == DownloadManager.STATUS_PENDING) {
-					Toast.makeText(mContext, "PENDING!", Toast.LENGTH_LONG)
-							.show();
-				} else if (status == DownloadManager.STATUS_RUNNING) {
-					Toast.makeText(mContext, "RUNNING!", Toast.LENGTH_LONG)
-							.show();
+					} 
 				}
+				cursor.close();
+			}else {
+				Log.d(TAG, "Download id id " + downloadID + ". Should be a Updater download not Gapps.");
+				//Toast.makeText(mContext, "download ID is " + downloadID, Toast.LENGTH_LONG).show();
 			}
-			cursor.close();
 		}
 	}
 	

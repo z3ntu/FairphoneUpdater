@@ -25,6 +25,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.RemoteViews;
 
+import com.fairphone.updater.FairphoneUpdater;
 import com.fairphone.updater.R;
 import com.fairphone.updater.gappsinstaller.GappsInstallerHelper;
 
@@ -36,7 +37,9 @@ public class GoogleAppsInstallerWidget extends AppWidgetProvider
     @Override
     public void onEnabled(Context context)
     {
-//        Log.d(TAG, "Fairphone - GoogleAppsInstaller Context is " + context);
+    	super.onEnabled(context);
+    	//start updater service
+    	FairphoneUpdater.startUpdaterService(context, false);
     }
 
     @Override
@@ -66,6 +69,8 @@ public class GoogleAppsInstallerWidget extends AppWidgetProvider
 
     private int setupButtonClickIntents(Context context, int code, RemoteViews widget)
     {
+    	FairphoneUpdater.startUpdaterService(context, false);
+    	
         // set up Disclaimer
         Intent disclaimerIntent = new Intent();
         disclaimerIntent.setAction(GappsInstallerHelper.GAPPS_ACTION_DISCLAIMER);

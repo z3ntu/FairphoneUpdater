@@ -205,27 +205,34 @@ public class FairphoneUpdater extends Activity
         finish();
     }
 
-    public void startUpdaterService()
+    public static void startUpdaterService(Context context, boolean forceDownload)
     {
-        boolean isRunning = isServiceRunning();
+        boolean isRunning = isServiceRunning(context);
 
         if (!isRunning)
         {
             Log.e(TAG, "Starting Updater Service...");
-            Intent i = new Intent(this, UpdaterService.class);
-            startService(i);
+            Intent i = new Intent(context, UpdaterService.class);
+            context.startService(i);
             try {
 				Thread.sleep(100);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+        }else if(forceDownload){
+        	downloadConfigFile(context);
         }
     }
+    
+    private static void downloadConfigFile(Context context){
+    	Intent i = new Intent(UpdaterService.ACTION_FAIRPHONE_UPDATER_CONFIG_FILE_DOWNLOAD);
+    	context.sendBroadcast(i);
+    }
 
-	private boolean isServiceRunning() {
+	private static boolean isServiceRunning(Context context) {
 		boolean isRunning = false;
-        ActivityManager manager = (ActivityManager) this.getSystemService(Context.ACTIVITY_SERVICE);
+        ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
         for (RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE))
         {
             if (UpdaterService.class.getName().equals(service.service.getClassName()))
@@ -237,14 +244,14 @@ public class FairphoneUpdater extends Activity
 		return isRunning;
 	}
     
-    public void stopUpdaterService(){
-        boolean isRunning = isServiceRunning();
+    public static void stopUpdaterService(Context context){
+        boolean isRunning = isServiceRunning(context);
 
         if (isRunning)
         {
             Log.e(TAG, "Stoping Updater Service...");
-            Intent i = new Intent(this, UpdaterService.class);
-            stopService(i);
+            Intent i = new Intent(context, UpdaterService.class);
+            context.stopService(i);
             try {
 				Thread.sleep(200);
 			} catch (InterruptedException e) {
@@ -368,27 +375,8 @@ public class FairphoneUpdater extends Activity
                         
                         Log.d(TAG, "Developer mode enabled for this session");
                         
-                        try
-                        {
-                            Thread.sleep(100);
-                        } catch (InterruptedException e1)
-                        {
-                            // TODO Auto-generated catch block
-                            e1.printStackTrace();
-                        }
+                        FairphoneUpdater.downloadConfigFile(FairphoneUpdater.this);
                         
-                        FairphoneUpdater.this.stopUpdaterService();
-                        
-                        try
-                        {
-                            Thread.sleep(2000);
-                        } catch (InterruptedException e)
-                        {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
-                        }
-                        
-                        FairphoneUpdater.this.startUpdaterService();
                 	}
                 }
             }
@@ -628,8 +616,7 @@ public class FairphoneUpdater extends Activity
         
         if (mCurrentState == UpdaterState.NORMAL)
         {
-        	stopUpdaterService();
-            startUpdaterService();
+            startUpdaterService(this, true);
         }
 
         boolean isConfigLoaded = UpdaterService.readUpdaterData(this);

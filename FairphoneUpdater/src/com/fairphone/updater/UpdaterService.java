@@ -56,11 +56,13 @@ import com.stericson.RootTools.execution.Shell;
 
 public class UpdaterService extends Service {
 
+	public static final String ACTION_FAIRPHONE_UPDATER_CONFIG_FILE_DOWNLOAD = "FAIRPHONE_UPDATER_CONFIG_FILE_DOWNLOAD";
+
 	private static final String TAG = UpdaterService.class.getSimpleName();
 	
 	private static final String PREFERENCE_LAST_CONFIG_DOWNLOAD_ID = "LastConfigDownloadId";
-	private DownloadManager mDownloadManager;
-	private DownloadBroadCastReceiver mDownloadBroadCastReceiver;
+	private DownloadManager mDownloadManager = null;
+	private DownloadBroadCastReceiver mDownloadBroadCastReceiver = null;
 
     private static final int MAX_DOWNLOAD_RETRIES = 3;
     private int mDownloadRetries;
@@ -71,6 +73,8 @@ public class UpdaterService extends Service {
 	final static long DAY_IN_MILLIS = 1000 * 60 * 60 * 24;
 	
     private GappsInstallerHelper mGappsInstaller;
+
+	private BroadcastReceiver mBCastConfigFileDownload;
     
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
@@ -86,17 +90,34 @@ public class UpdaterService extends Service {
 			
 	        setupDownloadManager();
 	
-			// remove the old file if its still there for some reason
-            removeLatestFileDownload(getApplicationContext());
-            
-			// start the download of the latest file
-			startDownloadLatest();
+			downloadConfigFile();
 		}
 		
 	    // setup the gapps installer
      	mGappsInstaller = new GappsInstallerHelper(getApplicationContext());
      	
-		return Service.START_NOT_STICKY;
+     	mBCastConfigFileDownload = new BroadcastReceiver() {
+
+			@Override
+			public void onReceive(Context context, Intent intent) {
+				if(hasInternetConnection()){
+					downloadConfigFile();
+				}
+			}
+		};
+
+		getApplicationContext().registerReceiver(mBCastConfigFileDownload, new IntentFilter(
+				ACTION_FAIRPHONE_UPDATER_CONFIG_FILE_DOWNLOAD));
+     	
+		return Service.START_STICKY;
+	}
+
+	private void downloadConfigFile() {
+		// remove the old file if its still there for some reason
+		removeLatestFileDownload(getApplicationContext());
+		
+		// start the download of the latest file
+		startDownloadLatest();
 	}
 
     public void updateGoogleAppsIntallerWidgets() {
@@ -139,7 +160,7 @@ public class UpdaterService extends Service {
 					resources.getString(R.string.configFilename)
 							+ resources.getString(R.string.config_zip));
 			
-			if (request != null) {
+			if (request != null && mDownloadManager != null) {
 				mLatestFileDownloadId = mDownloadManager.enqueue(request);
 
 				Editor editor = mSharedPreferences.edit();
@@ -300,16 +321,21 @@ public class UpdaterService extends Service {
 	}
 
 	private void setupDownloadManager() {
-		mDownloadManager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
+		if(mDownloadManager == null){
+			mDownloadManager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
+		}
 
-		mDownloadBroadCastReceiver = new DownloadBroadCastReceiver();
-
-		getApplicationContext().registerReceiver(mDownloadBroadCastReceiver,
-				new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
+		if(mDownloadBroadCastReceiver != null){
+			mDownloadBroadCastReceiver = new DownloadBroadCastReceiver();
+	
+			getApplicationContext().registerReceiver(mDownloadBroadCastReceiver,
+					new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
+		}
 	}
 
 	private void removeBroadcastReceiver() {
 		getApplicationContext().unregisterReceiver(mDownloadBroadCastReceiver);
+		mDownloadBroadCastReceiver = null;
 	}
 	
 	private static void checkVersionValidation(Context context){
@@ -356,7 +382,7 @@ public class UpdaterService extends Service {
     }
 
     private void removeLatestFileDownload(Context context) {
-        if(mLatestFileDownloadId != 0){
+        if(mLatestFileDownloadId != 0 && mDownloadManager != null){
         	mDownloadManager.remove(mLatestFileDownloadId);
         	mLatestFileDownloadId = 0;
         }
