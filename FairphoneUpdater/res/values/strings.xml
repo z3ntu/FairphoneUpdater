@@ -64,6 +64,8 @@
 	<string name="google_apps_reboot_description">The system needs to reboot to complete the installation.\n\nAfter the reboot, follow the steps to set up Google Apps.</string>
 	<string name="google_apps_uninstall_title">Google Apps installed</string>
 	<string name="google_apps_uninstall_description">Delete this\nInstaller</string>
+	<string name="google_apps_re_install_title">Google Apps installed</string>
+	<string name="google_apps_re_install_description">Remove this or\nclick to re-install</string>
 	<string name="google_apps_failed_download_title">Download failed</string>
 	<string name="google_apps_failed_download_description">Downloaded files are corrupted. Retry?</string>
 	<string name="google_apps_download_error">Error downloading files, please try again.</string>

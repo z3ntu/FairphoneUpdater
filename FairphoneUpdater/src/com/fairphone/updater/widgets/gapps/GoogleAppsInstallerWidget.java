@@ -22,6 +22,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.RemoteViews;
 
@@ -112,6 +113,12 @@ public class GoogleAppsInstallerWidget extends AppWidgetProvider
         PendingIntent rebootOkPendingIntent = PendingIntent.getBroadcast(context, code++, rebootOkIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         widget.setOnClickPendingIntent(R.id.rebootOkButton, rebootOkPendingIntent);
         
+        // set up Disclaimer
+        Intent reInstallDisclaimerIntent = new Intent();
+        reInstallDisclaimerIntent.setAction(GappsInstallerHelper.GAPPS_ACTION_DISCLAIMER);
+        PendingIntent reInstallDisclaimerPendingIntent = PendingIntent.getBroadcast(context, code++, reInstallDisclaimerIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        widget.setOnClickPendingIntent(R.id.reinstallButton, reInstallDisclaimerPendingIntent);
+        
         return code;
     }
 
@@ -134,6 +141,7 @@ public class GoogleAppsInstallerWidget extends AppWidgetProvider
                 widget.setViewVisibility(R.id.popupProgressGroup, View.GONE);
                 widget.setViewVisibility(R.id.popupPermissionsGroup, View.GONE);
                 widget.setViewVisibility(R.id.popupRebootGroup, View.GONE);
+                widget.setViewVisibility(R.id.reinstallGroup, View.GONE);
                 widget.setViewVisibility(R.id.uninstallGroup, View.GONE);
                 break;
             case GappsInstallerHelper.GAPPS_STATES_DOWNLOAD_CONFIGURATION_FILE:
@@ -143,6 +151,7 @@ public class GoogleAppsInstallerWidget extends AppWidgetProvider
                 widget.setViewVisibility(R.id.popupProgressGroup, View.VISIBLE);
                 widget.setViewVisibility(R.id.popupPermissionsGroup, View.GONE);
                 widget.setViewVisibility(R.id.popupRebootGroup, View.GONE);
+                widget.setViewVisibility(R.id.reinstallGroup, View.GONE);
                 widget.setViewVisibility(R.id.uninstallGroup, View.GONE);
                 widget.setTextViewText(R.id.progressDialogTitle, context.getResources().getString(R.string.google_apps_download_title));
                 
@@ -155,6 +164,7 @@ public class GoogleAppsInstallerWidget extends AppWidgetProvider
                 widget.setViewVisibility(R.id.popupProgressGroup, View.VISIBLE);
                 widget.setViewVisibility(R.id.popupPermissionsGroup, View.GONE);
                 widget.setViewVisibility(R.id.popupRebootGroup, View.GONE);
+                widget.setViewVisibility(R.id.reinstallGroup, View.GONE);
                 widget.setViewVisibility(R.id.uninstallGroup, View.GONE);
                 widget.setTextViewText(R.id.progressDialogTitle, context.getResources().getString(R.string.google_apps_download_title));
                 
@@ -167,6 +177,7 @@ public class GoogleAppsInstallerWidget extends AppWidgetProvider
                 widget.setViewVisibility(R.id.popupProgressGroup, View.VISIBLE);
                 widget.setViewVisibility(R.id.popupPermissionsGroup, View.GONE);
                 widget.setViewVisibility(R.id.popupRebootGroup, View.GONE);
+                widget.setViewVisibility(R.id.reinstallGroup, View.GONE);
                 widget.setViewVisibility(R.id.uninstallGroup, View.GONE);
                 widget.setTextViewText(R.id.progressDialogTitle, context.getResources().getString(R.string.google_apps_unzip_title));
                 
@@ -179,6 +190,7 @@ public class GoogleAppsInstallerWidget extends AppWidgetProvider
                 widget.setViewVisibility(R.id.popupProgressGroup, View.GONE);
                 widget.setViewVisibility(R.id.popupPermissionsGroup, View.GONE);
                 widget.setViewVisibility(R.id.popupRebootGroup, View.GONE);
+                widget.setViewVisibility(R.id.reinstallGroup, View.GONE);
                 widget.setViewVisibility(R.id.uninstallGroup, View.GONE);
             	break;
             case GappsInstallerHelper.GAPPS_STATES_PERMISSION_CHECK:
@@ -188,6 +200,7 @@ public class GoogleAppsInstallerWidget extends AppWidgetProvider
                 widget.setViewVisibility(R.id.popupProgressGroup, View.GONE);
                 widget.setViewVisibility(R.id.popupPermissionsGroup, View.VISIBLE);
                 widget.setViewVisibility(R.id.popupRebootGroup, View.GONE);
+                widget.setViewVisibility(R.id.reinstallGroup, View.GONE);
                 widget.setViewVisibility(R.id.uninstallGroup, View.GONE);
             	break;
             case GappsInstallerHelper.GAPPS_STATE_INSTALLATION:
@@ -197,6 +210,7 @@ public class GoogleAppsInstallerWidget extends AppWidgetProvider
                 widget.setViewVisibility(R.id.popupProgressGroup, View.VISIBLE);
                 widget.setViewVisibility(R.id.popupPermissionsGroup, View.GONE);
                 widget.setViewVisibility(R.id.popupRebootGroup, View.GONE);
+                widget.setViewVisibility(R.id.reinstallGroup, View.GONE);
                 widget.setViewVisibility(R.id.uninstallGroup, View.GONE);
                 widget.setTextViewText(R.id.progressDialogTitle, context.getResources().getString(R.string.google_apps_install_title));
 
@@ -209,6 +223,7 @@ public class GoogleAppsInstallerWidget extends AppWidgetProvider
                 widget.setViewVisibility(R.id.popupProgressGroup, View.GONE);
                 widget.setViewVisibility(R.id.popupPermissionsGroup, View.GONE);
                 widget.setViewVisibility(R.id.popupRebootGroup, View.VISIBLE);
+                widget.setViewVisibility(R.id.reinstallGroup, View.GONE);
                 widget.setViewVisibility(R.id.uninstallGroup, View.GONE);
 	            break;
             case GappsInstallerHelper.GAPPS_INSTALLED_STATE:
@@ -218,7 +233,8 @@ public class GoogleAppsInstallerWidget extends AppWidgetProvider
                 widget.setViewVisibility(R.id.popupProgressGroup, View.GONE);
                 widget.setViewVisibility(R.id.popupPermissionsGroup, View.GONE);
                 widget.setViewVisibility(R.id.popupRebootGroup, View.GONE);
-                widget.setViewVisibility(R.id.uninstallGroup, View.VISIBLE);
+                widget.setViewVisibility(R.id.reinstallGroup, View.VISIBLE);
+                widget.setViewVisibility(R.id.uninstallGroup, View.GONE);
                 break;
 
             default:

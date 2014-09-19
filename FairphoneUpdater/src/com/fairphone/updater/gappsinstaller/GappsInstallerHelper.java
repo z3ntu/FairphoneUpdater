@@ -76,8 +76,8 @@ public class GappsInstallerHelper {
 	public static final String GOOGLE_APPS_INSTALLER_PROGRESS = "com.fairphone.updater.gapps.WIDGET_SEEKBAR_PROGRESS";
 	public static final String GOOGLE_APPS_INSTALLER_PROGRESS_MAX = "com.fairphone.updater.gapps.WIDGET_SEEKBAR_PROGRESS_MAX";
 	public static final String GAPPS_ACTION_GO_PERMISSIONS = "com.fairphone.updater.gapps.GAPPS_ACTION_GO_PERMISSIONS";
-	public static final String GAPPS_REINSTALATION = "GAPPS_REINSTALATION_REQUEST";
-    public static final String GAPPS_REINSTALL_FLAG = "GAPPS_REINSTALL_FLAG";
+	public static final String GAPPS_REINSTALATION = "com.fairphone.updater.gapps.GAPPS_REINSTALATION_REQUEST";
+    public static final String GAPPS_REINSTALL_FLAG = "com.fairphone.updater.gapps.GAPPS_REINSTALL_FLAG";
 
 	public static final int GAPPS_STATES_INITIAL = 0;
 	public static final int GAPPS_STATES_DOWNLOAD_CONFIGURATION_FILE = 1;
@@ -137,7 +137,8 @@ public class GappsInstallerHelper {
 		}
 		
 		if(!checkGappsAreInstalled()){
-		    updateInstallerState(GAPPS_STATES_INITIAL);
+		    //updateInstallerState(GAPPS_STATES_INITIAL);
+		    updateWidgetState(GAPPS_STATES_INITIAL);
 		}
 	}
 
