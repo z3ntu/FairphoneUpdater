@@ -32,14 +32,12 @@ import java.util.concurrent.TimeoutException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import android.app.AlertDialog;
 import android.app.DownloadManager;
 import android.app.DownloadManager.Request;
 import android.appwidget.AppWidgetManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -124,27 +122,20 @@ public class GappsInstallerHelper {
 
 		if (currentState == GAPPS_REBOOT_STATE) {
 			updateWidgetState(GAPPS_STATES_PERMISSION_CHECK);
-		}
-
-		if (currentState != GAPPS_STATE_INSTALLATION &&
+		}else if (currentState != GAPPS_STATE_INSTALLATION &&
 			currentState != GAPPS_INSTALLED_STATE) {
 
 			// clean files that must be rechecked
 			forceCleanUnzipDirectory();
 			forceCleanConfigurationFile();
-
-			updateInstallerState(GAPPS_STATES_INITIAL);
-		}
-		
-		if(!checkGappsAreInstalled()){
-		    //updateInstallerState(GAPPS_STATES_INITIAL);
-		    updateWidgetState(GAPPS_STATES_INITIAL);
+			
+			checkGappsAreInstalled();
+		} else {
+			checkGappsAreInstalled();
 		}
 	}
 
 	private boolean checkGappsAreInstalled() {
-
-	    //boolean retVal = false;
 	    
 	    if (mSharedPrefs.getBoolean(GAPPS_REINSTALL_FLAG, false)) {
 	        showReinstallAlert();
@@ -333,6 +324,7 @@ public class GappsInstallerHelper {
 	private BroadcastReceiver mBCastReinstallGapps;
 	private BroadcastReceiver mBCastSetReinstallGappsFlag;
 	private BroadcastReceiver mBCastChangeGappsStateToInitial;
+	private BroadcastReceiver mBCastGappsPermissionsDenied;
 
 	private void setupTheStatesBroadCasts() {
 		// launching the application
@@ -380,7 +372,7 @@ public class GappsInstallerHelper {
 
 			@Override
 			public void onReceive(Context context, Intent intent) {
-				updateWidgetState(GAPPS_STATES_INITIAL);
+				checkGappsAreInstalled();
 			}
 
 		};
@@ -457,12 +449,26 @@ public class GappsInstallerHelper {
 
             @Override
             public void onReceive(Context context, Intent intent) {
-            	updateWidgetState(GAPPS_STATES_INITIAL);
+            	checkGappsAreInstalled();
             }
         };
 
         mContext.registerReceiver(mBCastChangeGappsStateToInitial, new IntentFilter(
                 TransparentActivity.ACTION_CHANGE_GAPPS_STATE_TO_INITIAL));
+        
+        mBCastGappsPermissionsDenied = new BroadcastReceiver() {
+
+            @Override
+            public void onReceive(Context context, Intent intent) {
+            	forceCleanConfigurationFile();
+				// forceCleanUnzipDirectory();
+
+				checkGappsAreInstalled();
+            }
+        };
+
+        mContext.registerReceiver(mBCastGappsPermissionsDenied, new IntentFilter(
+                TransparentActivity.ACTION_GAPPS_DENIED_PERMISSIONS));
 	}
 	
 	private String getConfigDownloadLink(Resources resources) {
@@ -547,9 +553,11 @@ public class GappsInstallerHelper {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
+			
+			updateWidgetState(GAPPS_REBOOT_STATE);
+		}else{
+			showPermissionsDialog();
 		}
-
-		updateWidgetState(GAPPS_REBOOT_STATE);
 	}
 
 	private void copyGappsToCache() {
@@ -610,36 +618,12 @@ public class GappsInstallerHelper {
                 e.printStackTrace();
             }
 		} else {
-			Resources resources = mContext.getResources();
-
-			AlertDialog permissionsDialog = new AlertDialog.Builder(mContext)
-					.create();
-
-			permissionsDialog.setTitle(resources
-					.getText(R.string.google_apps_denied_permissions_title));
-
-			// Setting Dialog Message
-			permissionsDialog
-					.setMessage(resources
-							.getText(R.string.google_apps_denied_permissions_description));
-
-			permissionsDialog.setButton(AlertDialog.BUTTON_POSITIVE,
-					resources.getString(android.R.string.ok),
-					new DialogInterface.OnClickListener() {
-
-						@Override
-						public void onClick(DialogInterface dialog, int which) {
-
-							forceCleanConfigurationFile();
-							// forceCleanUnzipDirectory();
-
-							updateWidgetState(GAPPS_STATES_INITIAL);
-
-						}
-					});
-
-			permissionsDialog.show();
+			showPermissionsDialog();
 		}
+	}
+
+	private void showPermissionsDialog() {
+		showDialogOnTransparentActivity(TransparentActivity.SHOW_GAPPS_PERMISSIONS_DIALOG);
 	}
 
 	private void clearBroadcastReceivers() {
@@ -651,6 +635,7 @@ public class GappsInstallerHelper {
 		mContext.unregisterReceiver(mBCastReinstallGapps);
 		mContext.unregisterReceiver(mBCastSetReinstallGappsFlag);
 		mContext.unregisterReceiver(mBCastChangeGappsStateToInitial);
+		mContext.unregisterReceiver(mBCastGappsPermissionsDenied);
 	}
 
 	private void updateGoogleAppsIntallerWidgets() {
@@ -725,7 +710,7 @@ public class GappsInstallerHelper {
 							updateGoogleAppsIntallerWidgets();
 						}catch(Exception e){
 							downloading = false;
-							updateWidgetState(GAPPS_STATES_INITIAL);
+							checkGappsAreInstalled();
 							mDownloadManager.remove(download_id);
 							SharedPreferences.Editor prefEdit = mSharedPrefs.edit();
 							prefEdit.putInt(
@@ -836,17 +821,25 @@ public class GappsInstallerHelper {
 		public void onReceive(Context context, Intent intent) {
 			DownloadManager.Query query = new DownloadManager.Query();
 
+			long currentDownloadID = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, 0);
+			int currentState = getCurrentState();
 			long downloadID = 0;
-
-			switch (getCurrentState()) {
-			case GAPPS_STATES_DOWNLOAD_CONFIGURATION_FILE:
-				downloadID = mConfigFileDownloadId;
-				break;
-			default:
-				downloadID = mSharedPrefs.getLong(GOOGLE_APPS_DOWNLOAD_ID, 0);
+			
+			switch (currentState) {
+				case GAPPS_STATES_DOWNLOAD_CONFIGURATION_FILE:
+					downloadID = mConfigFileDownloadId;
+					break;
+				case GAPPS_STATES_DOWNLOAD_GOOGLE_APPS_FILE:
+					downloadID = mSharedPrefs.getLong(GOOGLE_APPS_DOWNLOAD_ID, 0);
+					break;
+				default:
+					downloadID = 0;
 			}
 			
-			if(downloadID != 0) {
+			Toast.makeText(mContext,
+					"current download id = " + currentDownloadID + "\ndownload id = " + downloadID + "\n state = " + currentState + "\n mGappsFileDownloadId: " + mGappsFileDownloadId,
+					Toast.LENGTH_LONG).show();
+			if(downloadID != 0 && (currentDownloadID == mConfigFileDownloadId || currentDownloadID == mGappsFileDownloadId)) {
 				Cursor cursor = mDownloadManager.query(query);
 				query.setFilterById(downloadID);
 	
@@ -876,7 +869,8 @@ public class GappsInstallerHelper {
 	                                    R.string.google_apps_download_error,
 	                                    Toast.LENGTH_LONG).show();
 	
-	                            updateWidgetState(GAPPS_STATES_INITIAL);
+	                            checkGappsAreInstalled();
+	                            
 	                            if(mConfigFileDownloadId!=0){
 	                            	mDownloadManager.remove(mConfigFileDownloadId);
 	                            }
@@ -892,7 +886,7 @@ public class GappsInstallerHelper {
 										R.string.google_apps_download_error,
 										Toast.LENGTH_LONG).show();
 	
-								updateWidgetState(GAPPS_STATES_INITIAL);
+								checkGappsAreInstalled();
 								if(mConfigFileDownloadId!=0){
 	                            	mDownloadManager.remove(mConfigFileDownloadId);
 	                            }
@@ -912,7 +906,7 @@ public class GappsInstallerHelper {
 	//							updateWidgetState(GAPPS_REBOOT_STATE);
 							} else {
 								Log.d(TAG, "GAPPS> file does not match");
-	
+								
 								forceCleanGappsZipFile();
 	
 								// enqueue of gapps request
@@ -928,8 +922,6 @@ public class GappsInstallerHelper {
 								prefEdit.putLong(GOOGLE_APPS_DOWNLOAD_ID,
 										mGappsFileDownloadId);
 	
-								startDownloadProgressUpdateThread(mGappsFileDownloadId);
-	
 								prefEdit.putInt(
 										GappsInstallerHelper.GOOGLE_APPS_INSTALLER_PROGRESS,
 										0);
@@ -939,9 +931,14 @@ public class GappsInstallerHelper {
 	
 								prefEdit.commit();
 	
+								startDownloadProgressUpdateThread(mGappsFileDownloadId);
+								
 								// alter Widget State
-								updateGoogleAppsIntallerWidgets();
 								updateWidgetState(GAPPS_STATES_DOWNLOAD_GOOGLE_APPS_FILE);
+								
+								Toast.makeText(mContext,
+										"Start gapps download id: " + mGappsFileDownloadId + "\n state: " + getCurrentState(),
+										Toast.LENGTH_LONG).show();
 							}
 						} else if(hasAlreadyDownloadedZipFile(mMD5hash)){
 							updateWidgetState(GAPPS_STATES_PERMISSION_CHECK);
@@ -951,7 +948,7 @@ public class GappsInstallerHelper {
 									R.string.google_apps_download_error,
 									Toast.LENGTH_LONG).show();
 	
-							updateWidgetState(GAPPS_STATES_INITIAL);
+							checkGappsAreInstalled();
 							if(mConfigFileDownloadId != 0){
 	                        	mDownloadManager.remove(mConfigFileDownloadId);
 	                        }
@@ -965,7 +962,7 @@ public class GappsInstallerHelper {
 	
 						forceCleanUnzipDirectory();
 	
-						updateWidgetState(GAPPS_STATES_INITIAL);
+						checkGappsAreInstalled();
 					} 
 				}
 				cursor.close();

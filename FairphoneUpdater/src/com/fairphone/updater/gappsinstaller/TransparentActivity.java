@@ -21,7 +21,9 @@ public class TransparentActivity extends Activity {
 	public static final String SHOW_GAPPS_WIFI_WARNING_DIALOG = "SHOW_GAPPS_WIFI_WARNING_DIALOG";
 	public static final String SHOW_GAPPS_DISCLAIMER_DIALOG = "SHOW_GAPPS_DISCLAIMER_DIALOG";
 	public static final String SHOW_GAPPS_REINSTALL_DIALOG = "SHOW_GAPPS_REINSTALL_DIALOG";
+	public static final String SHOW_GAPPS_PERMISSIONS_DIALOG = "SHOW_GAPPS_PERMISSIONS_DIALOG";
 	
+	public static final String ACTION_GAPPS_DENIED_PERMISSIONS = "ACTION_GAPPS_DENIED_PERMISSIONS";
 	public static final String ACTION_SET_GAPPS_REINSTALL_FLAG = "ACTION_SET_GAPPS_REINSTALL_FLAG";
 	public static final String ACTION_CHANGE_GAPPS_STATE_TO_INITIAL = "ACTION_CHANGE_GAPPS_STATE_TO_INITIAL";
 	
@@ -44,6 +46,8 @@ public class TransparentActivity extends Activity {
 			showWifiWarning();
 		}else if(SHOW_GAPPS_PROGRESS_SPINNER.equals(action)){
 			showProgressSpinner();
+		}else if(SHOW_GAPPS_PERMISSIONS_DIALOG.equals(action)){
+			showPermissionsDialog();
 		}
 	}
 	
@@ -65,7 +69,6 @@ public class TransparentActivity extends Activity {
 	
 	@Override
 	protected void onPause() {
-		// TODO Auto-generated method stub
 		super.onPause();
 		
 		unregisterReceiver(mBCastProgressBar);
@@ -98,10 +101,12 @@ public class TransparentActivity extends Activity {
                             	Intent i = new Intent(ACTION_SET_GAPPS_REINSTALL_FLAG);
                             	sendBroadcast(i);
                             	
-                            	finish();
+                            	TransparentActivity.this.finish();
                             }
                         });
 
+        reinstallDialog.setCanceledOnTouchOutside(false);
+        reinstallDialog.setCancelable(false);
         reinstallDialog.show();
     }
 	
@@ -151,6 +156,8 @@ public class TransparentActivity extends Activity {
 					}
 				});
 
+		disclaimerDialog.setCanceledOnTouchOutside(false);
+		disclaimerDialog.setCancelable(false);
 		disclaimerDialog.show();
 	}
 
@@ -179,6 +186,8 @@ public class TransparentActivity extends Activity {
 					}
 				});
 
+		disclaimerDialog.setCanceledOnTouchOutside(false);
+		disclaimerDialog.setCancelable(false);
 		disclaimerDialog.show();
 	}
 
@@ -206,4 +215,39 @@ public class TransparentActivity extends Activity {
         
         finish();
     }
+	
+	private void showPermissionsDialog() {
+		Resources resources = getResources();
+
+		AlertDialog permissionsDialog = new AlertDialog.Builder(this)
+				.create();
+
+		permissionsDialog.setTitle(resources
+				.getText(R.string.google_apps_denied_permissions_title));
+
+		// Setting Dialog Message
+		permissionsDialog
+				.setMessage(resources
+						.getText(R.string.google_apps_denied_permissions_description));
+
+		permissionsDialog.setButton(AlertDialog.BUTTON_POSITIVE,
+				resources.getString(android.R.string.ok),
+				new DialogInterface.OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+
+						Intent permissionsIntent = new Intent();
+						permissionsIntent.setAction(ACTION_GAPPS_DENIED_PERMISSIONS);
+
+						sendBroadcast(permissionsIntent);
+						
+						TransparentActivity.this.finish();
+					}
+				});
+
+		permissionsDialog.setCanceledOnTouchOutside(false);
+		permissionsDialog.setCancelable(false);
+		permissionsDialog.show();
+	}
 }
