@@ -836,9 +836,8 @@ public class GappsInstallerHelper {
 					downloadID = 0;
 			}
 			
-			Toast.makeText(mContext,
-					"current download id = " + currentDownloadID + "\ndownload id = " + downloadID + "\n state = " + currentState + "\n mGappsFileDownloadId: " + mGappsFileDownloadId,
-					Toast.LENGTH_LONG).show();
+			Log.d(TAG, "Current download id = " + currentDownloadID + "\ndownload id = " + downloadID + "\n state = " + currentState + "\n mGappsFileDownloadId: " + mGappsFileDownloadId);
+			
 			if(downloadID != 0 && (currentDownloadID == mConfigFileDownloadId || currentDownloadID == mGappsFileDownloadId)) {
 				Cursor cursor = mDownloadManager.query(query);
 				query.setFilterById(downloadID);
@@ -936,9 +935,7 @@ public class GappsInstallerHelper {
 								// alter Widget State
 								updateWidgetState(GAPPS_STATES_DOWNLOAD_GOOGLE_APPS_FILE);
 								
-								Toast.makeText(mContext,
-										"Start gapps download id: " + mGappsFileDownloadId + "\n state: " + getCurrentState(),
-										Toast.LENGTH_LONG).show();
+								Log.d(TAG, "Start gapps download id: " + mGappsFileDownloadId + "\n state: " + getCurrentState());
 							}
 						} else if(hasAlreadyDownloadedZipFile(mMD5hash)){
 							updateWidgetState(GAPPS_STATES_PERMISSION_CHECK);
@@ -967,8 +964,7 @@ public class GappsInstallerHelper {
 				}
 				cursor.close();
 			}else {
-				Log.d(TAG, "Download id id " + downloadID + ". Should be a Updater download not Gapps.");
-				//Toast.makeText(mContext, "download ID is " + downloadID, Toast.LENGTH_LONG).show();
+				Log.d(TAG, "Download id " + downloadID + ". Should be a Updater download not Gapps.");
 			}
 		}
 	}
