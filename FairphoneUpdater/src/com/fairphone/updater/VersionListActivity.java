@@ -38,6 +38,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.fairphone.updater.tools.Utils;
+
 public class VersionListActivity extends Activity
 {
 
@@ -234,46 +236,50 @@ public class VersionListActivity extends Activity
             @Override
             public void onClick(View v)
             {
-            	if(mIsOSChange){
-            		View checkBoxView = View.inflate(VersionListActivity.this, R.layout.fp_alert_checkbox, null);
-            		
-            		AlertDialog.Builder builder = new AlertDialog.Builder(VersionListActivity.this)
-            		.setTitle(android.R.string.dialog_alert_title)
-            	    .setMessage(R.string.osChangeWarning)
-            	    .setView(checkBoxView)
-            	    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener()
-            	    {
-            	        @Override
-            	        public void onClick(DialogInterface dialog, int which)
-            	        {
-            	        	startVersionDownload(selectedVersion); 
-            	        }
-            	    })
-            	    .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-            	        public void onClick(DialogInterface dialog, int which) { 
-            	        	//Do nothing
-            	        }
-            	     })
-            	    .setIcon(android.R.drawable.ic_dialog_alert);
-            		
-            		final AlertDialog dialog = builder.create();
-            		
-            		CheckBox checkBox = (CheckBox) checkBoxView.findViewById(R.id.agree_checkbox);
-            		checkBox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-
-            		    @Override
-            		    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            		    	dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(isChecked);
-            		    }
-
-            		});
-            		checkBox.setText(R.string.osChangeCheckboxWarning);
-            		
-            		dialog.show();
-            		dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
-            	}else{
-            		showEraseAllDataWarning(selectedVersion);
-            	}
+            	if(!Utils.areGappsInstalling(VersionListActivity.this)){
+	            	if(mIsOSChange){
+	            		View checkBoxView = View.inflate(VersionListActivity.this, R.layout.fp_alert_checkbox, null);
+	            		
+	            		AlertDialog.Builder builder = new AlertDialog.Builder(VersionListActivity.this)
+	            		.setTitle(android.R.string.dialog_alert_title)
+	            	    .setMessage(R.string.osChangeWarning)
+	            	    .setView(checkBoxView)
+	            	    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener()
+	            	    {
+	            	        @Override
+	            	        public void onClick(DialogInterface dialog, int which)
+	            	        {
+	            	        	startVersionDownload(selectedVersion); 
+	            	        }
+	            	    })
+	            	    .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+	            	        public void onClick(DialogInterface dialog, int which) { 
+	            	        	//Do nothing
+	            	        }
+	            	     })
+	            	    .setIcon(android.R.drawable.ic_dialog_alert);
+	            		
+	            		final AlertDialog dialog = builder.create();
+	            		
+	            		CheckBox checkBox = (CheckBox) checkBoxView.findViewById(R.id.agree_checkbox);
+	            		checkBox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+	
+	            		    @Override
+	            		    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+	            		    	dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(isChecked);
+	            		    }
+	
+	            		});
+	            		checkBox.setText(R.string.osChangeCheckboxWarning);
+	            		
+	            		dialog.show();
+	            		dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+	            	}else{
+	            		showEraseAllDataWarning(selectedVersion);
+	            	}
+	            } else {
+	            	showGappsInstalingWarning();
+	            }
             }
         });
     }
@@ -301,6 +307,23 @@ public class VersionListActivity extends Activity
     	}else{
     		startVersionDownload(selectedVersion); 
     	}
+	}
+    
+    private void showGappsInstalingWarning() {
+		new AlertDialog.Builder(VersionListActivity.this)
+				.setTitle(android.R.string.dialog_alert_title)
+				.setMessage(R.string.updater_google_apps_installing_description)
+				.setPositiveButton(android.R.string.ok,
+						new DialogInterface.OnClickListener() {
+
+							@Override
+							public void onClick(DialogInterface dialog,
+									int which) {
+								// close dialog
+							}
+						})
+
+				.setIcon(android.R.drawable.ic_dialog_alert).show();
 	}
     
     public void toggleVersionDetails()

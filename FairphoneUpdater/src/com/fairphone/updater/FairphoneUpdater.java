@@ -74,7 +74,7 @@ public class FairphoneUpdater extends Activity
 
     public static final String FAIRPHONE_UPDATER_NEW_VERSION_RECEIVED = "FairphoneUpdater.NEW.VERSION.RECEIVED";
 
-    private static final String PREFERENCE_CURRENT_UPDATER_STATE = "CurrentUpdaterState";
+    public static final String PREFERENCE_CURRENT_UPDATER_STATE = "CurrentUpdaterState";
 
     private static final String PREFERENCE_DOWNLOAD_ID = "LatestUpdateDownloadId";
 
@@ -410,7 +410,6 @@ public class FairphoneUpdater extends Activity
                 toggleReleaseInfoOtherVersions(hasUpdate);
                 if (mCurrentState == UpdaterState.DOWNLOAD || mCurrentState == UpdaterState.PREINSTALL)
                 {
-
                     changeState(UpdaterState.NORMAL);
                 }
             }
@@ -451,19 +450,23 @@ public class FairphoneUpdater extends Activity
             public void onClick(View v)
             {
 
-                setSelectedVersion(mSelectedVersion != null ? mSelectedVersion : mLatestVersion);
-
-                if (mSelectedVersion != null)
-                {
-                    // Picasso.with(getApplicationContext()).load(mSelectedVersion.getThumbnailLink())
-                    // .placeholder(R.drawable.logo_fairphone)
-                    // .into(mCurrentVersionImage);
-                    int logo =
-                            Version.IMAGE_TYPE_FAIRPHONE.equalsIgnoreCase(mSelectedVersion.getImageType()) ? R.drawable.logo_fairphone
-                                    : R.drawable.aosp_versions_button_logo;
-                    mCurrentVersionImage.setImageResource(logo);
-                }
-                showEraseAllDataWarning();
+            	if(!Utils.areGappsInstalling(FairphoneUpdater.this)){
+	                setSelectedVersion(mSelectedVersion != null ? mSelectedVersion : mLatestVersion);
+	
+	                if (mSelectedVersion != null)
+	                {
+	                    // Picasso.with(getApplicationContext()).load(mSelectedVersion.getThumbnailLink())
+	                    // .placeholder(R.drawable.logo_fairphone)
+	                    // .into(mCurrentVersionImage);
+	                    int logo =
+	                            Version.IMAGE_TYPE_FAIRPHONE.equalsIgnoreCase(mSelectedVersion.getImageType()) ? R.drawable.logo_fairphone
+	                                    : R.drawable.aosp_versions_button_logo;
+	                    mCurrentVersionImage.setImageResource(logo);
+	                }
+	                showEraseAllDataWarning();
+            	} else{
+            		showGappsInstalingWarning();
+            	}
             }
         });
     }
@@ -960,6 +963,7 @@ public class FairphoneUpdater extends Activity
             // getSystemService(POWER_SERVICE)).reboot("recovery");
             try
             {
+            	changeState(UpdaterState.NORMAL);
                 Shell.runRootCommand(new CommandCapture(0, "reboot recovery"));
             } catch (IOException e)
             {
@@ -1334,6 +1338,23 @@ public class FairphoneUpdater extends Activity
 		}
 	}
 
+	private void showGappsInstalingWarning() {
+		new AlertDialog.Builder(FairphoneUpdater.this)
+				.setTitle(android.R.string.dialog_alert_title)
+				.setMessage(R.string.updater_google_apps_installing_description)
+				.setPositiveButton(android.R.string.ok,
+						new DialogInterface.OnClickListener() {
+
+							@Override
+							public void onClick(DialogInterface dialog,
+									int which) {
+								// close dialog
+							}
+						})
+
+				.setIcon(android.R.drawable.ic_dialog_alert).show();
+	}
+    
 	private class DownloadBroadCastReceiver extends BroadcastReceiver
     {
 

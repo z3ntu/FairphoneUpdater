@@ -16,6 +16,7 @@ import com.fairphone.updater.R;
 
 public class TransparentActivity extends Activity {
 
+	public static final String SHOW_UPDATER_INSTALLING_DIALOG = "SHOW_UPDATER_INSTALLING_DIALOG";
 	public static final String HIDE_GAPPS_PROGRESS_SPINNER = "HIDE_GAPPS_PROGRESS_SPINNER";
 	public static final String SHOW_GAPPS_PROGRESS_SPINNER = "SHOW_GAPPS_PROGRESS_SPINNER";
 	public static final String SHOW_GAPPS_WIFI_WARNING_DIALOG = "SHOW_GAPPS_WIFI_WARNING_DIALOG";
@@ -48,6 +49,8 @@ public class TransparentActivity extends Activity {
 			showProgressSpinner();
 		}else if(SHOW_GAPPS_PERMISSIONS_DIALOG.equals(action)){
 			showPermissionsDialog();
+		}else if(SHOW_UPDATER_INSTALLING_DIALOG.equals(action)){
+			showUpdaterInstallingDialog();
 		}
 	}
 	
@@ -249,5 +252,34 @@ public class TransparentActivity extends Activity {
 		permissionsDialog.setCanceledOnTouchOutside(false);
 		permissionsDialog.setCancelable(false);
 		permissionsDialog.show();
+	}
+	
+	private void showUpdaterInstallingDialog() {
+		Resources resources = getResources();
+
+		AlertDialog updaterInstallingDialog = new AlertDialog.Builder(this)
+				.create();
+
+		updaterInstallingDialog.setTitle(resources
+				.getText(android.R.string.dialog_alert_title));
+
+		// Setting Dialog Message
+		updaterInstallingDialog
+				.setMessage(resources
+						.getText(R.string.google_apps_updater_installing_description));
+
+		updaterInstallingDialog.setButton(AlertDialog.BUTTON_POSITIVE,
+				resources.getString(android.R.string.ok),
+				new DialogInterface.OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface dialog, int which) {						
+						TransparentActivity.this.finish();
+					}
+				});
+
+		updaterInstallingDialog.setCanceledOnTouchOutside(false);
+		updaterInstallingDialog.setCancelable(false);
+		updaterInstallingDialog.show();
 	}
 }

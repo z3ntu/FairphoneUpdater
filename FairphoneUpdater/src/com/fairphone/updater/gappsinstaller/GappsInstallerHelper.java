@@ -333,7 +333,11 @@ public class GappsInstallerHelper {
 
 			@Override
 			public void onReceive(Context context, Intent intent) {
-				showDisclaimer();
+				if(!Utils.isUpdaterInstalling(mContext)){
+					showDisclaimer();
+				}else{
+					showUpdaterWarning();
+				}
 			}
 		};
 
@@ -1038,6 +1042,10 @@ public class GappsInstallerHelper {
     
     private void showDisclaimer() {
     	showDialogOnTransparentActivity(TransparentActivity.SHOW_GAPPS_DISCLAIMER_DIALOG);
+	}
+    
+    private void showUpdaterWarning() {
+    	showDialogOnTransparentActivity(TransparentActivity.SHOW_UPDATER_INSTALLING_DIALOG);
 	}
 
 	private void showWifiWarning() {

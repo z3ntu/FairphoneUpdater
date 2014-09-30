@@ -44,6 +44,7 @@
     <string name="invalidSignatureDownloadMessage">Invalid file downloaded: Bad signature</string>
     <string name="osChangeWarning">You\'re about to change your OS.\nYou can lose some features and apps with this change.\nAre you sure you want to continue?</string>
     <string name="osChangeCheckboxWarning">Yes, I want to continue</string>
+    <string name="updater_google_apps_installing_description">Google apps installation is occurring on the background. Please try again later.</string>
     
     <!-- Google Apps Install Widget -->
     <string name="google_apps_installer_name">Google Apps Installer</string>
@@ -73,5 +74,6 @@
 	<string name="google_apps_connection_description">The file you\'re trying to download is too large for mobile connections (~100MB). Please enable Wi-Fi connection and try again.</string>
 	<string name="google_apps_reinstall_request_title">Remember</string>
     <string name="google_apps_reinstall_description">To reinstall the Play store on your phone, you must go to All Apps, Widgets, then drag the Google Apps Installer widget to your Home panel and select it.</string>
+    <string name="google_apps_updater_installing_description">Fairphone Updater is updating your OS on the background. Please try again later.</string>
     
 </resources>

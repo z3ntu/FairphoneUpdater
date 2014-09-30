@@ -18,7 +18,13 @@ package com.fairphone.updater.tools;
 
 import java.io.File;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
+
+import com.fairphone.updater.FairphoneUpdater;
+import com.fairphone.updater.FairphoneUpdater.UpdaterState;
+import com.fairphone.updater.gappsinstaller.GappsInstallerHelper;
 
 public class Utils {
 	
@@ -50,5 +56,22 @@ public class Utils {
 		long blockSize = stat.getBlockSize();
 		long availableBlocks = stat.getAvailableBlocks() * blockSize;
 		return availableBlocks;
+	}
+	
+	public static boolean areGappsInstalling(Context context){
+		SharedPreferences gappsSharedPrefs = context.getSharedPreferences(
+				GappsInstallerHelper.PREFS_GOOGLE_APPS_INSTALLER_DATA, Context.MODE_PRIVATE);
+		
+		int currentState = gappsSharedPrefs.getInt(GappsInstallerHelper.GOOGLE_APPS_INSTALLER_STATE, GappsInstallerHelper.GAPPS_STATES_INITIAL);
+		return currentState != GappsInstallerHelper.GAPPS_STATES_INITIAL && currentState != GappsInstallerHelper.GAPPS_INSTALLED_STATE;
+	}
+	
+	public static boolean isUpdaterInstalling(Context context){		
+		SharedPreferences updaterSharedPrefs = context.getSharedPreferences(
+				FairphoneUpdater.FAIRPHONE_UPDATER_PREFERENCES, Context.MODE_PRIVATE);
+		
+		String currentState = updaterSharedPrefs.getString(FairphoneUpdater.PREFERENCE_CURRENT_UPDATER_STATE, UpdaterState.NORMAL.name());
+		UpdaterState state = UpdaterState.valueOf(currentState);
+		return state != UpdaterState.NORMAL;
 	}
 }
