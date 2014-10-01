@@ -61,6 +61,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
+import com.fairphone.updater.gappsinstaller.GappsInstallerHelper;
 import com.fairphone.updater.tools.Utils;
 import com.stericson.RootTools.RootTools;
 import com.stericson.RootTools.exceptions.RootDeniedException;
@@ -79,8 +80,6 @@ public class FairphoneUpdater extends Activity
     private static final String PREFERENCE_DOWNLOAD_ID = "LatestUpdateDownloadId";
 
     public static final String FAIRPHONE_UPDATER_PREFERENCES = "FairphoneUpdaterPreferences";
-
-    private static final String GAPPS_REINSTALATION = "GAPPS_REINSTALATION_REQUEST";
 
     public static final String PREFERENCE_SELECTED_VERSION_NUMBER = "SelectedVersionNumber";
 
@@ -659,16 +658,20 @@ public class FairphoneUpdater extends Activity
 
     private void changeState(UpdaterState newState)
     {
-        mCurrentState = newState;
+        updateStatePreference(newState);
+
+        setupState(mCurrentState);
+    }
+
+	private void updateStatePreference(UpdaterState newState) {
+		mCurrentState = newState;
 
         Editor editor = mSharedPreferences.edit();
 
         editor.putString(PREFERENCE_CURRENT_UPDATER_STATE, mCurrentState.name());
 
         editor.commit();
-
-        setupState(mCurrentState);
-    }
+	}
 
     @Override
     protected void onPause()
@@ -949,7 +952,7 @@ public class FairphoneUpdater extends Activity
 
             // send broadcast intent
             Intent broadcastIntent = new Intent();
-            broadcastIntent.setAction(FairphoneUpdater.GAPPS_REINSTALATION);
+            broadcastIntent.setAction(GappsInstallerHelper.GAPPS_REINSTALATION);
             this.sendBroadcast(broadcastIntent);
 
             if(canCopyToCache()){
@@ -963,7 +966,7 @@ public class FairphoneUpdater extends Activity
             // getSystemService(POWER_SERVICE)).reboot("recovery");
             try
             {
-            	changeState(UpdaterState.NORMAL);
+            	updateStatePreference(UpdaterState.NORMAL);
                 Shell.runRootCommand(new CommandCapture(0, "reboot recovery"));
             } catch (IOException e)
             {
