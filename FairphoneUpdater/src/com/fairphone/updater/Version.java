@@ -80,6 +80,17 @@ public class Version implements Comparable<Version> {
     public Version() {
         mDependencies = new ArrayList<Integer>();
         mReleaseNotesMap = new HashMap<String, String>();
+        
+        mNumber = 0;
+        mName = "";
+        mAndroidVersion = "";
+        mOTADownloadLink = "";
+        mOTAMd5Sum = "";
+        mBuildNumber = "";
+        mReleaseDate = "";
+        mThumbnailImageLink = "";
+        mImageType = IMAGE_TYPE_FAIRPHONE;
+        mErasePartitionsWarning = false;
     }
 
     public static Version getVersionFromSharedPreferences(Context context) {
