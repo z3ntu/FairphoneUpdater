@@ -18,7 +18,7 @@
             android:lines="1"
             android:text="@string/app_name"
             android:textAllCaps="true"
-            android:textColor="#fff"
+            android:textColor="#00f"
             android:textSize="16.6sp" />
 
         <TextView
@@ -35,7 +35,7 @@
             android:paddingLeft="10dp"
             android:text="@string/app_name"
             android:textAllCaps="true"
-            android:textColor="#fff"
+            android:textColor="#00f"
             android:textSize="33sp"
             android:visibility="gone" />
     </FrameLayout>
