@@ -6,19 +6,28 @@
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
         android:orientation="vertical"
-        android:visibility="gone" >
+        android:visibility="visible" >
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Your OS version is up to date." />
+            android:layout_marginTop="5dp"
+            android:text="Your OS version is up to date."
+            android:textColor="@color/blue"
+            android:textSize="14sp" />
 
         <Button
             android:id="@+id/older_os_version_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:background="@drawable/button_blue_background"
             android:gravity="center"
-            android:text="Older Fairphone OS versions" />
+            android:paddingBottom="10dp"
+            android:paddingTop="10dp"
+            android:text="Older Fairphone OS versions"
+            android:textColor="@color/white"
+            android:textSize="14sp" />
     </LinearLayout>
 
 </merge>
