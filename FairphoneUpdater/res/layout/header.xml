@@ -4,39 +4,41 @@
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="72dp" >
+        android:layout_height="wrap_content"
+        android:background="#F7F7F7" >
 
         <TextView
-            android:id="@+id/titleText"
+            android:id="@+id/header_main_text"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="25dp"
-            android:layout_marginTop="10dp"
-            android:ellipsize="end"
-            android:fontFamily="sans-serif-light"
-            android:gravity="left"
-            android:lines="1"
+            android:layout_height="@dimen/header_big_height"
+            android:fontFamily="sans-serif-thin"
+            android:gravity="center_vertical|center_horizontal"
             android:text="@string/app_name"
-            android:textAllCaps="true"
-            android:textColor="#00f"
-            android:textSize="16.6sp" />
+            android:textColor="@color/blue"
+            android:textSize="@dimen/header_big_text_size" />
 
         <TextView
-            android:id="@+id/subtitleText"
+            android:id="@+id/header_fairphone_text"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="25dp"
+            android:layout_height="@dimen/header_small_height"
             android:drawableLeft="@drawable/icon_back"
-            android:drawablePadding="5dp"
-            android:ellipsize="end"
-            android:fontFamily="sans-serif-light"
-            android:gravity="left"
-            android:lines="1"
-            android:paddingLeft="10dp"
-            android:text="@string/app_name"
-            android:textAllCaps="true"
-            android:textColor="#00f"
-            android:textSize="33sp"
+            android:gravity="center_vertical|center_horizontal"
+            android:paddingLeft="@dimen/header_horizontal_padding"
+            android:paddingRight="@dimen/header_horizontal_padding"
+            android:textColor="@color/blue"
+            android:textSize="@dimen/header_small_text_size"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/header_android_text"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/header_small_height"
+            android:drawableLeft="@drawable/icon_back"
+            android:gravity="center_vertical|center_horizontal"
+            android:paddingLeft="@dimen/header_horizontal_padding"
+            android:paddingRight="@dimen/header_horizontal_padding"
+            android:textColor="@color/green"
+            android:textSize="@dimen/header_small_text_size"
             android:visibility="gone" />
     </FrameLayout>
 

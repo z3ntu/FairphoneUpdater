@@ -49,13 +49,13 @@ public class VersionListActivity extends Activity
 
     public static final String VERSION_LIST_TYPE = "VERSION_LIST_TYPE";
 
-	public static final String OS_VERSION_CHANGE = "OS_VERSION_CHANGE";
+    public static final String OS_VERSION_CHANGE = "OS_VERSION_CHANGE";
 
     private LinearLayout mVersionListContainer;
 
     private List<Version> mVersionList;
 
-    private TextView mVersionListHeaderTitle;
+    //    private TextView mVersionListHeaderTitle;
 
     private View mScrollView;
 
@@ -77,13 +77,13 @@ public class VersionListActivity extends Activity
 
     private String mVersionListType;
 
-    private TextView mVersionListHeaderSubTitle;
+    //    private TextView mVersionListHeaderSubTitle;
 
-	private ImageView mMoreInfoFairphoneLogo;
+    private ImageView mMoreInfoFairphoneLogo;
 
-	private ImageView mMoreInfoAndroidLogo;
+    private ImageView mMoreInfoAndroidLogo;
 
-	private boolean mIsOSChange;
+    private boolean mIsOSChange;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -99,18 +99,18 @@ public class VersionListActivity extends Activity
 
         mVersionListContainer = (LinearLayout) findViewById(R.id.versionListContainer);
 
-        mVersionListHeaderTitle = (TextView) findViewById(R.id.titleText);
-        mVersionListHeaderSubTitle = (TextView) findViewById(R.id.subtitleText);
-        setupTitleBar();
-
-        mVersionListHeaderSubTitle.setOnClickListener(new OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                onBackPressed();
-            }
-        });
+        //        mVersionListHeaderTitle = (TextView) findViewById(R.id.titleText);
+        //        mVersionListHeaderSubTitle = (TextView) findViewById(R.id.subtitleText);
+        //        setupTitleBar();
+        //
+        //        mVersionListHeaderSubTitle.setOnClickListener(new OnClickListener()
+        //        {
+        //            @Override
+        //            public void onClick(View v)
+        //            {
+        //                onBackPressed();
+        //            }
+        //        });
 
         mScrollView = findViewById(R.id.versionListScroll);
         mSelectedVersionLayout = findViewById(R.id.selectedVersionContainer);
@@ -122,8 +122,8 @@ public class VersionListActivity extends Activity
     public void setupTitleBar()
     {
         Resources resources = getResources();
-        mVersionListHeaderSubTitle.setText(Version.getImageTypeDescription(mVersionListType, resources));
-        mVersionListHeaderSubTitle.setVisibility(View.VISIBLE);
+        //        mVersionListHeaderSubTitle.setText(Version.getImageTypeDescription(mVersionListType, resources));
+        //        mVersionListHeaderSubTitle.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -181,7 +181,7 @@ public class VersionListActivity extends Activity
                     {
                         toggleVersionDetails();
 
-                        mVersionListHeaderSubTitle.setText(selectedVersion.getName() + " " + selectedVersion.getBuildNumber());
+                        //                        mVersionListHeaderSubTitle.setText(selectedVersion.getName() + " " + selectedVersion.getBuildNumber());
 
                         //                        Picasso.with(getApplicationContext()).load(selectedVersion.getThumbnailLink())
                         //                                .placeholder(R.drawable.fairphone_updater_current_version).into(mSelectedVersionImage);
@@ -198,8 +198,8 @@ public class VersionListActivity extends Activity
     public void setupMoreInfoLayout()
     {
         mMoreInfoLayout = (LinearLayout) mSelectedVersionLayout.findViewById(R.id.moreInfoLayout);
-        mMoreInfoFairphoneLogo = (ImageView)findViewById(R.id.updateLogoFairphone);
-        mMoreInfoAndroidLogo = (ImageView)findViewById(R.id.updateLogoAndroid);
+        mMoreInfoFairphoneLogo = (ImageView) findViewById(R.id.updateLogoFairphone);
+        mMoreInfoAndroidLogo = (ImageView) findViewById(R.id.updateLogoAndroid);
         mReleaseNotesText = (TextView) mSelectedVersionLayout.findViewById(R.id.releaseNotesText);
         mMoreInfoButtonsLayout = (LinearLayout) mSelectedVersionLayout.findViewById(R.id.actionButtonsContainer);
         mMoreInfoCancelButton = (Button) mSelectedVersionLayout.findViewById(R.id.cancelButton);
@@ -208,13 +208,17 @@ public class VersionListActivity extends Activity
 
     public void updateMoreInfoLayout(Version selectedVersion)
     {
-    	
-        mReleaseNotesText.setText(selectedVersion.getReleaseNotes(Locale.getDefault().getLanguage()) + "\n" + selectedVersion.getAndroidVersion(getResources()));
-        if(Version.IMAGE_TYPE_FAIRPHONE.equalsIgnoreCase(selectedVersion.getImageType())){
-        	mMoreInfoFairphoneLogo.setVisibility(View.VISIBLE);
+
+        mReleaseNotesText
+                .setText(selectedVersion.getReleaseNotes(Locale.getDefault().getLanguage()) + "\n" + selectedVersion.getAndroidVersion(getResources()));
+        if (Version.IMAGE_TYPE_FAIRPHONE.equalsIgnoreCase(selectedVersion.getImageType()))
+        {
+            mMoreInfoFairphoneLogo.setVisibility(View.VISIBLE);
             mMoreInfoAndroidLogo.setVisibility(View.GONE);
-        }else if(Version.IMAGE_TYPE_AOSP.equalsIgnoreCase(selectedVersion.getImageType())){
-        	mMoreInfoFairphoneLogo.setVisibility(View.GONE);
+        }
+        else if (Version.IMAGE_TYPE_AOSP.equalsIgnoreCase(selectedVersion.getImageType()))
+        {
+            mMoreInfoFairphoneLogo.setVisibility(View.GONE);
             mMoreInfoAndroidLogo.setVisibility(View.VISIBLE);
         }
         mMoreInfoButtonsLayout.setVisibility(View.VISIBLE);
@@ -236,96 +240,103 @@ public class VersionListActivity extends Activity
             @Override
             public void onClick(View v)
             {
-            	if(!Utils.areGappsInstalling(VersionListActivity.this)){
-	            	if(mIsOSChange){
-	            		View checkBoxView = View.inflate(VersionListActivity.this, R.layout.fp_alert_checkbox, null);
-	            		
-	            		AlertDialog.Builder builder = new AlertDialog.Builder(VersionListActivity.this)
-	            		.setTitle(android.R.string.dialog_alert_title)
-	            	    .setMessage(R.string.osChangeWarning)
-	            	    .setView(checkBoxView)
-	            	    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener()
-	            	    {
-	            	        @Override
-	            	        public void onClick(DialogInterface dialog, int which)
-	            	        {
-	            	        	startVersionDownload(selectedVersion); 
-	            	        }
-	            	    })
-	            	    .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-	            	        public void onClick(DialogInterface dialog, int which) { 
-	            	        	//Do nothing
-	            	        }
-	            	     })
-	            	    .setIcon(android.R.drawable.ic_dialog_alert);
-	            		
-	            		final AlertDialog dialog = builder.create();
-	            		
-	            		CheckBox checkBox = (CheckBox) checkBoxView.findViewById(R.id.agree_checkbox);
-	            		checkBox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-	
-	            		    @Override
-	            		    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-	            		    	dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(isChecked);
-	            		    }
-	
-	            		});
-	            		checkBox.setText(R.string.osChangeCheckboxWarning);
-	            		
-	            		dialog.show();
-	            		dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
-	            	}else{
-	            		showEraseAllDataWarning(selectedVersion);
-	            	}
-	            } else {
-	            	showGappsInstalingWarning();
-	            }
+                if (!Utils.areGappsInstalling(VersionListActivity.this))
+                {
+                    if (mIsOSChange)
+                    {
+                        View checkBoxView = View.inflate(VersionListActivity.this, R.layout.fp_alert_checkbox, null);
+
+                        AlertDialog.Builder builder =
+                                new AlertDialog.Builder(VersionListActivity.this).setTitle(android.R.string.dialog_alert_title)
+                                        .setMessage(R.string.osChangeWarning).setView(checkBoxView)
+                                        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener()
+                                        {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which)
+                                            {
+                                                startVersionDownload(selectedVersion);
+                                            }
+                                        }).setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener()
+                                        {
+                                            public void onClick(DialogInterface dialog, int which)
+                                            {
+                                                //Do nothing
+                                            }
+                                        }).setIcon(android.R.drawable.ic_dialog_alert);
+
+                        final AlertDialog dialog = builder.create();
+
+                        CheckBox checkBox = (CheckBox) checkBoxView.findViewById(R.id.agree_checkbox);
+                        checkBox.setOnCheckedChangeListener(new OnCheckedChangeListener()
+                        {
+
+                            @Override
+                            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
+                            {
+                                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(isChecked);
+                            }
+
+                        });
+                        checkBox.setText(R.string.osChangeCheckboxWarning);
+
+                        dialog.show();
+                        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+                    }
+                    else
+                    {
+                        showEraseAllDataWarning(selectedVersion);
+                    }
+                }
+                else
+                {
+                    showGappsInstalingWarning();
+                }
             }
         });
     }
 
-    private void showEraseAllDataWarning(final Version selectedVersion) {
-		if(selectedVersion != null && selectedVersion.hasEraseAllPartitionWarning()){
-    	    new AlertDialog.Builder(VersionListActivity.this)
-    	    .setTitle(android.R.string.dialog_alert_title)
-    	    .setMessage(R.string.eraseAllPartitionsWarning)
-    	    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener()
-    	    {
-    	        @Override
-    	        public void onClick(DialogInterface dialog, int which)
-    	        {
-    	        	startVersionDownload(selectedVersion); 
-    	        }
-    	    })
-    	    .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-    	        public void onClick(DialogInterface dialog, int which) { 
-    	        	//Do nothing
-    	        }
-    	     })
-    	    .setIcon(android.R.drawable.ic_dialog_alert)
-    	    .show();
-    	}else{
-    		startVersionDownload(selectedVersion); 
-    	}
-	}
-    
-    private void showGappsInstalingWarning() {
-		new AlertDialog.Builder(VersionListActivity.this)
-				.setTitle(android.R.string.dialog_alert_title)
-				.setMessage(R.string.updater_google_apps_installing_description)
-				.setPositiveButton(android.R.string.ok,
-						new DialogInterface.OnClickListener() {
+    private void showEraseAllDataWarning(final Version selectedVersion)
+    {
+        if (selectedVersion != null && selectedVersion.hasEraseAllPartitionWarning())
+        {
+            new AlertDialog.Builder(VersionListActivity.this).setTitle(android.R.string.dialog_alert_title).setMessage(R.string.eraseAllPartitionsWarning)
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener()
+                    {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which)
+                        {
+                            startVersionDownload(selectedVersion);
+                        }
+                    }).setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener()
+                    {
+                        public void onClick(DialogInterface dialog, int which)
+                        {
+                            //Do nothing
+                        }
+                    }).setIcon(android.R.drawable.ic_dialog_alert).show();
+        }
+        else
+        {
+            startVersionDownload(selectedVersion);
+        }
+    }
 
-							@Override
-							public void onClick(DialogInterface dialog,
-									int which) {
-								// close dialog
-							}
-						})
+    private void showGappsInstalingWarning()
+    {
+        new AlertDialog.Builder(VersionListActivity.this).setTitle(android.R.string.dialog_alert_title)
+                .setMessage(R.string.updater_google_apps_installing_description).setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener()
+                {
 
-				.setIcon(android.R.drawable.ic_dialog_alert).show();
-	}
-    
+                    @Override
+                    public void onClick(DialogInterface dialog, int which)
+                    {
+                        // close dialog
+                    }
+                })
+
+                .setIcon(android.R.drawable.ic_dialog_alert).show();
+    }
+
     public void toggleVersionDetails()
     {
         if (mScrollView.getVisibility() == View.VISIBLE)
@@ -344,17 +355,18 @@ public class VersionListActivity extends Activity
         }
     }
 
-	private void startVersionDownload(final Version selectedVersion) {
-		int versionNumber = selectedVersion != null ? selectedVersion.getNumber() : 0;
-		String versionImageType = selectedVersion != null ? selectedVersion.getImageType() : "";
+    private void startVersionDownload(final Version selectedVersion)
+    {
+        int versionNumber = selectedVersion != null ? selectedVersion.getNumber() : 0;
+        String versionImageType = selectedVersion != null ? selectedVersion.getImageType() : "";
 
-		Editor editor = mSharedPreferences.edit();
-		editor.putInt(FairphoneUpdater.PREFERENCE_SELECTED_VERSION_NUMBER, versionNumber);
-		editor.putString(FairphoneUpdater.PREFERENCE_SELECTED_VERSION_TYPE, versionImageType);
-		editor.putBoolean(FairphoneUpdater.PREFERENCE_SELECTED_VERSION_BEGIN_DOWNLOAD, true);
-		editor.commit();
+        Editor editor = mSharedPreferences.edit();
+        editor.putInt(FairphoneUpdater.PREFERENCE_SELECTED_VERSION_NUMBER, versionNumber);
+        editor.putString(FairphoneUpdater.PREFERENCE_SELECTED_VERSION_TYPE, versionImageType);
+        editor.putBoolean(FairphoneUpdater.PREFERENCE_SELECTED_VERSION_BEGIN_DOWNLOAD, true);
+        editor.commit();
 
-		finish();
-	}
+        finish();
+    }
 
 }
