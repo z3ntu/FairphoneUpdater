@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <!-- BACKGROUND -->
+    <color name="background_header">#F7F7F7</color>
+    <color name="background">#F0F0F0</color>
+    <color name="background_other_os_options">#E8E8E8</color>
+
+    <!-- MAIN COLORS -->
     <color name="transparent">#00000000</color>
     <color name="white">#FFFFFF</color>
     <color name="blue">#5F7C8A</color>

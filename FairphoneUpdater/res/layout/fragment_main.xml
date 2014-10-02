@@ -2,136 +2,52 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#000"
     android:orientation="vertical" >
 
     <LinearLayout
-        android:id="@+id/currentVersionInfoLayout"
+        android:id="@+id/current_version_group"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:animateLayoutChanges="true"
+        android:gravity="center_horizontal"
+        android:orientation="vertical" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Your current OS version" />
+
+        <TextView
+            android:id="@+id/current_version_name_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:text="Fairphone DELETE_ME v1.0" />
+
+        <include layout="@layout/fragment_main_version_up_to_date" />
+
+        <include layout="@layout/fragment_main_update_available" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/other_os_options_group"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="13.3dp"
-        android:layout_marginLeft="13.3dp"
-        android:layout_marginRight="13.3dp"
-        android:layout_weight="1"
-        android:background="#f00"
-        android:orientation="vertical"
-        android:padding="13.3dp" >
+        android:background="@color/background_other_os_options"
+        android:gravity="center_horizontal"
+        android:orientation="vertical" >
 
         <TextView
-            android:id="@+id/yourCurrentOSVersionIsText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Want to change your OS?" />
+
+        <Button
+            android:id="@+id/other_os_options_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="13.3dp"
-            android:gravity="center"
-            android:text="Your current OS version"
-            android:textColor="#fff"
-            android:textSize="13sp" />
-
-        <TextView
-            android:id="@+id/currentVersionNameText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:fontFamily="sans-serif-light"
-            android:gravity="center"
-            android:text="Fairphone DELETE_ME v1.0"
-            android:textColor="#00f"
-            android:textSize="20sp" />
-
-        <TextView
-            android:id="@+id/noUpdateAvailableText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:fontFamily="sans-serif-light"
-            android:gravity="center"
-            android:text="Your OS version is up to date."
-            android:textColor="#fff"
-            android:textSize="15.3sp" />
-
-        <View
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_weight="1" />
-
-        <LinearLayout
-            android:id="@+id/newUpdateInfoLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="13.3dp"
-            android:layout_marginLeft="13.3dp"
-            android:layout_marginRight="13.3dp"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:padding="13.3dp" >
-
-            <TextView
-                android:id="@+id/updateAvailableText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:fontFamily="sans-serif-light"
-                android:gravity="center"
-                android:text="Update is available"
-                android:textColor="#fff"
-                android:textSize="15.3sp" />
-
-            <TextView
-                android:id="@+id/newUpdateVersionNameText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:fontFamily="sans-serif-light"
-                android:gravity="center"
-                android:text="Fairphone DELETE_ME v2.0"
-                android:textColor="#fff"
-                android:textSize="15.3sp" />
-
-            <Button
-                android:id="@+id/installUpdateBtn"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:background="#fff"
-                android:fontFamily="sans-serif-light"
-                android:gravity="center"
-                android:text="Install Update"
-                android:textAllCaps="true"
-                android:textColor="#000"
-                android:textSize="17sp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/otherOSLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="13.3dp"
-            android:layout_marginLeft="13.3dp"
-            android:layout_marginRight="13.3dp"
-            android:layout_weight="1"
-            android:background="#0f0"
-            android:orientation="vertical"
-            android:padding="13.3dp" >
-
-            <TextView
-                android:id="@+id/WantToChangeYourOSText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="Want to change your OS?"
-                android:textColor="#fff" />
-
-            <Button
-                android:id="@+id/otherOSOptionsBtn"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:background="#fff"
-                android:fontFamily="sans-serif-light"
-                android:gravity="center"
-                android:text="Other OS Options"
-                android:textAllCaps="true"
-                android:textColor="#c0c0c0"
-                android:textSize="17sp" />
-        </LinearLayout>
+            android:text="Other OS Options" />
     </LinearLayout>
 
 </LinearLayout>

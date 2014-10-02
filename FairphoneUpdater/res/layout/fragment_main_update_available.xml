@@ -1,0 +1,36 @@
+<merge xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <LinearLayout
+        android:id="@+id/update_available_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:visibility="visible" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Update is available" />
+
+        <TextView
+            android:id="@+id/update_available_name_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Fairphone DELETE_ME v2.0" />
+
+        <Button
+            android:id="@+id/install_update_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Install Update" />
+
+        <Button
+            android:id="@+id/other_os_version_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Older Fairphone OS versions" />
+    </LinearLayout>
+
+</merge>
