@@ -29,7 +29,7 @@ import android.util.Log;
 
 public class Version implements Comparable<Version> {
 
-    public static final String DEFAULT_RELEASE_NOTES_LANG = "en";
+    public static final String DEFAULT_NOTES_LANG = "en";
 
 	private static final String TAG = Version.class.getSimpleName();
 
@@ -76,10 +76,13 @@ public class Version implements Comparable<Version> {
     private String mImageType;
     
     private boolean mErasePartitionsWarning;
+    
+    private Map<String,String> mWarningNotesMap;
 
     public Version() {
         mDependencies = new ArrayList<Integer>();
         mReleaseNotesMap = new HashMap<String, String>();
+        mWarningNotesMap = new HashMap<String, String>();
         
         mNumber = 0;
         mName = "";
@@ -96,7 +99,7 @@ public class Version implements Comparable<Version> {
     public static Version getVersionFromSharedPreferences(Context context) {
         Version version = new Version();
         SharedPreferences sharedPrefs = context.getSharedPreferences(
-                FairphoneUpdater.FAIRPHONE_UPDATER_PREFERENCES, Context.MODE_PRIVATE);
+                FairphoneUpdater2Activity.FAIRPHONE_UPDATER_PREFERENCES, Context.MODE_PRIVATE);
         Resources resources = context.getResources();
 
         int defaultVersionNumber = resources.getInteger(R.integer.defaultVersionNumber);
@@ -131,7 +134,7 @@ public class Version implements Comparable<Version> {
 
     public void saveToSharedPreferences(Context context) {
         SharedPreferences sharedPrefs = context.getSharedPreferences(
-                FairphoneUpdater.FAIRPHONE_UPDATER_PREFERENCES, Context.MODE_PRIVATE);
+                FairphoneUpdater2Activity.FAIRPHONE_UPDATER_PREFERENCES, Context.MODE_PRIVATE);
 
         Editor editor = sharedPrefs.edit();
         editor.putInt(FAIRPHONE_VERSION_NUMBER, getNumber());
@@ -243,14 +246,33 @@ public class Version implements Comparable<Version> {
     	
     	if(mReleaseNotesMap.containsKey(language)){
     		releaseNotes = mReleaseNotesMap.get(language);
-    	}else if(mReleaseNotesMap.containsKey(DEFAULT_RELEASE_NOTES_LANG)){
-    		releaseNotes = mReleaseNotesMap.get(DEFAULT_RELEASE_NOTES_LANG);
+    	}else if(mReleaseNotesMap.containsKey(DEFAULT_NOTES_LANG)){
+    		releaseNotes = mReleaseNotesMap.get(DEFAULT_NOTES_LANG);
     	}
         return TextUtils.isEmpty(releaseNotes) ? "" : releaseNotes;
     }
     
     public void resetReleaseNotes(){
     	mReleaseNotesMap.clear();
+    }
+    
+    public void setWarningNotes(String language, String releaseNotes) {
+        mWarningNotesMap.put(language.toLowerCase(), releaseNotes);
+    }
+
+    public String getWarningNotes(String language) {
+    	String warningNotes = "";
+    	
+    	if(mWarningNotesMap.containsKey(language)){
+    		warningNotes = mWarningNotesMap.get(language);
+    	}else if(mWarningNotesMap.containsKey(DEFAULT_NOTES_LANG)){
+    		warningNotes = mWarningNotesMap.get(DEFAULT_NOTES_LANG);
+    	}
+        return TextUtils.isEmpty(warningNotes) ? "" : warningNotes;
+    }
+    
+    public void resetWarningNotes(){
+    	mWarningNotesMap.clear();
     }
 
     public void setReleaseDate(String releaseDate) {

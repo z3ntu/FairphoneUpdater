@@ -91,7 +91,7 @@ public class VersionListActivity extends Activity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_version_list);
 
-        mSharedPreferences = getSharedPreferences(FairphoneUpdater.FAIRPHONE_UPDATER_PREFERENCES, MODE_PRIVATE);
+        mSharedPreferences = getSharedPreferences(FairphoneUpdater2Activity.FAIRPHONE_UPDATER_PREFERENCES, MODE_PRIVATE);
 
         Intent i = getIntent();
         mVersionListType = i.getStringExtra(VERSION_LIST_TYPE);
@@ -361,9 +361,9 @@ public class VersionListActivity extends Activity
         String versionImageType = selectedVersion != null ? selectedVersion.getImageType() : "";
 
         Editor editor = mSharedPreferences.edit();
-        editor.putInt(FairphoneUpdater.PREFERENCE_SELECTED_VERSION_NUMBER, versionNumber);
-        editor.putString(FairphoneUpdater.PREFERENCE_SELECTED_VERSION_TYPE, versionImageType);
-        editor.putBoolean(FairphoneUpdater.PREFERENCE_SELECTED_VERSION_BEGIN_DOWNLOAD, true);
+        editor.putInt(FairphoneUpdater2Activity.PREFERENCE_SELECTED_VERSION_NUMBER, versionNumber);
+        editor.putString(FairphoneUpdater2Activity.PREFERENCE_SELECTED_VERSION_TYPE, versionImageType);
+        editor.putBoolean(FairphoneUpdater2Activity.PREFERENCE_SELECTED_VERSION_BEGIN_DOWNLOAD, true);
         editor.commit();
 
         finish();

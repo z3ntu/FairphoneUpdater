@@ -12,14 +12,15 @@ import android.widget.Toast;
 
 import com.fairphone.updater.FairphoneUpdater2Activity.HeaderType;
 import com.fairphone.updater.R;
+import com.fairphone.updater.Version;
 
 public class MainFragment extends BaseFragment {
 
 	private TextView mCurrentVersionNameText;
 	private LinearLayout mVersionUpToDateGroup;
-	private Button mVersionUpToDateOlderOSVersionButton;
+	// private Button mVersionUpToDateOlderOSVersionButton;
 	private LinearLayout mUpdateAvailableGroup;
-	private Button mUpdateAvailableOlderOSVersionButton;
+	// private Button mUpdateAvailableOlderOSVersionButton;
 	private TextView mUpdateAvailableNameText;
 	private Button mUpdateAvailableInstallButton;
 	private Button mOtherOSOptionsButton;
@@ -41,27 +42,27 @@ public class MainFragment extends BaseFragment {
 	}
 
 	private void setupLayout(View view) {
-		//Current version group
+		// Current version group
 		mCurrentVersionNameText = (TextView) view
 				.findViewById(R.id.current_version_name_text);
 
-		//Version up to date group
+		// Version up to date group
 		mVersionUpToDateGroup = (LinearLayout) view
 				.findViewById(R.id.version_up_to_date_group);
-		mVersionUpToDateOlderOSVersionButton = (Button) view
-				.findViewById(R.id.older_os_version_button);
+		// mVersionUpToDateOlderOSVersionButton = (Button) view
+		// .findViewById(R.id.older_os_version_button);
 
-		//Update available group
+		// Update available group
 		mUpdateAvailableGroup = (LinearLayout) view
 				.findViewById(R.id.update_available_group);
 		mUpdateAvailableNameText = (TextView) view
 				.findViewById(R.id.update_available_name_text);
 		mUpdateAvailableInstallButton = (Button) view
 				.findViewById(R.id.install_update_button);
-		mUpdateAvailableOlderOSVersionButton = (Button) view
-				.findViewById(R.id.other_os_version_button);
+		// mUpdateAvailableOlderOSVersionButton = (Button) view
+		// .findViewById(R.id.other_os_version_button);
 
-		//Other OS Options group
+		// Other OS Options group
 		mOtherOSOptionsButton = (Button) view
 				.findViewById(R.id.other_os_options_button);
 	}
@@ -77,34 +78,33 @@ public class MainFragment extends BaseFragment {
 		});
 	}
 
-	private void toogleUpdateAvailableGroup() {
+	public void toogleUpdateAvailableGroup() {
 		if (mainActivity.isUpdateAvailable()) {
 			mVersionUpToDateGroup.setVisibility(View.GONE);
 			mUpdateAvailableGroup.setVisibility(View.VISIBLE);
 
 			updateUpdateAvailableGroup();
-
 		} else {
 			mUpdateAvailableGroup.setVisibility(View.GONE);
 			mVersionUpToDateGroup.setVisibility(View.VISIBLE);
 
-			updateOlderVersionsButton();
+			// updateOlderVersionsButton();
 
 		}
 	}
 
-	private void updateOlderVersionsButton() {
-		mVersionUpToDateOlderOSVersionButton
-				.setOnClickListener(new OnClickListener() {
-
-					@Override
-					public void onClick(View v) {
-						Toast.makeText(mainActivity,
-								"Procced to older OS Versions",
-								Toast.LENGTH_LONG).show();
-					}
-				});
-	}
+	// private void updateOlderVersionsButton() {
+	// mVersionUpToDateOlderOSVersionButton
+	// .setOnClickListener(new OnClickListener() {
+	//
+	// @Override
+	// public void onClick(View v) {
+	// Toast.makeText(mainActivity,
+	// "Procced to older OS Versions",
+	// Toast.LENGTH_LONG).show();
+	// }
+	// });
+	// }
 
 	private void updateUpdateAvailableGroup() {
 		mUpdateAvailableNameText.setText(mainActivity.getLatestVersionName());
@@ -112,21 +112,33 @@ public class MainFragment extends BaseFragment {
 
 			@Override
 			public void onClick(View v) {
-				Toast.makeText(mainActivity, "Procced to install",
-						Toast.LENGTH_LONG).show();
+				VersionDetailFragment fragment = new VersionDetailFragment();
+
+				Version latestVersion = mainActivity.getLatestVersion();
+				if (latestVersion != null) {
+
+					fragment.setHeaderType(mainActivity
+							.getHeaderTypeFromImageType(latestVersion
+									.getImageType()), "Install update PASS",
+							"Update version PASS");
+					fragment.setVersion(latestVersion);
+
+				}
+
+				mainActivity.changeFragment(fragment);
 			}
 		});
 
-		mUpdateAvailableOlderOSVersionButton
-				.setOnClickListener(new OnClickListener() {
-
-					@Override
-					public void onClick(View v) {
-						Toast.makeText(mainActivity,
-								"Procced to older OS Versions",
-								Toast.LENGTH_LONG).show();
-					}
-				});
+		// mUpdateAvailableOlderOSVersionButton
+		// .setOnClickListener(new OnClickListener() {
+		//
+		// @Override
+		// public void onClick(View v) {
+		// Toast.makeText(mainActivity,
+		// "Procced to older OS Versions",
+		// Toast.LENGTH_LONG).show();
+		// }
+		// });
 	}
 
 	private void updateCurrentVersionGroup() {

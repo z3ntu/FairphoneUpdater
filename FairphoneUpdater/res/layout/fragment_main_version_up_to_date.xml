@@ -16,7 +16,7 @@
             android:textColor="@color/blue"
             android:textSize="14sp" />
 
-        <Button
+        <!-- <Button
             android:id="@+id/older_os_version_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -27,7 +27,7 @@
             android:paddingTop="10dp"
             android:text="Older Fairphone OS versions"
             android:textColor="@color/white"
-            android:textSize="14sp" />
+            android:textSize="14sp" /> -->
     </LinearLayout>
 
 </merge>

@@ -230,7 +230,7 @@ public class VersionParserHelper {
         } else if (tagName.equalsIgnoreCase(XML_TAGS.DEPENDENCIES.name())) {
             version.setVersionDependencies(xpp.nextText());
         } else if (tagName.equalsIgnoreCase(XML_TAGS.RELEASE_NOTES.name())) {
-            version.setReleaseNotes(Version.DEFAULT_RELEASE_NOTES_LANG, xpp.nextText());
+            version.setReleaseNotes(Version.DEFAULT_NOTES_LANG, xpp.nextText());
         } else if (tagName.equalsIgnoreCase(XML_TAGS.RELEASE_NOTES.name() + "_" + Locale.getDefault().getLanguage())) {
             version.setReleaseNotes(Locale.getDefault().getLanguage(), xpp.nextText());
         }else if (tagName.equalsIgnoreCase(XML_TAGS.RELEASE_DATE.name())) {

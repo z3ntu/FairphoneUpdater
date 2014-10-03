@@ -25,12 +25,12 @@
             android:layout_height="wrap_content"
             android:text="Install Update" />
 
-        <Button
+        <!-- <Button
             android:id="@+id/other_os_version_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="Older Fairphone OS versions" />
+            android:text="Older Fairphone OS versions" /> -->
     </LinearLayout>
 
 </merge>

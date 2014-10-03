@@ -82,7 +82,7 @@ public class UpdaterService extends Service {
 	    // remove the logs
 	    clearDataLogs();
 	    
-		mSharedPreferences = getApplicationContext().getSharedPreferences(FairphoneUpdater.FAIRPHONE_UPDATER_PREFERENCES, MODE_PRIVATE);
+		mSharedPreferences = getApplicationContext().getSharedPreferences(FairphoneUpdater2Activity.FAIRPHONE_UPDATER_PREFERENCES, MODE_PRIVATE);
 
 		mLatestFileDownloadId = mSharedPreferences.getLong(PREFERENCE_LAST_CONFIG_DOWNLOAD_ID, 0);
 		
@@ -169,8 +169,8 @@ public class UpdaterService extends Service {
 				editor.commit();
 			} else {
 				Log.e(TAG, "Invalid request for link " + downloadLink);
-				Intent i = new Intent(FairphoneUpdater.FAIRPHONE_UPDATER_CONFIG_DOWNLOAD_FAILED);
-				i.putExtra(FairphoneUpdater.FAIRPHONE_UPDATER_CONFIG_DOWNLOAD_LINK, downloadLink);
+				Intent i = new Intent(FairphoneUpdater2Activity.FAIRPHONE_UPDATER_CONFIG_DOWNLOAD_FAILED);
+				i.putExtra(FairphoneUpdater2Activity.FAIRPHONE_UPDATER_CONFIG_DOWNLOAD_LINK, downloadLink);
 				sendBroadcast(i);
 			}
 		}
@@ -181,7 +181,7 @@ public class UpdaterService extends Service {
 	    Resources resources = context.getResources();
 	    
 		StringBuilder sb = new StringBuilder();
-		if(FairphoneUpdater.DEV_MODE_ENABLED){
+		if(FairphoneUpdater2Activity.DEV_MODE_ENABLED){
 		    sb.append(resources.getString(R.string.downloadDevUrl));
 		} else {
 		    sb.append(resources.getString(R.string.downloadUrl));
@@ -265,10 +265,10 @@ public class UpdaterService extends Service {
 						context.getResources().getString(R.string.app_name))
 				.setContentText(context.getResources().getString(R.string.fairphoneUpdateMessage));
 
-		Intent resultIntent = new Intent(context, FairphoneUpdater.class);
+		Intent resultIntent = new Intent(context, FairphoneUpdater2Activity.class);
 		TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
 
-		stackBuilder.addParentStack(FairphoneUpdater.class);
+		stackBuilder.addParentStack(FairphoneUpdater2Activity.class);
 
 		stackBuilder.addNextIntent(resultIntent);
 		PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0,
@@ -350,7 +350,7 @@ public class UpdaterService extends Service {
 				setNotification(context);
 			} 
 			//to update the activity
-			Intent updateIntent = new Intent(FairphoneUpdater.FAIRPHONE_UPDATER_NEW_VERSION_RECEIVED);
+			Intent updateIntent = new Intent(FairphoneUpdater2Activity.FAIRPHONE_UPDATER_NEW_VERSION_RECEIVED);
 	        context.sendBroadcast(updateIntent);
 		}
 	}
