@@ -11,7 +11,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.fairphone.updater.FairphoneUpdater2Activity.HeaderType;
 import com.fairphone.updater.R;
@@ -66,7 +65,7 @@ public class VersionDetailFragment extends BaseFragment {
 			public void onClick(View v) {
 				// TODO Launch version download fragment
 				mainActivity.setSelectedVersion(mSelectedVersion);
-				Toast.makeText(mainActivity, "To the download fragment", Toast.LENGTH_LONG).show();
+				mainActivity.startVersionDownload();
 			}
 		});
 	}

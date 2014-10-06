@@ -34,6 +34,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
+import com.fairphone.updater.fragments.DownloadAndRestartFragment;
 import com.fairphone.updater.fragments.MainFragment;
 import com.fairphone.updater.gappsinstaller.GappsInstallerHelper;
 import com.fairphone.updater.tools.Utils;
@@ -90,12 +91,15 @@ public class FairphoneUpdater2Activity extends FragmentActivity {
 	public static boolean DEV_MODE_ENABLED;
 	private int mIsDevModeCounter;
 
-	private TextView headerMainText;
+
+	private TextView headerMainFairphoneText;
+	private TextView headerMainAndroidText;
 	private TextView headerFairphoneText;
 	private TextView headerAndroidText;
 
+
 	public static enum HeaderType {
-		MAIN, FAIRPHONE, ANDROID
+		MAIN_FAIRPHONE, MAIN_ANDROID, FAIRPHONE, ANDROID
 	};
 
 	@Override
@@ -156,7 +160,7 @@ public class FairphoneUpdater2Activity extends FragmentActivity {
 				versionImageType, versionNumber);
 	}
 
-	private UpdaterState getCurrentUpdaterState() {
+	public UpdaterState getCurrentUpdaterState() {
 
 		String currentState = getStringPreference(PREFERENCE_CURRENT_UPDATER_STATE);
 
@@ -210,8 +214,9 @@ public class FairphoneUpdater2Activity extends FragmentActivity {
 	}
 
 	private void initHeaderViews() {
-		headerMainText = (TextView) findViewById(R.id.header_main_text);
+		headerMainFairphoneText = (TextView) findViewById(R.id.header_main_fairphone_text);
 		headerFairphoneText = (TextView) findViewById(R.id.header_fairphone_text);
+		headerMainAndroidText = (TextView) findViewById(R.id.header_main_android_text);
 		headerAndroidText = (TextView) findViewById(R.id.header_android_text);
 	}
 
@@ -219,25 +224,35 @@ public class FairphoneUpdater2Activity extends FragmentActivity {
 
 		switch (type) {
 		case FAIRPHONE:
-			headerMainText.setVisibility(View.GONE);
+			headerMainFairphoneText.setVisibility(View.GONE);
 			headerFairphoneText.setVisibility(View.VISIBLE);
+			headerMainAndroidText.setVisibility(View.GONE);
 			headerAndroidText.setVisibility(View.GONE);
 
 			headerFairphoneText.setText(headerText);
 			break;
 
 		case ANDROID:
-			headerMainText.setVisibility(View.GONE);
+			headerMainFairphoneText.setVisibility(View.GONE);
 			headerFairphoneText.setVisibility(View.GONE);
+			headerMainAndroidText.setVisibility(View.GONE);
 			headerAndroidText.setVisibility(View.VISIBLE);
 
 			headerAndroidText.setText(headerText);
 			break;
 
-		case MAIN:
-		default:
-			headerMainText.setVisibility(View.VISIBLE);
+		case MAIN_ANDROID:
+			headerMainFairphoneText.setVisibility(View.GONE);
 			headerFairphoneText.setVisibility(View.GONE);
+			headerMainAndroidText.setVisibility(View.VISIBLE);
+			headerAndroidText.setVisibility(View.GONE);
+			break;
+
+		case MAIN_FAIRPHONE:
+		default:
+			headerMainFairphoneText.setVisibility(View.VISIBLE);
+			headerFairphoneText.setVisibility(View.GONE);
+			headerMainAndroidText.setVisibility(View.GONE);
 			headerAndroidText.setVisibility(View.GONE);
 			break;
 		}
@@ -256,22 +271,9 @@ public class FairphoneUpdater2Activity extends FragmentActivity {
 			}
 
 			// Create a new Fragment to be placed in the activity layout
-			Fragment firstFragment;
+			Fragment firstFragment = getFragmentFromState();
 
-			switch (mCurrentState) {
-			case DOWNLOAD:
-				// TODO Add download fragment
-				firstFragment = new Fragment();
-				break;
-			case PREINSTALL:
-				// TODO Add pre-install fragment
-				firstFragment = new Fragment();
-				break;
-			case NORMAL:
-			default:
-				firstFragment = new MainFragment();
-				break;
-			}
+			
 
 			// In case this activity was started with special instructions from
 			// an
@@ -282,6 +284,21 @@ public class FairphoneUpdater2Activity extends FragmentActivity {
 			getSupportFragmentManager().beginTransaction()
 					.add(R.id.fragment_holder, firstFragment).commit();
 		}
+	}
+
+	public Fragment getFragmentFromState() {
+		Fragment firstFragment;
+		switch (mCurrentState) {
+			case PREINSTALL:
+			case DOWNLOAD:
+				firstFragment = new DownloadAndRestartFragment();
+				break;
+			case NORMAL:
+			default:
+				firstFragment = new MainFragment();
+				break;
+		}
+		return firstFragment;
 	}
 
 	public void changeFragment(Fragment newFragment) {
@@ -335,7 +352,7 @@ public class FairphoneUpdater2Activity extends FragmentActivity {
 		return mLatestVersion.isNewerVersionThan(mDeviceVersion);
 	}
 
-	private String getVersionName(Version version) {
+	public String getVersionName(Version version) {
 		String versionName = "";
 		if (version != null) {
 			versionName = version.getImageTypeDescription(getResources()) + " "
@@ -369,7 +386,7 @@ public class FairphoneUpdater2Activity extends FragmentActivity {
 	}
 
 	public HeaderType getHeaderTypeFromImageType(String imageType) {
-		HeaderType type = HeaderType.MAIN;
+		HeaderType type = HeaderType.MAIN_FAIRPHONE;
 		if (Version.IMAGE_TYPE_AOSP.equalsIgnoreCase(imageType)) {
 			type = HeaderType.ANDROID;
 		} else if (Version.IMAGE_TYPE_FAIRPHONE.equalsIgnoreCase(imageType)) {
@@ -404,6 +421,7 @@ public class FairphoneUpdater2Activity extends FragmentActivity {
 	}
 
 	private void showEraseAllDataWarning() {
+
 		if (mSelectedVersion.hasEraseAllPartitionWarning()) {
 			new AlertDialog.Builder(FairphoneUpdater2Activity.this)
 					.setTitle(android.R.string.dialog_alert_title)
@@ -465,7 +483,8 @@ public class FairphoneUpdater2Activity extends FragmentActivity {
 		return isWifi;
 	}
 
-	private void startUpdateDownload() {
+	public void startUpdateDownload() {
+		
 		// use only on WiFi
 		if (isWiFiEnabled()) {
 			// set the download for the latest version on the download manager
@@ -541,9 +560,6 @@ public class FairphoneUpdater2Activity extends FragmentActivity {
 			switch (status) {
 			case DownloadManager.STATUS_SUCCESSFUL:
 				changeState(UpdaterState.PREINSTALL);
-				break;
-			case DownloadManager.STATUS_RUNNING:
-				startDownloadProgressUpdateThread();
 				break;
 			case DownloadManager.STATUS_FAILED:
 				Resources resources = getResources();
@@ -643,28 +659,13 @@ public class FairphoneUpdater2Activity extends FragmentActivity {
 			editor.commit();
 			startUpdateDownload();
 		} else {
-			setupState(mCurrentState);
+			changeFragment(getFragmentFromState());
 		}
 	}
 
-	private void setupState(UpdaterState state) {
-		switch (state) {
-		case NORMAL:
-			setupNormalState();
-			break;
-		case DOWNLOAD:
-			setupDownloadState();
-			break;
-		case PREINSTALL:
-			setupPreInstallState();
-			break;
-		}
-	}
-
-	private void changeState(UpdaterState newState) {
+	public void changeState(UpdaterState newState) {
 		updateStatePreference(newState);
-
-		setupState(mCurrentState);
+        changeFragment(getFragmentFromState());
 	}
 
 	private void updateStatePreference(UpdaterState newState) {
@@ -939,7 +940,7 @@ public class FairphoneUpdater2Activity extends FragmentActivity {
 		return request;
 	}
 
-	private void setupDownloadState() {
+	public void setupDownloadState() {
 		// setup the download state views
 		if (mSelectedVersion == null) {
 			Resources resources = getResources();
@@ -970,72 +971,7 @@ public class FairphoneUpdater2Activity extends FragmentActivity {
 
 	}
 
-	private void startDownloadProgressUpdateThread() {
-		new Thread(new Runnable() {
-
-			@Override
-			public void run() {
-
-				boolean downloading = true;
-
-				while (mLatestUpdateDownloadId != 0 && downloading) {
-
-					DownloadManager.Query q = new DownloadManager.Query();
-					q.setFilterById(mLatestUpdateDownloadId);
-
-					Cursor cursor = mDownloadManager.query(q);
-					if (cursor != null) {
-						cursor.moveToFirst();
-						try {
-							int bytes_downloaded = cursor.getInt(cursor
-									.getColumnIndex(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR));
-							int bytes_total = cursor.getInt(cursor
-									.getColumnIndex(DownloadManager.COLUMN_TOTAL_SIZE_BYTES));
-
-							if ((bytes_total + 10000) > Utils
-									.getAvailablePartitionSizeInBytes(Environment
-											.getExternalStorageDirectory())) {
-								downloading = false;
-								Toast.makeText(
-										getApplicationContext(),
-										getResources()
-												.getString(
-														R.string.noSpaceAvailableSdcard),
-										Toast.LENGTH_LONG).show();
-								changeState(UpdaterState.NORMAL);
-							}
-
-							if (cursor.getInt(cursor
-									.getColumnIndex(DownloadManager.COLUMN_STATUS)) == DownloadManager.STATUS_SUCCESSFUL) {
-								downloading = false;
-
-								bytes_downloaded = 0;
-								bytes_total = 0;
-							}
-
-							// TODO PROGRESS update bar missing
-							// mUpdateVersionDownloadProgressBar
-							// .setProgress(bytes_downloaded);
-							// mUpdateVersionDownloadProgressBar
-							// .setMax(bytes_total);
-						} catch (Exception e) {
-							downloading = false;
-							Log.e(TAG,
-									"Error updating download progress: "
-											+ e.getMessage());
-						}
-
-						cursor.close();
-						try {
-							Thread.sleep(3000);
-						} catch (InterruptedException e) {
-							e.printStackTrace();
-						}
-					}
-				}
-			}
-		}).start();
-	}
+	
 
 	private void setupInstallationReceivers() {
 		mDownloadManager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
@@ -1124,7 +1060,13 @@ public class FairphoneUpdater2Activity extends FragmentActivity {
 				mProgress = null;
 			}
 		}
-
 	}
 
+	public long getLatestDownloadId(){
+		return mLatestUpdateDownloadId;
+	}
+	
+	public DownloadManager getDownloadManger(){
+		return mDownloadManager;
+	}
 }

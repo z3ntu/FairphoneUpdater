@@ -24,6 +24,7 @@ public class MainFragment extends BaseFragment {
 	private TextView mUpdateAvailableNameText;
 	private Button mUpdateAvailableInstallButton;
 	private Button mOtherOSOptionsButton;
+	private Version mDeviceVersion;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -33,12 +34,21 @@ public class MainFragment extends BaseFragment {
 
 		setupLayout(view);
 
-		mainActivity.updateHeader(HeaderType.MAIN, "");
+		mDeviceVersion =  mainActivity.getDeviceVersion();
+		updateHeader();
 		updateCurrentVersionGroup();
 		toogleUpdateAvailableGroup();
 		updateOtherOSOptionsGroup();
 
 		return view;
+	}
+
+	private void updateHeader() {
+		if(Version.IMAGE_TYPE_FAIRPHONE.equalsIgnoreCase(mDeviceVersion.getImageType())){
+			mainActivity.updateHeader(HeaderType.MAIN_FAIRPHONE, "");
+		}else if (Version.IMAGE_TYPE_AOSP.equalsIgnoreCase(mDeviceVersion.getImageType())){
+			mainActivity.updateHeader(HeaderType.MAIN_ANDROID, "");
+		}
 	}
 
 	private void setupLayout(View view) {
