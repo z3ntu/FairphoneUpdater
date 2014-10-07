@@ -3,31 +3,35 @@
     <LinearLayout
         android:id="@+id/version_up_to_date_group"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:background="@color/background"
         android:gravity="center_horizontal"
         android:orientation="vertical"
+        android:paddingLeft="@dimen/main_padding"
+        android:paddingRight="@dimen/main_padding"
         android:visibility="visible" >
 
         <TextView
+            style="@style/TextRegular16BlueDark"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:text="Your OS version is up to date."
-            android:textColor="@color/blue"
-            android:textSize="14sp" />
+            android:layout_marginTop="@dimen/main_small_text_margin_top"
+            android:text="Your current OS version" />
 
-        <!-- <Button
-            android:id="@+id/older_os_version_button"
+        <TextView
+            android:id="@+id/current_version_name_text"
+            style="@style/TextLight24BlueDark"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
-            android:background="@drawable/button_blue_background"
-            android:gravity="center"
-            android:paddingBottom="10dp"
-            android:paddingTop="10dp"
-            android:text="Older Fairphone OS versions"
-            android:textColor="@color/white"
-            android:textSize="14sp" /> -->
+            android:gravity="center_horizontal"
+            android:text="Fairphone DELETE_ME v1.0" />
+
+        <TextView
+            style="@style/TextRegular14GreyLight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/main_padding"
+            android:text="Your OS version is up to date." />
     </LinearLayout>
 
 </merge>

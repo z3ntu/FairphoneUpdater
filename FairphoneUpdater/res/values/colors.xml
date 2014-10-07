@@ -9,7 +9,8 @@
     <!-- MAIN COLORS -->
     <color name="transparent">#00000000</color>
     <color name="white">#FFFFFF</color>
-    <color name="blue">#2AA8E0</color>
+    <color name="grey_light">#999999</color>
+    <color name="blue">#2AA9E0</color>
     <color name="blue_dark">#123C59</color>
     <color name="blue_light">#AADCF2</color>
     <color name="green">#6BC1A3</color>

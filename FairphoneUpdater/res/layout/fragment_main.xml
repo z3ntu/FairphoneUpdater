@@ -11,27 +11,7 @@
         android:layout_weight="1"
         android:animateLayoutChanges="true"
         android:gravity="center_horizontal"
-        android:orientation="vertical"
-        android:paddingLeft="32dp"
-        android:paddingRight="32dp" >
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="50dp"
-            android:text="Your current OS version"
-            android:textColor="@color/blue_dark"
-            android:textSize="14sp" />
-
-        <TextView
-            android:id="@+id/current_version_name_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fontFamily="sans-serif-light"
-            android:gravity="center_horizontal"
-            android:text="Fairphone DELETE_ME v1.0"
-            android:textColor="@color/blue_dark"
-            android:textSize="24sp" />
+        android:orientation="vertical" >
 
         <include layout="@layout/fragment_main_version_up_to_date" />
 
@@ -45,16 +25,17 @@
         android:background="@color/background_other_os_options"
         android:gravity="center_horizontal"
         android:orientation="vertical"
-        android:paddingLeft="32dp"
-        android:paddingRight="32dp" >
+        android:padding="@dimen/main_padding" >
 
         <TextView
+            style="@style/TextRegular14GreyLight"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Want to change your OS?" />
 
         <Button
             android:id="@+id/other_os_options_button"
+            style="@style/ButtonTextBlue"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Other OS Options" />

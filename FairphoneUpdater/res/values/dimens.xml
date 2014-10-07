@@ -6,6 +6,10 @@
     <dimen name="header_horizontal_padding">33.3dp</dimen>
     <dimen name="header_big_text_size">34sp</dimen>
     <dimen name="header_small_text_size">20sp</dimen>
-    
+
+    <!-- MAIN -->
+    <dimen name="main_padding">32dp</dimen>
+    <dimen name="main_small_text_margin_top">43dp</dimen>
+    <dimen name="main_button_margin_top">8dp</dimen>
 
 </resources>

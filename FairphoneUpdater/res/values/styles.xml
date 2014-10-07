@@ -5,4 +5,73 @@
         <item name="android:windowFullscreen">false</item>
     </style>
 
+    <!-- BUTTONS -->
+    <style name="ButtonWhite" parent="@android:style/Widget.Button">
+        <item name="android:background">@drawable/button_white_background</item>
+        <item name="android:textColor">@color/button_white_text</item>
+        <item name="android:textSize">24sp</item>
+        <item name="android:padding">15dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+
+    <style name="ButtonTextBlue" parent="@android:style/Widget.Button">
+        <item name="android:background">@color/transparent</item>
+        <item name="android:textColor">@color/button_text_blue_text</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:padding">10dp</item>
+    </style>
+
+    <!-- TEXT REGULAR -->
+    <style name="TextRegular">
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+
+    <style name="TextRegular14" parent="@style/TextRegular">
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="TextRegular16" parent="@style/TextRegular">
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="TextRegular14GreyLight" parent="@style/TextRegular14">
+        <item name="android:textColor">@color/grey_light</item>
+    </style>
+
+    <style name="TextRegular14Blue" parent="@style/TextRegular14">
+        <item name="android:textColor">@color/blue</item>
+    </style>
+
+    <style name="TextRegular14BlueDark" parent="@style/TextRegular14">
+        <item name="android:textColor">@color/blue_dark</item>
+    </style>
+
+    <style name="TextRegular16BlueDark" parent="@style/TextRegular16">
+        <item name="android:textColor">@color/blue_dark</item>
+    </style>
+
+    <style name="TextRegular16White" parent="@style/TextRegular16">
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <!-- TEXT REGULAR -->
+    <style name="TextLight">
+        <item name="android:fontFamily">sans-serif-light</item>
+    </style>
+
+    <style name="TextLight24" parent="@style/TextLight">
+        <item name="android:textSize">24sp</item>
+    </style>
+
+    <style name="TextLight24BlueDark" parent="@style/TextLight24">
+        <item name="android:textColor">@color/blue_dark</item>
+    </style>
+
+    <style name="TextLight24White" parent="@style/TextLight24">
+        <item name="android:textColor">@color/white</item>
+    </style>
+
 </resources>

@@ -3,34 +3,50 @@
     <LinearLayout
         android:id="@+id/update_available_group"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:background="@color/blue"
         android:gravity="center_horizontal"
         android:orientation="vertical"
-        android:visibility="gone" >
+        android:paddingLeft="@dimen/main_padding"
+        android:paddingRight="@dimen/main_padding"
+        android:visibility="visible" >
 
         <TextView
+            style="@style/TextRegular16BlueDark"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/main_small_text_margin_top"
+            android:text="Your current OS version" />
+
+        <TextView
+            android:id="@+id/current_version_name_text"
+            style="@style/TextLight24BlueDark"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:text="Fairphone DELETE_ME v1.0" />
+
+        <TextView
+            style="@style/TextRegular16White"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/main_small_text_margin_top"
             android:text="Update is available" />
 
         <TextView
             android:id="@+id/update_available_name_text"
+            style="@style/TextLight24White"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Fairphone DELETE_ME v2.0" />
 
         <Button
             android:id="@+id/install_update_button"
+            style="@style/ButtonWhite"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/main_button_margin_top"
             android:text="Install Update" />
-
-        <!-- <Button
-            android:id="@+id/other_os_version_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="Older Fairphone OS versions" /> -->
     </LinearLayout>
 
 </merge>
