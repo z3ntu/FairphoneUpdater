@@ -32,7 +32,7 @@ public class VersionDetailFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
         Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-		View view = inflater.inflate(R.layout.fragment_version_detail, container, false);
+		View view = inflater.inflate(R.layout.fragment_update_version_detail, container, false);
 		
 		setupLayout(view);
 		

@@ -2,17 +2,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
-
-    <TextView
+    android:orientation="vertical" ><TextView
         android:id="@+id/version_details_title_text"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
-    
+        android:layout_height="wrap_content" />
+
     <TextView
         android:id="@+id/version_details_name_text"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content" />
 
     <ScrollView
         android:layout_width="match_parent"
@@ -22,31 +20,24 @@
         <TextView
             android:id="@+id/version_release_notes_text"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content" />
     </ScrollView>
 
-    <LinearLayout
-        android:id="@+id/version_warnings_group"
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Before you install please make sure" />
+
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical" >
 
         <TextView
+            android:id="@+id/version_warnings_text"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Before you install please make sure" />
-
-        <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical" >
-
-            <TextView
-                android:id="@+id/version_warnings_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-        </ScrollView>
-    </LinearLayout>
+            android:layout_height="wrap_content" />
+    </ScrollView>
 
     <Button
         android:id="@+id/download_and_update_button"

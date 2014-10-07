@@ -1,0 +1,53 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:id="@+id/other_os_options_group"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:animateLayoutChanges="true"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingLeft="32dp"
+        android:paddingRight="32dp" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="50dp"
+            android:text="Important Notice"
+            android:textColor="@color/blue_dark"
+            android:textSize="14sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="50dp"
+            android:text="It&apos;s important that you keep in mind that installing an older OS version will make loose features from newer ones bla, bla..."
+            android:textColor="@color/blue_dark"
+            android:textSize="14sp" />
+
+        <Button
+            android:id="@+id/older_fairphone_os_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="OLDER FAIRPHONE OS" />
+
+        <Button
+            android:id="@+id/android_os_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="ANDROID OS" />
+
+        <Button
+            android:id="@+id/ubunto_mobile_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="UBUNTO MOBILE" />
+    </LinearLayout>
+
+</LinearLayout>
