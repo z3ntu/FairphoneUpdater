@@ -1,38 +1,35 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/download_info_group"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:animateLayoutChanges="true"
+    android:background="@color/blue"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/main_padding"
+    android:paddingLeft="@dimen/main_padding"
+    android:paddingRight="@dimen/main_padding" >
 
-    <LinearLayout
-        android:id="@+id/download_info_group"
+    <TextView
+        android:id="@+id/download_version_name_text"
+        style="@style/TextLight24White"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:animateLayoutChanges="true"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/main_small_text_margin_top"
         android:gravity="center_horizontal"
-        android:orientation="vertical"
-        android:paddingLeft="32dp"
-        android:paddingRight="32dp" >
+        android:text="Fairphone DELETE_ME v1.0" />
 
-        <TextView
-            android:id="@+id/download_version_name_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fontFamily="sans-serif-light"
-            android:gravity="center_horizontal"
-            android:text="Fairphone DELETE_ME v1.0"
-            android:textColor="@color/blue_dark"
-            android:textSize="24sp" />
+    <include layout="@layout/fragment_download_fairphone_downloading" />
 
-        <include layout="@layout/fragment_download_fairphone_downloading" />
+    <include layout="@layout/fragment_download_fairphone_install" />
 
-        <include layout="@layout/fragment_download_fairphone_install" />
-        
-        <Button
-            android:id="@+id/cancel_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@android:string/cancel" />
-    </LinearLayout>
+    <Button
+        android:id="@+id/cancel_button"
+        style="@style/ButtonBlueDark"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/main_padding_small"
+        android:text="@android:string/cancel" />
+
 </LinearLayout>

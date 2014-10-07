@@ -9,6 +9,7 @@
 
     <!-- MAIN -->
     <dimen name="main_padding">32dp</dimen>
+    <dimen name="main_padding_small">20dp</dimen>
     <dimen name="main_small_text_margin_top">43dp</dimen>
     <dimen name="main_button_margin_top">8dp</dimen>
 

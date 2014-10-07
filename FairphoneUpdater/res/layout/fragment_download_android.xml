@@ -10,29 +10,30 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:animateLayoutChanges="true"
+        android:background="@color/green"
         android:gravity="center_horizontal"
         android:orientation="vertical"
-        android:paddingLeft="32dp"
-        android:paddingRight="32dp" >
+        android:paddingLeft="@dimen/main_padding"
+        android:paddingRight="@dimen/main_padding" >
 
         <TextView
             android:id="@+id/download_version_name_text"
+            style="@style/TextLight24White"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fontFamily="sans-serif-light"
+            android:layout_marginTop="@dimen/main_small_text_margin_top"
             android:gravity="center_horizontal"
-            android:text="Fairphone DELETE_ME v1.0"
-            android:textColor="@color/blue_dark"
-            android:textSize="24sp" />
+            android:text="Fairphone DELETE_ME v1.0" />
 
         <include layout="@layout/fragment_download_android_downloading" />
 
         <include layout="@layout/fragment_download_android_install" />
-        
+
         <Button
             android:id="@+id/cancel_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@android:string/cancel" />
     </LinearLayout>
+
 </LinearLayout>
