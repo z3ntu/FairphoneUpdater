@@ -5,6 +5,15 @@
         <item name="android:windowFullscreen">false</item>
     </style>
 
+    <!-- PROGRESS BAR -->
+    <style name="ProgressBar" parent="@android:style/Widget.ProgressBar">
+        <item name="android:indeterminate">false</item>
+        <item name="android:indeterminateOnly">false</item>
+        <item name="android:progressDrawable">@drawable/progress_bar_background</item>
+        <item name="android:max">100</item>
+        <item name="android:progress">1</item>
+    </style>
+
     <!-- BUTTONS -->
     <style name="ButtonWhite" parent="@android:style/Widget.Button">
         <item name="android:background">@drawable/button_white_background</item>
