@@ -30,11 +30,14 @@ import android.app.ActivityManager.RunningServiceInfo;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.util.Log;
 
 import com.fairphone.updater.FairphoneUpdater2Activity;
 import com.fairphone.updater.FairphoneUpdater2Activity.UpdaterState;
 import com.fairphone.updater.UpdaterService;
+import com.fairphone.updater.Version;
+import com.fairphone.updater.VersionParserHelper;
 import com.fairphone.updater.gappsinstaller.GappsInstallerHelper;
 
 public class Utils {
@@ -204,5 +207,21 @@ public class Utils {
 					Log.e(TAG, "Exception on closing MD5 input stream", e);
 				}
 			}
+		}
+		
+		public static String getModelAndOS(Context context) {
+			StringBuilder sb = new StringBuilder();
+
+			// attach the model and the os
+			sb.append("?");
+			sb.append("model=" + Build.MODEL.replaceAll("\\s", ""));
+			Version currentVersion = VersionParserHelper.getDeviceVersion(context);
+
+			if (currentVersion != null) {
+				sb.append("&");
+				sb.append("os=" + currentVersion.getAndroidVersion());
+			}
+
+			return sb.toString();
 		}
 }

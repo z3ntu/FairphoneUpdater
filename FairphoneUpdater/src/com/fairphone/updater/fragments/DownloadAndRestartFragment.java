@@ -1,12 +1,25 @@
 package com.fairphone.updater.fragments;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.concurrent.TimeoutException;
+
 import android.app.DownloadManager;
+import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.res.Resources;
+import android.content.res.Resources.NotFoundException;
 import android.database.Cursor;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -18,7 +31,13 @@ import com.fairphone.updater.FairphoneUpdater2Activity.HeaderType;
 import com.fairphone.updater.FairphoneUpdater2Activity.UpdaterState;
 import com.fairphone.updater.R;
 import com.fairphone.updater.Version;
+import com.fairphone.updater.VersionParserHelper;
+import com.fairphone.updater.gappsinstaller.GappsInstallerHelper;
 import com.fairphone.updater.tools.Utils;
+import com.stericson.RootTools.RootTools;
+import com.stericson.RootTools.exceptions.RootDeniedException;
+import com.stericson.RootTools.execution.CommandCapture;
+import com.stericson.RootTools.execution.Shell;
 
 public class DownloadAndRestartFragment extends BaseFragment {
 
@@ -33,6 +52,12 @@ public class DownloadAndRestartFragment extends BaseFragment {
 	private Button mCancelButton;
 	private Version mSelectedVersion;
 
+	private DownloadManager mDownloadManager;
+
+	private DownloadBroadCastReceiver mDownloadBroadCastReceiver;
+
+	private long mLatestUpdateDownloadId;
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -41,7 +66,7 @@ public class DownloadAndRestartFragment extends BaseFragment {
 		View view = inflateViewByImageType(inflater, container);
 
 		setupLayout(view);
-		
+
 		updateHeader();
 		mDownloadVersionName.setText(mainActivity
 				.getVersionName(mSelectedVersion));
@@ -54,13 +79,15 @@ public class DownloadAndRestartFragment extends BaseFragment {
 	private void toggleDownloadProgressAndRestart() {
 		switch (mainActivity.getCurrentUpdaterState()) {
 		case DOWNLOAD:
-			startDownloadProgressUpdateThread();
+			setupDownloadState();
 
 			mVersionInstallGroup.setVisibility(View.GONE);
 			mVersionDownloadingGroup.setVisibility(View.VISIBLE);
 			break;
 
 		case PREINSTALL:
+			setupPreInstallState();
+	
 			mVersionDownloadingGroup.setVisibility(View.GONE);
 			mVersionInstallGroup.setVisibility(View.VISIBLE);
 			break;
@@ -68,6 +95,16 @@ public class DownloadAndRestartFragment extends BaseFragment {
 		default:
 			break;
 		}
+		
+		mCancelButton.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				removeLastUpdateDownload();
+				mainActivity.updateStatePreference(UpdaterState.NORMAL);
+				mainActivity.removeLastFragment();
+			}
+		});
 	}
 
 	private void updateHeader() {
@@ -92,13 +129,14 @@ public class DownloadAndRestartFragment extends BaseFragment {
 
 				boolean downloading = true;
 
-				long latestUpdateDownloadId = mainActivity.getLatestDownloadId();
-				while (latestUpdateDownloadId  != 0 && downloading) {
+				long latestUpdateDownloadId = mainActivity
+						.getLatestDownloadId();
+				while (latestUpdateDownloadId != 0 && downloading) {
 
 					DownloadManager.Query q = new DownloadManager.Query();
 					q.setFilterById(latestUpdateDownloadId);
 
-					Cursor cursor = mainActivity.getDownloadManger().query(q);
+					Cursor cursor = mDownloadManager.query(q);
 					if (cursor != null) {
 						cursor.moveToFirst();
 						try {
@@ -130,8 +168,7 @@ public class DownloadAndRestartFragment extends BaseFragment {
 
 							mVersionDownloadProgressBar
 									.setProgress(bytes_downloaded);
-							mVersionDownloadProgressBar
-									.setMax(bytes_total);
+							mVersionDownloadProgressBar.setMax(bytes_total);
 						} catch (Exception e) {
 							downloading = false;
 							Log.e(TAG,
@@ -141,6 +178,7 @@ public class DownloadAndRestartFragment extends BaseFragment {
 
 						cursor.close();
 						try {
+							// TODO WHYYYYYY???????
 							Thread.sleep(3000);
 						} catch (InterruptedException e) {
 							e.printStackTrace();
@@ -187,4 +225,394 @@ public class DownloadAndRestartFragment extends BaseFragment {
 		mCancelButton = (Button) view.findViewById(R.id.cancel_button);
 	}
 
+	@Override
+	public void onResume() {
+		super.onResume();
+
+		setupInstallationReceivers();
+		registerDownloadBroadCastReceiver();
+	}
+
+	@Override
+	public void onPause() {
+		super.onPause();
+
+		unregisterBroadCastReceiver();
+	}
+
+	private void setupInstallationReceivers() {
+		mDownloadManager = (DownloadManager) mainActivity
+				.getSystemService(Context.DOWNLOAD_SERVICE);
+
+		mDownloadBroadCastReceiver = new DownloadBroadCastReceiver();
+	}
+
+	private void registerDownloadBroadCastReceiver() {
+		mainActivity.registerReceiver(mDownloadBroadCastReceiver,
+				new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
+	}
+
+	private void unregisterBroadCastReceiver() {
+		mainActivity.unregisterReceiver(mDownloadBroadCastReceiver);
+	}
+
+	private class DownloadBroadCastReceiver extends BroadcastReceiver {
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+
+			mainActivity.getLatestUpdateDownloadIdFromSharedPreference();
+
+			updateDownloadFile();
+		}
+	}
+
+	private void updateDownloadFile() {
+
+		long downloadId = mainActivity.getLatestDownloadId();
+
+		if (downloadId != 0) {
+			DownloadManager.Query query = new DownloadManager.Query();
+
+			query.setFilterById();
+
+			Cursor cursor = mDownloadManager.query(query);
+
+			if (cursor.moveToFirst()) {
+				int columnIndex = cursor
+						.getColumnIndex(DownloadManager.COLUMN_STATUS);
+				int status = cursor.getInt(columnIndex);
+
+				switch (status) {
+				case DownloadManager.STATUS_SUCCESSFUL:
+					mainActivity.updateStatePreference(UpdaterState.PREINSTALL);
+					toggleDownloadProgressAndRestart();
+					break;
+				case DownloadManager.STATUS_RUNNING:
+					startDownloadProgressUpdateThread();
+					break;
+				case DownloadManager.STATUS_FAILED:
+					Resources resources = getResources();
+					if (mSelectedVersion != null) {
+						String downloadTitle = mSelectedVersion.getName()
+								+ " "
+								+ mSelectedVersion
+										.getImageTypeDescription(resources);
+						Toast.makeText(
+								mainActivity,
+								resources
+										.getString(R.string.updateDownloadError)
+										+ " " + downloadTitle,
+								Toast.LENGTH_LONG).show();
+					} else {
+						Toast.makeText(
+								mainActivity,
+								resources
+										.getString(R.string.updateDownloadError),
+								Toast.LENGTH_LONG).show();
+					}
+					mainActivity.changeState(UpdaterState.NORMAL);
+					break;
+				}
+			}
+
+			cursor.close();
+		}
+	}
+
+	// ************************************************************************************
+	// PRE INSTALL
+	// ************************************************************************************
+
+	private void setupPreInstallState() {
+
+		Resources resources = mainActivity.getResources();
+		// the latest version data must exist
+		if (mSelectedVersion != null) {
+
+			// check the md5 of the file
+			File file = new File(getVersionDownloadPath(mSelectedVersion));
+
+			if (file.exists()) {
+				if (Utils.checkMD5(mSelectedVersion.getMd5Sum(), file)) {
+					copyUpdateToCache(file);
+					return;
+				} else {
+					Toast.makeText(
+							mainActivity,
+							resources
+									.getString(R.string.invalidMD5DownloadMessage),
+							Toast.LENGTH_LONG).show();
+					removeLastUpdateDownload();
+				}
+			}
+		}
+
+		// remove the updater directory
+		File fileDir = new File(Environment.getExternalStorageDirectory()
+				+ resources.getString(R.string.updaterFolder));
+		fileDir.delete();
+
+		// else if the perfect case does not happen, reset the download
+		mainActivity.changeState(UpdaterState.NORMAL);
+	}
+
+	// ************************************************************************************
+	// DOWNLOAD UPDATE
+	// ************************************************************************************
+
+	public void setupDownloadState() {
+		// setup the download state views
+		if (mSelectedVersion == null) {
+			Resources resources = getResources();
+
+			// we don't have the lastest.xml so get back to initial state
+			File updateDir = new File(Environment.getExternalStorageDirectory()
+					+ resources.getString(R.string.updaterFolder));
+
+			updateDir.delete();
+
+			mainActivity.changeState(UpdaterState.NORMAL);
+
+			return;
+		}
+
+		// if there is a download ID on the shared preferences
+		if (mLatestUpdateDownloadId == 0) {
+			mLatestUpdateDownloadId = mainActivity.getLatestUpdateDownloadIdFromSharedPreference();
+
+			// invalid download Id
+			if (mLatestUpdateDownloadId == 0) {
+				mainActivity.changeState(UpdaterState.NORMAL);
+				return;
+			}
+		}
+
+		updateDownloadFile();
+	}
+	
+	private void startPreInstall() {
+
+		if (RootTools.isAccessGiven()) {
+			// set the command for the recovery
+			Resources resources = getResources();
+			// Process p;
+			try {
+
+				Shell.runRootCommand(new CommandCapture(0,
+						"rm -f /cache/recovery/command"));
+
+				Shell.runRootCommand(new CommandCapture(0,
+						"rm -f /cache/recovery/extendedcommand"));
+
+				Shell.runRootCommand(new CommandCapture(0,
+						"echo '--wipe_cache' >> /cache/recovery/command"));
+
+				if (canCopyToCache()) {
+					Shell.runRootCommand(new CommandCapture(
+							0,
+							"echo '--update_package=/"
+									+ resources
+											.getString(R.string.recoveryCachePath)
+									+ "/"
+									+ VersionParserHelper
+											.getNameFromVersion(mSelectedVersion)
+									+ "' >> /cache/recovery/command"));
+				} else {
+					Shell.runRootCommand(new CommandCapture(
+							0,
+							"echo '--update_package=/"
+									+ resources
+											.getString(R.string.recoverySdCardPath)
+									+ resources
+											.getString(R.string.updaterFolder)
+									+ VersionParserHelper
+											.getNameFromVersion(mSelectedVersion)
+									+ "' >> /cache/recovery/command"));
+				}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (NotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (TimeoutException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (RootDeniedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			// send broadcast intent
+			Intent broadcastIntent = new Intent();
+			broadcastIntent.setAction(GappsInstallerHelper.GAPPS_REINSTALATION);
+			mainActivity.sendBroadcast(broadcastIntent);
+
+			if (canCopyToCache()) {
+				removeLastUpdateDownload();
+			}
+
+			// remove the update files from data
+			removeUpdateFilesFromData();
+			// reboot the device into recovery
+			// ((PowerManager)
+			// getSystemService(POWER_SERVICE)).reboot("recovery");
+			try {
+				mainActivity.updateStatePreference(UpdaterState.NORMAL);
+				Shell.runRootCommand(new CommandCapture(0, "reboot recovery"));
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (TimeoutException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (RootDeniedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} else {
+			// TODO: show warning
+		}
+	}
+
+	private void copyUpdateToCache(File file) {
+		if (canCopyToCache()) {
+			CopyFileToCacheTask copyTask = new CopyFileToCacheTask();
+			copyTask.execute(
+					file.getPath(),
+					Environment.getDownloadCacheDirectory()
+							+ "/"
+							+ VersionParserHelper
+									.getNameFromVersion(mSelectedVersion));
+		} else {
+			Log.d(TAG, "No space on cache. Defaulting to Sdcard");
+			Toast.makeText(mainActivity,
+					getResources().getString(R.string.noSpaceAvailableCache),
+					Toast.LENGTH_LONG).show();
+		}
+	}
+
+	public boolean canCopyToCache() {
+		Resources resources = getResources();
+		double cacheSize = Utils.getPartitionSizeInMBytes(Environment
+				.getDownloadCacheDirectory());
+		return cacheSize > resources
+				.getInteger(R.integer.FP1CachePartitionSizeMb)
+				&& cacheSize > resources
+						.getInteger(R.integer.minimalCachePartitionSizeMb);
+	}
+
+	private void clearCache() {
+		File f = Environment.getDownloadCacheDirectory();
+		File files[] = f.listFiles();
+		if (files != null) {
+			Log.d(TAG, "Size: " + files.length);
+			for (int i = 0; i < files.length; i++) {
+				String filename = files[i].getName();
+
+				if (filename.endsWith(".zip")) {
+					files[i].delete();
+					Log.d(TAG, "Deleted file " + filename);
+				}
+			}
+		}
+	}
+
+	// ************************************************************************************
+	// Update Removal
+	// ************************************************************************************
+	private void removeUpdateFilesFromData() {
+		try {
+			Shell.runRootCommand(new CommandCapture(
+					0,
+					getResources().getString(R.string.removePlayStoreCommand),
+					getResources().getString(R.string.removeGooglePlusCommand),
+					getResources().getString(R.string.removeSoundSearchCommand),
+					getResources().getString(R.string.removeGmailCommand),
+					getResources()
+							.getString(R.string.removePlayServicesCommand),
+					getResources().getString(R.string.removeQuicksearchCommand),
+					getResources().getString(R.string.removeTalkbackCommand),
+					getResources().getString(R.string.removeText2SpeechCommand)));
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (TimeoutException e) {
+			e.printStackTrace();
+		} catch (RootDeniedException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void removeLastUpdateDownload() {
+		long latestUpdateDownloadId = mainActivity
+				.getLatestUpdateDownloadIdFromSharedPreference();
+		if (latestUpdateDownloadId != 0) {
+			// residue download ID
+			mDownloadManager.remove(latestUpdateDownloadId);
+
+			mainActivity.resetLastUpdateDownloadId();
+		}
+	}
+
+	private class CopyFileToCacheTask extends
+			AsyncTask<String, Integer, Integer> {
+
+		ProgressDialog mProgress;
+
+		@Override
+		protected Integer doInBackground(String... params) {
+			// check the correct number of
+			if (params.length != 2) {
+				return -1;
+			}
+
+			String originalFilePath = params[0];
+			String destinyFilePath = params[1];
+
+			if (RootTools.isAccessGiven()) {
+				clearCache();
+
+				File otaFilePath = new File(originalFilePath);
+				File otaFileCache = new File(destinyFilePath);
+
+				if (!otaFileCache.exists()) {
+					RootTools.copyFile(otaFilePath.getPath(),
+							otaFileCache.getPath(), false, false);
+				}
+			}
+
+			return 1;
+		}
+
+		protected void onProgressUpdate(Integer... progress) {
+
+		}
+
+		protected void onPreExecute() {
+
+			if (mProgress == null) {
+				String title = "";
+				String message = mainActivity.getResources()
+						.getString(R.string.pleaseWait);
+				mProgress = ProgressDialog.show(mainActivity,
+						title, message, true, false);
+			}
+		}
+
+		protected void onPostExecute(Integer result) {
+			// disable the spinner
+			if (mProgress != null) {
+				mProgress.dismiss();
+				mProgress = null;
+			}
+		}
+	}
+	
+	private String getVersionDownloadPath(Version version) {
+		Resources resources = mainActivity.getResources();
+		return Environment.getExternalStorageDirectory()
+				+ resources.getString(R.string.updaterFolder)
+				+ VersionParserHelper.getNameFromVersion(version);
+	}
 }
