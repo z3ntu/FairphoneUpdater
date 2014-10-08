@@ -3,68 +3,95 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center_horizontal"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    android:padding="@dimen/alert_padding" >
 
     <TextView
+        style="@style/TextLight24GreenDark"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/alert_title_margin_bottom"
         android:text="WARNING" />
 
     <TextView
+        style="@style/TextRegular14GreenDark"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="You are about to install" />
 
     <TextView
+        style="@style/TextBold14GreenDark"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Fairphone Peanuts v0.7" />
 
     <TextView
+        style="@style/TextRegular14GreenDark"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="an older version of your current OS." />
 
     <TextView
+        style="@style/TextRegular14GreyLight"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/alert_padding"
+        android:layout_marginTop="@dimen/alert_padding"
         android:gravity="center_horizontal"
         android:text="Are you sure you want to go forward with it despite all the implications?" />
 
     <FrameLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" >
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/alert_padding" >
 
         <Button
             android:id="@+id/confirmation_no_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingBottom="25dp"
+            android:paddingTop="5dp"
             android:text="NO" />
 
         <TextView
+            style="@style/TextRegular16White"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center_horizontal"
+            android:clickable="false"
+            android:focusable="false"
+            android:paddingBottom="5dp"
             android:text="Please take me back" />
     </FrameLayout>
 
     <FrameLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" >
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/alert_padding" >
 
         <Button
             android:id="@+id/confirmation_yes_button"
+            style="@style/ButtonGreen"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingBottom="25dp"
+            android:paddingTop="5dp"
             android:text="YES" />
 
         <TextView
+            style="@style/TextRegular16White"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center_horizontal"
+            android:clickable="false"
+            android:focusable="false"
+            android:paddingBottom="5dp"
             android:text="Go ahead and install it" />
     </FrameLayout>
 
     <CheckBox
         android:id="@+id/confirmation_checkbox"
+        style="@style/CheckBoxGreen"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="I know and understand all implication of performing this installation" />
