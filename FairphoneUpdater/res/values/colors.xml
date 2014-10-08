@@ -9,11 +9,14 @@
     <!-- MAIN COLORS -->
     <color name="transparent">#00000000</color>
     <color name="white">#FFFFFF</color>
+    <color name="white_Transparent">#55FFFFFF</color>
     <color name="grey_light">#999999</color>
     <color name="blue">#2AA9E0</color>
     <color name="blue_dark">#123C59</color>
     <color name="blue_light">#AADCF2</color>
     <color name="green">#6BC1A3</color>
+    <color name="green_dark">#17717A</color>
+    <color name="green_light">#a0d7c4</color>
 
     <!-- GOOGLE COLORS (DEPENDENCIES) -->
     <color name="google_blue">#33b5e5</color>

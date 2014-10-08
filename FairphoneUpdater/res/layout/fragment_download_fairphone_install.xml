@@ -18,14 +18,14 @@
         <TextView
             style="@style/TextRegular14BlueLight"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:layout_marginTop="@dimen/main_small_text_margin_top"
             android:layout_weight="1"
             android:text="Restart your phone to complete the update." />
 
         <Button
             android:id="@+id/restart_button"
-            style="@style/ButtonWhite"
+            style="@style/ButtonWhiteBlue"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Restart" />

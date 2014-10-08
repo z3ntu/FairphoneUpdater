@@ -16,8 +16,8 @@
 
     <!-- BUTTONS -->
     <style name="ButtonWhite" parent="@android:style/Widget.Button">
-        <item name="android:background">@drawable/button_white_background</item>
-        <item name="android:textColor">@color/button_white_text</item>
+        <item name="android:background">@drawable/button_white_blue_background</item>
+        <item name="android:textColor">@color/button_white_blue_text</item>
         <item name="android:textSize">24sp</item>
         <item name="android:padding">15dp</item>
         <item name="android:gravity">center</item>
@@ -25,9 +25,29 @@
         <item name="android:textAllCaps">true</item>
     </style>
 
+    <style name="ButtonWhiteBlue" parent="@style/ButtonWhite">
+        <item name="android:background">@drawable/button_white_blue_background</item>
+        <item name="android:textColor">@color/button_white_blue_text</item>
+    </style>
+
+    <style name="ButtonWhiteGreen" parent="@style/ButtonWhite">
+        <item name="android:background">@drawable/button_white_green_background</item>
+        <item name="android:textColor">@color/button_white_green_text</item>
+    </style>
+
     <style name="ButtonBlueDark" parent="@android:style/Widget.Button">
         <item name="android:background">@drawable/button_blue_dark_background</item>
         <item name="android:textColor">@color/button_blue_dark_text</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:padding">15dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+
+    <style name="ButtonGreenDark" parent="@android:style/Widget.Button">
+        <item name="android:background">@drawable/button_green_dark_background</item>
+        <item name="android:textColor">@color/button_green_dark_text</item>
         <item name="android:textSize">16sp</item>
         <item name="android:padding">15dp</item>
         <item name="android:gravity">center</item>
@@ -72,8 +92,16 @@
         <item name="android:textColor">@color/blue_light</item>
     </style>
 
+    <style name="TextRegular14GreenLight" parent="@style/TextRegular14">
+        <item name="android:textColor">@color/green_light</item>
+    </style>
+
     <style name="TextRegular14BlueDark" parent="@style/TextRegular14">
         <item name="android:textColor">@color/blue_dark</item>
+    </style>
+
+    <style name="TextRegular14GreenDark" parent="@style/TextRegular14">
+        <item name="android:textColor">@color/green_dark</item>
     </style>
 
     <style name="TextRegular16BlueDark" parent="@style/TextRegular16">
@@ -117,6 +145,10 @@
 
     <style name="TextBold16BlueDark" parent="@style/TextBold16">
         <item name="android:textColor">@color/blue_dark</item>
+    </style>
+
+    <style name="TextBold16GreenDark" parent="@style/TextBold16">
+        <item name="android:textColor">@color/green_dark</item>
     </style>
 
 </resources>
