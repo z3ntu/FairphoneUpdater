@@ -25,7 +25,7 @@
 
         <Button
             android:id="@+id/restart_button"
-            style="@style/ButtonWhitGreen"
+            style="@style/ButtonWhiteGreen"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Restart" />
