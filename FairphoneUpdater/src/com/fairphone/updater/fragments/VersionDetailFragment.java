@@ -58,6 +58,7 @@ public class VersionDetailFragment extends BaseFragment {
 		View view = setLayoutType(inflater, container);
 
 		setupLayout(view);
+		setHeaderAndVersionDetailsTitles();
 
 		mainActivity.updateHeader(mHeaderType, mHeaderText);
 		updateVersionName();
@@ -147,14 +148,14 @@ public class VersionDetailFragment extends BaseFragment {
 			DetailLayoutType detailType) {
 		mSelectedVersion = selectedVersion;
 
-		mHeaderType = mainActivity.getHeaderTypeFromImageType(mSelectedVersion
-				.getImageType());
 		mDetailLayoutType = detailType;
-
-		setHeaderAndVersionDetailsTitles();
 	}
 
 	private void setHeaderAndVersionDetailsTitles() {
+
+		mHeaderType = mainActivity.getHeaderTypeFromImageType(mSelectedVersion
+				.getImageType());
+
 		switch (mDetailLayoutType) {
 		case UPDATE:
 			mHeaderText = "Install Update PASS";
@@ -267,10 +268,6 @@ public class VersionDetailFragment extends BaseFragment {
 	public void onResume() {
 		super.onResume();
 
-		setupInstallationReceivers();
-	}
-
-	private void setupInstallationReceivers() {
 		mDownloadManager = (DownloadManager) mainActivity
 				.getSystemService(Context.DOWNLOAD_SERVICE);
 	}
@@ -309,13 +306,15 @@ public class VersionDetailFragment extends BaseFragment {
 							new DialogInterface.OnClickListener() {
 								public void onClick(DialogInterface dialog,
 										int which) {
-									// do nothing
+									mainActivity.setSelectedVersion(null);
 								}
 							}).setIcon(android.R.drawable.ic_dialog_alert)
 					.show();
 		} else {
 			if (currentState == UpdaterState.NORMAL) {
 				startUpdateDownload();
+			} else {
+				mainActivity.setSelectedVersion(null);
 			}
 		}
 	}

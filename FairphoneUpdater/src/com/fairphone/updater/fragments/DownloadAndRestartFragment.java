@@ -66,12 +66,10 @@ public class DownloadAndRestartFragment extends BaseFragment {
 		View view = inflateViewByImageType(inflater, container);
 
 		setupLayout(view);
-
+		
 		updateHeader();
 		mDownloadVersionName.setText(mainActivity
 				.getVersionName(mSelectedVersion));
-
-		toggleDownloadProgressAndRestart();
 
 		return view;
 	}
@@ -231,6 +229,8 @@ public class DownloadAndRestartFragment extends BaseFragment {
 
 		setupInstallationReceivers();
 		registerDownloadBroadCastReceiver();
+		
+		toggleDownloadProgressAndRestart();
 	}
 
 	@Override
@@ -274,7 +274,7 @@ public class DownloadAndRestartFragment extends BaseFragment {
 		if (downloadId != 0) {
 			DownloadManager.Query query = new DownloadManager.Query();
 
-			query.setFilterById();
+			query.setFilterById(downloadId);
 
 			Cursor cursor = mDownloadManager.query(query);
 

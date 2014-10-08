@@ -270,7 +270,9 @@ public class FairphoneUpdater2Activity extends FragmentActivity {
 
 	public void changeFragment(Fragment newFragment) {
 
-		if (!newFragment.getClass().equals(getTopFragment().getClass())) {
+		Fragment topFragment = getTopFragment();
+		if (topFragment != null
+				&& !newFragment.getClass().equals(topFragment.getClass())) {
 
 			FragmentTransaction transaction = getSupportFragmentManager()
 					.beginTransaction();
@@ -287,7 +289,7 @@ public class FairphoneUpdater2Activity extends FragmentActivity {
 			transaction.commit();
 		}
 	}
-	
+
 	public void removeLastFragment() {
 		getSupportFragmentManager().popBackStackImmediate();
 	}
@@ -420,20 +422,20 @@ public class FairphoneUpdater2Activity extends FragmentActivity {
 
 		getSelectedVersionFromSharedPreferences();
 
-//		if (mSharedPreferences
-//				.getBoolean(
-//						FairphoneUpdater2Activity.PREFERENCE_SELECTED_VERSION_BEGIN_DOWNLOAD,
-//						false)) {
-//			Editor editor = mSharedPreferences.edit();
-//			editor.putBoolean(
-//					FairphoneUpdater2Activity.PREFERENCE_SELECTED_VERSION_BEGIN_DOWNLOAD,
-//					false);
-//			editor.commit();
-//			startUpdateDownload();
-//		} else {
-//			changeFragment(getFragmentFromState());
-//		}
-		
+		// if (mSharedPreferences
+		// .getBoolean(
+		// FairphoneUpdater2Activity.PREFERENCE_SELECTED_VERSION_BEGIN_DOWNLOAD,
+		// false)) {
+		// Editor editor = mSharedPreferences.edit();
+		// editor.putBoolean(
+		// FairphoneUpdater2Activity.PREFERENCE_SELECTED_VERSION_BEGIN_DOWNLOAD,
+		// false);
+		// editor.commit();
+		// startUpdateDownload();
+		// } else {
+		// changeFragment(getFragmentFromState());
+		// }
+
 		changeFragment(getFragmentFromState());
 	}
 

@@ -85,8 +85,8 @@ public class MainFragment extends BaseFragment {
 
 			@Override
 			public void onClick(View v) {
-				Toast.makeText(mainActivity, "Procced to other OS options",
-						Toast.LENGTH_LONG).show();
+				OtherOSOptionsFragment newFragment = new OtherOSOptionsFragment();
+				mainActivity.changeFragment(newFragment);
 			}
 		});
 	}
