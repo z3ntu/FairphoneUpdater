@@ -26,7 +26,7 @@
 
     <Button
         android:id="@+id/cancel_button"
-        style="@style/ButtonGreenDark"
+        style="@style/ButtonSmallGreenDark"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/main_padding_small"

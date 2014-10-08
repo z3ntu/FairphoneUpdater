@@ -3,6 +3,8 @@
     <style name="AppTheme" parent="android:Theme.Holo.Light">
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowFullscreen">false</item>
+        <item name="android:buttonStyle">@style/Button</item>
+        <item name="android:progressBarStyle">@style/ProgressBar</item>
     </style>
 
     <!-- PROGRESS BAR -->
@@ -15,9 +17,9 @@
     </style>
 
     <!-- BUTTONS -->
-    <style name="ButtonWhite" parent="@android:style/Widget.Button">
-        <item name="android:background">@drawable/button_white_blue_background</item>
-        <item name="android:textColor">@color/button_white_blue_text</item>
+    <style name="Button" parent="@android:style/Widget.Button">
+        <item name="android:background">@drawable/button_grey_background</item>
+        <item name="android:textColor">@color/white</item>
         <item name="android:textSize">24sp</item>
         <item name="android:paddingTop">15dp</item>
         <item name="android:paddingBottom">15dp</item>
@@ -28,19 +30,29 @@
         <item name="android:textAllCaps">true</item>
     </style>
 
-    <style name="ButtonWhiteBlue" parent="@style/ButtonWhite">
+    <style name="ButtonBlue" parent="@style/Button">
+        <item name="android:background">@drawable/button_blue_background</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="ButtonGreen" parent="@style/Button">
+        <item name="android:background">@drawable/button_green_background</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="ButtonWhiteBlue" parent="@style/Button">
         <item name="android:background">@drawable/button_white_blue_background</item>
         <item name="android:textColor">@color/button_white_blue_text</item>
     </style>
 
-    <style name="ButtonWhiteGreen" parent="@style/ButtonWhite">
+    <style name="ButtonWhiteGreen" parent="@style/Button">
         <item name="android:background">@drawable/button_white_green_background</item>
         <item name="android:textColor">@color/button_white_green_text</item>
     </style>
 
-    <style name="ButtonBlueDark" parent="@android:style/Widget.Button">
-        <item name="android:background">@drawable/button_blue_dark_background</item>
-        <item name="android:textColor">@color/button_blue_dark_text</item>
+    <style name="ButtonSmall" parent="@android:style/Widget.Button">
+        <item name="android:background">@drawable/button_grey_background</item>
+        <item name="android:textColor">@color/white</item>
         <item name="android:textSize">16sp</item>
         <item name="android:padding">15dp</item>
         <item name="android:gravity">center</item>
@@ -48,14 +60,14 @@
         <item name="android:textAllCaps">true</item>
     </style>
 
-    <style name="ButtonGreenDark" parent="@android:style/Widget.Button">
+    <style name="ButtonSmallBlueDark" parent="@style/ButtonSmall">
+        <item name="android:background">@drawable/button_blue_dark_background</item>
+        <item name="android:textColor">@color/button_blue_dark_text</item>
+    </style>
+
+    <style name="ButtonSmallGreenDark" parent="@style/ButtonSmall">
         <item name="android:background">@drawable/button_green_dark_background</item>
         <item name="android:textColor">@color/button_green_dark_text</item>
-        <item name="android:textSize">16sp</item>
-        <item name="android:padding">15dp</item>
-        <item name="android:gravity">center</item>
-        <item name="android:fontFamily">sans-serif</item>
-        <item name="android:textAllCaps">true</item>
     </style>
 
     <style name="ButtonTextBlue" parent="@android:style/Widget.Button">
@@ -144,6 +156,18 @@
     <style name="TextBold">
         <item name="android:fontFamily">sans-serif</item>
         <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="TextBold14" parent="@style/TextBold">
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="TextBold14White" parent="@style/TextBold14">
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="TextBold14BlueDark" parent="@style/TextBold14">
+        <item name="android:textColor">@color/blue_dark</item>
     </style>
 
     <style name="TextBold16" parent="@style/TextBold">
