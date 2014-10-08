@@ -19,7 +19,10 @@
         <item name="android:background">@drawable/button_white_blue_background</item>
         <item name="android:textColor">@color/button_white_blue_text</item>
         <item name="android:textSize">24sp</item>
-        <item name="android:padding">15dp</item>
+        <item name="android:paddingTop">15dp</item>
+        <item name="android:paddingBottom">15dp</item>
+        <item name="android:paddingRight">15dp</item>
+        <item name="android:paddingLeft">15dp</item>
         <item name="android:gravity">center</item>
         <item name="android:fontFamily">sans-serif-medium</item>
         <item name="android:textAllCaps">true</item>
@@ -102,6 +105,14 @@
 
     <style name="TextRegular14GreenDark" parent="@style/TextRegular14">
         <item name="android:textColor">@color/green_dark</item>
+    </style>
+
+    <style name="TextRegular16Blue" parent="@style/TextRegular16">
+        <item name="android:textColor">@color/blue</item>
+    </style>
+
+    <style name="TextRegular16Green" parent="@style/TextRegular16">
+        <item name="android:textColor">@color/green</item>
     </style>
 
     <style name="TextRegular16BlueDark" parent="@style/TextRegular16">

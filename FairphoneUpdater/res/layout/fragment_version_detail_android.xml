@@ -69,12 +69,30 @@
         </ScrollView>
     </LinearLayout>
 
-    <Button
-        android:id="@+id/download_and_update_button"
-        style="@style/ButtonWhiteGreen"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/main_padding"
-        android:text="Install Update" />
+        android:layout_height="wrap_content" >
+
+        <Button
+            android:id="@+id/download_and_update_button"
+            style="@style/ButtonWhiteGreen"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/main_padding"
+            android:paddingBottom="25dp"
+            android:paddingTop="5dp"
+            android:text="Install Update" />
+
+        <TextView
+            android:id="@+id/download_and_update_button_version_text"
+            style="@style/TextRegular16Green"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center_horizontal"
+            android:clickable="false"
+            android:focusable="false"
+            android:paddingBottom="5dp"
+            android:text="Fairphone Peanuts v0.7" />
+    </FrameLayout>
 
 </LinearLayout>
