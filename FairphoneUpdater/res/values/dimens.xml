@@ -3,7 +3,7 @@
     <!-- HEADER -->
     <dimen name="header_big_height">94.6dp</dimen>
     <dimen name="header_small_height">56dp</dimen>
-    <dimen name="header_horizontal_padding">33.3dp</dimen>
+    <dimen name="header_horizontal_padding">15dp</dimen>
     <dimen name="header_big_text_size">34sp</dimen>
     <dimen name="header_small_text_size">20sp</dimen>
 
@@ -12,7 +12,7 @@
     <dimen name="main_padding_small">20dp</dimen>
     <dimen name="main_small_text_margin_top">43dp</dimen>
     <dimen name="main_button_margin_top">8dp</dimen>
-    
+
     <!-- ALERT -->
     <dimen name="alert_padding">15dp</dimen>
     <dimen name="alert_title_margin_bottom">5dp</dimen>

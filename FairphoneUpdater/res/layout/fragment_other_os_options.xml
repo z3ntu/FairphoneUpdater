@@ -12,35 +12,39 @@
         android:animateLayoutChanges="true"
         android:gravity="center_horizontal"
         android:orientation="vertical"
-        android:paddingLeft="32dp"
-        android:paddingRight="32dp" >
+        android:paddingLeft="@dimen/main_padding"
+        android:paddingRight="@dimen/main_padding" >
 
         <TextView
+            style="@style/TextLight24GreyDark"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="50dp"
-            android:text="Important Notice"
-            android:textColor="@color/blue_dark"
-            android:textSize="14sp" />
+            android:layout_marginTop="@dimen/main_small_text_margin_top"
+            android:text="Important Notice" />
 
         <TextView
+            style="@style/TextRegular14GreyLight"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="50dp"
-            android:text="It&apos;s important that you keep in mind that installing an older OS version will make loose features from newer ones bla, bla..."
-            android:textColor="@color/blue_dark"
-            android:textSize="14sp" />
+            android:layout_marginTop="@dimen/main_button_margin_top"
+            android:gravity="center_horizontal"
+            android:maxLines="10"
+            android:text="It&apos;s important that you keep in mind that installing an older OS version will make loose features from newer ones bla, bla..." />
 
         <Button
             android:id="@+id/older_fairphone_os_button"
+            style="@style/ButtonTextBlue"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/main_small_text_margin_top"
             android:text="OLDER FAIRPHONE OS" />
 
         <Button
             android:id="@+id/android_os_button"
+            style="@style/ButtonTextGreen"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/main_button_margin_top"
             android:text="ANDROID OS" />
     </LinearLayout>
 

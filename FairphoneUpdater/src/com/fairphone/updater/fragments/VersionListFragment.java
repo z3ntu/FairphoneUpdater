@@ -41,39 +41,37 @@ public class VersionListFragment extends BaseFragment
 
     private View setupLayout(LayoutInflater inflater, ViewGroup container)
     {
-        
+
         View view;
         switch (mListLayoutType)
         {
             case ANDROID:
                 view = inflater.inflate(R.layout.fragment_other_os_options_android_list, container, false);
-                
-                mVersionListContainer = (LinearLayout) view.findViewById(R.id.versionListContainer);
+
+                mVersionListContainer = (LinearLayout) view.findViewById(R.id.version_list_container);
 
                 setupAndroidVersions(container);
                 break;
             case FAIRPHONE:
             default:
                 view = inflater.inflate(R.layout.fragment_other_os_options_fairphone_list, container, false);
-                
-                mVersionListContainer = (LinearLayout) view.findViewById(R.id.versionListContainer);
-                
+
+                mVersionListContainer = (LinearLayout) view.findViewById(R.id.version_list_container);
+
                 setupFairphoneVersions(container);
                 break;
         }
         return view;
     }
-    
-   
 
     @Override
     public void onDetach()
     {
         super.onDetach();
-        
-//        mVersionListContainer.removeAllViews();
+
+        //        mVersionListContainer.removeAllViews();
     }
-    
+
     private void setupFairphoneVersions(ViewGroup root)
     {
         Button versionLayout;
@@ -81,13 +79,13 @@ public class VersionListFragment extends BaseFragment
 
         mVersionList = UpdaterData.getInstance().getFairphoneVersionList();
 
-        System.out.println("Values : "+ mVersionList.size());
+        System.out.println("Values : " + mVersionList.size());
         for (Version version : mVersionList)
         {
-            versionLayout = (Button) inflater.inflate( R.layout.fragment_other_os_options_fairphone_list_button, root, false);
+            versionLayout = (Button) inflater.inflate(R.layout.fragment_other_os_options_fairphone_list_button, root, false);
             versionLayout.setTag(version);
             versionLayout.setClickable(true);
-            
+
             mVersionListContainer.addView(versionLayout);
 
             versionLayout.setText(version.getName() + " " + version.getBuildNumber());
@@ -110,7 +108,6 @@ public class VersionListFragment extends BaseFragment
                 }
             });
 
-            
         }
     }
 
@@ -121,13 +118,13 @@ public class VersionListFragment extends BaseFragment
 
         mVersionList = UpdaterData.getInstance().getAOSPVersionList();
 
-        System.out.println("Values : "+ mVersionList.size());
+        System.out.println("Values : " + mVersionList.size());
         for (Version version : mVersionList)
         {
-            versionLayout = (Button) inflater.inflate( R.layout.fragment_other_os_options_android_list_button, root, false);
+            versionLayout = (Button) inflater.inflate(R.layout.fragment_other_os_options_android_list_button, root, false);
             versionLayout.setTag(version);
             versionLayout.setClickable(true);
-            
+
             mVersionListContainer.addView(versionLayout);
 
             versionLayout.setText(version.getName() + " " + version.getBuildNumber());
@@ -151,7 +148,6 @@ public class VersionListFragment extends BaseFragment
                 }
             });
 
-            
         }
     }
 

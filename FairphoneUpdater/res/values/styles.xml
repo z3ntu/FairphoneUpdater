@@ -123,12 +123,20 @@
         <item name="android:textColor">@color/button_green_dark_text</item>
     </style>
 
-    <style name="ButtonTextBlue" parent="@android:style/Widget.Button">
+    <style name="ButtonText" parent="@android:style/Widget.Button">
         <item name="android:background">@color/transparent</item>
-        <item name="android:textColor">@color/button_text_blue_text</item>
+        <item name="android:textColor">@color/button_text_grey_text</item>
         <item name="android:textSize">16sp</item>
         <item name="android:gravity">center</item>
         <item name="android:padding">10dp</item>
+    </style>
+
+    <style name="ButtonTextBlue" parent="@style/ButtonText">
+        <item name="android:textColor">@color/button_text_blue_text</item>
+    </style>
+
+    <style name="ButtonTextGreen" parent="@style/ButtonText">
+        <item name="android:textColor">@color/button_text_green_text</item>
     </style>
 
     <!-- TEXT REGULAR -->
@@ -180,6 +188,10 @@
         <item name="android:textColor">@color/green</item>
     </style>
 
+    <style name="TextRegular16GreenDark" parent="@style/TextRegular16">
+        <item name="android:textColor">@color/green_dark</item>
+    </style>
+
     <style name="TextRegular16BlueDark" parent="@style/TextRegular16">
         <item name="android:textColor">@color/blue_dark</item>
     </style>
@@ -207,6 +219,10 @@
 
     <style name="TextLight24White" parent="@style/TextLight24">
         <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="TextLight24GreyDark" parent="@style/TextLight24">
+        <item name="android:textColor">@color/grey_dark</item>
     </style>
 
     <!-- TEXT BOLD -->
