@@ -38,6 +38,7 @@
             style="@style/TextLight24White"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
             android:text="Fairphone DELETE_ME v2.0" />
 
         <Button

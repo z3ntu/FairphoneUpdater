@@ -6,6 +6,59 @@
         <item name="android:buttonStyle">@style/Button</item>
         <item name="android:progressBarStyle">@style/ProgressBar</item>
         <item name="android:checkboxStyle">@style/CheckBox</item>
+        <item name="android:alertDialogTheme">@style/AlertDialog</item>
+    </style>
+
+    <!-- DIALOG -->
+    <style name="AlertDialog" parent="@android:Theme.Dialog">
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowTitleStyle">@style/DialogWindowTitle</item>
+        <item name="android:windowBackground">@color/transparent</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowContentOverlay">@color/green</item>
+        <!-- <item name="android:windowAnimationStyle">@android:style/Animation.Dialog</item> -->
+        <item name="android:windowSoftInputMode">stateUnspecified|adjustPan</item>
+        <!-- <item name="android:windowCloseOnTouchOutside">@bool/config_closeDialogWhenTouchOutside</item> -->
+        <item name="android:windowActionModeOverlay">true</item>
+        <item name="android:colorBackgroundCacheHint">@color/green</item>
+        <!-- <item name="textAppearance">@android:style/TextAppearance</item> -->
+        <!-- <item name="textAppearanceInverse">@android:style/TextAppearance.Inverse</item> -->
+        <!-- <item name="textColorPrimary">@android:color/primary_text_dark</item> -->
+        <!-- <item name="textColorSecondary">@android:color/secondary_text_dark</item> -->
+        <!-- <item name="textColorTertiary">@android:color/tertiary_text_dark</item> -->
+        <!-- <item name="textColorPrimaryInverse">@android:color/primary_text_light</item> -->
+        <!-- <item name="textColorSecondaryInverse">@android:color/secondary_text_light</item> -->
+        <!-- <item name="textColorTertiaryInverse">@android:color/tertiary_text_light</item> -->
+        <!-- <item name="textColorPrimaryDisableOnly">@android:color/primary_text_dark_disable_only</item> -->
+        <!-- <item name="textColorPrimaryInverseDisableOnly">@android:color/primary_text_light_disable_only</item> -->
+        <!-- <item name="textColorPrimaryNoDisable">@android:color/primary_text_dark_nodisable</item> -->
+        <!-- <item name="textColorSecondaryNoDisable">@android:color/secondary_text_dark_nodisable</item> -->
+        <!-- <item name="textColorPrimaryInverseNoDisable">@android:color/primary_text_light_nodisable</item> -->
+        <!-- <item name="textColorSecondaryInverseNoDisable">@android:color/secondary_text_light_nodisable</item> -->
+        <!-- <item name="textColorHint">@android:color/hint_foreground_dark</item> -->
+        <!-- <item name="textColorHintInverse">@android:color/hint_foreground_light</item> -->
+        <!-- <item name="textColorSearchUrl">@android:color/search_url_text</item> -->
+        <!-- <item name="textAppearanceLarge">@android:style/TextAppearance.Large</item> -->
+        <!-- <item name="textAppearanceMedium">@android:style/TextAppearance.Medium</item> -->
+        <!-- <item name="textAppearanceSmall">@android:style/TextAppearance.Small</item> -->
+        <!-- <item name="textAppearanceLargeInverse">@android:style/TextAppearance.Large.Inverse</item> -->
+        <!-- <item name="textAppearanceMediumInverse">@android:style/TextAppearance.Medium.Inverse</item> -->
+        <!-- <item name="textAppearanceSmallInverse">@android:style/TextAppearance.Small.Inverse</item> -->
+        <!-- <item name="listPreferredItemPaddingLeft">10dip</item> -->
+        <!-- <item name="listPreferredItemPaddingRight">10dip</item> -->
+        <!-- <item name="listPreferredItemPaddingStart">10dip</item> -->
+        <!-- <item name="listPreferredItemPaddingEnd">10dip</item> -->
+        <!-- <item name="preferencePanelStyle">@style/PreferencePanel.Dialog</item> -->
+
+    </style>
+
+    <style name="DialogWindowTitle">
+        <item name="android:maxLines">1</item>
+        <item name="android:scrollHorizontally">true</item>
+        <item name="android:textColor">@color/button_text_blue_text</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:padding">10dp</item>
     </style>
 
     <!-- CHECK BOX -->
