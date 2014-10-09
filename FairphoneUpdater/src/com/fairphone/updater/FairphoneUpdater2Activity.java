@@ -271,8 +271,8 @@ public class FairphoneUpdater2Activity extends FragmentActivity {
 	public void changeFragment(Fragment newFragment) {
 
 		Fragment topFragment = getTopFragment();
-		if (topFragment != null
-				&& !newFragment.getClass().equals(topFragment.getClass())) {
+		if (topFragment == null || (topFragment != null 
+				&& !newFragment.getClass().equals(topFragment.getClass()))) {
 
 			FragmentTransaction transaction = getSupportFragmentManager()
 					.beginTransaction();
