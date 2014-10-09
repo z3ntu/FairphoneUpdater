@@ -18,7 +18,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/main_small_text_margin_top"
         android:gravity="center_horizontal"
-        android:text="Fairphone DELETE_ME v1.0" />
+        android:text="Fairphone version name v0.0" />
 
     <include layout="@layout/fragment_download_android_downloading" />
 
@@ -30,6 +30,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/main_padding_small"
-        android:text="@android:string/cancel" />
+        android:text="@string/cancel" />
 
 </LinearLayout>

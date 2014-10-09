@@ -20,7 +20,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/main_small_text_margin_top"
-            android:text="IMPORTANT NOTICE" />
+            android:text="@string/important_notice" />
 
         <TextView
             style="@style/TextRegular14GreyLight"
@@ -29,7 +29,7 @@
             android:layout_marginTop="@dimen/main_button_margin_top"
             android:gravity="center_horizontal"
             android:maxLines="10"
-            android:text="It&apos;s important that you keep in mind that installing an older OS version will make loose features from newer ones bla, bla..." />
+            android:text="@string/important_notice_message" />
 
         <Button
             android:id="@+id/older_fairphone_os_button"
@@ -37,7 +37,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/main_small_text_margin_top"
-            android:text="OLDER FAIRPHONE OS" />
+            android:text="@string/fairphone_os" />
 
         <Button
             android:id="@+id/android_os_button"
@@ -45,7 +45,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/main_button_margin_top"
-            android:text="ANDROID OS" />
+            android:text="@string/android_os" />
     </LinearLayout>
 
 </LinearLayout>

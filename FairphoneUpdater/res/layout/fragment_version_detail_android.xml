@@ -34,7 +34,7 @@
         <TextView
             android:id="@+id/version_release_notes_text"
             style="@style/TextRegular14White"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal" />
     </ScrollView>

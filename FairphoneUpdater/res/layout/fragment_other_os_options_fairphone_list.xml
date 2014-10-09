@@ -19,7 +19,7 @@
             style="@style/TextRegular16BlueDark"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Latest version" />
+            android:text="@string/latest_version" />
 
         <TextView
             android:id="@+id/other_os_options_fairphone_version_text"
@@ -28,7 +28,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/main_padding_small"
             android:gravity="center_horizontal"
-            android:text="Fairphone Coconut v1.0" />
+            android:text="Fairphone version name v0.0" />
 
         <TextView
             android:id="@+id/other_os_options_fairphone_installed_indicator_text"
@@ -36,7 +36,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
-            android:text="Installed" />
+            android:text="@string/installed" />
 
         <Button
             android:id="@+id/install_update_fairphone_os_button"
@@ -44,7 +44,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/main_padding_small"
-            android:text="Install Update"
+            android:text="@string/install_update"
             android:visibility="gone" />
     </LinearLayout>
 
@@ -54,7 +54,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/main_padding_small"
         android:layout_marginTop="@dimen/main_padding"
-        android:text="Older version" />
+        android:text="@string/older_version" />
 
     <ScrollView
         android:id="@+id/version_list_scroll"

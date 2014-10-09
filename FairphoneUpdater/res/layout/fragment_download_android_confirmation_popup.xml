@@ -11,25 +11,25 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/alert_title_margin_bottom"
-        android:text="WARNING" />
+        android:text="@string/warning" />
 
     <TextView
         style="@style/TextRegular14GreenDark"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="You are about to install" />
+        android:text="@string/your_are_about_to_install" />
 
     <TextView
         style="@style/TextBold14GreenDark"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Fairphone Peanuts v0.7" />
+        android:text="Fairphone version name v0.0" />
 
     <TextView
         style="@style/TextRegular14GreenDark"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="an older version of your current OS." />
+        android:text="@string/an_older_version_of_os" />
 
     <TextView
         style="@style/TextRegular14GreyLight"
@@ -38,7 +38,7 @@
         android:layout_marginBottom="@dimen/alert_padding"
         android:layout_marginTop="@dimen/alert_padding"
         android:gravity="center_horizontal"
-        android:text="Are you sure you want to go forward with it despite all the implications?" />
+        android:text="@string/older_version_os_install_confirmation" />
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -51,7 +51,7 @@
             android:layout_height="wrap_content"
             android:paddingBottom="25dp"
             android:paddingTop="5dp"
-            android:text="NO" />
+            android:text="@string/no" />
 
         <TextView
             style="@style/TextRegular16White"
@@ -61,7 +61,7 @@
             android:clickable="false"
             android:focusable="false"
             android:paddingBottom="5dp"
-            android:text="Please take me back" />
+            android:text="@string/take_me_back" />
     </FrameLayout>
 
     <FrameLayout
@@ -76,7 +76,7 @@
             android:layout_height="wrap_content"
             android:paddingBottom="25dp"
             android:paddingTop="5dp"
-            android:text="YES" />
+            android:text="@string/yes" />
 
         <TextView
             style="@style/TextRegular16White"
@@ -86,7 +86,7 @@
             android:clickable="false"
             android:focusable="false"
             android:paddingBottom="5dp"
-            android:text="Go ahead and install it" />
+            android:text="@string/go_ahead_and_install_it" />
     </FrameLayout>
 
     <CheckBox
@@ -94,6 +94,6 @@
         style="@style/CheckBoxGreen"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="I know and understand all implication of performing this installation" />
+        android:text="@string/older_version_os_install_confirmation_checkbox" />
 
 </LinearLayout>

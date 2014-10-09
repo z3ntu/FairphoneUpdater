@@ -16,7 +16,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/main_small_text_margin_top"
-            android:text="Your current OS version" />
+            android:text="@string/your_current_os_version" />
 
         <TextView
             android:id="@+id/update_available_current_version_name_text"
@@ -24,14 +24,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
-            android:text="Fairphone DELETE_ME v1.0" />
+            android:text="Fairphone version name v0.0" />
 
         <TextView
             style="@style/TextRegular16White"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/main_small_text_margin_top"
-            android:text="Update is available" />
+            android:text="@string/update_is_available" />
 
         <TextView
             android:id="@+id/update_available_name_text"
@@ -39,7 +39,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
-            android:text="Fairphone DELETE_ME v2.0" />
+            android:text="Fairphone version name v0.0" />
 
         <Button
             android:id="@+id/install_update_button"
@@ -47,7 +47,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/main_button_margin_top"
-            android:text="Install Update" />
+            android:text="@string/install_update" />
     </LinearLayout>
 
 </merge>

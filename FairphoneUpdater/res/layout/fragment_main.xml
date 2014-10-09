@@ -31,14 +31,14 @@
             style="@style/TextRegular14GreyLight"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Want to change your OS?" />
+            android:text="@string/want_to_change_your_os" />
 
         <Button
             android:id="@+id/other_os_options_button"
             style="@style/ButtonTextBlue"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Other OS Options" />
+            android:text="@string/other_os_options" />
     </LinearLayout>
 
 </LinearLayout>
