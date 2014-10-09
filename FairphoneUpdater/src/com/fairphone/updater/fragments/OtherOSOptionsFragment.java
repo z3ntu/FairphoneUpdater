@@ -7,6 +7,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.fairphone.updater.FairphoneUpdater2Activity.HeaderType;
 import com.fairphone.updater.R;
 import com.fairphone.updater.fragments.VersionListFragment.ListLayoutType;
 
@@ -25,6 +26,8 @@ public class OtherOSOptionsFragment extends BaseFragment
 
         olderFairphoneOSButton = (Button) view.findViewById(R.id.older_fairphone_os_button);
         androidOSButton = (Button) view.findViewById(R.id.android_os_button);
+
+        mainActivity.updateHeader(HeaderType.OTHER_OS, "Other OS");
 
         return view;
     }

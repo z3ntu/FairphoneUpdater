@@ -13,6 +13,7 @@ import android.widget.LinearLayout;
 import com.fairphone.updater.R;
 import com.fairphone.updater.UpdaterData;
 import com.fairphone.updater.Version;
+import com.fairphone.updater.FairphoneUpdater2Activity.HeaderType;
 import com.fairphone.updater.fragments.VersionDetailFragment.DetailLayoutType;
 
 public class VersionListFragment extends BaseFragment
@@ -46,6 +47,7 @@ public class VersionListFragment extends BaseFragment
         {
             case ANDROID:
                 view = inflater.inflate(R.layout.fragment_other_os_options_android_list, container, false);
+                mainActivity.updateHeader(HeaderType.ANDROID, "ANDROID OS");
 
                 mVersionListContainer = (LinearLayout) view.findViewById(R.id.version_list_container);
 
@@ -54,6 +56,7 @@ public class VersionListFragment extends BaseFragment
             case FAIRPHONE:
             default:
                 view = inflater.inflate(R.layout.fragment_other_os_options_fairphone_list, container, false);
+                mainActivity.updateHeader(HeaderType.FAIRPHONE, "FAIRPHONE OS");
 
                 mVersionListContainer = (LinearLayout) view.findViewById(R.id.version_list_container);
 

@@ -20,7 +20,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/main_small_text_margin_top"
-            android:text="Important Notice" />
+            android:text="IMPORTANT NOTICE" />
 
         <TextView
             style="@style/TextRegular14GreyLight"

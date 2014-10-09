@@ -50,13 +50,10 @@ public class FairphoneUpdater2Activity extends FragmentActivity
     };
 
     private Version mDeviceVersion;
-
     private Version mLatestVersion;
-
     private Version mSelectedVersion;
 
     private UpdaterState mCurrentState;
-
     private SharedPreferences mSharedPreferences;
 
     private long mLatestUpdateDownloadId;
@@ -68,12 +65,11 @@ public class FairphoneUpdater2Activity extends FragmentActivity
     private TextView headerMainAndroidText;
     private TextView headerFairphoneText;
     private TextView headerAndroidText;
-
     private TextView headerOtherOSText;
 
     public static enum HeaderType
     {
-        MAIN_FAIRPHONE, MAIN_ANDROID, FAIRPHONE, ANDROID
+        MAIN_FAIRPHONE, MAIN_ANDROID, FAIRPHONE, ANDROID, OTHER_OS
     };
 
     @Override
@@ -199,7 +195,6 @@ public class FairphoneUpdater2Activity extends FragmentActivity
         headerFairphoneText = (TextView) findViewById(R.id.header_fairphone_text);
         headerAndroidText = (TextView) findViewById(R.id.header_android_text);
         headerOtherOSText = (TextView) findViewById(R.id.header_other_os_text);
-        ;
 
         OnClickListener headerBackPressListener = new OnClickListener()
         {
@@ -222,35 +217,49 @@ public class FairphoneUpdater2Activity extends FragmentActivity
         {
             case FAIRPHONE:
                 headerMainFairphoneText.setVisibility(View.GONE);
-                headerFairphoneText.setVisibility(View.VISIBLE);
                 headerMainAndroidText.setVisibility(View.GONE);
+                headerFairphoneText.setVisibility(View.VISIBLE);
                 headerAndroidText.setVisibility(View.GONE);
+                headerOtherOSText.setVisibility(View.GONE);
 
                 headerFairphoneText.setText(headerText);
                 break;
 
             case ANDROID:
                 headerMainFairphoneText.setVisibility(View.GONE);
-                headerFairphoneText.setVisibility(View.GONE);
                 headerMainAndroidText.setVisibility(View.GONE);
+                headerFairphoneText.setVisibility(View.GONE);
                 headerAndroidText.setVisibility(View.VISIBLE);
+                headerOtherOSText.setVisibility(View.GONE);
 
                 headerAndroidText.setText(headerText);
                 break;
 
+            case OTHER_OS:
+                headerMainFairphoneText.setVisibility(View.GONE);
+                headerMainAndroidText.setVisibility(View.GONE);
+                headerFairphoneText.setVisibility(View.GONE);
+                headerAndroidText.setVisibility(View.GONE);
+                headerOtherOSText.setVisibility(View.VISIBLE);
+
+                headerOtherOSText.setText(headerText);
+                break;
+
             case MAIN_ANDROID:
                 headerMainFairphoneText.setVisibility(View.GONE);
-                headerFairphoneText.setVisibility(View.GONE);
                 headerMainAndroidText.setVisibility(View.VISIBLE);
+                headerFairphoneText.setVisibility(View.GONE);
                 headerAndroidText.setVisibility(View.GONE);
+                headerOtherOSText.setVisibility(View.GONE);
                 break;
 
             case MAIN_FAIRPHONE:
             default:
                 headerMainFairphoneText.setVisibility(View.VISIBLE);
-                headerFairphoneText.setVisibility(View.GONE);
                 headerMainAndroidText.setVisibility(View.GONE);
+                headerFairphoneText.setVisibility(View.GONE);
                 headerAndroidText.setVisibility(View.GONE);
+                headerOtherOSText.setVisibility(View.GONE);
                 break;
         }
     }
@@ -308,12 +317,14 @@ public class FairphoneUpdater2Activity extends FragmentActivity
         {
 
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-
             // Replace whatever is in the fragment_container view with this
             // fragment,
             // and add the transaction to the back stack so the user can
             // navigate
             // back
+            //            transaction.setCustomAnimations(R.animator.fade_in_fragment, R.animator.fade_out_fragment, R.animator.fade_in_fragment,
+            //                    R.animator.fade_out_fragment);
+            transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
             transaction.replace(R.id.fragment_holder, newFragment);
             transaction.addToBackStack(null);
 
