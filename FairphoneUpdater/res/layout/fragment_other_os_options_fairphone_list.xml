@@ -13,45 +13,22 @@
         android:gravity="center_horizontal"
         android:orientation="vertical"
         android:paddingLeft="32dp"
-        android:paddingRight="32dp" ><LinearLayout
+        android:paddingRight="32dp" >
+
+        <ScrollView
+            android:id="@+id/versionListScroll"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
+            android:clickable="true"
             android:orientation="vertical" >
 
-            <TextView
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:id="@+id/versionListContainer"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="50dp"
-                android:text="Latest version"
-                android:textColor="@color/blue_dark"
-                android:textSize="14sp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="50dp"
-                android:text="Fairphone Orange v1"
-                android:textColor="@color/blue_dark"
-                android:textSize="14sp" />
-        </LinearLayout>
-
-        <Button
-            android:id="@+id/fairphone_1_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Fairphone Orangina v0.9" />
-
-        <Button
-            android:id="@+id/fairphone_2_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Fairphone Cointreau v0.8" />
-
-        <Button
-            android:id="@+id/fairphone_3_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Fairphone Peanuts v0.7" />
+                android:clickable="true"
+                android:orientation="vertical" />
+        </ScrollView>
     </LinearLayout>
 
 </LinearLayout>
