@@ -16,32 +16,33 @@
 
 package com.fairphone.updater;
 
+import java.util.Calendar;
+
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
-import java.util.Calendar;
-
-public class BootBroadcastReceiver extends BroadcastReceiver {
+public class BootBroadcastReceiver extends BroadcastReceiver
+{
 
     final static long NOTIFICATION_INTERVAL_MILLIS = 1000 * 60 * 60 * 8;
-    
-	@Override
-	public void onReceive(Context context, Intent intent) {
-		
-		AlarmManager service = (AlarmManager) context
-				.getSystemService(Context.ALARM_SERVICE);
-		Intent i = new Intent(context, UpdaterService.class);
-		PendingIntent pending = PendingIntent.getService(context, 0, i, PendingIntent.FLAG_CANCEL_CURRENT);
 
-		Calendar cal = Calendar.getInstance();
-		// Start 30 seconds after boot completed
-		cal.add(Calendar.SECOND, 30);
-		
-		// InexactRepeating allows Android to optimize the energy consumption
-		service.setInexactRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), NOTIFICATION_INTERVAL_MILLIS, pending);
-	}
+    @Override
+    public void onReceive(Context context, Intent intent)
+    {
+
+        AlarmManager service = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        Intent i = new Intent(context, UpdaterService.class);
+        PendingIntent pending = PendingIntent.getService(context, 0, i, PendingIntent.FLAG_CANCEL_CURRENT);
+
+        Calendar cal = Calendar.getInstance();
+        // Start 30 seconds after boot completed
+        cal.add(Calendar.SECOND, 30);
+
+        // InexactRepeating allows Android to optimize the energy consumption
+        service.setInexactRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), NOTIFICATION_INTERVAL_MILLIS, pending);
+    }
 
 }

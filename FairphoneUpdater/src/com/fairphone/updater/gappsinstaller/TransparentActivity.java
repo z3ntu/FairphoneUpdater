@@ -14,272 +14,270 @@ import android.view.Window;
 
 import com.fairphone.updater.R;
 
-public class TransparentActivity extends Activity {
+public class TransparentActivity extends Activity
+{
 
-	public static final String SHOW_UPDATER_INSTALLING_DIALOG = "SHOW_UPDATER_INSTALLING_DIALOG";
-	public static final String HIDE_GAPPS_PROGRESS_SPINNER = "HIDE_GAPPS_PROGRESS_SPINNER";
-	public static final String SHOW_GAPPS_PROGRESS_SPINNER = "SHOW_GAPPS_PROGRESS_SPINNER";
-	public static final String SHOW_GAPPS_WIFI_WARNING_DIALOG = "SHOW_GAPPS_WIFI_WARNING_DIALOG";
-	public static final String SHOW_GAPPS_DISCLAIMER_DIALOG = "SHOW_GAPPS_DISCLAIMER_DIALOG";
-	public static final String SHOW_GAPPS_REINSTALL_DIALOG = "SHOW_GAPPS_REINSTALL_DIALOG";
-	public static final String SHOW_GAPPS_PERMISSIONS_DIALOG = "SHOW_GAPPS_PERMISSIONS_DIALOG";
-	
-	public static final String ACTION_GAPPS_DENIED_PERMISSIONS = "ACTION_GAPPS_DENIED_PERMISSIONS";
-	public static final String ACTION_SET_GAPPS_REINSTALL_FLAG = "ACTION_SET_GAPPS_REINSTALL_FLAG";
-	public static final String ACTION_CHANGE_GAPPS_STATE_TO_INITIAL = "ACTION_CHANGE_GAPPS_STATE_TO_INITIAL";
-	
-	private ProgressDialog mProgress = null;
-	private BroadcastReceiver mBCastProgressBar;
+    public static final String SHOW_UPDATER_INSTALLING_DIALOG = "SHOW_UPDATER_INSTALLING_DIALOG";
+    public static final String HIDE_GAPPS_PROGRESS_SPINNER = "HIDE_GAPPS_PROGRESS_SPINNER";
+    public static final String SHOW_GAPPS_PROGRESS_SPINNER = "SHOW_GAPPS_PROGRESS_SPINNER";
+    public static final String SHOW_GAPPS_WIFI_WARNING_DIALOG = "SHOW_GAPPS_WIFI_WARNING_DIALOG";
+    public static final String SHOW_GAPPS_DISCLAIMER_DIALOG = "SHOW_GAPPS_DISCLAIMER_DIALOG";
+    public static final String SHOW_GAPPS_REINSTALL_DIALOG = "SHOW_GAPPS_REINSTALL_DIALOG";
+    public static final String SHOW_GAPPS_PERMISSIONS_DIALOG = "SHOW_GAPPS_PERMISSIONS_DIALOG";
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
-		getActionBar().hide();
-		
-		String action = getIntent().getAction();
-		
-		if(SHOW_GAPPS_REINSTALL_DIALOG.equals(action)){
-			showReinstallAlert();
-		}else if(SHOW_GAPPS_DISCLAIMER_DIALOG.equals(action)){
-			showDisclaimer();
-		}else if(SHOW_GAPPS_WIFI_WARNING_DIALOG.equals(action)){
-			showWifiWarning();
-		}else if(SHOW_GAPPS_PROGRESS_SPINNER.equals(action)){
-			showProgressSpinner();
-		}else if(SHOW_GAPPS_PERMISSIONS_DIALOG.equals(action)){
-			showPermissionsDialog();
-		}else if(SHOW_UPDATER_INSTALLING_DIALOG.equals(action)){
-			showUpdaterInstallingDialog();
-		}
-	}
-	
-	@Override
-	protected void onResume() {
-		super.onResume();
-		
-		mBCastProgressBar = new BroadcastReceiver() {
+    public static final String ACTION_GAPPS_DENIED_PERMISSIONS = "ACTION_GAPPS_DENIED_PERMISSIONS";
+    public static final String ACTION_SET_GAPPS_REINSTALL_FLAG = "ACTION_SET_GAPPS_REINSTALL_FLAG";
+    public static final String ACTION_CHANGE_GAPPS_STATE_TO_INITIAL = "ACTION_CHANGE_GAPPS_STATE_TO_INITIAL";
 
-			@Override
-			public void onReceive(Context context, Intent intent) {
-				hideProgressSpinner();
-			}
-		};
+    private ProgressDialog mProgress = null;
+    private BroadcastReceiver mBCastProgressBar;
 
-		registerReceiver(mBCastProgressBar, new IntentFilter(
-				HIDE_GAPPS_PROGRESS_SPINNER));
-	}
-	
-	@Override
-	protected void onPause() {
-		super.onPause();
-		
-		unregisterReceiver(mBCastProgressBar);
-	}
-	
-	public void showReinstallAlert() {
+    @Override
+    protected void onCreate(Bundle savedInstanceState)
+    {
+        super.onCreate(savedInstanceState);
+        getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
+        getActionBar().hide();
+
+        String action = getIntent().getAction();
+
+        if (SHOW_GAPPS_REINSTALL_DIALOG.equals(action))
+        {
+            showReinstallAlert();
+        }
+        else if (SHOW_GAPPS_DISCLAIMER_DIALOG.equals(action))
+        {
+            showDisclaimer();
+        }
+        else if (SHOW_GAPPS_WIFI_WARNING_DIALOG.equals(action))
+        {
+            showWifiWarning();
+        }
+        else if (SHOW_GAPPS_PROGRESS_SPINNER.equals(action))
+        {
+            showProgressSpinner();
+        }
+        else if (SHOW_GAPPS_PERMISSIONS_DIALOG.equals(action))
+        {
+            showPermissionsDialog();
+        }
+        else if (SHOW_UPDATER_INSTALLING_DIALOG.equals(action))
+        {
+            showUpdaterInstallingDialog();
+        }
+    }
+
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+
+        mBCastProgressBar = new BroadcastReceiver()
+        {
+
+            @Override
+            public void onReceive(Context context, Intent intent)
+            {
+                hideProgressSpinner();
+            }
+        };
+
+        registerReceiver(mBCastProgressBar, new IntentFilter(HIDE_GAPPS_PROGRESS_SPINNER));
+    }
+
+    @Override
+    protected void onPause()
+    {
+        super.onPause();
+
+        unregisterReceiver(mBCastProgressBar);
+    }
+
+    public void showReinstallAlert()
+    {
         Resources resources = getResources();
 
-        AlertDialog reinstallDialog = new AlertDialog.Builder(this)
-                .create();
+        AlertDialog reinstallDialog = new AlertDialog.Builder(this).create();
 
-        reinstallDialog.setTitle(resources
-                .getText(R.string.google_apps_reinstall_request_title));
+        reinstallDialog.setTitle(resources.getText(R.string.google_apps_reinstall_request_title));
 
         // Setting Dialog Message
-        reinstallDialog.setMessage(resources
-                .getText(R.string.google_apps_reinstall_description));
+        reinstallDialog.setMessage(resources.getText(R.string.google_apps_reinstall_description));
 
-        reinstallDialog
-                .setButton(
-                        AlertDialog.BUTTON_POSITIVE,
-                        resources
-                                .getString(android.R.string.ok),
-                        new DialogInterface.OnClickListener() {
+        reinstallDialog.setButton(AlertDialog.BUTTON_POSITIVE, resources.getString(android.R.string.ok), new DialogInterface.OnClickListener()
+        {
 
-                            @Override
-                            public void onClick(DialogInterface dialog,
-                                    int which) {
+            @Override
+            public void onClick(DialogInterface dialog, int which)
+            {
 
-                            	Intent i = new Intent(ACTION_SET_GAPPS_REINSTALL_FLAG);
-                            	sendBroadcast(i);
-                            	
-                            	TransparentActivity.this.finish();
-                            }
-                        });
+                Intent i = new Intent(ACTION_SET_GAPPS_REINSTALL_FLAG);
+                sendBroadcast(i);
+
+                TransparentActivity.this.finish();
+            }
+        });
 
         reinstallDialog.setCanceledOnTouchOutside(false);
         reinstallDialog.setCancelable(false);
         reinstallDialog.show();
     }
-	
-	private void showDisclaimer() {
-		Resources resources = getResources();
 
-		AlertDialog disclaimerDialog = new AlertDialog.Builder(this)
-				.create();
+    private void showDisclaimer()
+    {
+        Resources resources = getResources();
 
-		disclaimerDialog.setTitle(resources
-				.getText(R.string.google_apps_disclaimer_title));
+        AlertDialog disclaimerDialog = new AlertDialog.Builder(this).create();
 
-		// Setting Dialog Message
-		disclaimerDialog.setMessage(resources
-				.getText(R.string.google_apps_disclaimer_description));
+        disclaimerDialog.setTitle(resources.getText(R.string.google_apps_disclaimer_title));
 
-		disclaimerDialog
-				.setButton(
-						AlertDialog.BUTTON_POSITIVE,
-						resources
-								.getString(R.string.google_apps_disclaimer_agree),
-						new DialogInterface.OnClickListener() {
+        // Setting Dialog Message
+        disclaimerDialog.setMessage(resources.getText(R.string.google_apps_disclaimer_description));
 
-							@Override
-							public void onClick(DialogInterface dialog,
-									int which) {
+        disclaimerDialog.setButton(AlertDialog.BUTTON_POSITIVE, resources.getString(R.string.google_apps_disclaimer_agree),
+                new DialogInterface.OnClickListener()
+                {
 
-								Intent startDownloadOkIntent = new Intent();
-								startDownloadOkIntent
-										.setAction(GappsInstallerHelper.GAPPS_ACTION_DOWNLOAD_CONFIGURATION_FILE);
+                    @Override
+                    public void onClick(DialogInterface dialog, int which)
+                    {
 
-								sendBroadcast(startDownloadOkIntent);
-								
-								TransparentActivity.this.finish();
-							}
-						});
+                        Intent startDownloadOkIntent = new Intent();
+                        startDownloadOkIntent.setAction(GappsInstallerHelper.GAPPS_ACTION_DOWNLOAD_CONFIGURATION_FILE);
 
-		disclaimerDialog.setButton(AlertDialog.BUTTON_NEGATIVE,
-				resources.getString(android.R.string.cancel),
-				new DialogInterface.OnClickListener() {
+                        sendBroadcast(startDownloadOkIntent);
 
-					@Override
-					public void onClick(DialogInterface dialog,
-							int which) {
-						
-						changeGappsStateToInitial();
-					}
-				});
+                        TransparentActivity.this.finish();
+                    }
+                });
 
-		disclaimerDialog.setCanceledOnTouchOutside(false);
-		disclaimerDialog.setCancelable(false);
-		disclaimerDialog.show();
-	}
+        disclaimerDialog.setButton(AlertDialog.BUTTON_NEGATIVE, resources.getString(android.R.string.cancel), new DialogInterface.OnClickListener()
+        {
 
-	private void showWifiWarning() {
-		AlertDialog disclaimerDialog = new AlertDialog.Builder(
-				this).create();
+            @Override
+            public void onClick(DialogInterface dialog, int which)
+            {
 
-		Resources resources = getResources();
+                changeGappsStateToInitial();
+            }
+        });
 
-		disclaimerDialog.setTitle(resources
-				.getText(R.string.google_apps_connection_title));
+        disclaimerDialog.setCanceledOnTouchOutside(false);
+        disclaimerDialog.setCancelable(false);
+        disclaimerDialog.show();
+    }
 
-		// Setting Dialog Message
-		disclaimerDialog
-				.setMessage(resources
-						.getText(R.string.google_apps_connection_description));
+    private void showWifiWarning()
+    {
+        AlertDialog disclaimerDialog = new AlertDialog.Builder(this).create();
 
-		disclaimerDialog.setButton(AlertDialog.BUTTON_POSITIVE,
-				resources.getString(android.R.string.ok),
-				new DialogInterface.OnClickListener() {
+        Resources resources = getResources();
 
-					@Override
-					public void onClick(DialogInterface dialog,
-							int which) {
-						changeGappsStateToInitial();
-					}
-				});
+        disclaimerDialog.setTitle(resources.getText(R.string.google_apps_connection_title));
 
-		disclaimerDialog.setCanceledOnTouchOutside(false);
-		disclaimerDialog.setCancelable(false);
-		disclaimerDialog.show();
-	}
+        // Setting Dialog Message
+        disclaimerDialog.setMessage(resources.getText(R.string.google_apps_connection_description));
 
-	private void changeGappsStateToInitial() {
-		Intent i = new Intent(ACTION_CHANGE_GAPPS_STATE_TO_INITIAL);
-		sendBroadcast(i);
-		
-		finish();
-	}
-	
-	private void showProgressSpinner() {            
-        if(mProgress == null){
+        disclaimerDialog.setButton(AlertDialog.BUTTON_POSITIVE, resources.getString(android.R.string.ok), new DialogInterface.OnClickListener()
+        {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which)
+            {
+                changeGappsStateToInitial();
+            }
+        });
+
+        disclaimerDialog.setCanceledOnTouchOutside(false);
+        disclaimerDialog.setCancelable(false);
+        disclaimerDialog.show();
+    }
+
+    private void changeGappsStateToInitial()
+    {
+        Intent i = new Intent(ACTION_CHANGE_GAPPS_STATE_TO_INITIAL);
+        sendBroadcast(i);
+
+        finish();
+    }
+
+    private void showProgressSpinner()
+    {
+        if (mProgress == null)
+        {
             String title = "";
             String message = getResources().getString(R.string.pleaseWait);
             mProgress = ProgressDialog.show(this, title, message, true, false);
         }
     }
 
-	private void hideProgressSpinner() {
+    private void hideProgressSpinner()
+    {
         // disable the spinner
-        if(mProgress != null){
+        if (mProgress != null)
+        {
             mProgress.dismiss();
             mProgress = null;
         }
-        
+
         finish();
     }
-	
-	private void showPermissionsDialog() {
-		Resources resources = getResources();
 
-		AlertDialog permissionsDialog = new AlertDialog.Builder(this)
-				.create();
+    private void showPermissionsDialog()
+    {
+        Resources resources = getResources();
 
-		permissionsDialog.setTitle(resources
-				.getText(R.string.google_apps_denied_permissions_title));
+        AlertDialog permissionsDialog = new AlertDialog.Builder(this).create();
 
-		// Setting Dialog Message
-		permissionsDialog
-				.setMessage(resources
-						.getText(R.string.google_apps_denied_permissions_description));
+        permissionsDialog.setTitle(resources.getText(R.string.google_apps_denied_permissions_title));
 
-		permissionsDialog.setButton(AlertDialog.BUTTON_POSITIVE,
-				resources.getString(android.R.string.ok),
-				new DialogInterface.OnClickListener() {
+        // Setting Dialog Message
+        permissionsDialog.setMessage(resources.getText(R.string.google_apps_denied_permissions_description));
 
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
+        permissionsDialog.setButton(AlertDialog.BUTTON_POSITIVE, resources.getString(android.R.string.ok), new DialogInterface.OnClickListener()
+        {
 
-						Intent permissionsIntent = new Intent();
-						permissionsIntent.setAction(ACTION_GAPPS_DENIED_PERMISSIONS);
+            @Override
+            public void onClick(DialogInterface dialog, int which)
+            {
 
-						sendBroadcast(permissionsIntent);
-						
-						TransparentActivity.this.finish();
-					}
-				});
+                Intent permissionsIntent = new Intent();
+                permissionsIntent.setAction(ACTION_GAPPS_DENIED_PERMISSIONS);
 
-		permissionsDialog.setCanceledOnTouchOutside(false);
-		permissionsDialog.setCancelable(false);
-		permissionsDialog.show();
-	}
-	
-	private void showUpdaterInstallingDialog() {
-		Resources resources = getResources();
+                sendBroadcast(permissionsIntent);
 
-		AlertDialog updaterInstallingDialog = new AlertDialog.Builder(this)
-				.create();
+                TransparentActivity.this.finish();
+            }
+        });
 
-		updaterInstallingDialog.setTitle(resources
-				.getText(android.R.string.dialog_alert_title));
+        permissionsDialog.setCanceledOnTouchOutside(false);
+        permissionsDialog.setCancelable(false);
+        permissionsDialog.show();
+    }
 
-		// Setting Dialog Message
-		updaterInstallingDialog
-				.setMessage(resources
-						.getText(R.string.google_apps_updater_installing_description));
+    private void showUpdaterInstallingDialog()
+    {
+        Resources resources = getResources();
 
-		updaterInstallingDialog.setButton(AlertDialog.BUTTON_POSITIVE,
-				resources.getString(android.R.string.ok),
-				new DialogInterface.OnClickListener() {
+        AlertDialog updaterInstallingDialog = new AlertDialog.Builder(this).create();
 
-					@Override
-					public void onClick(DialogInterface dialog, int which) {						
-						TransparentActivity.this.finish();
-					}
-				});
+        updaterInstallingDialog.setTitle(resources.getText(android.R.string.dialog_alert_title));
 
-		updaterInstallingDialog.setCanceledOnTouchOutside(false);
-		updaterInstallingDialog.setCancelable(false);
-		updaterInstallingDialog.show();
-	}
+        // Setting Dialog Message
+        updaterInstallingDialog.setMessage(resources.getText(R.string.google_apps_updater_installing_description));
+
+        updaterInstallingDialog.setButton(AlertDialog.BUTTON_POSITIVE, resources.getString(android.R.string.ok), new DialogInterface.OnClickListener()
+        {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which)
+            {
+                TransparentActivity.this.finish();
+            }
+        });
+
+        updaterInstallingDialog.setCanceledOnTouchOutside(false);
+        updaterInstallingDialog.setCancelable(false);
+        updaterInstallingDialog.show();
+    }
 }

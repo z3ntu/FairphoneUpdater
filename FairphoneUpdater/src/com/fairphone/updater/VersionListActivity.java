@@ -55,7 +55,7 @@ public class VersionListActivity extends Activity
 
     private List<Version> mVersionList;
 
-    //    private TextView mVersionListHeaderTitle;
+    // private TextView mVersionListHeaderTitle;
 
     private View mScrollView;
 
@@ -77,7 +77,7 @@ public class VersionListActivity extends Activity
 
     private String mVersionListType;
 
-    //    private TextView mVersionListHeaderSubTitle;
+    // private TextView mVersionListHeaderSubTitle;
 
     private ImageView mMoreInfoFairphoneLogo;
 
@@ -99,18 +99,19 @@ public class VersionListActivity extends Activity
 
         mVersionListContainer = (LinearLayout) findViewById(R.id.versionListContainer);
 
-        //        mVersionListHeaderTitle = (TextView) findViewById(R.id.titleText);
-        //        mVersionListHeaderSubTitle = (TextView) findViewById(R.id.subtitleText);
-        //        setupTitleBar();
+        // mVersionListHeaderTitle = (TextView) findViewById(R.id.titleText);
+        // mVersionListHeaderSubTitle = (TextView)
+        // findViewById(R.id.subtitleText);
+        // setupTitleBar();
         //
-        //        mVersionListHeaderSubTitle.setOnClickListener(new OnClickListener()
-        //        {
-        //            @Override
-        //            public void onClick(View v)
-        //            {
-        //                onBackPressed();
-        //            }
-        //        });
+        // mVersionListHeaderSubTitle.setOnClickListener(new OnClickListener()
+        // {
+        // @Override
+        // public void onClick(View v)
+        // {
+        // onBackPressed();
+        // }
+        // });
 
         mScrollView = findViewById(R.id.versionListScroll);
         mSelectedVersionLayout = findViewById(R.id.selectedVersionContainer);
@@ -122,8 +123,9 @@ public class VersionListActivity extends Activity
     public void setupTitleBar()
     {
         Resources resources = getResources();
-        //        mVersionListHeaderSubTitle.setText(Version.getImageTypeDescription(mVersionListType, resources));
-        //        mVersionListHeaderSubTitle.setVisibility(View.VISIBLE);
+        // mVersionListHeaderSubTitle.setText(Version.getImageTypeDescription(mVersionListType,
+        // resources));
+        // mVersionListHeaderSubTitle.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -166,8 +168,9 @@ public class VersionListActivity extends Activity
             TextView versionName = (TextView) versionLayout.findViewById(R.id.versionNameText);
             versionName.setText(version.getName() + " " + version.getBuildNumber());
 
-            //ImageView versionImage = (ImageView) versionLayout.findViewById(R.id.versionImage);
-            //Picasso.with(this).load(version.getThumbnailLink()).placeholder(R.drawable.fairphone_updater_current_version).into(versionImage);
+            // ImageView versionImage = (ImageView)
+            // versionLayout.findViewById(R.id.versionImage);
+            // Picasso.with(this).load(version.getThumbnailLink()).placeholder(R.drawable.fairphone_updater_current_version).into(versionImage);
 
             versionLayout.setOnClickListener(new OnClickListener()
             {
@@ -181,10 +184,11 @@ public class VersionListActivity extends Activity
                     {
                         toggleVersionDetails();
 
-                        //                        mVersionListHeaderSubTitle.setText(selectedVersion.getName() + " " + selectedVersion.getBuildNumber());
+                        // mVersionListHeaderSubTitle.setText(selectedVersion.getName()
+                        // + " " + selectedVersion.getBuildNumber());
 
-                        //                        Picasso.with(getApplicationContext()).load(selectedVersion.getThumbnailLink())
-                        //                                .placeholder(R.drawable.fairphone_updater_current_version).into(mSelectedVersionImage);
+                        // Picasso.with(getApplicationContext()).load(selectedVersion.getThumbnailLink())
+                        // .placeholder(R.drawable.fairphone_updater_current_version).into(mSelectedVersionImage);
 
                         updateMoreInfoLayout(selectedVersion);
                     }
@@ -260,7 +264,7 @@ public class VersionListActivity extends Activity
                                         {
                                             public void onClick(DialogInterface dialog, int which)
                                             {
-                                                //Do nothing
+                                                // Do nothing
                                             }
                                         }).setIcon(android.R.drawable.ic_dialog_alert);
 
@@ -311,7 +315,7 @@ public class VersionListActivity extends Activity
                     {
                         public void onClick(DialogInterface dialog, int which)
                         {
-                            //Do nothing
+                            // Do nothing
                         }
                     }).setIcon(android.R.drawable.ic_dialog_alert).show();
         }

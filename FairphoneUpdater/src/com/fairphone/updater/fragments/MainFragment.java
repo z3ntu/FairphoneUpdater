@@ -20,178 +20,195 @@ import com.fairphone.updater.FairphoneUpdater2Activity.UpdaterState;
 import com.fairphone.updater.R;
 import com.fairphone.updater.Version;
 
-public class MainFragment extends BaseFragment {
+public class MainFragment extends BaseFragment
+{
 
-	private LinearLayout mVersionUpToDateGroup;
-	private TextView mVersionUpToDateCurrentVersionNameText;
-	private LinearLayout mUpdateAvailableGroup;
-	private TextView mUpdateAvailableCurrentVersionNameText;
-	private TextView mUpdateAvailableNameText;
-	private Button mUpdateAvailableInstallButton;
-	private Button mOtherOSOptionsButton;
-	private Version mDeviceVersion;
-	private BroadcastReceiver newVersionbroadcastReceiver;
+    private LinearLayout mVersionUpToDateGroup;
+    private TextView mVersionUpToDateCurrentVersionNameText;
+    private LinearLayout mUpdateAvailableGroup;
+    private TextView mUpdateAvailableCurrentVersionNameText;
+    private TextView mUpdateAvailableNameText;
+    private Button mUpdateAvailableInstallButton;
+    private Button mOtherOSOptionsButton;
+    private Version mDeviceVersion;
+    private BroadcastReceiver newVersionbroadcastReceiver;
 
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
-		// Inflate the layout for this fragment
-		View view = inflater.inflate(R.layout.fragment_main, container, false);
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+    {
+        // Inflate the layout for this fragment
+        View view = inflater.inflate(R.layout.fragment_main, container, false);
 
-		setupLayout(view);
+        setupLayout(view);
 
-		mDeviceVersion = mainActivity.getDeviceVersion();
-		updateHeader();
-		updateCurrentVersionGroup();
-		toogleUpdateAvailableGroup();
-		updateOtherOSOptionsGroup();
+        mDeviceVersion = mainActivity.getDeviceVersion();
+        updateHeader();
+        updateCurrentVersionGroup();
+        toogleUpdateAvailableGroup();
+        updateOtherOSOptionsGroup();
 
-		return view;
-	}
+        return view;
+    }
 
-	private void updateHeader() {
-		if (Version.IMAGE_TYPE_FAIRPHONE.equalsIgnoreCase(mDeviceVersion
-				.getImageType())) {
-			mainActivity.updateHeader(HeaderType.MAIN_FAIRPHONE, "");
-		} else if (Version.IMAGE_TYPE_AOSP.equalsIgnoreCase(mDeviceVersion
-				.getImageType())) {
-			mainActivity.updateHeader(HeaderType.MAIN_ANDROID, "");
-		}
-	}
+    private void updateHeader()
+    {
+        if (Version.IMAGE_TYPE_FAIRPHONE.equalsIgnoreCase(mDeviceVersion.getImageType()))
+        {
+            mainActivity.updateHeader(HeaderType.MAIN_FAIRPHONE, "");
+        }
+        else if (Version.IMAGE_TYPE_AOSP.equalsIgnoreCase(mDeviceVersion.getImageType()))
+        {
+            mainActivity.updateHeader(HeaderType.MAIN_ANDROID, "");
+        }
+    }
 
-	private void setupLayout(View view) {
-		// Version up to date group
-		mVersionUpToDateGroup = (LinearLayout) view
-				.findViewById(R.id.version_up_to_date_group);
-		mVersionUpToDateCurrentVersionNameText = (TextView) view
-						.findViewById(R.id.version_up_to_date_current_version_name_text);
+    private void setupLayout(View view)
+    {
+        // Version up to date group
+        mVersionUpToDateGroup = (LinearLayout) view.findViewById(R.id.version_up_to_date_group);
+        mVersionUpToDateCurrentVersionNameText = (TextView) view.findViewById(R.id.version_up_to_date_current_version_name_text);
 
-		// Update available group
-		mUpdateAvailableGroup = (LinearLayout) view
-				.findViewById(R.id.update_available_group);
-		mUpdateAvailableCurrentVersionNameText = (TextView) view
-				.findViewById(R.id.update_available_current_version_name_text);
-		mUpdateAvailableNameText = (TextView) view
-				.findViewById(R.id.update_available_name_text);
-		mUpdateAvailableInstallButton = (Button) view
-				.findViewById(R.id.install_update_button);
+        // Update available group
+        mUpdateAvailableGroup = (LinearLayout) view.findViewById(R.id.update_available_group);
+        mUpdateAvailableCurrentVersionNameText = (TextView) view.findViewById(R.id.update_available_current_version_name_text);
+        mUpdateAvailableNameText = (TextView) view.findViewById(R.id.update_available_name_text);
+        mUpdateAvailableInstallButton = (Button) view.findViewById(R.id.install_update_button);
 
-		// Other OS Options group
-		mOtherOSOptionsButton = (Button) view
-				.findViewById(R.id.other_os_options_button);
-	}
+        // Other OS Options group
+        mOtherOSOptionsButton = (Button) view.findViewById(R.id.other_os_options_button);
+    }
 
-	private void updateOtherOSOptionsGroup() {
-		mOtherOSOptionsButton.setOnClickListener(new OnClickListener() {
+    private void updateOtherOSOptionsGroup()
+    {
+        mOtherOSOptionsButton.setOnClickListener(new OnClickListener()
+        {
 
-			@Override
-			public void onClick(View v) {
-				OtherOSOptionsFragment newFragment = new OtherOSOptionsFragment();
-				mainActivity.changeFragment(newFragment);
-			}
-		});
-	}
+            @Override
+            public void onClick(View v)
+            {
+                OtherOSOptionsFragment newFragment = new OtherOSOptionsFragment();
+                mainActivity.changeFragment(newFragment);
+            }
+        });
+    }
 
-	public void toogleUpdateAvailableGroup() {
-		if (mainActivity.isUpdateAvailable()) {
-			mVersionUpToDateGroup.setVisibility(View.GONE);
-			mUpdateAvailableGroup.setVisibility(View.VISIBLE);
+    public void toogleUpdateAvailableGroup()
+    {
+        if (mainActivity.isUpdateAvailable())
+        {
+            mVersionUpToDateGroup.setVisibility(View.GONE);
+            mUpdateAvailableGroup.setVisibility(View.VISIBLE);
 
-			updateUpdateAvailableGroup();
-		} else {
-			mUpdateAvailableGroup.setVisibility(View.GONE);
-			mVersionUpToDateGroup.setVisibility(View.VISIBLE);
-		}
-	}
+            updateUpdateAvailableGroup();
+        }
+        else
+        {
+            mUpdateAvailableGroup.setVisibility(View.GONE);
+            mVersionUpToDateGroup.setVisibility(View.VISIBLE);
+        }
+    }
 
-	private void updateUpdateAvailableGroup() {
-		mUpdateAvailableNameText.setText(mainActivity.getLatestVersionName());
-		mUpdateAvailableInstallButton.setOnClickListener(new OnClickListener() {
+    private void updateUpdateAvailableGroup()
+    {
+        mUpdateAvailableNameText.setText(mainActivity.getLatestVersionName());
+        mUpdateAvailableInstallButton.setOnClickListener(new OnClickListener()
+        {
 
-			@Override
-			public void onClick(View v) {
-				VersionDetailFragment fragment = new VersionDetailFragment();
+            @Override
+            public void onClick(View v)
+            {
+                VersionDetailFragment fragment = new VersionDetailFragment();
 
-				Version latestVersion = mainActivity.getLatestVersion();
-				if (latestVersion != null) {
-					fragment.setupFragment(latestVersion,
-							VersionDetailFragment.DetailLayoutType.UPDATE);
-					mainActivity.changeFragment(fragment);
-				}
-			}
-		});
-	}
+                Version latestVersion = mainActivity.getLatestVersion();
+                if (latestVersion != null)
+                {
+                    fragment.setupFragment(latestVersion, VersionDetailFragment.DetailLayoutType.UPDATE);
+                    mainActivity.changeFragment(fragment);
+                }
+            }
+        });
+    }
 
-	private void updateCurrentVersionGroup() {
-		String currentVersionName = mainActivity.getDeviceVersionName();
-		mVersionUpToDateCurrentVersionNameText.setText(currentVersionName);
-		mVersionUpToDateCurrentVersionNameText.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				mainActivity.onEnableDevMode();
-			}
-		});
-		
-		mUpdateAvailableCurrentVersionNameText.setText(currentVersionName);
-		mUpdateAvailableCurrentVersionNameText.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				mainActivity.onEnableDevMode();
-			}
-		});
-	}
+    private void updateCurrentVersionGroup()
+    {
+        String currentVersionName = mainActivity.getDeviceVersionName();
+        mVersionUpToDateCurrentVersionNameText.setText(currentVersionName);
+        mVersionUpToDateCurrentVersionNameText.setOnClickListener(new OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                mainActivity.onEnableDevMode();
+            }
+        });
 
-	@Override
-	public void onResume() {
-		super.onResume();
-		setupBroadcastReceiver();
+        mUpdateAvailableCurrentVersionNameText.setText(currentVersionName);
+        mUpdateAvailableCurrentVersionNameText.setOnClickListener(new OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                mainActivity.onEnableDevMode();
+            }
+        });
+    }
 
-		registerBroadCastReceiver();
-	}
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+        setupBroadcastReceiver();
 
-	@Override
-	public void onPause() {
-		super.onPause();
+        registerBroadCastReceiver();
+    }
 
-		unregisterBroadCastReceiver();
-	}
+    @Override
+    public void onPause()
+    {
+        super.onPause();
 
-	protected void setupBroadcastReceiver() {
-		newVersionbroadcastReceiver = new BroadcastReceiver() {
+        unregisterBroadCastReceiver();
+    }
 
-			@Override
-			public void onReceive(Context context, Intent intent) {
-				String action = intent.getAction();
+    protected void setupBroadcastReceiver()
+    {
+        newVersionbroadcastReceiver = new BroadcastReceiver()
+        {
 
-				if (FairphoneUpdater2Activity.FAIRPHONE_UPDATER_NEW_VERSION_RECEIVED
-						.equals(action)) {
-					mainActivity.updateLatestVersionFromConfig();
-					if (mainActivity.getCurrentUpdaterState() == UpdaterState.NORMAL) {
-						toogleUpdateAvailableGroup();
-					}
-				} else if (FairphoneUpdater2Activity.FAIRPHONE_UPDATER_CONFIG_DOWNLOAD_FAILED
-						.equals(action)) {
-					String link = intent
-							.getStringExtra(FairphoneUpdater2Activity.FAIRPHONE_UPDATER_CONFIG_DOWNLOAD_LINK);
-					Toast.makeText(
-							context.getApplicationContext(),
-							context.getResources().getString(
-									R.string.configFileDownloadLinkError)
-									+ " " + link, Toast.LENGTH_LONG).show();
-				}
-			}
-		};
-	}
+            @Override
+            public void onReceive(Context context, Intent intent)
+            {
+                String action = intent.getAction();
 
-	private void registerBroadCastReceiver() {
-		IntentFilter iFilter = new IntentFilter();
-		iFilter.addAction(FairphoneUpdater2Activity.FAIRPHONE_UPDATER_NEW_VERSION_RECEIVED);
-		iFilter.addAction(FairphoneUpdater2Activity.FAIRPHONE_UPDATER_CONFIG_DOWNLOAD_FAILED);
-		mainActivity.registerReceiver(newVersionbroadcastReceiver, iFilter);
-	}
+                if (FairphoneUpdater2Activity.FAIRPHONE_UPDATER_NEW_VERSION_RECEIVED.equals(action))
+                {
+                    mainActivity.updateLatestVersionFromConfig();
+                    if (mainActivity.getCurrentUpdaterState() == UpdaterState.NORMAL)
+                    {
+                        toogleUpdateAvailableGroup();
+                    }
+                }
+                else if (FairphoneUpdater2Activity.FAIRPHONE_UPDATER_CONFIG_DOWNLOAD_FAILED.equals(action))
+                {
+                    String link = intent.getStringExtra(FairphoneUpdater2Activity.FAIRPHONE_UPDATER_CONFIG_DOWNLOAD_LINK);
+                    Toast.makeText(context.getApplicationContext(), context.getResources().getString(R.string.configFileDownloadLinkError) + " " + link,
+                            Toast.LENGTH_LONG).show();
+                }
+            }
+        };
+    }
 
-	private void unregisterBroadCastReceiver() {
-		mainActivity.unregisterReceiver(newVersionbroadcastReceiver);
-	}
+    private void registerBroadCastReceiver()
+    {
+        IntentFilter iFilter = new IntentFilter();
+        iFilter.addAction(FairphoneUpdater2Activity.FAIRPHONE_UPDATER_NEW_VERSION_RECEIVED);
+        iFilter.addAction(FairphoneUpdater2Activity.FAIRPHONE_UPDATER_CONFIG_DOWNLOAD_FAILED);
+        mainActivity.registerReceiver(newVersionbroadcastReceiver, iFilter);
+    }
+
+    private void unregisterBroadCastReceiver()
+    {
+        mainActivity.unregisterReceiver(newVersionbroadcastReceiver);
+    }
 
 }

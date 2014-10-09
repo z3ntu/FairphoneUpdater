@@ -37,9 +37,9 @@ public class GoogleAppsInstallerWidget extends AppWidgetProvider
     @Override
     public void onEnabled(Context context)
     {
-    	super.onEnabled(context);
-    	//start updater service
-    	Utils.startUpdaterService(context, false);
+        super.onEnabled(context);
+        // start updater service
+        Utils.startUpdaterService(context, false);
     }
 
     @Override
@@ -54,7 +54,7 @@ public class GoogleAppsInstallerWidget extends AppWidgetProvider
     public void onDeleted(Context context, int[] appWidgetIds)
     {
         // Widget instance is removed from the homescreen
-//        Log.d(TAG, "onDeleted - " + appWidgetIds);
+        // Log.d(TAG, "onDeleted - " + appWidgetIds);
     }
 
     @Override
@@ -69,8 +69,8 @@ public class GoogleAppsInstallerWidget extends AppWidgetProvider
 
     private int setupButtonClickIntents(Context context, int code, RemoteViews widget)
     {
-    	Utils.startUpdaterService(context, false);
-    	
+        Utils.startUpdaterService(context, false);
+
         // set up Disclaimer
         Intent disclaimerIntent = new Intent();
         disclaimerIntent.setAction(GappsInstallerHelper.GAPPS_ACTION_DISCLAIMER);
@@ -86,9 +86,10 @@ public class GoogleAppsInstallerWidget extends AppWidgetProvider
         // set up the start download Cancel intent
         Intent startDownloadCancelIntent = new Intent();
         startDownloadCancelIntent.setAction(GappsInstallerHelper.GOOGLE_APPS_INSTALL_DOWNLOAD_CANCEL);
-        PendingIntent startDownloadCancelPendingIntent = PendingIntent.getBroadcast(context, code++, startDownloadCancelIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent startDownloadCancelPendingIntent =
+                PendingIntent.getBroadcast(context, code++, startDownloadCancelIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         widget.setOnClickPendingIntent(R.id.disclaimerCancelButton, startDownloadCancelPendingIntent);
-        
+
         // set up the start download Ok intent
         Intent failedDownloadOkIntent = new Intent();
         failedDownloadOkIntent.setAction(GappsInstallerHelper.GAPPS_ACTION_DOWNLOAD_CONFIGURATION_FILE);
@@ -99,25 +100,27 @@ public class GoogleAppsInstallerWidget extends AppWidgetProvider
         permissionsOkIntent.setAction(GappsInstallerHelper.GAPPS_ACTION_GO_PERMISSIONS);
         PendingIntent permissionsOkPendingIntent = PendingIntent.getBroadcast(context, code++, permissionsOkIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         widget.setOnClickPendingIntent(R.id.permissionsOkButton, permissionsOkPendingIntent);
-        
+
         // set up the start download Cancel intent
         Intent failedDownloadCancelIntent = new Intent();
         failedDownloadCancelIntent.setAction(GappsInstallerHelper.GOOGLE_APPS_INSTALL_DOWNLOAD_CANCEL);
-        PendingIntent failedDownloadCancelPendingIntent = PendingIntent.getBroadcast(context, code++, failedDownloadCancelIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent failedDownloadCancelPendingIntent =
+                PendingIntent.getBroadcast(context, code++, failedDownloadCancelIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         widget.setOnClickPendingIntent(R.id.failedDownloadCancelButton, failedDownloadCancelPendingIntent);
-        
+
         // set up the start reboot ok intent
         Intent rebootOkIntent = new Intent();
         rebootOkIntent.setAction(GappsInstallerHelper.GOOGLE_APPS_INSTALL_REBOOT);
         PendingIntent rebootOkPendingIntent = PendingIntent.getBroadcast(context, code++, rebootOkIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         widget.setOnClickPendingIntent(R.id.rebootOkButton, rebootOkPendingIntent);
-        
+
         // set up Disclaimer
         Intent reInstallDisclaimerIntent = new Intent();
         reInstallDisclaimerIntent.setAction(GappsInstallerHelper.GAPPS_ACTION_DISCLAIMER);
-        PendingIntent reInstallDisclaimerPendingIntent = PendingIntent.getBroadcast(context, code++, reInstallDisclaimerIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent reInstallDisclaimerPendingIntent =
+                PendingIntent.getBroadcast(context, code++, reInstallDisclaimerIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         widget.setOnClickPendingIntent(R.id.reinstallButton, reInstallDisclaimerPendingIntent);
-        
+
         return code;
     }
 
@@ -127,7 +130,7 @@ public class GoogleAppsInstallerWidget extends AppWidgetProvider
         // get the widgets
         RemoteViews widget = new RemoteViews(context.getPackageName(), R.layout.fp_google_apps_installer_widget);
 
-		code = setupButtonClickIntents(context, code, widget);
+        code = setupButtonClickIntents(context, code, widget);
 
         SharedPreferences sharedPrefs = context.getSharedPreferences(GappsInstallerHelper.PREFS_GOOGLE_APPS_INSTALLER_DATA, Context.MODE_PRIVATE);
         int widgetCurrentState = sharedPrefs.getInt(GappsInstallerHelper.GOOGLE_APPS_INSTALLER_STATE, 0);
@@ -144,7 +147,7 @@ public class GoogleAppsInstallerWidget extends AppWidgetProvider
                 widget.setViewVisibility(R.id.uninstallGroup, View.GONE);
                 break;
             case GappsInstallerHelper.GAPPS_STATES_DOWNLOAD_CONFIGURATION_FILE:
-            	widget.setViewVisibility(R.id.installGroup, View.GONE);
+                widget.setViewVisibility(R.id.installGroup, View.GONE);
                 widget.setViewVisibility(R.id.popupDisclaimerGroup, View.GONE);
                 widget.setViewVisibility(R.id.popupFailedDownloadGroup, View.GONE);
                 widget.setViewVisibility(R.id.popupProgressGroup, View.VISIBLE);
@@ -153,11 +156,11 @@ public class GoogleAppsInstallerWidget extends AppWidgetProvider
                 widget.setViewVisibility(R.id.reinstallGroup, View.GONE);
                 widget.setViewVisibility(R.id.uninstallGroup, View.GONE);
                 widget.setTextViewText(R.id.progressDialogTitle, context.getResources().getString(R.string.google_apps_download_title));
-                
+
                 updateProgress(widget, sharedPrefs);
-            	break;
+                break;
             case GappsInstallerHelper.GAPPS_STATES_DOWNLOAD_GOOGLE_APPS_FILE:
-            	widget.setViewVisibility(R.id.installGroup, View.GONE);
+                widget.setViewVisibility(R.id.installGroup, View.GONE);
                 widget.setViewVisibility(R.id.popupDisclaimerGroup, View.GONE);
                 widget.setViewVisibility(R.id.popupFailedDownloadGroup, View.GONE);
                 widget.setViewVisibility(R.id.popupProgressGroup, View.VISIBLE);
@@ -166,11 +169,11 @@ public class GoogleAppsInstallerWidget extends AppWidgetProvider
                 widget.setViewVisibility(R.id.reinstallGroup, View.GONE);
                 widget.setViewVisibility(R.id.uninstallGroup, View.GONE);
                 widget.setTextViewText(R.id.progressDialogTitle, context.getResources().getString(R.string.google_apps_download_title));
-                
+
                 updateProgress(widget, sharedPrefs);
-            	break;
+                break;
             case GappsInstallerHelper.GAPPS_STATES_EXTRACT_FILES:
-            	widget.setViewVisibility(R.id.installGroup, View.GONE);
+                widget.setViewVisibility(R.id.installGroup, View.GONE);
                 widget.setViewVisibility(R.id.popupDisclaimerGroup, View.GONE);
                 widget.setViewVisibility(R.id.popupFailedDownloadGroup, View.GONE);
                 widget.setViewVisibility(R.id.popupProgressGroup, View.VISIBLE);
@@ -179,11 +182,11 @@ public class GoogleAppsInstallerWidget extends AppWidgetProvider
                 widget.setViewVisibility(R.id.reinstallGroup, View.GONE);
                 widget.setViewVisibility(R.id.uninstallGroup, View.GONE);
                 widget.setTextViewText(R.id.progressDialogTitle, context.getResources().getString(R.string.google_apps_unzip_title));
-                
+
                 updateProgress(widget, sharedPrefs);
-            	break;
+                break;
             case GappsInstallerHelper.GAPPS_DOWNLOAD_FAILED_STATE:
-            	widget.setViewVisibility(R.id.installGroup, View.GONE);
+                widget.setViewVisibility(R.id.installGroup, View.GONE);
                 widget.setViewVisibility(R.id.popupDisclaimerGroup, View.GONE);
                 widget.setViewVisibility(R.id.popupFailedDownloadGroup, View.VISIBLE);
                 widget.setViewVisibility(R.id.popupProgressGroup, View.GONE);
@@ -191,20 +194,20 @@ public class GoogleAppsInstallerWidget extends AppWidgetProvider
                 widget.setViewVisibility(R.id.popupRebootGroup, View.GONE);
                 widget.setViewVisibility(R.id.reinstallGroup, View.GONE);
                 widget.setViewVisibility(R.id.uninstallGroup, View.GONE);
-            	break;
+                break;
             case GappsInstallerHelper.GAPPS_STATES_PERMISSION_CHECK:
-            	widget.setViewVisibility(R.id.installGroup, View.GONE);
-            	widget.setViewVisibility(R.id.popupFailedDownloadGroup, View.GONE);
+                widget.setViewVisibility(R.id.installGroup, View.GONE);
+                widget.setViewVisibility(R.id.popupFailedDownloadGroup, View.GONE);
                 widget.setViewVisibility(R.id.popupDisclaimerGroup, View.GONE);
                 widget.setViewVisibility(R.id.popupProgressGroup, View.GONE);
                 widget.setViewVisibility(R.id.popupPermissionsGroup, View.VISIBLE);
                 widget.setViewVisibility(R.id.popupRebootGroup, View.GONE);
                 widget.setViewVisibility(R.id.reinstallGroup, View.GONE);
                 widget.setViewVisibility(R.id.uninstallGroup, View.GONE);
-            	break;
+                break;
             case GappsInstallerHelper.GAPPS_STATE_INSTALLATION:
-            	widget.setViewVisibility(R.id.installGroup, View.GONE);
-            	widget.setViewVisibility(R.id.popupFailedDownloadGroup, View.GONE);
+                widget.setViewVisibility(R.id.installGroup, View.GONE);
+                widget.setViewVisibility(R.id.popupFailedDownloadGroup, View.GONE);
                 widget.setViewVisibility(R.id.popupDisclaimerGroup, View.GONE);
                 widget.setViewVisibility(R.id.popupProgressGroup, View.VISIBLE);
                 widget.setViewVisibility(R.id.popupPermissionsGroup, View.GONE);
@@ -214,17 +217,17 @@ public class GoogleAppsInstallerWidget extends AppWidgetProvider
                 widget.setTextViewText(R.id.progressDialogTitle, context.getResources().getString(R.string.google_apps_install_title));
 
                 updateProgress(widget, sharedPrefs);
-	            break;
+                break;
             case GappsInstallerHelper.GAPPS_REBOOT_STATE:
-            	widget.setViewVisibility(R.id.installGroup, View.GONE);
-            	widget.setViewVisibility(R.id.popupFailedDownloadGroup, View.GONE);
+                widget.setViewVisibility(R.id.installGroup, View.GONE);
+                widget.setViewVisibility(R.id.popupFailedDownloadGroup, View.GONE);
                 widget.setViewVisibility(R.id.popupDisclaimerGroup, View.GONE);
                 widget.setViewVisibility(R.id.popupProgressGroup, View.GONE);
                 widget.setViewVisibility(R.id.popupPermissionsGroup, View.GONE);
                 widget.setViewVisibility(R.id.popupRebootGroup, View.VISIBLE);
                 widget.setViewVisibility(R.id.reinstallGroup, View.GONE);
                 widget.setViewVisibility(R.id.uninstallGroup, View.GONE);
-	            break;
+                break;
             case GappsInstallerHelper.GAPPS_INSTALLED_STATE:
                 widget.setViewVisibility(R.id.installGroup, View.GONE);
                 widget.setViewVisibility(R.id.popupFailedDownloadGroup, View.GONE);
@@ -244,12 +247,12 @@ public class GoogleAppsInstallerWidget extends AppWidgetProvider
         appWidgetManager.updateAppWidget(appWidgetId, widget);
     }
 
-	private void updateProgress(RemoteViews widget,
-			SharedPreferences sharedPrefs) {
-		int progress = sharedPrefs.getInt(GappsInstallerHelper.GOOGLE_APPS_INSTALLER_PROGRESS, 0);
-		int progressMax = sharedPrefs.getInt(GappsInstallerHelper.GOOGLE_APPS_INSTALLER_PROGRESS_MAX, 0);
-		widget.setProgressBar(R.id.progressBar, progressMax != 0 ? progressMax : 100, progress, false);
-	}
+    private void updateProgress(RemoteViews widget, SharedPreferences sharedPrefs)
+    {
+        int progress = sharedPrefs.getInt(GappsInstallerHelper.GOOGLE_APPS_INSTALLER_PROGRESS, 0);
+        int progressMax = sharedPrefs.getInt(GappsInstallerHelper.GOOGLE_APPS_INSTALLER_PROGRESS_MAX, 0);
+        widget.setProgressBar(R.id.progressBar, progressMax != 0 ? progressMax : 100, progress, false);
+    }
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds)
@@ -263,7 +266,8 @@ public class GoogleAppsInstallerWidget extends AppWidgetProvider
         // iterate through every instance of this widget
         // remember that it can have more than one widget of the same type.
         for (int i = 0; i < appWidgetIds.length; i++)
-        { // See the dimensions and
+        { // See the dimensions
+          // and
             System.out.println("Updating widget #" + i);
             updateUI(context, appWidgetManager, appWidgetIds[i]);
         }

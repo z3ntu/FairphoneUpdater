@@ -5,11 +5,10 @@ import java.util.List;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.fairphone.updater.R;
 import com.fairphone.updater.UpdaterData;
@@ -69,7 +68,7 @@ public class VersionListFragment extends BaseFragment
     {
         super.onDetach();
 
-        //        mVersionListContainer.removeAllViews();
+        // mVersionListContainer.removeAllViews();
     }
 
     private void setupFairphoneVersions(ViewGroup root)

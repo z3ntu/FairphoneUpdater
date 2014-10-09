@@ -27,11 +27,12 @@ import android.content.res.Resources;
 import android.text.TextUtils;
 import android.util.Log;
 
-public class Version implements Comparable<Version> {
+public class Version implements Comparable<Version>
+{
 
     public static final String DEFAULT_NOTES_LANG = "en";
 
-	private static final String TAG = Version.class.getSimpleName();
+    private static final String TAG = Version.class.getSimpleName();
 
     private static final String DEPENDENCY_SEPARATOR = ",";
 
@@ -65,7 +66,7 @@ public class Version implements Comparable<Version> {
 
     private String mBuildNumber;
 
-    private Map<String,String> mReleaseNotesMap;
+    private Map<String, String> mReleaseNotesMap;
 
     private String mReleaseDate;
 
@@ -74,16 +75,17 @@ public class Version implements Comparable<Version> {
     private ArrayList<Integer> mDependencies;
 
     private String mImageType;
-    
-    private boolean mErasePartitionsWarning;
-    
-    private Map<String,String> mWarningNotesMap;
 
-    public Version() {
+    private boolean mErasePartitionsWarning;
+
+    private Map<String, String> mWarningNotesMap;
+
+    public Version()
+    {
         mDependencies = new ArrayList<Integer>();
         mReleaseNotesMap = new HashMap<String, String>();
         mWarningNotesMap = new HashMap<String, String>();
-        
+
         mNumber = 0;
         mName = "";
         mAndroidVersion = "";
@@ -96,10 +98,10 @@ public class Version implements Comparable<Version> {
         mErasePartitionsWarning = false;
     }
 
-    public static Version getVersionFromSharedPreferences(Context context) {
+    public static Version getVersionFromSharedPreferences(Context context)
+    {
         Version version = new Version();
-        SharedPreferences sharedPrefs = context.getSharedPreferences(
-                FairphoneUpdater2Activity.FAIRPHONE_UPDATER_PREFERENCES, Context.MODE_PRIVATE);
+        SharedPreferences sharedPrefs = context.getSharedPreferences(FairphoneUpdater2Activity.FAIRPHONE_UPDATER_PREFERENCES, Context.MODE_PRIVATE);
         Resources resources = context.getResources();
 
         int defaultVersionNumber = resources.getInteger(R.integer.defaultVersionNumber);
@@ -109,32 +111,30 @@ public class Version implements Comparable<Version> {
         version.setName(sharedPrefs.getString(FAIRPHONE_VERSION_NAME, defaultVersionName));
 
         String defaultVersionBuildNumber = resources.getString(R.string.defaultBuildNumber);
-        version.setBuildNumber(sharedPrefs.getString(FAIRPHONE_VERSION_BUILD_NUMBER,
-                defaultVersionBuildNumber));
+        version.setBuildNumber(sharedPrefs.getString(FAIRPHONE_VERSION_BUILD_NUMBER, defaultVersionBuildNumber));
 
         String defaultVersionAndroid = resources.getString(R.string.defaultAndroidVersionNumber);
-        version.setAndroidVersion(sharedPrefs.getString(FAIRPHONE_ANDROID_VERSION,
-                defaultVersionAndroid));
+        version.setAndroidVersion(sharedPrefs.getString(FAIRPHONE_ANDROID_VERSION, defaultVersionAndroid));
 
         version.setDownloadLink(sharedPrefs.getString(FAIRPHONE_VERSION_OTA_DOWNLOAD_LINK, ""));
 
-        version.setThumbnailLink(sharedPrefs.getString(FAIRPHONE_VERSION_THUMBNAIL_DOWNLOAD_LINK,
-                ""));
+        version.setThumbnailLink(sharedPrefs.getString(FAIRPHONE_VERSION_THUMBNAIL_DOWNLOAD_LINK, ""));
 
         version.setMd5Sum(sharedPrefs.getString(FAIRPHONE_VERSION_OTA_MD5, ""));
 
-        if (TextUtils.isEmpty(version.getMd5Sum()) || TextUtils.isEmpty(version.getMd5Sum())) {
+        if (TextUtils.isEmpty(version.getMd5Sum()) || TextUtils.isEmpty(version.getMd5Sum()))
+        {
             return null;
         }
-        
+
         version.setEraseAllPartitionWarning(false);
-        
+
         return version;
     }
 
-    public void saveToSharedPreferences(Context context) {
-        SharedPreferences sharedPrefs = context.getSharedPreferences(
-                FairphoneUpdater2Activity.FAIRPHONE_UPDATER_PREFERENCES, Context.MODE_PRIVATE);
+    public void saveToSharedPreferences(Context context)
+    {
+        SharedPreferences sharedPrefs = context.getSharedPreferences(FairphoneUpdater2Activity.FAIRPHONE_UPDATER_PREFERENCES, Context.MODE_PRIVATE);
 
         Editor editor = sharedPrefs.edit();
         editor.putInt(FAIRPHONE_VERSION_NUMBER, getNumber());
@@ -147,76 +147,95 @@ public class Version implements Comparable<Version> {
         editor.commit();
     }
 
-    public boolean hasEraseAllPartitionWarning(){
+    public boolean hasEraseAllPartitionWarning()
+    {
         return mErasePartitionsWarning;
     }
-    
-    public void setEraseAllPartitionWarning(boolean erasePartitionsWarning){
+
+    public void setEraseAllPartitionWarning(boolean erasePartitionsWarning)
+    {
         mErasePartitionsWarning = erasePartitionsWarning;
     }
-    
-    public int getNumber() {
+
+    public int getNumber()
+    {
         return mNumber;
     }
 
-    public void setNumber(String number) {
-        try {
+    public void setNumber(String number)
+    {
+        try
+        {
             this.mNumber = Integer.valueOf(number);
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException e)
+        {
             this.mNumber = 0;
         }
     }
 
-    public void setNumber(int number) {
+    public void setNumber(int number)
+    {
         this.mNumber = number;
     }
 
-    public String getName() {
+    public String getName()
+    {
         return mName;
     }
 
-    public void setName(String mName) {
+    public void setName(String mName)
+    {
         this.mName = mName;
     }
 
-    public String getDownloadLink() {
+    public String getDownloadLink()
+    {
         return mOTADownloadLink;
     }
 
-    public void setDownloadLink(String mDownloadLink) {
+    public void setDownloadLink(String mDownloadLink)
+    {
         this.mOTADownloadLink = mDownloadLink;
     }
 
-    public String getMd5Sum() {
+    public String getMd5Sum()
+    {
         return mOTAMd5Sum;
     }
 
-    public void setMd5Sum(String mMd5Sum) {
+    public void setMd5Sum(String mMd5Sum)
+    {
         this.mOTAMd5Sum = mMd5Sum;
     }
 
-    public String getAndroidVersion() {
+    public String getAndroidVersion()
+    {
         return mAndroidVersion;
     }
 
-    public void setAndroidVersion(String mAndroid) {
+    public void setAndroidVersion(String mAndroid)
+    {
         this.mAndroidVersion = mAndroid;
     }
 
-    public boolean isNewerVersionThan(Version version) {
+    public boolean isNewerVersionThan(Version version)
+    {
 
         boolean result = false;
 
-        try {
+        try
+        {
             result = this.getNumber() > version.getNumber();
-        } catch (Throwable t) {
+        } catch (Throwable t)
+        {
             Log.e(Version.class.getSimpleName(), "Invalid Number for Version", t);
         }
 
         return result;
     }
 
-    public void deleteFromSharedPreferences(Context context) {
+    public void deleteFromSharedPreferences(Context context)
+    {
         setNumber(1);
         setName(null);
         setBuildNumber(null);
@@ -229,134 +248,177 @@ public class Version implements Comparable<Version> {
         saveToSharedPreferences(context);
     }
 
-    public void setBuildNumber(String buildNumber) {
+    public void setBuildNumber(String buildNumber)
+    {
         mBuildNumber = buildNumber;
     }
 
-    public String getBuildNumber() {
+    public String getBuildNumber()
+    {
         return mBuildNumber;
     }
 
-    public void setReleaseNotes(String language, String releaseNotes) {
+    public void setReleaseNotes(String language, String releaseNotes)
+    {
         mReleaseNotesMap.put(language.toLowerCase(), releaseNotes);
     }
 
-    public String getReleaseNotes(String language) {
-    	String releaseNotes = "";
-    	
-    	if(mReleaseNotesMap.containsKey(language)){
-    		releaseNotes = mReleaseNotesMap.get(language);
-    	}else if(mReleaseNotesMap.containsKey(DEFAULT_NOTES_LANG)){
-    		releaseNotes = mReleaseNotesMap.get(DEFAULT_NOTES_LANG);
-    	}
+    public String getReleaseNotes(String language)
+    {
+        String releaseNotes = "";
+
+        if (mReleaseNotesMap.containsKey(language))
+        {
+            releaseNotes = mReleaseNotesMap.get(language);
+        }
+        else if (mReleaseNotesMap.containsKey(DEFAULT_NOTES_LANG))
+        {
+            releaseNotes = mReleaseNotesMap.get(DEFAULT_NOTES_LANG);
+        }
         return TextUtils.isEmpty(releaseNotes) ? "" : releaseNotes;
     }
-    
-    public void resetReleaseNotes(){
-    	mReleaseNotesMap.clear();
+
+    public void resetReleaseNotes()
+    {
+        mReleaseNotesMap.clear();
     }
-    
-    public void setWarningNotes(String language, String releaseNotes) {
+
+    public void setWarningNotes(String language, String releaseNotes)
+    {
         mWarningNotesMap.put(language.toLowerCase(), releaseNotes);
     }
 
-    public String getWarningNotes(String language) {
-    	String warningNotes = "";
-    	
-    	if(mWarningNotesMap.containsKey(language)){
-    		warningNotes = mWarningNotesMap.get(language);
-    	}else if(mWarningNotesMap.containsKey(DEFAULT_NOTES_LANG)){
-    		warningNotes = mWarningNotesMap.get(DEFAULT_NOTES_LANG);
-    	}
+    public String getWarningNotes(String language)
+    {
+        String warningNotes = "";
+
+        if (mWarningNotesMap.containsKey(language))
+        {
+            warningNotes = mWarningNotesMap.get(language);
+        }
+        else if (mWarningNotesMap.containsKey(DEFAULT_NOTES_LANG))
+        {
+            warningNotes = mWarningNotesMap.get(DEFAULT_NOTES_LANG);
+        }
         return TextUtils.isEmpty(warningNotes) ? "" : warningNotes;
     }
-    
-    public void resetWarningNotes(){
-    	mWarningNotesMap.clear();
+
+    public void resetWarningNotes()
+    {
+        mWarningNotesMap.clear();
     }
 
-    public void setReleaseDate(String releaseDate) {
+    public void setReleaseDate(String releaseDate)
+    {
         mReleaseDate = releaseDate;
     }
 
-    public String getReleaseDate() {
+    public String getReleaseDate()
+    {
         return mReleaseDate;
     }
 
-    public void setThumbnailLink(String thumbnailImageLink) {
+    public void setThumbnailLink(String thumbnailImageLink)
+    {
         mThumbnailImageLink = thumbnailImageLink;
     }
 
-    public String getThumbnailLink() {
+    public String getThumbnailLink()
+    {
         return mThumbnailImageLink;
     }
 
-    public void setVersionDependencies(String dependencyList) {
-        if (TextUtils.isEmpty(dependencyList)) {
+    public void setVersionDependencies(String dependencyList)
+    {
+        if (TextUtils.isEmpty(dependencyList))
+        {
             mDependencies.clear();
-        } else {
+        }
+        else
+        {
             String[] dependencies = dependencyList.split(DEPENDENCY_SEPARATOR);
-            for (String dependency : dependencies) {
-                try {
+            for (String dependency : dependencies)
+            {
+                try
+                {
                     mDependencies.add(Integer.valueOf(dependency));
-                } catch (NumberFormatException e) {
+                } catch (NumberFormatException e)
+                {
                     Log.e(TAG, "Invalid dependency");
                 }
             }
         }
     }
 
-    public ArrayList<Integer> getVersionDependencies() {
+    public ArrayList<Integer> getVersionDependencies()
+    {
         return mDependencies;
     }
 
-    public void setImageType(String imageType) {
+    public void setImageType(String imageType)
+    {
         mImageType = imageType;
     }
 
-    public String getImageType() {
+    public String getImageType()
+    {
         return mImageType;
     }
-    
-    public String getImageTypeDescription(Resources resources) {
+
+    public String getImageTypeDescription(Resources resources)
+    {
         return Version.getImageTypeDescription(mImageType, resources);
     }
-    
-    public static String getImageTypeDescription(String imageType, Resources resources) {
+
+    public static String getImageTypeDescription(String imageType, Resources resources)
+    {
         String description = resources.getString(R.string.fairphone);
-        if(imageType.equalsIgnoreCase(IMAGE_TYPE_AOSP)){
+        if (imageType.equalsIgnoreCase(IMAGE_TYPE_AOSP))
+        {
             description = resources.getString(R.string.android);
         }
-        if(imageType.equalsIgnoreCase(IMAGE_TYPE_FAIRPHONE)){
+        if (imageType.equalsIgnoreCase(IMAGE_TYPE_FAIRPHONE))
+        {
             description = resources.getString(R.string.fairphone);
         }
         return description;
     }
-    
-    public String getAndroidVersion(Resources resources) {
-    	String retVal = "";
-    	if(!TextUtils.isEmpty(mAndroidVersion)){
-    		StringBuilder sb = new StringBuilder();
-    		sb.append(resources.getString(R.string.android));
-    		sb.append(" ");
-    		sb.append(mAndroidVersion);
-    		retVal =  sb.toString();
-    	}
-    	return retVal;
+
+    public String getAndroidVersion(Resources resources)
+    {
+        String retVal = "";
+        if (!TextUtils.isEmpty(mAndroidVersion))
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.append(resources.getString(R.string.android));
+            sb.append(" ");
+            sb.append(mAndroidVersion);
+            retVal = sb.toString();
+        }
+        return retVal;
     }
 
     @Override
-    public int compareTo(Version another) {
+    public int compareTo(Version another)
+    {
         int retVal;
-        if (another != null) {
-            if (this.getNumber() < another.getNumber()) {
+        if (another != null)
+        {
+            if (this.getNumber() < another.getNumber())
+            {
                 retVal = 1;
-            } else if (this.getNumber() == another.getNumber()) {
+            }
+            else if (this.getNumber() == another.getNumber())
+            {
                 retVal = 0;
-            } else {
+            }
+            else
+            {
                 retVal = -1;
             }
-        } else {
+        }
+        else
+        {
             retVal = 1;
         }
         return retVal;
