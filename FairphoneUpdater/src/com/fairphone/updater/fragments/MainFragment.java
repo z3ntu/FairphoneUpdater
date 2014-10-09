@@ -43,8 +43,6 @@ public class MainFragment extends BaseFragment
 
         setupLayout(view);
 
-        mDeviceVersion = mainActivity.getDeviceVersion();
-
         return view;
     }
 
@@ -101,6 +99,8 @@ public class MainFragment extends BaseFragment
 
     public void toogleUpdateAvailableGroup()
     {
+        updateCurrentVersionGroup();
+
         if (mainActivity.isUpdateAvailable())
         {
             mVersionUpToDateGroup.setVisibility(View.GONE);
@@ -113,7 +113,7 @@ public class MainFragment extends BaseFragment
             mUpdateAvailableGroup.setVisibility(View.GONE);
             mVersionUpToDateGroup.setVisibility(View.VISIBLE);
         }
-        
+
         updateOtherOSOptionsGroup();
     }
 
@@ -169,6 +169,7 @@ public class MainFragment extends BaseFragment
         setupBroadcastReceiver();
         registerBroadCastReceiver();
 
+        mDeviceVersion = mainActivity.getDeviceVersion();
         updateHeader();
         updateCurrentVersionGroup();
         toogleUpdateAvailableGroup();

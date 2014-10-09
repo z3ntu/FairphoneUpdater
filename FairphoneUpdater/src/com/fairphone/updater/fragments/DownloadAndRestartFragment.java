@@ -67,15 +67,13 @@ public class DownloadAndRestartFragment extends BaseFragment
 
         setupLayout(view);
 
-        updateHeader();
-        mDownloadVersionName.setText(mainActivity.getVersionName(mSelectedVersion));
-
         return view;
     }
 
     private void toggleDownloadProgressAndRestart()
     {
-        switch (mainActivity.getCurrentUpdaterState())
+        UpdaterState state = mainActivity.getCurrentUpdaterState();
+        switch (state)
         {
             case DOWNLOAD:
                 setupDownloadState();
@@ -89,10 +87,24 @@ public class DownloadAndRestartFragment extends BaseFragment
 
                 mVersionDownloadingGroup.setVisibility(View.GONE);
                 mVersionInstallGroup.setVisibility(View.VISIBLE);
+
+                mRestartButton.setOnClickListener(new OnClickListener()
+                {
+
+                    @Override
+                    public void onClick(View v)
+                    {
+                        startPreInstall();
+                    }
+                });
+
                 break;
 
             default:
-                break;
+                Log.w(TAG, "Wrong State: " + state + "\nOnly DOWNLOAD and PREINSTALL are supported");
+                mainActivity.removeLastFragment();
+                return;
+
         }
 
         mCancelButton.setOnClickListener(new OnClickListener()
@@ -232,6 +244,8 @@ public class DownloadAndRestartFragment extends BaseFragment
         setupInstallationReceivers();
         registerDownloadBroadCastReceiver();
 
+        updateHeader();
+        mDownloadVersionName.setText(mainActivity.getVersionName(mSelectedVersion));
         toggleDownloadProgressAndRestart();
     }
 

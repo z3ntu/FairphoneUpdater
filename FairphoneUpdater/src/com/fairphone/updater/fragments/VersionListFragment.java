@@ -2,6 +2,7 @@ package com.fairphone.updater.fragments;
 
 import java.util.List;
 
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,11 +10,12 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
+import com.fairphone.updater.FairphoneUpdater2Activity.HeaderType;
 import com.fairphone.updater.R;
 import com.fairphone.updater.UpdaterData;
 import com.fairphone.updater.Version;
-import com.fairphone.updater.FairphoneUpdater2Activity.HeaderType;
 import com.fairphone.updater.fragments.VersionDetailFragment.DetailLayoutType;
 
 public class VersionListFragment extends BaseFragment
@@ -29,6 +31,9 @@ public class VersionListFragment extends BaseFragment
     private ListLayoutType mListLayoutType;
     private List<Version> mVersionList;
     private LinearLayout mVersionListContainer;
+    private TextView mLatestVersionText;
+    private TextView mInstalledIndicator;
+    private Button mInstallUpdateVersionButton;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -42,24 +47,35 @@ public class VersionListFragment extends BaseFragment
     private View setupLayout(LayoutInflater inflater, ViewGroup container)
     {
 
-        View view;
+        View view = null;
+        Resources resources = mainActivity.getResources();
         switch (mListLayoutType)
         {
+
             case ANDROID:
                 view = inflater.inflate(R.layout.fragment_other_os_options_android_list, container, false);
-                mainActivity.updateHeader(HeaderType.ANDROID, "ANDROID OS");
+                mainActivity.updateHeader(HeaderType.ANDROID, resources.getString(R.string.android_os));
 
                 mVersionListContainer = (LinearLayout) view.findViewById(R.id.version_list_container);
 
+                mLatestVersionText = (TextView) view.findViewById(R.id.other_os_options_android_version_text);
+                mInstalledIndicator = (TextView) view.findViewById(R.id.other_os_options_android_installed_indicator_text);
+
+                setupAndroidLatestVersion();
                 setupAndroidVersions(container);
                 break;
             case FAIRPHONE:
             default:
                 view = inflater.inflate(R.layout.fragment_other_os_options_fairphone_list, container, false);
-                mainActivity.updateHeader(HeaderType.FAIRPHONE, "FAIRPHONE OS");
+                mainActivity.updateHeader(HeaderType.FAIRPHONE, resources.getString(R.string.fairphone_os));
 
                 mVersionListContainer = (LinearLayout) view.findViewById(R.id.version_list_container);
 
+                mLatestVersionText = (TextView) view.findViewById(R.id.other_os_options_fairphone_version_text);
+                mInstalledIndicator = (TextView) view.findViewById(R.id.other_os_options_fairphone_installed_indicator_text);
+                mInstallUpdateVersionButton = (Button) view.findViewById(R.id.install_update_fairphone_os_button);
+
+                setupFairphoneLatestVersion();
                 setupFairphoneVersions(container);
                 break;
         }
@@ -70,8 +86,6 @@ public class VersionListFragment extends BaseFragment
     public void onDetach()
     {
         super.onDetach();
-
-        // mVersionListContainer.removeAllViews();
     }
 
     private void setupFairphoneVersions(ViewGroup root)
@@ -81,7 +95,6 @@ public class VersionListFragment extends BaseFragment
 
         mVersionList = UpdaterData.getInstance().getFairphoneVersionList();
 
-        System.out.println("Values : " + mVersionList.size());
         for (Version version : mVersionList)
         {
             versionLayout = (Button) inflater.inflate(R.layout.fragment_other_os_options_fairphone_list_button, root, false);
@@ -113,6 +126,40 @@ public class VersionListFragment extends BaseFragment
         }
     }
 
+    private void setupFairphoneLatestVersion()
+    {
+        final Version latestFairphoneVersion = UpdaterData.getInstance().getLatestVersion(Version.IMAGE_TYPE_FAIRPHONE);
+        mLatestVersionText.setText(latestFairphoneVersion.getName() + " v" + latestFairphoneVersion.getBuildNumber());
+
+        if (mainActivity.getDeviceVersion().compareTo(latestFairphoneVersion) == 0)
+        {
+            mInstalledIndicator.setVisibility(View.VISIBLE);
+            mInstallUpdateVersionButton.setVisibility(View.GONE);
+        }
+        else
+        {
+            mInstalledIndicator.setVisibility(View.GONE);
+            mInstallUpdateVersionButton.setVisibility(View.VISIBLE);
+
+            mInstallUpdateVersionButton.setOnClickListener(new OnClickListener()
+            {
+
+                @Override
+                public void onClick(View v)
+                {
+                    if (latestFairphoneVersion != null)
+                    {
+                        VersionDetailFragment versionDetail = new VersionDetailFragment();
+
+                        versionDetail.setupFragment(latestFairphoneVersion, DetailLayoutType.FAIRPHONE);
+
+                        mainActivity.changeFragment(versionDetail);
+                    }
+                }
+            });
+        }
+    }
+
     private void setupAndroidVersions(ViewGroup root)
     {
         Button versionLayout;
@@ -120,7 +167,6 @@ public class VersionListFragment extends BaseFragment
 
         mVersionList = UpdaterData.getInstance().getAOSPVersionList();
 
-        System.out.println("Values : " + mVersionList.size());
         for (Version version : mVersionList)
         {
             versionLayout = (Button) inflater.inflate(R.layout.fragment_other_os_options_android_list_button, root, false);
@@ -150,6 +196,21 @@ public class VersionListFragment extends BaseFragment
                 }
             });
 
+        }
+    }
+
+    private void setupAndroidLatestVersion()
+    {
+        Version latestAOSPVersion = UpdaterData.getInstance().getLatestVersion(Version.IMAGE_TYPE_AOSP);
+        mLatestVersionText.setText(latestAOSPVersion.getName() + " v" + latestAOSPVersion.getBuildNumber());
+
+        if (mainActivity.getDeviceVersion().compareTo(latestAOSPVersion) == 0)
+        {
+            mInstalledIndicator.setVisibility(View.VISIBLE);
+        }
+        else
+        {
+            mInstalledIndicator.setVisibility(View.GONE);
         }
     }
 

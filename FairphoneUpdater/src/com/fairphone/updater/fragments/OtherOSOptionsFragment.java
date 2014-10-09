@@ -28,7 +28,7 @@ public class OtherOSOptionsFragment extends BaseFragment
         olderFairphoneOSButton = (Button) view.findViewById(R.id.older_fairphone_os_button);
         androidOSButton = (Button) view.findViewById(R.id.android_os_button);
 
-        mainActivity.updateHeader(HeaderType.OTHER_OS, "Other OS");
+        mainActivity.updateHeader(HeaderType.OTHER_OS, mainActivity.getResources().getString(R.string.other_os_options));
 
         return view;
     }
