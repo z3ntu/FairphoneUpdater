@@ -51,6 +51,7 @@ public class VersionDetailFragment extends BaseFragment
     private Version mSelectedVersion;
     private DownloadManager mDownloadManager;
     private DetailLayoutType mDetailLayoutType;
+    private TextView mDownload_and_update_button_version_text;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -59,13 +60,6 @@ public class VersionDetailFragment extends BaseFragment
         View view = setLayoutType(inflater, container);
 
         setupLayout(view);
-        setHeaderAndVersionDetailsTitles();
-
-        mainActivity.updateHeader(mHeaderType, mHeaderText);
-        updateVersionName();
-        updateReleaseNotesText();
-        updateVersionWarningsGroup();
-        setupDownloadAndUpdateButton();
 
         return view;
     }
@@ -101,10 +95,17 @@ public class VersionDetailFragment extends BaseFragment
         mVersion_warnings_text = (TextView) view.findViewById(R.id.version_warnings_text);
 
         mDownload_and_update_button = (Button) view.findViewById(R.id.download_and_update_button);
+        mDownload_and_update_button_version_text = (TextView) view.findViewById(R.id.download_and_update_button_version_text);
     }
 
     private void setupDownloadAndUpdateButton()
     {
+        // This is only not null when coming from other OS options fragment
+        if (mDownload_and_update_button_version_text != null)
+        {
+            mDownload_and_update_button_version_text.setText(mainActivity.getVersionName(mSelectedVersion));
+        }
+
         mDownload_and_update_button.setOnClickListener(new OnClickListener()
         {
 
@@ -144,7 +145,7 @@ public class VersionDetailFragment extends BaseFragment
     private void updateVersionName()
     {
         mVersion_details_title_text.setText(mVersionDetailsTitle);
-        mVersion_details_name_text.setText(mainActivity.getSelectedVersionName());
+        mVersion_details_name_text.setText(mainActivity.getVersionName(mSelectedVersion));
     }
 
     public void setupFragment(Version selectedVersion, DetailLayoutType detailType)
@@ -158,22 +159,23 @@ public class VersionDetailFragment extends BaseFragment
     {
 
         mHeaderType = mainActivity.getHeaderTypeFromImageType(mSelectedVersion.getImageType());
+        Resources resources = mainActivity.getResources();
 
         switch (mDetailLayoutType)
         {
             case UPDATE:
-                mHeaderText = "Install Update PASS";
-                mVersionDetailsTitle = "Update version PASS";
+                mHeaderText = resources.getString(R.string.install_update);
+                mVersionDetailsTitle = resources.getString(R.string.update_version);
                 break;
             case ANDROID:
                 mHeaderText = mainActivity.getVersionName(mSelectedVersion);
-                mVersionDetailsTitle = "New OS PASS";
+                mVersionDetailsTitle = resources.getString(R.string.new_os);
                 break;
 
             case FAIRPHONE:
             default:
                 mHeaderText = mainActivity.getVersionName(mSelectedVersion);
-                mVersionDetailsTitle = "Older version PASS";
+                mVersionDetailsTitle = resources.getString(R.string.older_version);
                 break;
         }
     }
@@ -264,6 +266,13 @@ public class VersionDetailFragment extends BaseFragment
         super.onResume();
 
         mDownloadManager = (DownloadManager) mainActivity.getSystemService(Context.DOWNLOAD_SERVICE);
+
+        setHeaderAndVersionDetailsTitles();
+        mainActivity.updateHeader(mHeaderType, mHeaderText);
+        updateVersionName();
+        updateReleaseNotesText();
+        updateVersionWarningsGroup();
+        setupDownloadAndUpdateButton();
     }
 
     public void startVersionDownload()

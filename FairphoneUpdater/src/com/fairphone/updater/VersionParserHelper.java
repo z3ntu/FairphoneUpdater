@@ -32,7 +32,6 @@ import org.xmlpull.v1.XmlPullParserFactory;
 import android.content.Context;
 import android.content.res.Resources;
 import android.os.Environment;
-import android.text.TextUtils;
 import android.util.Log;
 
 public class VersionParserHelper
@@ -184,10 +183,7 @@ public class VersionParserHelper
                                 update.setLatestAOSPVersionNumber(xpp.getAttributeValue(0));
                             }
                             version = readVersion(version, xpp, tagName);
-                            if (TextUtils.isEmpty(version.getImageType()))
-                            {
-                                version.setImageType(Version.IMAGE_TYPE_AOSP);
-                            }
+                            version.setImageType(Version.IMAGE_TYPE_AOSP);
                             break;
                         case FAIRPHONE:
                             if (tagName.equalsIgnoreCase(XML_TAGS.FAIRPHONE.name()))
@@ -195,10 +191,7 @@ public class VersionParserHelper
                                 update.setLatestFairphoneVersionNumber(xpp.getAttributeValue(0));
                             }
                             version = readVersion(version, xpp, tagName);
-                            if (TextUtils.isEmpty(version.getImageType()))
-                            {
-                                version.setImageType(Version.IMAGE_TYPE_FAIRPHONE);
-                            }
+                            version.setImageType(Version.IMAGE_TYPE_FAIRPHONE);
                             break;
                         default:
                             break;
