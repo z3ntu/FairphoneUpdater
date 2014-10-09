@@ -22,9 +22,10 @@ import com.fairphone.updater.Version;
 
 public class MainFragment extends BaseFragment {
 
-	private TextView mCurrentVersionNameText;
 	private LinearLayout mVersionUpToDateGroup;
+	private TextView mVersionUpToDateCurrentVersionNameText;
 	private LinearLayout mUpdateAvailableGroup;
+	private TextView mUpdateAvailableCurrentVersionNameText;
 	private TextView mUpdateAvailableNameText;
 	private Button mUpdateAvailableInstallButton;
 	private Button mOtherOSOptionsButton;
@@ -59,17 +60,17 @@ public class MainFragment extends BaseFragment {
 	}
 
 	private void setupLayout(View view) {
-		// Current version group
-		mCurrentVersionNameText = (TextView) view
-				.findViewById(R.id.current_version_name_text);
-
 		// Version up to date group
 		mVersionUpToDateGroup = (LinearLayout) view
 				.findViewById(R.id.version_up_to_date_group);
+		mVersionUpToDateCurrentVersionNameText = (TextView) view
+						.findViewById(R.id.version_up_to_date_current_version_name_text);
 
 		// Update available group
 		mUpdateAvailableGroup = (LinearLayout) view
 				.findViewById(R.id.update_available_group);
+		mUpdateAvailableCurrentVersionNameText = (TextView) view
+				.findViewById(R.id.update_available_current_version_name_text);
 		mUpdateAvailableNameText = (TextView) view
 				.findViewById(R.id.update_available_name_text);
 		mUpdateAvailableInstallButton = (Button) view
@@ -122,8 +123,17 @@ public class MainFragment extends BaseFragment {
 	}
 
 	private void updateCurrentVersionGroup() {
-		mCurrentVersionNameText.setText(mainActivity.getDeviceVersionName());
-		mCurrentVersionNameText.setOnClickListener(new OnClickListener() {
+		String currentVersionName = mainActivity.getDeviceVersionName();
+		mVersionUpToDateCurrentVersionNameText.setText(currentVersionName);
+		mVersionUpToDateCurrentVersionNameText.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				mainActivity.onEnableDevMode();
+			}
+		});
+		
+		mUpdateAvailableCurrentVersionNameText.setText(currentVersionName);
+		mUpdateAvailableCurrentVersionNameText.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				mainActivity.onEnableDevMode();
