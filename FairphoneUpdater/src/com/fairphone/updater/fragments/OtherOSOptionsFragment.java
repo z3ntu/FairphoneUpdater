@@ -9,6 +9,7 @@ import android.widget.Button;
 
 import com.fairphone.updater.FairphoneUpdater2Activity.HeaderType;
 import com.fairphone.updater.R;
+import com.fairphone.updater.UpdaterData;
 import com.fairphone.updater.fragments.VersionListFragment.ListLayoutType;
 
 public class OtherOSOptionsFragment extends BaseFragment
@@ -37,28 +38,53 @@ public class OtherOSOptionsFragment extends BaseFragment
     {
         super.onResume();
 
-        olderFairphoneOSButton.setOnClickListener(new OnClickListener()
+        setupOlderFairphoneVersionsButton();
+        setupAndroidVersionsButton();
+    }
+
+    private void setupAndroidVersionsButton()
+    {
+        if (!UpdaterData.getInstance().isAOSPVersionListEmpty())
         {
-
-            @Override
-            public void onClick(View v)
+            androidOSButton.setVisibility(View.VISIBLE);
+            androidOSButton.setOnClickListener(new OnClickListener()
             {
-                VersionListFragment newFragment = new VersionListFragment();
-                newFragment.setupFragment(ListLayoutType.FAIRPHONE);
-                mainActivity.changeFragment(newFragment);
-            }
-        });
 
-        androidOSButton.setOnClickListener(new OnClickListener()
+                @Override
+                public void onClick(View v)
+                {
+                    VersionListFragment newFragment = new VersionListFragment();
+                    newFragment.setupFragment(ListLayoutType.ANDROID);
+                    mainActivity.changeFragment(newFragment);
+                }
+            });
+        }
+        else
         {
+            androidOSButton.setVisibility(View.GONE);
+        }
+    }
 
-            @Override
-            public void onClick(View v)
+    private void setupOlderFairphoneVersionsButton()
+    {
+        if (!UpdaterData.getInstance().isFairphoneVersionListEmpty())
+        {
+            olderFairphoneOSButton.setVisibility(View.VISIBLE);
+            olderFairphoneOSButton.setOnClickListener(new OnClickListener()
             {
-                VersionListFragment newFragment = new VersionListFragment();
-                newFragment.setupFragment(ListLayoutType.ANDROID);
-                mainActivity.changeFragment(newFragment);
-            }
-        });
+
+                @Override
+                public void onClick(View v)
+                {
+                    VersionListFragment newFragment = new VersionListFragment();
+                    newFragment.setupFragment(ListLayoutType.FAIRPHONE);
+                    mainActivity.changeFragment(newFragment);
+                }
+            });
+        }
+        else
+        {
+            olderFairphoneOSButton.setVisibility(View.GONE);
+        }
     }
 }

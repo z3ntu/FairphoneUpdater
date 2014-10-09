@@ -18,6 +18,7 @@ import com.fairphone.updater.FairphoneUpdater2Activity;
 import com.fairphone.updater.FairphoneUpdater2Activity.HeaderType;
 import com.fairphone.updater.FairphoneUpdater2Activity.UpdaterState;
 import com.fairphone.updater.R;
+import com.fairphone.updater.UpdaterData;
 import com.fairphone.updater.Version;
 
 public class MainFragment extends BaseFragment
@@ -29,6 +30,7 @@ public class MainFragment extends BaseFragment
     private TextView mUpdateAvailableCurrentVersionNameText;
     private TextView mUpdateAvailableNameText;
     private Button mUpdateAvailableInstallButton;
+    private LinearLayout mOtherOSOptionsGroup;
     private Button mOtherOSOptionsButton;
     private Version mDeviceVersion;
     private BroadcastReceiver newVersionbroadcastReceiver;
@@ -42,10 +44,6 @@ public class MainFragment extends BaseFragment
         setupLayout(view);
 
         mDeviceVersion = mainActivity.getDeviceVersion();
-        updateHeader();
-        updateCurrentVersionGroup();
-        toogleUpdateAvailableGroup();
-        updateOtherOSOptionsGroup();
 
         return view;
     }
@@ -75,21 +73,30 @@ public class MainFragment extends BaseFragment
         mUpdateAvailableInstallButton = (Button) view.findViewById(R.id.install_update_button);
 
         // Other OS Options group
+        mOtherOSOptionsGroup = (LinearLayout) view.findViewById(R.id.other_os_options_group);
         mOtherOSOptionsButton = (Button) view.findViewById(R.id.other_os_options_button);
     }
 
     private void updateOtherOSOptionsGroup()
     {
-        mOtherOSOptionsButton.setOnClickListener(new OnClickListener()
+        if (!UpdaterData.getInstance().isFairphoneVersionListEmpty() || !UpdaterData.getInstance().isAOSPVersionListEmpty())
         {
-
-            @Override
-            public void onClick(View v)
+            mOtherOSOptionsGroup.setVisibility(View.VISIBLE);
+            mOtherOSOptionsButton.setOnClickListener(new OnClickListener()
             {
-                OtherOSOptionsFragment newFragment = new OtherOSOptionsFragment();
-                mainActivity.changeFragment(newFragment);
-            }
-        });
+
+                @Override
+                public void onClick(View v)
+                {
+                    OtherOSOptionsFragment newFragment = new OtherOSOptionsFragment();
+                    mainActivity.changeFragment(newFragment);
+                }
+            });
+        }
+        else
+        {
+            mOtherOSOptionsGroup.setVisibility(View.GONE);
+        }
     }
 
     public void toogleUpdateAvailableGroup()
@@ -106,6 +113,8 @@ public class MainFragment extends BaseFragment
             mUpdateAvailableGroup.setVisibility(View.GONE);
             mVersionUpToDateGroup.setVisibility(View.VISIBLE);
         }
+        
+        updateOtherOSOptionsGroup();
     }
 
     private void updateUpdateAvailableGroup()
@@ -158,8 +167,12 @@ public class MainFragment extends BaseFragment
     {
         super.onResume();
         setupBroadcastReceiver();
-
         registerBroadCastReceiver();
+
+        updateHeader();
+        updateCurrentVersionGroup();
+        toogleUpdateAvailableGroup();
+        updateOtherOSOptionsGroup();
     }
 
     @Override

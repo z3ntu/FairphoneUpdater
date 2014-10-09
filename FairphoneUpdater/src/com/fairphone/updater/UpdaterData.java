@@ -138,6 +138,6 @@ public class UpdaterData
 
     public boolean isFairphoneVersionListEmpty()
     {
-        return mAOSPVersionMap.isEmpty();
+        return mFairphoneVersionMap.isEmpty();
     }
 }
