@@ -9,7 +9,6 @@
         android:id="@+id/other_os_options_fairphone_group"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:animateLayoutChanges="true"
         android:background="@color/blue"
         android:gravity="center_horizontal"
         android:orientation="vertical"

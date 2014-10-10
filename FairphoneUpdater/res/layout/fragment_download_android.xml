@@ -3,7 +3,6 @@
     android:id="@+id/download_info_group"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:animateLayoutChanges="true"
     android:background="@color/green"
     android:gravity="center_horizontal"
     android:orientation="vertical"
