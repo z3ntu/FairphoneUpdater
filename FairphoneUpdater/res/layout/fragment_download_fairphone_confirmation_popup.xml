@@ -20,10 +20,11 @@
         android:text="@string/your_are_about_to_install" />
 
     <TextView
+        android:id="@+id/installing_version"
         style="@style/TextBold14BlueDark"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Fairphone version name v0.0" />
+        android:text="" />
 
     <TextView
         style="@style/TextRegular14BlueDark"
@@ -47,6 +48,7 @@
 
         <Button
             android:id="@+id/confirmation_no_button"
+            style="@style/Button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingBottom="25dp"

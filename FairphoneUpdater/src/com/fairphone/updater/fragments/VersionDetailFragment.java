@@ -12,6 +12,7 @@ import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.v4.app.FragmentManager;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +21,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 
 import com.fairphone.updater.FairphoneUpdater2Activity.HeaderType;
@@ -27,6 +29,7 @@ import com.fairphone.updater.FairphoneUpdater2Activity.UpdaterState;
 import com.fairphone.updater.R;
 import com.fairphone.updater.Version;
 import com.fairphone.updater.VersionParserHelper;
+import com.fairphone.updater.fragments.ConfirmationPopupDialog.ConfirmationPopupDialogListener;
 import com.fairphone.updater.tools.Utils;
 
 public class VersionDetailFragment extends BaseFragment
@@ -170,7 +173,7 @@ public class VersionDetailFragment extends BaseFragment
                 mVersionDetailsTitle = resources.getString(R.string.update_version);
                 mIsOSChange = false;
                 break;
-                
+
             case ANDROID:
                 mHeaderText = mainActivity.getVersionName(mSelectedVersion);
                 mVersionDetailsTitle = resources.getString(R.string.new_os);
@@ -181,7 +184,7 @@ public class VersionDetailFragment extends BaseFragment
             default:
                 mHeaderText = mainActivity.getVersionName(mSelectedVersion);
                 mVersionDetailsTitle = resources.getString(R.string.older_version);
-                mIsOSChange = deviceversion.getImageType().equalsIgnoreCase(Version.IMAGE_TYPE_AOSP);
+                mIsOSChange = deviceversion.getImageType().equalsIgnoreCase(Version.IMAGE_TYPE_AOSP) || (deviceversion.getImageType().equalsIgnoreCase(Version.IMAGE_TYPE_FAIRPHONE) && deviceversion.isNewerVersionThan(mSelectedVersion));
                 break;
         }
     }
@@ -281,6 +284,13 @@ public class VersionDetailFragment extends BaseFragment
         setupDownloadAndUpdateButton();
     }
 
+    private void showPopupDialog(String version, ConfirmationPopupDialogListener listener)
+    {
+        FragmentManager fm = getActivity().getSupportFragmentManager();
+        ConfirmationPopupDialog popupDialog = new ConfirmationPopupDialog(version, mDetailLayoutType, listener);
+        popupDialog.show(fm, version);
+    }
+
     public void startVersionDownload()
     {
 
@@ -288,43 +298,22 @@ public class VersionDetailFragment extends BaseFragment
         {
             if (mIsOSChange)
             {
-//                View checkBoxView = View.inflate(mainActivity, R.layout.fp_alert_checkbox, null);
-
-                AlertDialog.Builder builder =
-                        new AlertDialog.Builder(mainActivity).setTitle(android.R.string.dialog_alert_title)/*.setMessage(R.string.osChangeWarning)
-                                .setView(checkBoxView)*/.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener()
-                                {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which)
-                                    {
-                                        mainActivity.setSelectedVersion(mSelectedVersion != null ? mSelectedVersion : mainActivity.getLatestVersion());
-                                        showEraseAllDataWarning();
-                                    }
-                                }).setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener()
-                                {
-                                    public void onClick(DialogInterface dialog, int which)
-                                    {
-                                        // Do nothing
-                                    }
-                                });
-
-                final AlertDialog dialog = builder.create();
-
-//                CheckBox checkBox = (CheckBox) checkBoxView.findViewById(R.id.agree_checkbox);
-//                checkBox.setOnCheckedChangeListener(new OnCheckedChangeListener()
-//                {
-//
-//                    @Override
-//                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
-//                    {
-//                        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(isChecked);
-//                    }
-//
-//                });
-//                checkBox.setText(R.string.osChangeCheckboxWarning);
-
-                dialog.show();
-                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+                // View checkBoxView = View.inflate(mainActivity,
+                // R.layout.fp_alert_checkbox, null);
+                showPopupDialog(mSelectedVersion.getName(), new ConfirmationPopupDialogListener()
+                {
+                    
+                    @Override
+                    public void onFinishPopUpDialog(boolean isOk)
+                    {
+                        // Toast.makeText(this, "Hi, " + inputText, Toast.LENGTH_SHORT).show();
+                        if (isOk)
+                        {
+                            mainActivity.setSelectedVersion(mSelectedVersion != null ? mSelectedVersion : mainActivity.getLatestVersion());
+                            showEraseAllDataWarning();
+                        }
+                    }
+                });
             }
             else
             {
@@ -337,6 +326,8 @@ public class VersionDetailFragment extends BaseFragment
             showGappsInstalingWarning();
         }
     }
+
+    
 
     private void showEraseAllDataWarning()
     {
