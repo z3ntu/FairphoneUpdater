@@ -116,7 +116,7 @@ public class FairphoneUpdater2Activity extends FragmentActivity
                 return;
             }
         }
-        Toast.makeText(this, R.string.deviceNotSupported, Toast.LENGTH_LONG).show();
+        Toast.makeText(this, R.string.device_not_supported_message, Toast.LENGTH_LONG).show();
         finish();
     }
 
@@ -362,7 +362,7 @@ public class FairphoneUpdater2Activity extends FragmentActivity
             {
                 DEV_MODE_ENABLED = true;
 
-                Toast.makeText(getApplicationContext(), getResources().getString(R.string.dev_mode_toast), Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), getResources().getString(R.string.dev_mode_message), Toast.LENGTH_LONG).show();
 
                 Log.d(TAG, "Developer mode enabled for this session");
 

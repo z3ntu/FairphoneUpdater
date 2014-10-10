@@ -1,41 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="updaterService">Servicio de actualización</string>
-    <string name="currentVersion">Versión actual</string>
-    <string name="newVersion">Nueva versión</string>
-    <string name="installVersion">Instalar nueva versión</string>
-    <string name="rebootDevice">Reiniciar dispositivo</string>
-    <string name="messageReadyToInstall">La nueva versión está lista para instalar&#8230;</string>
-    <string name="fairphoneUpdateMessage">Nueva actualización para Fairphone disponible</string>
-    <string name="downloadMessage">Descargando actualización, ten paciencia&#8230;</string>
-    <string name="downloadUpdateTitle">Nueva actualización para Fairphone</string>
-    <string name="wifiDiscaimerTitle">Wi-Fi desconectado</string>
-	<string name="wifiDiscaimerMessage">El archivo que está intentando descargar demasiado grande para conexiones móviles (~200mb). Por favor conéctese al Wi-Fi e intente otra vez.</string>
-	
-	<string name="releaseNotes">Notas de la versión:</string>
-    <string name="moreInfo">Más Información</string>
-    <string name="lessInfo">Menos información</string>
-    <string name="noUpdatesAvailable">No existen actualizaciones disponibles</string>
-    <string name="newVersionAvailable">Nueva versión disponible</string>
-    <string name="youAreRunning">Estas usando</string>
-    <string name="downloadAndUpdateVersionBtn">Descargar y actualizar</string>
-    <string name="installBtn">Instalar</string>
-    <string name="downloading">Descargando</string>
-    <string name="deviceNotSupported">Dispositivo no soportado</string>
-    <string name="configFileDownloadError">Error descargando archivo de configuración.</string>
-    <string name="configFileDownloadLinkError">Error descargando archivo de configuración. Link usado:</string>
-    <string name="updateDownloadError">Error de descarga</string>
-    <string name="checkDetails">Verifica los detalles y opciones de instalación</string>
-    <string name="alsoAvailable">Librería del sistema operativo</string>
-    
-    <string name="pleaseWait">Por favor espere&#8230;</string>
-    <string name="eraseAllPartitionsWarning">Esta actualización borrará todos sus datos.\n¿Quiere continuar?</string>
-    <string name="dev_mode_toast">Modo para desarrolladores activado en sesión</string>
-    <string name="noSpaceAvailableCache">No hay espacio disponible en /cache. Abortando&#8230;</string>
-    <string name="noSpaceAvailableSdcard">No hay espacio disponible en la memoria. Abortando&#8230;</string>
-    <string name="invalidMD5DownloadMessage">El archivo descargado es inválido: MD5 erróneo</string>
-    <string name="invalidSignatureDownloadMessage">El archivo descardado es inválido: Firma errónea</string>
-    
+
     <!-- Google Apps Install Widget -->
     <string name="google_apps_installer_name">Instalador Google Apps</string>
     <string name="google_apps_initial_title">Instalar\nGoogle Apps</string>
@@ -60,5 +25,5 @@
     <string name="google_apps_download_error">Error al descargar los archivos. Por favor, inténtelo de nuevo.</string>
     <string name="google_apps_connection_title">Wi-Fi desconectado</string>
     <string name="google_apps_connection_description">El archivo que está intentando descargar es muy grande para conexiones móviles (~100mb). Por favor, conéctese a un punto Wi-Fi e inténtelo de nuevo.</string>
-    
+
 </resources>

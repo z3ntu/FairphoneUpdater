@@ -276,7 +276,7 @@ public class UpdaterService extends Service
                 new NotificationCompat.Builder(context).setSmallIcon(R.drawable.fairphone_updater_tray_icon_small)
                         .setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.drawable.fairphone_updater_tray_icon))
                         .setContentTitle(context.getResources().getString(R.string.app_name))
-                        .setContentText(context.getResources().getString(R.string.fairphoneUpdateMessage));
+                        .setContentText(context.getResources().getString(R.string.fairphone_update_message));
 
         Intent resultIntent = new Intent(context, FairphoneUpdater2Activity.class);
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
@@ -308,7 +308,7 @@ public class UpdaterService extends Service
             request.setDestinationInExternalPublicDir(resources.getString(R.string.updaterFolder), fileName);
             request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI);
             request.setAllowedOverRoaming(false);
-            request.setTitle(resources.getString(R.string.downloadUpdateTitle));
+            request.setTitle(resources.getString(R.string.fairphone_update_message_title));
         } catch (Exception e)
         {
             Log.e(TAG, "Error creating request: " + e.getMessage());
@@ -389,7 +389,7 @@ public class UpdaterService extends Service
             }
             else
             {
-                Toast.makeText(context, resources.getString(R.string.invalidSignatureDownloadMessage), Toast.LENGTH_LONG).show();
+                Toast.makeText(context, resources.getString(R.string.invalid_signature_download_message), Toast.LENGTH_LONG).show();
                 file.delete();
             }
         }
@@ -420,7 +420,7 @@ public class UpdaterService extends Service
         }
         if (removeReceiver)
         {
-            Toast.makeText(getApplicationContext(), getResources().getString(R.string.configFileDownloadError), Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), getResources().getString(R.string.config_file_download_error_message), Toast.LENGTH_LONG).show();
         }
         return removeReceiver;
     }
@@ -459,7 +459,7 @@ public class UpdaterService extends Service
                         }
                         else
                         {
-                            Toast.makeText(getApplicationContext(), resources.getString(R.string.invalidSignatureDownloadMessage), Toast.LENGTH_LONG).show();
+                            Toast.makeText(getApplicationContext(), resources.getString(R.string.invalid_signature_download_message), Toast.LENGTH_LONG).show();
                             removeReceiver = retryDownload(context);
                         }
                         break;

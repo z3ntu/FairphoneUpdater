@@ -206,7 +206,7 @@ public class TransparentActivity extends Activity
         if (mProgress == null)
         {
             String title = "";
-            String message = getResources().getString(R.string.pleaseWait);
+            String message = getResources().getString(R.string.please_be_patient);
             mProgress = ProgressDialog.show(this, title, message, true, false);
         }
     }

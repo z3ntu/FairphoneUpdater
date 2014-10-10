@@ -235,7 +235,7 @@ public class VersionDetailFragment extends BaseFragment
             }
             else
             {
-                Toast.makeText(mainActivity, getResources().getString(R.string.updateDownloadError) + " " + downloadTitle, Toast.LENGTH_LONG).show();
+                Toast.makeText(mainActivity, getResources().getString(R.string.error_downloading) + " " + downloadTitle, Toast.LENGTH_LONG).show();
             }
         }
         else
@@ -244,10 +244,10 @@ public class VersionDetailFragment extends BaseFragment
 
             AlertDialog.Builder disclaimerDialog = new AlertDialog.Builder(mainActivity);
 
-            disclaimerDialog.setTitle(resources.getString(R.string.wifiDiscaimerTitle));
+            disclaimerDialog.setTitle(resources.getString(R.string.wifi_disabled));
 
             // Setting Dialog Message
-            disclaimerDialog.setMessage(resources.getString(R.string.wifiDiscaimerMessage));
+            disclaimerDialog.setMessage(resources.getString(R.string.wifi_discaimer_message));
             disclaimerDialog.setPositiveButton(resources.getString(android.R.string.ok), new DialogInterface.OnClickListener()
             {
                 public void onClick(DialogInterface dialog, int id)
@@ -295,7 +295,7 @@ public class VersionDetailFragment extends BaseFragment
 
         if (mSelectedVersion.hasEraseAllPartitionWarning())
         {
-            new AlertDialog.Builder(mainActivity).setTitle(android.R.string.dialog_alert_title).setMessage(R.string.eraseAllPartitionsWarning)
+            new AlertDialog.Builder(mainActivity).setTitle(android.R.string.dialog_alert_title).setMessage(R.string.erase_all_partitions_warning_message)
                     .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener()
                     {
 

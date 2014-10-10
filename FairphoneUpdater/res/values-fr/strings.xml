@@ -1,64 +1,29 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="updaterService">Service de mise à jour</string>
-    <string name="currentVersion">Version actuelle</string>
-    <string name="newVersion">Nouvelle version</string>
-    <string name="installVersion">Installer la nouvelle version</string>
-    <string name="rebootDevice">Redémarrer l\'appareil</string>
-    <string name="messageReadyToInstall">Une nouvelle version est prête à installer&#8230;</string>
-    <string name="fairphoneUpdateMessage">Nouvelle mise à jour de Fairphone disponible</string>
-    <string name="downloadMessage">Téléchargement de la mise à jour, veuillez patienter&#8230;</string>
-    <string name="downloadUpdateTitle">Nouvelle mise à jour de Fairphone</string>
-    <string name="wifiDiscaimerTitle">Fonction Wi-Fi désactivée</string>
-	<string name="wifiDiscaimerMessage">Le fichier que vous essayez de télécharger est trop volumineux pour les connexions mobiles (~200 MB). Veuillez activer la connexion Wi-Fi et essayer à nouveau.</string>
-	
-	<string name="releaseNotes">Notes de mise à jour:</string>
-    <string name="moreInfo">Plus d\'infos</string>
-    <string name="lessInfo">Moins d\'infos</string>
-    <string name="noUpdatesAvailable">Aucune mise à jour disponible</string>
-    <string name="newVersionAvailable">Nouvelle version disponible</string>
-    <string name="youAreRunning">Vous utilisez</string>
-    <string name="downloadAndUpdateVersionBtn">Téléchargement et mise à jour</string>
-    <string name="installBtn">Installer</string>
-    <string name="downloading">Téléchargement</string>
-    <string name="deviceNotSupported">Appareil non supporté</string>
-    <string name="configFileDownloadError">Erreur de téléchargement de fichier de configuration.</string>
-    <string name="configFileDownloadLinkError">Erreur de téléchargement de fichier de configuration. Lien utilisé:</string>
-    <string name="updateDownloadError">Erreur de téléchargement</string>
-    <string name="checkDetails">Vérifier les informations et les options d\'installation</string>
-    <string name="alsoAvailable">Bibliotheque de système d\'exploitation</string>
-    
-    <string name="pleaseWait">S\'il vous plaît patienter&#8230;</string>
-    <string name="eraseAllPartitionsWarning">Cette mise à jour effacera toutes vos données.\nVoulez-vous continuer?</string>
-    <string name="dev_mode_toast">Mode développeur activé pour cette session</string>
-    <string name="noSpaceAvailableCache">Pas d\'espace disponible dans /cache. Telechargement abandonné&#8230;</string>
-    <string name="noSpaceAvailableSdcard">Pas d\'espace disponible dans /data. Telechargement abandonné&#8230;</string>
-    <string name="invalidMD5DownloadMessage">Fichier téléchargé non valide: Mauvaise somme MD5</string>
-    <string name="invalidSignatureDownloadMessage">Fichier téléchargé non valide: Signature invalide</string>
-    
+
     <!-- Google Apps Install Widget -->
     <string name="google_apps_installer_name">Programme d’installation de Google Apps</string>
-	<string name="google_apps_initial_title">Installer\nles Google Apps</string>
-	<string name="google_apps_disclaimer_title">Installer les Google Apps</string>
-	<string name="google_apps_disclaimer_description">Pour une expérience mobile Android et Google complète, telle que la boutique Google Play, votre téléphone a besoin de contenus et de logiciels supplémentaires. Comme Fairphone ne possède pas, pour l’heure, de licence, il ne nous est malheureusement pas possible de préinstaller ce contenu ni de le fournir directement. Nous travaillons actuellement avec le propriétaire du contenu en vue d’atteindre cet objectif.\nCliquez sur « J’accepte », ci-dessous, pour télécharger ce contenu à partir d’une source externe sécurisée. L’installation de ce contenu est de votre entière responsabilité.\nSi vous n’acceptez pas, votre téléphone fonctionnera, bien entendu, avec les applications de base pour Android, mais vous regretterez certainement de ne pas pouvoir utiliser certains services proposés par Google.</string>
-	<string name="google_apps_disclaimer_agree">J’accepte</string>
-	<string name="google_apps_denied_permissions_title">Autorisations refusées</string>
-	<string name="google_apps_denied_permissions_description">Le Concepteur de Fairphone ne parvient pas à obtenir les permissions nécessaires pour installer les Google Apps. Si vous avez choisi l’option REFUSER, veuillez redémarrer le programme d’installation et cliquer sur AUTORISER afin d’activer cette option.</string>
-	<string name="google_apps_reboot_failed_title">Redémarrage échoué</string>
-	<string name="google_apps_reboot_failed_description">Les Google Apps sont installées. Si vous ne parvenez pas à redémarrer l’appareil, faite-le manuellement.</string>
-	<string name="google_apps_download_title">Téléchargement des Google Apps</string>
-	<string name="google_apps_unzip_title">Extraction des Google Apps</string>
-	<string name="google_apps_install_title">Installation des Google Apps</string>
-	<string name="google_apps_reboot_title">Redémarrage de l’appareil</string>
-	<string name="google_apps_permissions_description">Le Concepteur de Fairphone va maintenant vous demander d’activer l’accès de Super-utilisateur. Nous vous assurons que cela est absolument sans risque. Vous devrez alors sélectionner l’option AUTORISER.</string>
-	<string name="google_apps_permissions_title">Autorisations du système</string>
-	<string name="google_apps_reboot_description">Pour conclure l’installation, il est nécessaire de redémarrer le système.\nAprès le redémarrage de l’appareil, suivez les étapes pour configurer les Google Apps.</string>
-	<string name="google_apps_uninstall_title">Google Apps installées</string>
-	<string name="google_apps_uninstall_description">Éliminer ce\nprogramme d’installation</string>
-	<string name="google_apps_failed_download_title">Téléchargement échoué</string>
-	<string name="google_apps_failed_download_description">Les fichiers téléchargés sont endommagés. Souhaitez-vous essayer à nouveau?</string>
-	<string name="google_apps_download_error">Une erreur est survenue lors du téléchargement des fichiers. Essayez à nouveau.</string>
-	<string name="google_apps_connection_title">Fonction Wi-Fi désactivée</string>
-	<string name="google_apps_connection_description">Le fichier que vous essayez de télécharger est trop volumineux pour les connexions mobiles (~100 MB). Veuillez activer la connexion Wi-Fi et essayer à nouveau.</string>
-	
+    <string name="google_apps_initial_title">Installer\nles Google Apps</string>
+    <string name="google_apps_disclaimer_title">Installer les Google Apps</string>
+    <string name="google_apps_disclaimer_description">Pour une expérience mobile Android et Google complète, telle que la boutique Google Play, votre téléphone a besoin de contenus et de logiciels supplémentaires. Comme Fairphone ne possède pas, pour l’heure, de licence, il ne nous est malheureusement pas possible de préinstaller ce contenu ni de le fournir directement. Nous travaillons actuellement avec le propriétaire du contenu en vue d’atteindre cet objectif.\nCliquez sur « J’accepte », ci-dessous, pour télécharger ce contenu à partir d’une source externe sécurisée. L’installation de ce contenu est de votre entière responsabilité.\nSi vous n’acceptez pas, votre téléphone fonctionnera, bien entendu, avec les applications de base pour Android, mais vous regretterez certainement de ne pas pouvoir utiliser certains services proposés par Google.</string>
+    <string name="google_apps_disclaimer_agree">J’accepte</string>
+    <string name="google_apps_denied_permissions_title">Autorisations refusées</string>
+    <string name="google_apps_denied_permissions_description">Le Concepteur de Fairphone ne parvient pas à obtenir les permissions nécessaires pour installer les Google Apps. Si vous avez choisi l’option REFUSER, veuillez redémarrer le programme d’installation et cliquer sur AUTORISER afin d’activer cette option.</string>
+    <string name="google_apps_reboot_failed_title">Redémarrage échoué</string>
+    <string name="google_apps_reboot_failed_description">Les Google Apps sont installées. Si vous ne parvenez pas à redémarrer l’appareil, faite-le manuellement.</string>
+    <string name="google_apps_download_title">Téléchargement des Google Apps</string>
+    <string name="google_apps_unzip_title">Extraction des Google Apps</string>
+    <string name="google_apps_install_title">Installation des Google Apps</string>
+    <string name="google_apps_reboot_title">Redémarrage de l’appareil</string>
+    <string name="google_apps_permissions_description">Le Concepteur de Fairphone va maintenant vous demander d’activer l’accès de Super-utilisateur. Nous vous assurons que cela est absolument sans risque. Vous devrez alors sélectionner l’option AUTORISER.</string>
+    <string name="google_apps_permissions_title">Autorisations du système</string>
+    <string name="google_apps_reboot_description">Pour conclure l’installation, il est nécessaire de redémarrer le système.\nAprès le redémarrage de l’appareil, suivez les étapes pour configurer les Google Apps.</string>
+    <string name="google_apps_uninstall_title">Google Apps installées</string>
+    <string name="google_apps_uninstall_description">Éliminer ce\nprogramme d’installation</string>
+    <string name="google_apps_failed_download_title">Téléchargement échoué</string>
+    <string name="google_apps_failed_download_description">Les fichiers téléchargés sont endommagés. Souhaitez-vous essayer à nouveau?</string>
+    <string name="google_apps_download_error">Une erreur est survenue lors du téléchargement des fichiers. Essayez à nouveau.</string>
+    <string name="google_apps_connection_title">Fonction Wi-Fi désactivée</string>
+    <string name="google_apps_connection_description">Le fichier que vous essayez de télécharger est trop volumineux pour les connexions mobiles (~100 MB). Veuillez activer la connexion Wi-Fi et essayer à nouveau.</string>
+
 </resources>

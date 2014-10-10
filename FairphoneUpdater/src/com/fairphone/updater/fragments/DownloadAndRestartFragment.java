@@ -169,7 +169,7 @@ public class DownloadAndRestartFragment extends BaseFragment
                             if ((bytes_total + 10000) > Utils.getAvailablePartitionSizeInBytes(Environment.getExternalStorageDirectory()))
                             {
                                 downloading = false;
-                                Toast.makeText(mainActivity, getResources().getString(R.string.noSpaceAvailableSdcard), Toast.LENGTH_LONG).show();
+                                Toast.makeText(mainActivity, getResources().getString(R.string.no_space_available_sd_card_message), Toast.LENGTH_LONG).show();
                                 mainActivity.changeState(UpdaterState.NORMAL);
                             }
 
@@ -319,11 +319,11 @@ public class DownloadAndRestartFragment extends BaseFragment
                         if (mSelectedVersion != null)
                         {
                             String downloadTitle = mSelectedVersion.getName() + " " + mSelectedVersion.getImageTypeDescription(resources);
-                            Toast.makeText(mainActivity, resources.getString(R.string.updateDownloadError) + " " + downloadTitle, Toast.LENGTH_LONG).show();
+                            Toast.makeText(mainActivity, resources.getString(R.string.error_downloading) + " " + downloadTitle, Toast.LENGTH_LONG).show();
                         }
                         else
                         {
-                            Toast.makeText(mainActivity, resources.getString(R.string.updateDownloadError), Toast.LENGTH_LONG).show();
+                            Toast.makeText(mainActivity, resources.getString(R.string.error_downloading), Toast.LENGTH_LONG).show();
                         }
                         mainActivity.changeState(UpdaterState.NORMAL);
                         break;
@@ -358,7 +358,7 @@ public class DownloadAndRestartFragment extends BaseFragment
                 }
                 else
                 {
-                    Toast.makeText(mainActivity, resources.getString(R.string.invalidMD5DownloadMessage), Toast.LENGTH_LONG).show();
+                    Toast.makeText(mainActivity, resources.getString(R.string.invalid_md5_download_message), Toast.LENGTH_LONG).show();
                     removeLastUpdateDownload();
                 }
             }
@@ -504,7 +504,7 @@ public class DownloadAndRestartFragment extends BaseFragment
         else
         {
             Log.d(TAG, "No space on cache. Defaulting to Sdcard");
-            Toast.makeText(mainActivity, getResources().getString(R.string.noSpaceAvailableCache), Toast.LENGTH_LONG).show();
+            Toast.makeText(mainActivity, getResources().getString(R.string.no_space_available_cache_message), Toast.LENGTH_LONG).show();
         }
     }
 
@@ -615,7 +615,7 @@ public class DownloadAndRestartFragment extends BaseFragment
             if (mProgress == null)
             {
                 String title = "";
-                String message = mainActivity.getResources().getString(R.string.pleaseWait);
+                String message = mainActivity.getResources().getString(R.string.please_be_patient);
                 mProgress = ProgressDialog.show(mainActivity, title, message, true, false);
             }
         }

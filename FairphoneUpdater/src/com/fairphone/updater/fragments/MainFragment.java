@@ -205,7 +205,7 @@ public class MainFragment extends BaseFragment
                 else if (FairphoneUpdater2Activity.FAIRPHONE_UPDATER_CONFIG_DOWNLOAD_FAILED.equals(action))
                 {
                     String link = intent.getStringExtra(FairphoneUpdater2Activity.FAIRPHONE_UPDATER_CONFIG_DOWNLOAD_LINK);
-                    Toast.makeText(context.getApplicationContext(), context.getResources().getString(R.string.configFileDownloadLinkError) + " " + link,
+                    Toast.makeText(context.getApplicationContext(), context.getResources().getString(R.string.config_file_download_link_error_message) + " " + link,
                             Toast.LENGTH_LONG).show();
                 }
             }

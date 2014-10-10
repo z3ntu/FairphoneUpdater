@@ -51,7 +51,7 @@
             android:layout_height="wrap_content"
             android:paddingBottom="25dp"
             android:paddingTop="5dp"
-            android:text="@string/no" />
+            android:text="@android:string/no" />
 
         <TextView
             style="@style/TextRegular16White"
@@ -76,7 +76,7 @@
             android:layout_height="wrap_content"
             android:paddingBottom="25dp"
             android:paddingTop="5dp"
-            android:text="@string/yes" />
+            android:text="@android:string/yes" />
 
         <TextView
             style="@style/TextRegular16White"

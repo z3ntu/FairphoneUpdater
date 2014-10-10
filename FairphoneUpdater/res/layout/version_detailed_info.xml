@@ -35,7 +35,7 @@
             android:scaleType="centerInside"
             android:src="@drawable/aosp_versions_button_logo"
             android:visibility="gone" />
-        
+
         <LinearLayout
             android:id="@+id/updateDownloadInfo"
             android:layout_width="match_parent"
@@ -51,7 +51,6 @@
                 android:layout_marginTop="15dp"
                 android:gravity="center"
                 android:includeFontPadding="false"
-                android:text="@string/downloading"
                 android:textColor="#fff"
                 android:textSize="17sp" />
 
@@ -74,7 +73,6 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:gravity="center"
-            android:text="@string/releaseNotes"
             android:textColor="#fff" />
 
         <TextView
@@ -100,10 +98,10 @@
                 android:id="@+id/cancelButton"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
+                android:layout_marginBottom="7dp"
                 android:layout_marginLeft="7dp"
                 android:layout_marginRight="7dp"
-                android:layout_marginBottom="7dp"
+                android:layout_weight="1"
                 android:background="@drawable/button_background_color"
                 android:fontFamily="sans-serif-light"
                 android:gravity="center"
@@ -116,10 +114,10 @@
                 android:id="@+id/actionButton"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
+                android:layout_marginBottom="7dp"
                 android:layout_marginLeft="7dp"
                 android:layout_marginRight="7dp"
-                android:layout_marginBottom="7dp"
+                android:layout_weight="1"
                 android:background="@drawable/button_background_color"
                 android:fontFamily="sans-serif-light"
                 android:gravity="center"
