@@ -128,7 +128,7 @@ public class GoogleAppsInstallerWidget extends AppWidgetProvider
     {
         int code = 0;
         // get the widgets
-        RemoteViews widget = new RemoteViews(context.getPackageName(), R.layout.fp_google_apps_installer_widget);
+        RemoteViews widget = new RemoteViews(context.getPackageName(), R.layout.widget_google_apps_installer);
 
         code = setupButtonClickIntents(context, code, widget);
 

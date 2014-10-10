@@ -273,8 +273,8 @@ public class UpdaterService extends Service
         NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
         NotificationCompat.Builder builder =
-                new NotificationCompat.Builder(context).setSmallIcon(R.drawable.fairphone_updater_tray_icon_small)
-                        .setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.drawable.fairphone_updater_tray_icon))
+                new NotificationCompat.Builder(context).setSmallIcon(R.drawable.updater_tray_icon_small)
+                        .setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.drawable.updater_tray_icon))
                         .setContentTitle(context.getResources().getString(R.string.app_name))
                         .setContentText(context.getResources().getString(R.string.fairphone_update_message));
 

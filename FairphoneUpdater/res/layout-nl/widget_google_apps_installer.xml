@@ -14,7 +14,7 @@
             android:id="@+id/installButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/fp_gapps_widget_install" />
+            android:background="@drawable/widget_gapps_widget_install" />
 
         <TextView
             android:id="@+id/installText"
@@ -31,7 +31,7 @@
         android:id="@+id/popupDisclaimerGroup"
         android:layout_width="280dp"
         android:layout_height="wrap_content"
-        android:background="@drawable/fp_gapps_alert_background"
+        android:background="@drawable/widget_gapps_alert_background"
         android:orientation="vertical"
         android:visibility="gone" >
 
@@ -39,12 +39,12 @@
             android:layout_width="match_parent"
             android:layout_height="58dp"
             android:layout_gravity="center_vertical"
-            android:padding="15dp"
-            android:text="@string/google_apps_disclaimer_title"
-            android:textColor="@color/google_blue"
             android:ellipsize="marquee"
             android:marqueeRepeatLimit="marquee_forever"
-            android:scrollHorizontally="true" 
+            android:padding="15dp"
+            android:scrollHorizontally="true"
+            android:text="@string/google_apps_disclaimer_title"
+            android:textColor="@color/google_blue"
             android:textSize="18.5sp" />
 
         <TextView
@@ -73,7 +73,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:background="@drawable/fp_gaaps_alert_button"
+                android:background="@drawable/widget_gaaps_alert_button"
                 android:text="@android:string/cancel"
                 android:textSize="12.5sp" />
 
@@ -87,17 +87,17 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:background="@drawable/fp_gaaps_alert_button"
+                android:background="@drawable/widget_gaaps_alert_button"
                 android:text="@android:string/ok"
                 android:textSize="12.5sp" />
         </LinearLayout>
     </LinearLayout>
-    
+
     <LinearLayout
         android:id="@+id/popupFailedDownloadGroup"
         android:layout_width="280dp"
         android:layout_height="wrap_content"
-        android:background="@drawable/fp_gapps_alert_background"
+        android:background="@drawable/widget_gapps_alert_background"
         android:orientation="vertical"
         android:visibility="gone" >
 
@@ -120,7 +120,6 @@
             android:textColor="@color/white"
             android:textSize="13.5sp" />
 
-
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="1dp"
@@ -137,7 +136,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:background="@drawable/fp_gaaps_alert_button"
+                android:background="@drawable/widget_gaaps_alert_button"
                 android:text="@android:string/cancel"
                 android:textSize="12.5sp" />
 
@@ -151,7 +150,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:background="@drawable/fp_gaaps_alert_button"
+                android:background="@drawable/widget_gaaps_alert_button"
                 android:text="@android:string/ok"
                 android:textSize="12.5sp" />
         </LinearLayout>
@@ -161,7 +160,7 @@
         android:id="@+id/popupProgressGroup"
         android:layout_width="280dp"
         android:layout_height="wrap_content"
-        android:background="@drawable/fp_gapps_alert_background"
+        android:background="@drawable/widget_gapps_alert_background"
         android:orientation="vertical"
         android:visibility="gone" >
 
@@ -169,10 +168,14 @@
             android:id="@+id/progressDialogTitle"
             android:layout_width="match_parent"
             android:layout_height="58dp"
-            android:layout_gravity="center_vertical"
-            android:padding="15dp"
+            android:ellipsize="end"
+            android:gravity="center_vertical"
+            android:maxLines="2"
+            android:paddingBottom="5dp"
+            android:paddingLeft="10dp"
+            android:paddingTop="5dp"
             android:textColor="@color/google_blue"
-            android:textSize="18.5sp" />
+            android:textSize="16sp" />
 
         <ProgressBar
             android:id="@+id/progressBar"
@@ -186,14 +189,14 @@
             android:indeterminateOnly="false"
             android:max="100"
             android:padding="0dp"
-            android:progressDrawable="@drawable/fp_gapps_progress" />
+            android:progressDrawable="@drawable/widget_gapps_progress" />
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/popupRebootGroup"
         android:layout_width="280dp"
         android:layout_height="wrap_content"
-        android:background="@drawable/fp_gapps_alert_background"
+        android:background="@drawable/widget_gapps_alert_background"
         android:orientation="vertical"
         android:visibility="gone" >
 
@@ -205,7 +208,7 @@
             android:padding="15dp"
             android:text="@string/google_apps_reboot_title"
             android:textColor="@color/google_blue"
-            android:textSize="18.5sp" />
+            android:textSize="17sp" />
 
         <TextView
             android:layout_width="match_parent"
@@ -227,23 +230,23 @@
             android:layout_height="43.5dp"
             android:orientation="horizontal"
             android:weightSum="1" >
-            
+
             <Button
                 android:id="@+id/rebootOkButton"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:background="@drawable/fp_gaaps_alert_button"
+                android:background="@drawable/widget_gaaps_alert_button"
                 android:text="@android:string/ok"
                 android:textSize="12.5sp" />
         </LinearLayout>
     </LinearLayout>
-    
+
     <LinearLayout
         android:id="@+id/popupPermissionsGroup"
         android:layout_width="280dp"
         android:layout_height="wrap_content"
-        android:background="@drawable/fp_gapps_alert_background"
+        android:background="@drawable/widget_gapps_alert_background"
         android:orientation="vertical"
         android:visibility="gone" >
 
@@ -255,7 +258,7 @@
             android:padding="15dp"
             android:text="@string/google_apps_permissions_title"
             android:textColor="@color/google_blue"
-            android:textSize="18.5sp" />
+            android:textSize="15sp" />
 
         <TextView
             android:layout_width="match_parent"
@@ -283,7 +286,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:background="@drawable/fp_gaaps_alert_button"
+                android:background="@drawable/widget_gaaps_alert_button"
                 android:text="@android:string/ok"
                 android:textSize="12.5sp" />
         </LinearLayout>
@@ -299,7 +302,7 @@
             android:id="@+id/uninstallButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/fp_gapps_widget_uninstall" />
+            android:background="@drawable/widget_gapps_widget_uninstall" />
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -322,44 +325,6 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:text="@string/google_apps_uninstall_description"
-                android:textColor="#c8c8c8"
-                android:textSize="18.5sp" />
-        </LinearLayout>
-    </FrameLayout>
-    
-    <FrameLayout
-        android:id="@+id/reinstallGroup"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone" >
-
-        <ImageButton
-            android:id="@+id/reinstallButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/fp_gapps_widget_uninstall" />
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginLeft="20dp"
-            android:orientation="vertical" >
-
-            <TextView
-                android:id="@+id/reinstallTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/google_apps_re_install_title"
-                android:textColor="#c8c8c8"
-                android:textSize="13.3dp" />
-
-            <TextView
-                android:id="@+id/reinstallText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:text="@string/google_apps_re_install_description"
                 android:textColor="#c8c8c8"
                 android:textSize="18.5sp" />
         </LinearLayout>
