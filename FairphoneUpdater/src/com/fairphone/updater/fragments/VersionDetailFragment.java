@@ -52,6 +52,7 @@ public class VersionDetailFragment extends BaseFragment
     private DownloadManager mDownloadManager;
     private DetailLayoutType mDetailLayoutType;
     private TextView mDownload_and_update_button_version_text;
+    private boolean mIsOSChange;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -160,22 +161,27 @@ public class VersionDetailFragment extends BaseFragment
 
         mHeaderType = mainActivity.getHeaderTypeFromImageType(mSelectedVersion.getImageType());
         Resources resources = mainActivity.getResources();
+        Version deviceversion = mainActivity.getDeviceVersion();
 
         switch (mDetailLayoutType)
         {
             case UPDATE:
                 mHeaderText = resources.getString(R.string.install_update);
                 mVersionDetailsTitle = resources.getString(R.string.update_version);
+                mIsOSChange = false;
                 break;
+                
             case ANDROID:
                 mHeaderText = mainActivity.getVersionName(mSelectedVersion);
                 mVersionDetailsTitle = resources.getString(R.string.new_os);
+                mIsOSChange = deviceversion.getImageType().equalsIgnoreCase(Version.IMAGE_TYPE_FAIRPHONE);
                 break;
 
             case FAIRPHONE:
             default:
                 mHeaderText = mainActivity.getVersionName(mSelectedVersion);
                 mVersionDetailsTitle = resources.getString(R.string.older_version);
+                mIsOSChange = deviceversion.getImageType().equalsIgnoreCase(Version.IMAGE_TYPE_AOSP);
                 break;
         }
     }
@@ -277,10 +283,54 @@ public class VersionDetailFragment extends BaseFragment
 
     public void startVersionDownload()
     {
+
         if (!Utils.areGappsInstalling(mainActivity))
         {
-            mainActivity.setSelectedVersion(mSelectedVersion != null ? mSelectedVersion : mainActivity.getLatestVersion());
-            showEraseAllDataWarning();
+            if (mIsOSChange)
+            {
+//                View checkBoxView = View.inflate(mainActivity, R.layout.fp_alert_checkbox, null);
+
+                AlertDialog.Builder builder =
+                        new AlertDialog.Builder(mainActivity).setTitle(android.R.string.dialog_alert_title)/*.setMessage(R.string.osChangeWarning)
+                                .setView(checkBoxView)*/.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener()
+                                {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which)
+                                    {
+                                        mainActivity.setSelectedVersion(mSelectedVersion != null ? mSelectedVersion : mainActivity.getLatestVersion());
+                                        showEraseAllDataWarning();
+                                    }
+                                }).setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener()
+                                {
+                                    public void onClick(DialogInterface dialog, int which)
+                                    {
+                                        // Do nothing
+                                    }
+                                });
+
+                final AlertDialog dialog = builder.create();
+
+//                CheckBox checkBox = (CheckBox) checkBoxView.findViewById(R.id.agree_checkbox);
+//                checkBox.setOnCheckedChangeListener(new OnCheckedChangeListener()
+//                {
+//
+//                    @Override
+//                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
+//                    {
+//                        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(isChecked);
+//                    }
+//
+//                });
+//                checkBox.setText(R.string.osChangeCheckboxWarning);
+
+                dialog.show();
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+            }
+            else
+            {
+                mainActivity.setSelectedVersion(mSelectedVersion != null ? mSelectedVersion : mainActivity.getLatestVersion());
+                showEraseAllDataWarning();
+            }
         }
         else
         {
