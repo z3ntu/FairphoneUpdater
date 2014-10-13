@@ -213,6 +213,20 @@ public class FairphoneUpdater extends FragmentActivity
         headerOtherOSText.setOnClickListener(headerBackPressListener);
     }
 
+    @Override
+    public void onBackPressed()
+    {
+        Fragment fragment = getTopFragment();
+        if (fragment != null && fragment instanceof DownloadAndRestartFragment && !getCurrentUpdaterState().equals(UpdaterState.NORMAL))
+        {
+            ((DownloadAndRestartFragment) fragment).abortUpdateProccess();
+        }
+        else
+        {
+            super.onBackPressed();
+        }
+    }
+
     public void updateHeader(HeaderType type, String headerText)
     {
 
@@ -325,8 +339,9 @@ public class FairphoneUpdater extends FragmentActivity
             // and add the transaction to the back stack so the user can
             // navigate
             // back
-            //            transaction.setCustomAnimations(R.animator.fade_in_fragment, R.animator.fade_out_fragment, R.animator.fade_in_fragment,
-            //                    R.animator.fade_out_fragment);
+            // transaction.setCustomAnimations(R.animator.fade_in_fragment,
+            // R.animator.fade_out_fragment, R.animator.fade_in_fragment,
+            // R.animator.fade_out_fragment);
             transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
             transaction.replace(R.id.fragment_holder, newFragment);
             transaction.addToBackStack(null);

@@ -113,9 +113,7 @@ public class DownloadAndRestartFragment extends BaseFragment
             @Override
             public void onClick(View v)
             {
-                removeLastUpdateDownload();
-                mainActivity.updateStatePreference(UpdaterState.NORMAL);
-                mainActivity.removeLastFragment();
+                abortUpdateProccess();
             }
         });
     }
@@ -636,4 +634,12 @@ public class DownloadAndRestartFragment extends BaseFragment
         Resources resources = mainActivity.getResources();
         return Environment.getExternalStorageDirectory() + resources.getString(R.string.updaterFolder) + VersionParserHelper.getNameFromVersion(version);
     }
+
+    public void abortUpdateProccess()
+    {
+        removeLastUpdateDownload();
+        mainActivity.updateStatePreference(UpdaterState.NORMAL);
+        mainActivity.removeLastFragment();
+    }
+
 }
