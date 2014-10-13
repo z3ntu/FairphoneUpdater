@@ -404,11 +404,11 @@ public class Version implements Comparable<Version>
         int retVal;
         if (another != null)
         {
-            if (this.getNumber() < another.getNumber())
+            if (this.getNumber() < another.getNumber() && this.getImageType().equalsIgnoreCase(another.getImageType()))
             {
                 retVal = 1;
             }
-            else if (this.getNumber() == another.getNumber())
+            else if (this.getNumber() == another.getNumber() && this.getImageType().equalsIgnoreCase(another.getImageType()))
             {
                 retVal = 0;
             }
