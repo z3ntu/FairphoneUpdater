@@ -21,7 +21,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 
 import com.fairphone.updater.FairphoneUpdater2Activity.HeaderType;
@@ -56,6 +55,7 @@ public class VersionDetailFragment extends BaseFragment
     private DetailLayoutType mDetailLayoutType;
     private TextView mDownload_and_update_button_version_text;
     private boolean mIsOSChange;
+    private boolean mIsOlderVersion;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -172,19 +172,24 @@ public class VersionDetailFragment extends BaseFragment
                 mHeaderText = resources.getString(R.string.install_update);
                 mVersionDetailsTitle = resources.getString(R.string.update_version);
                 mIsOSChange = false;
+                mIsOlderVersion = false;
                 break;
 
             case ANDROID:
                 mHeaderText = mainActivity.getVersionName(mSelectedVersion);
                 mVersionDetailsTitle = resources.getString(R.string.new_os);
                 mIsOSChange = deviceversion.getImageType().equalsIgnoreCase(Version.IMAGE_TYPE_FAIRPHONE);
+                mIsOlderVersion =
+                        (deviceversion.getImageType().equalsIgnoreCase(Version.IMAGE_TYPE_AOSP) && deviceversion.isNewerVersionThan(mSelectedVersion));
                 break;
 
             case FAIRPHONE:
             default:
                 mHeaderText = mainActivity.getVersionName(mSelectedVersion);
                 mVersionDetailsTitle = resources.getString(R.string.older_version);
-                mIsOSChange = deviceversion.getImageType().equalsIgnoreCase(Version.IMAGE_TYPE_AOSP) || (deviceversion.getImageType().equalsIgnoreCase(Version.IMAGE_TYPE_FAIRPHONE) && deviceversion.isNewerVersionThan(mSelectedVersion));
+                mIsOSChange = deviceversion.getImageType().equalsIgnoreCase(Version.IMAGE_TYPE_AOSP);
+                mIsOlderVersion =
+                        (deviceversion.getImageType().equalsIgnoreCase(Version.IMAGE_TYPE_FAIRPHONE) && deviceversion.isNewerVersionThan(mSelectedVersion));
                 break;
         }
     }
@@ -287,7 +292,7 @@ public class VersionDetailFragment extends BaseFragment
     private void showPopupDialog(String version, ConfirmationPopupDialogListener listener)
     {
         FragmentManager fm = getActivity().getSupportFragmentManager();
-        ConfirmationPopupDialog popupDialog = new ConfirmationPopupDialog(version, mDetailLayoutType, listener);
+        ConfirmationPopupDialog popupDialog = new ConfirmationPopupDialog(version, mIsOSChange, mIsOlderVersion, mDetailLayoutType, listener);
         popupDialog.show(fm, version);
     }
 
@@ -296,17 +301,14 @@ public class VersionDetailFragment extends BaseFragment
 
         if (!Utils.areGappsInstalling(mainActivity))
         {
-            if (mIsOSChange)
+            if (mIsOSChange || mIsOlderVersion)
             {
-                // View checkBoxView = View.inflate(mainActivity,
-                // R.layout.fp_alert_checkbox, null);
                 showPopupDialog(mSelectedVersion.getName(), new ConfirmationPopupDialogListener()
                 {
-                    
+
                     @Override
                     public void onFinishPopUpDialog(boolean isOk)
                     {
-                        // Toast.makeText(this, "Hi, " + inputText, Toast.LENGTH_SHORT).show();
                         if (isOk)
                         {
                             mainActivity.setSelectedVersion(mSelectedVersion != null ? mSelectedVersion : mainActivity.getLatestVersion());
@@ -326,8 +328,6 @@ public class VersionDetailFragment extends BaseFragment
             showGappsInstalingWarning();
         }
     }
-
-    
 
     private void showEraseAllDataWarning()
     {

@@ -32,8 +32,11 @@ public class ConfirmationPopupDialog extends DialogFragment implements OnEditorA
     private Button mOkButton;
     private Button mCancelButton;
     private CheckBox mConfirmationCheckbox;
+    private boolean mIsOSChange;
+    private boolean mIsOlderVersion;
 
-    public ConfirmationPopupDialog(String version, DetailLayoutType layoutType, ConfirmationPopupDialogListener callback)
+    public ConfirmationPopupDialog(String version, boolean isOSChange, boolean isOlderVersion, DetailLayoutType layoutType,
+            ConfirmationPopupDialogListener callback)
     {
         // Empty constructor required for DialogFragment
         super();
@@ -41,6 +44,8 @@ public class ConfirmationPopupDialog extends DialogFragment implements OnEditorA
         mVersion = version;
         mCallback = callback;
         mLayoutType = layoutType;
+        mIsOSChange = isOSChange;
+        mIsOlderVersion = isOlderVersion;
     }
 
     @Override
@@ -48,25 +53,34 @@ public class ConfirmationPopupDialog extends DialogFragment implements OnEditorA
     {
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         View view = null;
-        TextView textView = null;
+        TextView versionNameText = null;
 
         switch (mLayoutType)
         {
             case ANDROID:
                 view = inflater.inflate(R.layout.fragment_download_android_confirmation_popup, container);
-                
+
                 break;
             case UPDATE:
             case FAIRPHONE:
+            default:
                 view = inflater.inflate(R.layout.fragment_download_fairphone_confirmation_popup, container);
                 break;
-            default:
-                break;
         }
-        
-        
-        textView = (TextView) view.findViewById(R.id.installing_version);
-        textView.setText(mVersion);
+
+        versionNameText = (TextView) view.findViewById(R.id.installing_version);
+        versionNameText.setText(mVersion);
+
+        TextView versionTypeText = (TextView) view.findViewById(R.id.version_type_text);
+
+        if (mIsOSChange)
+        {
+            versionTypeText.setText(R.string.a_different_os_from_the_current);
+        }
+        else if (mIsOlderVersion)
+        {
+            versionTypeText.setText(R.string.an_older_version_of_os);
+        }
 
         mOkButton = (Button) view.findViewById(R.id.confirmation_yes_button);
         mOkButton.setEnabled(false);
@@ -114,7 +128,6 @@ public class ConfirmationPopupDialog extends DialogFragment implements OnEditorA
         if (EditorInfo.IME_ACTION_DONE == actionId)
         {
             // Return input text to activity
-            // mCallback.onP("bleka");
             this.dismiss();
             return true;
         }

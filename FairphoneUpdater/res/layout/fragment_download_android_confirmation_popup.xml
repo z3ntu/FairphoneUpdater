@@ -27,6 +27,7 @@
         android:text="" />
 
     <TextView
+        android:id="@+id/version_type_text"
         style="@style/TextRegular14GreenDark"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

@@ -33,6 +33,7 @@
     <string name="older_version_os_install_confirmation_checkbox">I know and understand all implication of performing this installation</string>
     <string name="your_are_about_to_install">You are about to install</string>
     <string name="an_older_version_of_os">an older version of your current OS.</string>
+    <string name="a_different_os_from_the_current">a different OS from your current one.</string>
     <string name="your_current_os_version">Your current OS version</string>
     <string name="your_os_is_up_to_date">Your OS is up to date</string>
     <string name="want_to_change_your_os">Want to change your OS?</string>
