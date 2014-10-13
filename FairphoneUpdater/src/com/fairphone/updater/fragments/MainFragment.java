@@ -14,12 +14,12 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.fairphone.updater.FairphoneUpdater2Activity;
-import com.fairphone.updater.FairphoneUpdater2Activity.HeaderType;
-import com.fairphone.updater.FairphoneUpdater2Activity.UpdaterState;
+import com.fairphone.updater.FairphoneUpdater;
+import com.fairphone.updater.FairphoneUpdater.HeaderType;
+import com.fairphone.updater.FairphoneUpdater.UpdaterState;
+import com.fairphone.updater.data.UpdaterData;
+import com.fairphone.updater.data.Version;
 import com.fairphone.updater.R;
-import com.fairphone.updater.UpdaterData;
-import com.fairphone.updater.Version;
 
 public class MainFragment extends BaseFragment
 {
@@ -194,7 +194,7 @@ public class MainFragment extends BaseFragment
             {
                 String action = intent.getAction();
 
-                if (FairphoneUpdater2Activity.FAIRPHONE_UPDATER_NEW_VERSION_RECEIVED.equals(action))
+                if (FairphoneUpdater.FAIRPHONE_UPDATER_NEW_VERSION_RECEIVED.equals(action))
                 {
                     mainActivity.updateLatestVersionFromConfig();
                     if (mainActivity.getCurrentUpdaterState() == UpdaterState.NORMAL)
@@ -202,9 +202,9 @@ public class MainFragment extends BaseFragment
                         toogleUpdateAvailableGroup();
                     }
                 }
-                else if (FairphoneUpdater2Activity.FAIRPHONE_UPDATER_CONFIG_DOWNLOAD_FAILED.equals(action))
+                else if (FairphoneUpdater.FAIRPHONE_UPDATER_CONFIG_DOWNLOAD_FAILED.equals(action))
                 {
-                    String link = intent.getStringExtra(FairphoneUpdater2Activity.FAIRPHONE_UPDATER_CONFIG_DOWNLOAD_LINK);
+                    String link = intent.getStringExtra(FairphoneUpdater.FAIRPHONE_UPDATER_CONFIG_DOWNLOAD_LINK);
                     Toast.makeText(context.getApplicationContext(), context.getResources().getString(R.string.config_file_download_link_error_message) + " " + link,
                             Toast.LENGTH_LONG).show();
                 }
@@ -215,8 +215,8 @@ public class MainFragment extends BaseFragment
     private void registerBroadCastReceiver()
     {
         IntentFilter iFilter = new IntentFilter();
-        iFilter.addAction(FairphoneUpdater2Activity.FAIRPHONE_UPDATER_NEW_VERSION_RECEIVED);
-        iFilter.addAction(FairphoneUpdater2Activity.FAIRPHONE_UPDATER_CONFIG_DOWNLOAD_FAILED);
+        iFilter.addAction(FairphoneUpdater.FAIRPHONE_UPDATER_NEW_VERSION_RECEIVED);
+        iFilter.addAction(FairphoneUpdater.FAIRPHONE_UPDATER_CONFIG_DOWNLOAD_FAILED);
         mainActivity.registerReceiver(newVersionbroadcastReceiver, iFilter);
     }
 

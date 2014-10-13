@@ -33,11 +33,11 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.util.Log;
 
-import com.fairphone.updater.FairphoneUpdater2Activity;
-import com.fairphone.updater.FairphoneUpdater2Activity.UpdaterState;
+import com.fairphone.updater.FairphoneUpdater;
+import com.fairphone.updater.FairphoneUpdater.UpdaterState;
 import com.fairphone.updater.UpdaterService;
-import com.fairphone.updater.Version;
-import com.fairphone.updater.VersionParserHelper;
+import com.fairphone.updater.data.Version;
+import com.fairphone.updater.data.VersionParserHelper;
 import com.fairphone.updater.gappsinstaller.GappsInstallerHelper;
 
 public class Utils
@@ -87,9 +87,9 @@ public class Utils
 
     public static boolean isUpdaterInstalling(Context context)
     {
-        SharedPreferences updaterSharedPrefs = context.getSharedPreferences(FairphoneUpdater2Activity.FAIRPHONE_UPDATER_PREFERENCES, Context.MODE_PRIVATE);
+        SharedPreferences updaterSharedPrefs = context.getSharedPreferences(FairphoneUpdater.FAIRPHONE_UPDATER_PREFERENCES, Context.MODE_PRIVATE);
 
-        String currentState = updaterSharedPrefs.getString(FairphoneUpdater2Activity.PREFERENCE_CURRENT_UPDATER_STATE, UpdaterState.NORMAL.name());
+        String currentState = updaterSharedPrefs.getString(FairphoneUpdater.PREFERENCE_CURRENT_UPDATER_STATE, UpdaterState.NORMAL.name());
         UpdaterState state = UpdaterState.valueOf(currentState);
         return state != UpdaterState.NORMAL;
     }

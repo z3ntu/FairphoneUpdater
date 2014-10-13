@@ -7,9 +7,9 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import com.fairphone.updater.FairphoneUpdater2Activity.HeaderType;
+import com.fairphone.updater.FairphoneUpdater.HeaderType;
 import com.fairphone.updater.R;
-import com.fairphone.updater.UpdaterData;
+import com.fairphone.updater.data.UpdaterData;
 import com.fairphone.updater.fragments.VersionListFragment.ListLayoutType;
 
 public class OtherOSOptionsFragment extends BaseFragment

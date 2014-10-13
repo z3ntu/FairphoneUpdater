@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.fairphone.updater;
+package com.fairphone.updater.data;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -28,6 +28,10 @@ import java.util.Scanner;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
+
+import com.fairphone.updater.R;
+import com.fairphone.updater.R.integer;
+import com.fairphone.updater.R.string;
 
 import android.content.Context;
 import android.content.res.Resources;

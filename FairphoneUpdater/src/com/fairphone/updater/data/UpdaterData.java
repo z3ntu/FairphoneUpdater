@@ -1,4 +1,4 @@
-package com.fairphone.updater;
+package com.fairphone.updater.data;
 
 import java.util.ArrayList;
 import java.util.Collection;

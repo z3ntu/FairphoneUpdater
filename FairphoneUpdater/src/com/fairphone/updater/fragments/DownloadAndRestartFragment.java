@@ -27,11 +27,11 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.fairphone.updater.FairphoneUpdater2Activity.HeaderType;
-import com.fairphone.updater.FairphoneUpdater2Activity.UpdaterState;
+import com.fairphone.updater.FairphoneUpdater.HeaderType;
+import com.fairphone.updater.FairphoneUpdater.UpdaterState;
 import com.fairphone.updater.R;
-import com.fairphone.updater.Version;
-import com.fairphone.updater.VersionParserHelper;
+import com.fairphone.updater.data.Version;
+import com.fairphone.updater.data.VersionParserHelper;
 import com.fairphone.updater.gappsinstaller.GappsInstallerHelper;
 import com.fairphone.updater.tools.Utils;
 import com.stericson.RootTools.RootTools;

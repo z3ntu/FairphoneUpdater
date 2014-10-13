@@ -47,6 +47,8 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.fairphone.updater.data.Version;
+import com.fairphone.updater.data.VersionParserHelper;
 import com.fairphone.updater.gappsinstaller.GappsInstallerHelper;
 import com.fairphone.updater.tools.RSAUtils;
 import com.fairphone.updater.tools.Utils;
@@ -84,7 +86,7 @@ public class UpdaterService extends Service
         // remove the logs
         clearDataLogs();
 
-        mSharedPreferences = getApplicationContext().getSharedPreferences(FairphoneUpdater2Activity.FAIRPHONE_UPDATER_PREFERENCES, MODE_PRIVATE);
+        mSharedPreferences = getApplicationContext().getSharedPreferences(FairphoneUpdater.FAIRPHONE_UPDATER_PREFERENCES, MODE_PRIVATE);
 
         mLatestFileDownloadId = mSharedPreferences.getLong(PREFERENCE_LAST_CONFIG_DOWNLOAD_ID, 0);
 
@@ -179,8 +181,8 @@ public class UpdaterService extends Service
             else
             {
                 Log.e(TAG, "Invalid request for link " + downloadLink);
-                Intent i = new Intent(FairphoneUpdater2Activity.FAIRPHONE_UPDATER_CONFIG_DOWNLOAD_FAILED);
-                i.putExtra(FairphoneUpdater2Activity.FAIRPHONE_UPDATER_CONFIG_DOWNLOAD_LINK, downloadLink);
+                Intent i = new Intent(FairphoneUpdater.FAIRPHONE_UPDATER_CONFIG_DOWNLOAD_FAILED);
+                i.putExtra(FairphoneUpdater.FAIRPHONE_UPDATER_CONFIG_DOWNLOAD_LINK, downloadLink);
                 sendBroadcast(i);
             }
         }
@@ -192,7 +194,7 @@ public class UpdaterService extends Service
         Resources resources = context.getResources();
 
         StringBuilder sb = new StringBuilder();
-        if (FairphoneUpdater2Activity.DEV_MODE_ENABLED)
+        if (FairphoneUpdater.DEV_MODE_ENABLED)
         {
             sb.append(resources.getString(R.string.downloadDevUrl));
         }
@@ -278,10 +280,10 @@ public class UpdaterService extends Service
                         .setContentTitle(context.getResources().getString(R.string.app_name))
                         .setContentText(context.getResources().getString(R.string.fairphone_update_message));
 
-        Intent resultIntent = new Intent(context, FairphoneUpdater2Activity.class);
+        Intent resultIntent = new Intent(context, FairphoneUpdater.class);
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
 
-        stackBuilder.addParentStack(FairphoneUpdater2Activity.class);
+        stackBuilder.addParentStack(FairphoneUpdater.class);
 
         stackBuilder.addNextIntent(resultIntent);
         PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -364,7 +366,7 @@ public class UpdaterService extends Service
                 setNotification(context);
             }
             // to update the activity
-            Intent updateIntent = new Intent(FairphoneUpdater2Activity.FAIRPHONE_UPDATER_NEW_VERSION_RECEIVED);
+            Intent updateIntent = new Intent(FairphoneUpdater.FAIRPHONE_UPDATER_NEW_VERSION_RECEIVED);
             context.sendBroadcast(updateIntent);
         }
     }

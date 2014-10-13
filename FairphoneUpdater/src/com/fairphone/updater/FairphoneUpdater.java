@@ -17,14 +17,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
+import com.fairphone.updater.data.UpdaterData;
+import com.fairphone.updater.data.Version;
+import com.fairphone.updater.data.VersionParserHelper;
 import com.fairphone.updater.fragments.DownloadAndRestartFragment;
 import com.fairphone.updater.fragments.MainFragment;
 import com.fairphone.updater.tools.Utils;
 
-public class FairphoneUpdater2Activity extends FragmentActivity
+public class FairphoneUpdater extends FragmentActivity
 {
 
-    private static final String TAG = FairphoneUpdater2Activity.class.getSimpleName();
+    private static final String TAG = FairphoneUpdater.class.getSimpleName();
 
     public static final String FAIRPHONE_UPDATER_NEW_VERSION_RECEIVED = "FairphoneUpdater.NEW.VERSION.RECEIVED";
 

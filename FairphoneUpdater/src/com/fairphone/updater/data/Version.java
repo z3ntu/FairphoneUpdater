@@ -14,11 +14,16 @@
  * limitations under the License.
  */
 
-package com.fairphone.updater;
+package com.fairphone.updater.data;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
+import com.fairphone.updater.FairphoneUpdater;
+import com.fairphone.updater.R;
+import com.fairphone.updater.R.integer;
+import com.fairphone.updater.R.string;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -101,7 +106,7 @@ public class Version implements Comparable<Version>
     public static Version getVersionFromSharedPreferences(Context context)
     {
         Version version = new Version();
-        SharedPreferences sharedPrefs = context.getSharedPreferences(FairphoneUpdater2Activity.FAIRPHONE_UPDATER_PREFERENCES, Context.MODE_PRIVATE);
+        SharedPreferences sharedPrefs = context.getSharedPreferences(FairphoneUpdater.FAIRPHONE_UPDATER_PREFERENCES, Context.MODE_PRIVATE);
         Resources resources = context.getResources();
 
         int defaultVersionNumber = resources.getInteger(R.integer.defaultVersionNumber);
@@ -134,7 +139,7 @@ public class Version implements Comparable<Version>
 
     public void saveToSharedPreferences(Context context)
     {
-        SharedPreferences sharedPrefs = context.getSharedPreferences(FairphoneUpdater2Activity.FAIRPHONE_UPDATER_PREFERENCES, Context.MODE_PRIVATE);
+        SharedPreferences sharedPrefs = context.getSharedPreferences(FairphoneUpdater.FAIRPHONE_UPDATER_PREFERENCES, Context.MODE_PRIVATE);
 
         Editor editor = sharedPrefs.edit();
         editor.putInt(FAIRPHONE_VERSION_NUMBER, getNumber());

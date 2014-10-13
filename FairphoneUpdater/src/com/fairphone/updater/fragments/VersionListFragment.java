@@ -12,10 +12,10 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.fairphone.updater.FairphoneUpdater2Activity.HeaderType;
+import com.fairphone.updater.FairphoneUpdater.HeaderType;
 import com.fairphone.updater.R;
-import com.fairphone.updater.UpdaterData;
-import com.fairphone.updater.Version;
+import com.fairphone.updater.data.UpdaterData;
+import com.fairphone.updater.data.Version;
 import com.fairphone.updater.fragments.VersionDetailFragment.DetailLayoutType;
 
 public class VersionListFragment extends BaseFragment
