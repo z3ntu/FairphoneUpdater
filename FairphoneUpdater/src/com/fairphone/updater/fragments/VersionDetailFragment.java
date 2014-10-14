@@ -380,8 +380,6 @@ public class VersionDetailFragment extends BaseFragment
                     {
                         // close dialog
                     }
-                })
-
-                .setIcon(android.R.drawable.ic_dialog_alert).show();
+                }).show();
     }
 }
