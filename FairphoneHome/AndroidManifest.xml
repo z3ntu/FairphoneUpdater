@@ -20,7 +20,7 @@
 <manifest
     xmlns:android="http://schemas.android.com/apk/res/android"
     package="org.fairphone.launcher"
-    android:versionCode="3"
+    android:versionCode="4"
     android:versionName="FP-1.7" >
     
     <uses-sdk android:minSdkVersion="16" android:targetSdkVersion="17"/>

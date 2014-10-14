@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.fairphone.updater"
-    android:versionCode="5"
-    android:versionName="FP-1.8" >
+    android:versionCode="4"
+    android:versionName="FP-1.7" >
 
     <uses-sdk
         android:minSdkVersion="17"
