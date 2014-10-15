@@ -33,7 +33,6 @@ public class VersionListFragment extends BaseFragment
     private LinearLayout mVersionListContainer;
     private TextView mLatestVersionText;
     private TextView mInstalledIndicator;
-    private Button mInstallUpdateVersionButton;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -73,7 +72,6 @@ public class VersionListFragment extends BaseFragment
 
                 mLatestVersionText = (TextView) view.findViewById(R.id.other_os_options_fairphone_version_text);
                 mInstalledIndicator = (TextView) view.findViewById(R.id.other_os_options_fairphone_installed_indicator_text);
-                mInstallUpdateVersionButton = (Button) view.findViewById(R.id.install_update_fairphone_os_button);
 
                 setupFairphoneLatestVersion();
                 setupFairphoneVersions(container);
@@ -138,29 +136,10 @@ public class VersionListFragment extends BaseFragment
         if (mainActivity.getDeviceVersion().compareTo(latestFairphoneVersion) == 0)
         {
             mInstalledIndicator.setVisibility(View.VISIBLE);
-            mInstallUpdateVersionButton.setVisibility(View.GONE);
         }
         else
         {
             mInstalledIndicator.setVisibility(View.GONE);
-            mInstallUpdateVersionButton.setVisibility(View.VISIBLE);
-
-            mInstallUpdateVersionButton.setOnClickListener(new OnClickListener()
-            {
-
-                @Override
-                public void onClick(View v)
-                {
-                    if (latestFairphoneVersion != null)
-                    {
-                        VersionDetailFragment versionDetail = new VersionDetailFragment();
-
-                        versionDetail.setupFragment(latestFairphoneVersion, DetailLayoutType.FAIRPHONE);
-
-                        mainActivity.changeFragment(versionDetail);
-                    }
-                }
-            });
         }
 
         mLatestVersionText.setOnClickListener(new OnClickListener()

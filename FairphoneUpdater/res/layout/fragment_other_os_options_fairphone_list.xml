@@ -35,15 +35,6 @@
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
             android:text="@string/installed" />
-
-        <Button
-            android:id="@+id/install_update_fairphone_os_button"
-            style="@style/ButtonWhiteBlue"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/main_padding_small"
-            android:text="@string/install_update"
-            android:visibility="gone" />
     </LinearLayout>
 
     <TextView
