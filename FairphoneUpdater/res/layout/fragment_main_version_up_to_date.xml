@@ -23,8 +23,7 @@
             style="@style/TextLight24BlueDark"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:text="Fairphone version name v0.0" />
+            android:gravity="center_horizontal" />
 
         <TextView
             style="@style/TextRegular14GreyLight"

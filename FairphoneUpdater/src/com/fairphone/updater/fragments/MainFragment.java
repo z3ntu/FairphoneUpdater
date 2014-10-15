@@ -17,9 +17,10 @@ import android.widget.Toast;
 import com.fairphone.updater.FairphoneUpdater;
 import com.fairphone.updater.FairphoneUpdater.HeaderType;
 import com.fairphone.updater.FairphoneUpdater.UpdaterState;
+import com.fairphone.updater.R;
 import com.fairphone.updater.data.UpdaterData;
 import com.fairphone.updater.data.Version;
-import com.fairphone.updater.R;
+import com.fairphone.updater.fragments.VersionDetailFragment.DetailLayoutType;
 
 public class MainFragment extends BaseFragment
 {
@@ -34,6 +35,7 @@ public class MainFragment extends BaseFragment
     private Button mOtherOSOptionsButton;
     private Version mDeviceVersion;
     private BroadcastReceiver newVersionbroadcastReceiver;
+    private LinearLayout mCurrentVersionGroup;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -41,7 +43,7 @@ public class MainFragment extends BaseFragment
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_main, container, false);
 
-        setupLayout(view);
+        setupLayout(inflater, view);
 
         return view;
     }
@@ -58,8 +60,10 @@ public class MainFragment extends BaseFragment
         }
     }
 
-    private void setupLayout(View view)
+    private void setupLayout(LayoutInflater inflater, View view)
     {
+        setupCurrentVersionGroup(inflater, view);
+
         // Version up to date group
         mVersionUpToDateGroup = (LinearLayout) view.findViewById(R.id.version_up_to_date_group);
         mVersionUpToDateCurrentVersionNameText = (TextView) view.findViewById(R.id.version_up_to_date_current_version_name_text);
@@ -73,6 +77,26 @@ public class MainFragment extends BaseFragment
         // Other OS Options group
         mOtherOSOptionsGroup = (LinearLayout) view.findViewById(R.id.other_os_options_group);
         mOtherOSOptionsButton = (Button) view.findViewById(R.id.other_os_options_button);
+    }
+
+    private void setupCurrentVersionGroup(LayoutInflater inflater, View view)
+    {
+        mCurrentVersionGroup = (LinearLayout) view.findViewById(R.id.current_version_group);
+
+        View updateGroupView = null;
+        if (Version.IMAGE_TYPE_FAIRPHONE.equalsIgnoreCase(mainActivity.getDeviceVersion().getImageType()))
+        {
+            updateGroupView = inflater.inflate(R.layout.fragment_main_update_available_fairphone, null);
+        }
+        else if (Version.IMAGE_TYPE_AOSP.equalsIgnoreCase(mainActivity.getDeviceVersion().getImageType()))
+        {
+            updateGroupView = inflater.inflate(R.layout.fragment_main_update_available_android, null);
+        }
+        if (updateGroupView != null)
+        {
+            updateGroupView.setLayoutParams(mCurrentVersionGroup.getLayoutParams());
+            mCurrentVersionGroup.addView(updateGroupView);
+        }
     }
 
     private void updateOtherOSOptionsGroup()
@@ -131,11 +155,26 @@ public class MainFragment extends BaseFragment
                 Version latestVersion = mainActivity.getLatestVersion();
                 if (latestVersion != null)
                 {
-                    fragment.setupFragment(latestVersion, VersionDetailFragment.DetailLayoutType.UPDATE);
+
+                    fragment.setupFragment(latestVersion, getDetailLayoutFromDeviceVersion(latestVersion));
                     mainActivity.changeFragment(fragment);
                 }
             }
         });
+    }
+
+    private VersionDetailFragment.DetailLayoutType getDetailLayoutFromDeviceVersion(Version latestVersion)
+    {
+        VersionDetailFragment.DetailLayoutType type = DetailLayoutType.UPDATE_FAIRPHONE;
+        if (Version.IMAGE_TYPE_FAIRPHONE.equalsIgnoreCase(latestVersion.getImageType()))
+        {
+            type = DetailLayoutType.UPDATE_FAIRPHONE;
+        }
+        else if (Version.IMAGE_TYPE_AOSP.equalsIgnoreCase(latestVersion.getImageType()))
+        {
+            type = DetailLayoutType.UPDATE_ANDROID;
+        }
+        return type;
     }
 
     private void updateCurrentVersionGroup()
@@ -205,8 +244,8 @@ public class MainFragment extends BaseFragment
                 else if (FairphoneUpdater.FAIRPHONE_UPDATER_CONFIG_DOWNLOAD_FAILED.equals(action))
                 {
                     String link = intent.getStringExtra(FairphoneUpdater.FAIRPHONE_UPDATER_CONFIG_DOWNLOAD_LINK);
-                    Toast.makeText(context.getApplicationContext(), context.getResources().getString(R.string.config_file_download_link_error_message) + " " + link,
-                            Toast.LENGTH_LONG).show();
+                    Toast.makeText(context.getApplicationContext(),
+                            context.getResources().getString(R.string.config_file_download_link_error_message) + " " + link, Toast.LENGTH_LONG).show();
                 }
             }
         };

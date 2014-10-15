@@ -38,7 +38,7 @@ public class VersionDetailFragment extends BaseFragment
 
     public static enum DetailLayoutType
     {
-        UPDATE, FAIRPHONE, ANDROID
+        UPDATE_FAIRPHONE, UPDATE_ANDROID, FAIRPHONE, ANDROID
     }
 
     private HeaderType mHeaderType;
@@ -73,8 +73,11 @@ public class VersionDetailFragment extends BaseFragment
         View view = null;
         switch (mDetailLayoutType)
         {
-            case UPDATE:
-                view = inflater.inflate(R.layout.fragment_version_detail_update, container, false);
+            case UPDATE_FAIRPHONE:
+                view = inflater.inflate(R.layout.fragment_version_detail_update_fairphone, container, false);
+                break;
+            case UPDATE_ANDROID:
+                view = inflater.inflate(R.layout.fragment_version_detail_update_android, container, false);
                 break;
             case ANDROID:
                 view = inflater.inflate(R.layout.fragment_version_detail_android, container, false);
@@ -168,7 +171,8 @@ public class VersionDetailFragment extends BaseFragment
 
         switch (mDetailLayoutType)
         {
-            case UPDATE:
+            case UPDATE_FAIRPHONE:
+            case UPDATE_ANDROID:
                 mHeaderText = resources.getString(R.string.install_update);
                 mVersionDetailsTitle = resources.getString(R.string.update_version);
                 mIsOSChange = false;

@@ -13,8 +13,7 @@
         android:orientation="vertical" >
 
         <include layout="@layout/fragment_main_version_up_to_date" />
-
-        <include layout="@layout/fragment_main_update_available" />
+                
     </LinearLayout>
 
     <LinearLayout

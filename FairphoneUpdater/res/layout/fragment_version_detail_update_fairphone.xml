@@ -52,7 +52,7 @@
             style="@style/TextBold16BlueDark"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Before you install please make sure" />
+            android:text="@string/before_you_update" />
 
         <ScrollView
             android:layout_width="match_parent"
@@ -75,6 +75,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/main_padding"
-        android:text="Install Update" />
+        android:text="@string/install_update" />
 
 </LinearLayout>

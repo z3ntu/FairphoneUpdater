@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/blue"
+    android:background="@color/green"
     android:gravity="center_horizontal"
     android:orientation="vertical"
     android:paddingBottom="@dimen/main_padding"
@@ -49,7 +49,7 @@
         android:orientation="vertical" >
 
         <TextView
-            style="@style/TextBold16BlueDark"
+            style="@style/TextBold16GreenDark"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/before_you_update" />
@@ -62,36 +62,19 @@
 
             <TextView
                 android:id="@+id/version_warnings_text"
-                style="@style/TextRegular14BlueDark"
+                style="@style/TextRegular14GreenDark"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal" />
         </ScrollView>
     </LinearLayout>
 
-    <FrameLayout
+    <Button
+        android:id="@+id/download_and_update_button"
+        style="@style/ButtonWhiteGreen"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
-
-        <Button
-            android:id="@+id/download_and_update_button"
-            style="@style/ButtonWhiteBlue"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/main_padding"
-            android:paddingBottom="25dp"
-            android:paddingTop="5dp"
-            android:text="@string/install_update" />
-
-        <TextView
-            android:id="@+id/download_and_update_button_version_text"
-            style="@style/TextRegular16Blue"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|center_horizontal"
-            android:clickable="false"
-            android:focusable="false"
-            android:paddingBottom="5dp" />
-    </FrameLayout>
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/main_padding"
+        android:text="@string/install_update" />
 
 </LinearLayout>

@@ -57,11 +57,11 @@ public class ConfirmationPopupDialog extends DialogFragment implements OnEditorA
 
         switch (mLayoutType)
         {
+            case UPDATE_ANDROID:
             case ANDROID:
                 view = inflater.inflate(R.layout.fragment_download_android_confirmation_popup, container);
-
                 break;
-            case UPDATE:
+            case UPDATE_FAIRPHONE:
             case FAIRPHONE:
             default:
                 view = inflater.inflate(R.layout.fragment_download_fairphone_confirmation_popup, container);

@@ -52,7 +52,7 @@
             style="@style/TextBold16GreenDark"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Before you install please make sure" />
+            android:text="@string/before_you_update" />
 
         <ScrollView
             android:layout_width="match_parent"
@@ -81,7 +81,7 @@
             android:layout_marginTop="@dimen/main_padding"
             android:paddingBottom="25dp"
             android:paddingTop="5dp"
-            android:text="Install Update" />
+            android:text="@string/install_update" />
 
         <TextView
             android:id="@+id/download_and_update_button_version_text"
@@ -91,8 +91,7 @@
             android:layout_gravity="bottom|center_horizontal"
             android:clickable="false"
             android:focusable="false"
-            android:paddingBottom="5dp"
-            android:text="Fairphone Peanuts v0.7" />
+            android:paddingBottom="5dp" />
     </FrameLayout>
 
 </LinearLayout>
