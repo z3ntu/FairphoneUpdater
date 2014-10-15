@@ -316,7 +316,7 @@ public class VersionDetailFragment extends BaseFragment
                         if (isOk)
                         {
                             mainActivity.setSelectedVersion(mSelectedVersion != null ? mSelectedVersion : mainActivity.getLatestVersion());
-                            showEraseAllDataWarning();
+                            showEraseAllDataWarning(true);
                         }
                     }
                 });
@@ -324,7 +324,7 @@ public class VersionDetailFragment extends BaseFragment
             else
             {
                 mainActivity.setSelectedVersion(mSelectedVersion != null ? mSelectedVersion : mainActivity.getLatestVersion());
-                showEraseAllDataWarning();
+                showEraseAllDataWarning(false);
             }
         }
         else
@@ -333,12 +333,12 @@ public class VersionDetailFragment extends BaseFragment
         }
     }
 
-    private void showEraseAllDataWarning()
+    private void showEraseAllDataWarning(boolean bypassEraseAllWarning)
     {
 
         final UpdaterState currentState = mainActivity.getCurrentUpdaterState();
 
-        if (mSelectedVersion.hasEraseAllPartitionWarning())
+        if (mSelectedVersion.hasEraseAllPartitionWarning() && !bypassEraseAllWarning)
         {
             new AlertDialog.Builder(mainActivity).setTitle(android.R.string.dialog_alert_title).setMessage(R.string.erase_all_partitions_warning_message)
                     .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener()

@@ -4,10 +4,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
 
+import android.app.AlertDialog;
 import android.app.DownloadManager;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Resources;
@@ -94,7 +96,7 @@ public class DownloadAndRestartFragment extends BaseFragment
                     @Override
                     public void onClick(View v)
                     {
-                        startPreInstall();
+                        showEraseAllDataWarning();
                     }
                 });
 
@@ -116,6 +118,33 @@ public class DownloadAndRestartFragment extends BaseFragment
                 abortUpdateProccess();
             }
         });
+    }
+
+    private void showEraseAllDataWarning()
+    {
+        if (mSelectedVersion.hasEraseAllPartitionWarning())
+        {
+            new AlertDialog.Builder(mainActivity).setTitle(android.R.string.dialog_alert_title).setMessage(R.string.erase_all_partitions_warning_message)
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener()
+                    {
+
+                        @Override
+                        public void onClick(DialogInterface dialog, int which)
+                        {
+                            startPreInstall();
+                        }
+                    }).setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener()
+                    {
+                        public void onClick(DialogInterface dialog, int which)
+                        {
+                            // do nothing
+                        }
+                    }).show();
+        }
+        else
+        {
+            startPreInstall();
+        }
     }
 
     private void updateHeader()
