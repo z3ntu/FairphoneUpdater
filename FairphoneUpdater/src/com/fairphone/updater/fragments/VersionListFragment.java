@@ -94,35 +94,39 @@ public class VersionListFragment extends BaseFragment
         LayoutInflater inflater = getActivity().getLayoutInflater();
 
         mVersionList = UpdaterData.getInstance().getFairphoneVersionList();
+        Version latestFairphoneVersion = UpdaterData.getInstance().getLatestVersion(Version.IMAGE_TYPE_FAIRPHONE);
 
         for (Version version : mVersionList)
         {
-            versionLayout = (Button) inflater.inflate(R.layout.fragment_other_os_options_fairphone_list_button, root, false);
-            versionLayout.setTag(version);
-            versionLayout.setClickable(true);
-
-            mVersionListContainer.addView(versionLayout);
-
-            versionLayout.setText(version.getName() + " " + version.getBuildNumber());
-
-            versionLayout.setOnClickListener(new OnClickListener()
+            if (version.compareTo(latestFairphoneVersion) != 0)
             {
-                @Override
-                public void onClick(View v)
+                versionLayout = (Button) inflater.inflate(R.layout.fragment_other_os_options_fairphone_list_button, root, false);
+                versionLayout.setTag(version);
+                versionLayout.setClickable(true);
+
+                mVersionListContainer.addView(versionLayout);
+
+                versionLayout.setText(version.getName() + " " + version.getBuildNumber());
+
+                versionLayout.setOnClickListener(new OnClickListener()
                 {
-                    Version selectedVersion = (Version) v.getTag();
-
-                    if (selectedVersion != null)
+                    @Override
+                    public void onClick(View v)
                     {
-                        VersionDetailFragment versionDetail = new VersionDetailFragment();
+                        Version selectedVersion = (Version) v.getTag();
 
-                        versionDetail.setupFragment(selectedVersion, DetailLayoutType.FAIRPHONE);
+                        if (selectedVersion != null)
+                        {
+                            VersionDetailFragment versionDetail = new VersionDetailFragment();
 
-                        mainActivity.changeFragment(versionDetail);
+                            versionDetail.setupFragment(selectedVersion, DetailLayoutType.FAIRPHONE);
+
+                            mainActivity.changeFragment(versionDetail);
+                        }
                     }
-                }
-            });
+                });
 
+            }
         }
     }
 
@@ -158,6 +162,23 @@ public class VersionListFragment extends BaseFragment
                 }
             });
         }
+
+        mLatestVersionText.setOnClickListener(new OnClickListener()
+        {
+
+            @Override
+            public void onClick(View v)
+            {
+                if (latestFairphoneVersion != null)
+                {
+                    VersionDetailFragment versionDetail = new VersionDetailFragment();
+
+                    versionDetail.setupFragment(latestFairphoneVersion, DetailLayoutType.FAIRPHONE);
+
+                    mainActivity.changeFragment(versionDetail);
+                }
+            }
+        });
     }
 
     private void setupAndroidVersions(ViewGroup root)
@@ -166,42 +187,46 @@ public class VersionListFragment extends BaseFragment
         LayoutInflater inflater = getActivity().getLayoutInflater();
 
         mVersionList = UpdaterData.getInstance().getAOSPVersionList();
+        Version latestAOSPVersion = UpdaterData.getInstance().getLatestVersion(Version.IMAGE_TYPE_AOSP);
 
         for (Version version : mVersionList)
         {
-            versionLayout = (Button) inflater.inflate(R.layout.fragment_other_os_options_android_list_button, root, false);
-            versionLayout.setTag(version);
-            versionLayout.setClickable(true);
-
-            mVersionListContainer.addView(versionLayout);
-
-            versionLayout.setText(version.getName() + " " + version.getBuildNumber());
-
-            versionLayout.setOnClickListener(new OnClickListener()
+            if (version.compareTo(latestAOSPVersion) != 0)
             {
+                versionLayout = (Button) inflater.inflate(R.layout.fragment_other_os_options_android_list_button, root, false);
+                versionLayout.setTag(version);
+                versionLayout.setClickable(true);
 
-                @Override
-                public void onClick(View v)
+                mVersionListContainer.addView(versionLayout);
+
+                versionLayout.setText(version.getName() + " " + version.getBuildNumber());
+
+                versionLayout.setOnClickListener(new OnClickListener()
                 {
-                    Version selectedVersion = (Version) v.getTag();
 
-                    if (selectedVersion != null)
+                    @Override
+                    public void onClick(View v)
                     {
-                        VersionDetailFragment versionDetail = new VersionDetailFragment();
+                        Version selectedVersion = (Version) v.getTag();
 
-                        versionDetail.setupFragment(selectedVersion, DetailLayoutType.ANDROID);
+                        if (selectedVersion != null)
+                        {
+                            VersionDetailFragment versionDetail = new VersionDetailFragment();
 
-                        mainActivity.changeFragment(versionDetail);
+                            versionDetail.setupFragment(selectedVersion, DetailLayoutType.ANDROID);
+
+                            mainActivity.changeFragment(versionDetail);
+                        }
                     }
-                }
-            });
+                });
 
+            }
         }
     }
 
     private void setupAndroidLatestVersion()
     {
-        Version latestAOSPVersion = UpdaterData.getInstance().getLatestVersion(Version.IMAGE_TYPE_AOSP);
+        final Version latestAOSPVersion = UpdaterData.getInstance().getLatestVersion(Version.IMAGE_TYPE_AOSP);
         mLatestVersionText.setText(latestAOSPVersion.getName() + " v" + latestAOSPVersion.getBuildNumber());
 
         if (mainActivity.getDeviceVersion().compareTo(latestAOSPVersion) == 0)
@@ -212,6 +237,23 @@ public class VersionListFragment extends BaseFragment
         {
             mInstalledIndicator.setVisibility(View.GONE);
         }
+
+        mLatestVersionText.setOnClickListener(new OnClickListener()
+        {
+
+            @Override
+            public void onClick(View v)
+            {
+                if (latestAOSPVersion != null)
+                {
+                    VersionDetailFragment versionDetail = new VersionDetailFragment();
+
+                    versionDetail.setupFragment(latestAOSPVersion, DetailLayoutType.ANDROID);
+
+                    mainActivity.changeFragment(versionDetail);
+                }
+            }
+        });
     }
 
     public void setupFragment(ListLayoutType listType)
