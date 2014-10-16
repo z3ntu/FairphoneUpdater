@@ -129,7 +129,8 @@ public class VersionDetailFragment extends BaseFragment
         if (mSelectedVersion != null)
         {
             String warnings = mSelectedVersion.getWarningNotes(Locale.getDefault().getLanguage());
-            if (!TextUtils.isEmpty(warnings))
+            // FIXME Hide the warning for now
+            if (!TextUtils.isEmpty(warnings) && false)
             {
                 mVersion_warnings_group.setVisibility(View.VISIBLE);
                 mVersion_warnings_text.setText(warnings);
