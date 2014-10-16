@@ -9,6 +9,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.View;
@@ -40,8 +41,6 @@ public class FairphoneUpdater extends FragmentActivity
     public static final String PREFERENCE_SELECTED_VERSION_NUMBER = "SelectedVersionNumber";
 
     public static final String PREFERENCE_SELECTED_VERSION_TYPE = "SelectedVersionImageType";
-
-    protected static final String PREFERENCE_SELECTED_VERSION_BEGIN_DOWNLOAD = "SelectedVersionBeginDownload";
 
     public static final String FAIRPHONE_UPDATER_CONFIG_DOWNLOAD_FAILED = "FairphoneUpdater.Config.File.Download.FAILED";
 
@@ -221,6 +220,11 @@ public class FairphoneUpdater extends FragmentActivity
         {
             ((DownloadAndRestartFragment) fragment).abortUpdateProccess();
         }
+        else if (fragment != null && fragment instanceof MainFragment)
+        {
+            clearBackStack();
+            finish();
+        }
         else
         {
             super.onBackPressed();
@@ -351,9 +355,47 @@ public class FairphoneUpdater extends FragmentActivity
         }
     }
 
-    public void removeLastFragment()
+    public void removeLastFragment(boolean forceFinish)
     {
-        getSupportFragmentManager().popBackStackImmediate();
+        boolean popSuccess = getSupportFragmentManager().popBackStackImmediate();
+        if (forceFinish && !popSuccess)
+        {
+            finish();
+        }
+    }
+
+    public int getFragmentCount()
+    {
+        FragmentManager fragManager = getSupportFragmentManager();
+        List<Fragment> allFragments = fragManager.getFragments();
+        int listSize = 0;
+        if (allFragments != null)
+        {
+            listSize = allFragments.size();
+        }
+
+        Log.d(TAG, "Fragment list size: " + listSize);
+        return listSize;
+    }
+
+    public int getBackStackSize()
+    {
+        FragmentManager fragManager = getSupportFragmentManager();
+        int backStackSize = fragManager.getBackStackEntryCount();
+
+        Log.d(TAG, "Back stack size: " + backStackSize);
+        return backStackSize;
+    }
+
+    public void clearBackStack()
+    {
+        FragmentManager fragManager = getSupportFragmentManager();
+        int backStackSize = fragManager.getBackStackEntryCount();
+
+        for (int i = 0; i < backStackSize; i++)
+        {
+            removeLastFragment(false);
+        }
     }
 
     public Fragment getTopFragment()
@@ -497,20 +539,6 @@ public class FairphoneUpdater extends FragmentActivity
         mLatestVersion = isConfigLoaded ? UpdaterData.getInstance().getLatestVersion(mDeviceVersion.getImageType()) : new Version();
 
         getSelectedVersionFromSharedPreferences();
-
-        // if (mSharedPreferences
-        // .getBoolean(
-        // FairphoneUpdater2Activity.PREFERENCE_SELECTED_VERSION_BEGIN_DOWNLOAD,
-        // false)) {
-        // Editor editor = mSharedPreferences.edit();
-        // editor.putBoolean(
-        // FairphoneUpdater2Activity.PREFERENCE_SELECTED_VERSION_BEGIN_DOWNLOAD,
-        // false);
-        // editor.commit();
-        // startUpdateDownload();
-        // } else {
-        // changeFragment(getFragmentFromState());
-        // }
 
         changeFragment(getFragmentFromState());
     }

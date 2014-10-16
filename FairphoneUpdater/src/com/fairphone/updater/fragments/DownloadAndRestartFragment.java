@@ -104,7 +104,7 @@ public class DownloadAndRestartFragment extends BaseFragment
 
             default:
                 Log.w(TAG, "Wrong State: " + state + "\nOnly DOWNLOAD and PREINSTALL are supported");
-                mainActivity.removeLastFragment();
+                mainActivity.removeLastFragment(true);
                 return;
 
         }
@@ -197,7 +197,7 @@ public class DownloadAndRestartFragment extends BaseFragment
                             {
                                 downloading = false;
                                 Toast.makeText(mainActivity, getResources().getString(R.string.no_space_available_sd_card_message), Toast.LENGTH_LONG).show();
-                                mainActivity.changeState(UpdaterState.NORMAL);
+                                abortUpdateProccess();
                             }
 
                             if (cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS)) == DownloadManager.STATUS_SUCCESSFUL)
@@ -352,9 +352,13 @@ public class DownloadAndRestartFragment extends BaseFragment
                         {
                             Toast.makeText(mainActivity, resources.getString(R.string.error_downloading), Toast.LENGTH_LONG).show();
                         }
-                        mainActivity.changeState(UpdaterState.NORMAL);
+                        abortUpdateProccess();
                         break;
                 }
+            }
+            else
+            {
+                abortUpdateProccess();
             }
 
             cursor.close();
@@ -396,7 +400,7 @@ public class DownloadAndRestartFragment extends BaseFragment
         fileDir.delete();
 
         // else if the perfect case does not happen, reset the download
-        mainActivity.changeState(UpdaterState.NORMAL);
+        abortUpdateProccess();
     }
 
     // ************************************************************************************
@@ -415,7 +419,7 @@ public class DownloadAndRestartFragment extends BaseFragment
 
             updateDir.delete();
 
-            mainActivity.changeState(UpdaterState.NORMAL);
+            abortUpdateProccess();
 
             return;
         }
@@ -428,7 +432,7 @@ public class DownloadAndRestartFragment extends BaseFragment
             // invalid download Id
             if (mLatestUpdateDownloadId == 0)
             {
-                mainActivity.changeState(UpdaterState.NORMAL);
+                abortUpdateProccess();
                 return;
             }
         }
@@ -517,7 +521,7 @@ public class DownloadAndRestartFragment extends BaseFragment
         }
         else
         {
-            // TODO: show warning
+            abortUpdateProccess();
         }
     }
 
@@ -525,8 +529,15 @@ public class DownloadAndRestartFragment extends BaseFragment
     {
         if (canCopyToCache())
         {
-            CopyFileToCacheTask copyTask = new CopyFileToCacheTask();
-            copyTask.execute(file.getPath(), Environment.getDownloadCacheDirectory() + "/" + VersionParserHelper.getNameFromVersion(mSelectedVersion));
+            if (RootTools.isAccessGiven())
+            {
+                CopyFileToCacheTask copyTask = new CopyFileToCacheTask();
+                copyTask.execute(file.getPath(), Environment.getDownloadCacheDirectory() + "/" + VersionParserHelper.getNameFromVersion(mSelectedVersion));
+            }
+            else
+            {
+                abortUpdateProccess();
+            }
         }
         else
         {
@@ -667,8 +678,17 @@ public class DownloadAndRestartFragment extends BaseFragment
     public void abortUpdateProccess()
     {
         removeLastUpdateDownload();
-        mainActivity.updateStatePreference(UpdaterState.NORMAL);
-        mainActivity.removeLastFragment();
+
+        if (mainActivity.getFragmentCount() == 1 && mainActivity.getBackStackSize() == 0)
+        {
+            mainActivity.removeLastFragment(false);
+            mainActivity.changeState(UpdaterState.NORMAL);
+        }
+        else
+        {
+            mainActivity.removeLastFragment(false);
+            mainActivity.updateStatePreference(UpdaterState.NORMAL);
+        }
     }
 
 }
