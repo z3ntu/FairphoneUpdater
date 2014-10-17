@@ -20,17 +20,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.fairphone.updater.FairphoneUpdater;
-import com.fairphone.updater.R;
-import com.fairphone.updater.R.integer;
-import com.fairphone.updater.R.string;
-
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.res.Resources;
 import android.text.TextUtils;
 import android.util.Log;
+
+import com.fairphone.updater.FairphoneUpdater;
+import com.fairphone.updater.R;
 
 public class Version implements Comparable<Version>
 {
@@ -83,13 +81,10 @@ public class Version implements Comparable<Version>
 
     private boolean mErasePartitionsWarning;
 
-    private Map<String, String> mWarningNotesMap;
-
     public Version()
     {
         mDependencies = new ArrayList<Integer>();
         mReleaseNotesMap = new HashMap<String, String>();
-        mWarningNotesMap = new HashMap<String, String>();
 
         mNumber = 0;
         mName = "";
@@ -286,31 +281,6 @@ public class Version implements Comparable<Version>
     public void resetReleaseNotes()
     {
         mReleaseNotesMap.clear();
-    }
-
-    public void setWarningNotes(String language, String releaseNotes)
-    {
-        mWarningNotesMap.put(language.toLowerCase(), releaseNotes);
-    }
-
-    public String getWarningNotes(String language)
-    {
-        String warningNotes = "";
-
-        if (mWarningNotesMap.containsKey(language))
-        {
-            warningNotes = mWarningNotesMap.get(language);
-        }
-        else if (mWarningNotesMap.containsKey(DEFAULT_NOTES_LANG))
-        {
-            warningNotes = mWarningNotesMap.get(DEFAULT_NOTES_LANG);
-        }
-        return TextUtils.isEmpty(warningNotes) ? "" : warningNotes;
-    }
-
-    public void resetWarningNotes()
-    {
-        mWarningNotesMap.clear();
     }
 
     public void setReleaseDate(String releaseDate)

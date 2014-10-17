@@ -29,14 +29,12 @@ import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
 
-import com.fairphone.updater.R;
-import com.fairphone.updater.R.integer;
-import com.fairphone.updater.R.string;
-
 import android.content.Context;
 import android.content.res.Resources;
 import android.os.Environment;
 import android.util.Log;
+
+import com.fairphone.updater.R;
 
 public class VersionParserHelper
 {
@@ -143,7 +141,7 @@ public class VersionParserHelper
 
     public enum XML_TAGS
     {
-        RELEASES, AOSP, FAIRPHONE, VERSION, NAME, BUILD_NUMBER, ANDROID_VERSION, RELEASE_NOTES, WARNING_NOTES, RELEASE_DATE, MD5SUM, THUMBNAIL_LINK, UPDATE_LINK, ERASE_DATA_WARNING, DEPENDENCIES;
+        RELEASES, AOSP, FAIRPHONE, VERSION, NAME, BUILD_NUMBER, ANDROID_VERSION, RELEASE_NOTES, RELEASE_DATE, MD5SUM, THUMBNAIL_LINK, UPDATE_LINK, ERASE_DATA_WARNING, DEPENDENCIES;
     }
 
     // @formatter:on
@@ -267,14 +265,6 @@ public class VersionParserHelper
         else if (tagName.equalsIgnoreCase(XML_TAGS.RELEASE_NOTES.name() + "_" + Locale.getDefault().getLanguage()))
         {
             version.setReleaseNotes(Locale.getDefault().getLanguage(), xpp.nextText());
-        }
-        else if (tagName.equalsIgnoreCase(XML_TAGS.WARNING_NOTES.name()))
-        {
-            version.setWarningNotes(Version.DEFAULT_NOTES_LANG, xpp.nextText());
-        }
-        else if (tagName.equalsIgnoreCase(XML_TAGS.WARNING_NOTES.name() + "_" + Locale.getDefault().getLanguage()))
-        {
-            version.setWarningNotes(Locale.getDefault().getLanguage(), xpp.nextText());
         }
         else if (tagName.equalsIgnoreCase(XML_TAGS.RELEASE_DATE.name()))
         {

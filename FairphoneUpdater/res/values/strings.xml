@@ -38,7 +38,6 @@
     <string name="your_os_is_up_to_date">Your OS is up to date</string>
     <string name="want_to_change_your_os">Want to change your OS?</string>
     <string name="update_is_available">Update is available</string>
-    <string name="before_you_update">Before you update, make sure&#8230;</string>
     <string name="please_be_patient">Please be patient&#8230;</string>
     <string name="config_file_download_error_message">Error downloading config file.</string>
     <string name="config_file_download_link_error_message">Error downloading config file. Link used:</string>

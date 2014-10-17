@@ -13,13 +13,11 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.FragmentManager;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -45,8 +43,6 @@ public class VersionDetailFragment extends BaseFragment
     private String mHeaderText;
     private TextView mVersion_details_title_text;
     private TextView mVersion_release_notes_text;
-    private LinearLayout mVersion_warnings_group;
-    private TextView mVersion_warnings_text;
     private Button mDownload_and_update_button;
     private TextView mVersion_details_name_text;
     private String mVersionDetailsTitle;
@@ -97,10 +93,6 @@ public class VersionDetailFragment extends BaseFragment
 
         mVersion_release_notes_text = (TextView) view.findViewById(R.id.version_release_notes_text);
 
-        // Version warnings group
-        mVersion_warnings_group = (LinearLayout) view.findViewById(R.id.version_warnings_group);
-        mVersion_warnings_text = (TextView) view.findViewById(R.id.version_warnings_text);
-
         mDownload_and_update_button = (Button) view.findViewById(R.id.download_and_update_button);
         mDownload_and_update_button_version_text = (TextView) view.findViewById(R.id.download_and_update_button_version_text);
     }
@@ -139,24 +131,6 @@ public class VersionDetailFragment extends BaseFragment
             default:
                 mDownload_and_update_button.setText(R.string.install);
                 break;
-        }
-    }
-
-    private void updateVersionWarningsGroup()
-    {
-        if (mSelectedVersion != null)
-        {
-            String warnings = mSelectedVersion.getWarningNotes(Locale.getDefault().getLanguage());
-            // FIXME Hide the warning for now
-            if (!TextUtils.isEmpty(warnings) && false)
-            {
-                mVersion_warnings_group.setVisibility(View.VISIBLE);
-                mVersion_warnings_text.setText(warnings);
-            }
-            else
-            {
-                mVersion_warnings_group.setVisibility(View.GONE);
-            }
         }
     }
 
@@ -308,7 +282,6 @@ public class VersionDetailFragment extends BaseFragment
         mainActivity.updateHeader(mHeaderType, mHeaderText);
         updateVersionName();
         updateReleaseNotesText();
-        updateVersionWarningsGroup();
         setupDownloadAndUpdateButton();
     }
 
