@@ -33,6 +33,16 @@
         android:text="@string/an_older_version_of_os" />
 
     <TextView
+        android:id="@+id/erase_all_data_warning_text"
+        style="@style/TextBold14Red"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/alert_padding"
+        android:layout_marginTop="@dimen/alert_padding"
+        android:text="@string/erase_all_data_warning_message"
+        android:visibility="gone" />
+
+    <TextView
         style="@style/TextRegular14GreyLight"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

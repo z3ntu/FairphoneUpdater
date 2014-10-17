@@ -107,6 +107,8 @@ public class VersionDetailFragment extends BaseFragment
 
     private void setupDownloadAndUpdateButton()
     {
+        setDownloadAndUpdateButtonText();
+
         // This is only not null when coming from other OS options fragment
         if (mDownload_and_update_button_version_text != null)
         {
@@ -122,6 +124,22 @@ public class VersionDetailFragment extends BaseFragment
                 startVersionDownload();
             }
         });
+    }
+
+    private void setDownloadAndUpdateButtonText()
+    {
+        switch (mDetailLayoutType)
+        {
+            case UPDATE_ANDROID:
+            case UPDATE_FAIRPHONE:
+                mDownload_and_update_button.setText(R.string.install_update);
+                break;
+            case FAIRPHONE:
+            case ANDROID:
+            default:
+                mDownload_and_update_button.setText(R.string.install);
+                break;
+        }
     }
 
     private void updateVersionWarningsGroup()
@@ -294,10 +312,11 @@ public class VersionDetailFragment extends BaseFragment
         setupDownloadAndUpdateButton();
     }
 
-    private void showPopupDialog(String version, ConfirmationPopupDialogListener listener)
+    private void showPopupDialog(String version, boolean hasEraseAllDataWarning, ConfirmationPopupDialogListener listener)
     {
         FragmentManager fm = getActivity().getSupportFragmentManager();
-        ConfirmationPopupDialog popupDialog = new ConfirmationPopupDialog(version, mIsOSChange, mIsOlderVersion, mDetailLayoutType, listener);
+        ConfirmationPopupDialog popupDialog =
+                new ConfirmationPopupDialog(version, mIsOSChange, mIsOlderVersion, hasEraseAllDataWarning, mDetailLayoutType, listener);
         popupDialog.show(fm, version);
     }
 
@@ -308,7 +327,7 @@ public class VersionDetailFragment extends BaseFragment
         {
             if (mIsOSChange || mIsOlderVersion)
             {
-                showPopupDialog(mSelectedVersion.getName(), new ConfirmationPopupDialogListener()
+                showPopupDialog(mSelectedVersion.getName(), mSelectedVersion.hasEraseAllPartitionWarning(), new ConfirmationPopupDialogListener()
                 {
 
                     @Override

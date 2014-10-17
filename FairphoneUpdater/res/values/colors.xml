@@ -22,6 +22,7 @@
     <color name="green_dark">#17717A</color>
     <color name="green_light">#a0d7c4</color>
     <color name="green_transparent">#666BC1A3</color>
+    <color name="red">#c3474c</color>
 
     <!-- GOOGLE COLORS (DEPENDENCIES) -->
     <color name="google_blue">#33b5e5</color>

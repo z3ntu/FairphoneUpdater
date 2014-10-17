@@ -250,6 +250,10 @@
     <style name="TextBold14GreenDark" parent="@style/TextBold14">
         <item name="android:textColor">@color/green_dark</item>
     </style>
+    
+    <style name="TextBold14Red" parent="@style/TextBold14">
+        <item name="android:textColor">@color/red</item>
+    </style>
 
     <style name="TextBold16" parent="@style/TextBold">
         <item name="android:textSize">16sp</item>

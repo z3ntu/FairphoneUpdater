@@ -51,6 +51,7 @@
     <string name="no_space_available_cache_message">No space available on /cache.</string>
     <string name="invalid_md5_download_message">Invalid file downloaded: Wrong MD5</string>
     <string name="erase_all_partitions_warning_message">This update will erase all your data.\nDo you want to continue?</string>
+    <string name="erase_all_data_warning_message">This update will erase all your data.</string>
     <string name="wifi_discaimer_message">The file you’re trying to download is too large for mobile connections (~200MB). Please enable Wi-Fi connection and try again.</string>
     <string name="updater_google_apps_installing_description">Google apps installation is occurring on the background. Please try again later.</string>
 
