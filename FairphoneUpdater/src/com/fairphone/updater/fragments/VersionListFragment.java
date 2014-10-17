@@ -31,8 +31,8 @@ public class VersionListFragment extends BaseFragment
     private ListLayoutType mListLayoutType;
     private List<Version> mVersionList;
     private LinearLayout mVersionListContainer;
-    private TextView mLatestVersionText;
-    private TextView mInstalledIndicator;
+    private Button mLatestVersionDetailsButton;
+    private TextView mLatestVersionInstalledIndicator;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -57,8 +57,8 @@ public class VersionListFragment extends BaseFragment
 
                 mVersionListContainer = (LinearLayout) view.findViewById(R.id.version_list_container);
 
-                mLatestVersionText = (TextView) view.findViewById(R.id.other_os_options_android_version_text);
-                mInstalledIndicator = (TextView) view.findViewById(R.id.other_os_options_android_installed_indicator_text);
+                mLatestVersionDetailsButton = (Button) view.findViewById(R.id.other_os_options_android_latest_version_button);
+                mLatestVersionInstalledIndicator = (TextView) view.findViewById(R.id.other_os_options_android_version_installed_indicator_text);
 
                 setupAndroidLatestVersion();
                 setupAndroidVersions(container);
@@ -70,8 +70,8 @@ public class VersionListFragment extends BaseFragment
 
                 mVersionListContainer = (LinearLayout) view.findViewById(R.id.version_list_container);
 
-                mLatestVersionText = (TextView) view.findViewById(R.id.other_os_options_fairphone_version_text);
-                mInstalledIndicator = (TextView) view.findViewById(R.id.other_os_options_fairphone_installed_indicator_text);
+                mLatestVersionDetailsButton = (Button) view.findViewById(R.id.other_os_options_fairphone_latest_version_button);
+                mLatestVersionInstalledIndicator = (TextView) view.findViewById(R.id.other_os_options_fairphone_version_installed_indicator_text);
 
                 setupFairphoneLatestVersion();
                 setupFairphoneVersions(container);
@@ -131,18 +131,18 @@ public class VersionListFragment extends BaseFragment
     private void setupFairphoneLatestVersion()
     {
         final Version latestFairphoneVersion = UpdaterData.getInstance().getLatestVersion(Version.IMAGE_TYPE_FAIRPHONE);
-        mLatestVersionText.setText(latestFairphoneVersion.getName() + " v" + latestFairphoneVersion.getBuildNumber());
+        mLatestVersionDetailsButton.setText(latestFairphoneVersion.getName() + " v" + latestFairphoneVersion.getBuildNumber());
 
         if (mainActivity.getDeviceVersion().compareTo(latestFairphoneVersion) == 0)
         {
-            mInstalledIndicator.setVisibility(View.VISIBLE);
+            mLatestVersionInstalledIndicator.setVisibility(View.VISIBLE);
         }
         else
         {
-            mInstalledIndicator.setVisibility(View.GONE);
+            mLatestVersionInstalledIndicator.setVisibility(View.GONE);
         }
 
-        mLatestVersionText.setOnClickListener(new OnClickListener()
+        mLatestVersionDetailsButton.setOnClickListener(new OnClickListener()
         {
 
             @Override
@@ -206,18 +206,18 @@ public class VersionListFragment extends BaseFragment
     private void setupAndroidLatestVersion()
     {
         final Version latestAOSPVersion = UpdaterData.getInstance().getLatestVersion(Version.IMAGE_TYPE_AOSP);
-        mLatestVersionText.setText(latestAOSPVersion.getName() + " v" + latestAOSPVersion.getBuildNumber());
+        mLatestVersionDetailsButton.setText(latestAOSPVersion.getName() + " v" + latestAOSPVersion.getBuildNumber());
 
         if (mainActivity.getDeviceVersion().compareTo(latestAOSPVersion) == 0)
         {
-            mInstalledIndicator.setVisibility(View.VISIBLE);
+            mLatestVersionInstalledIndicator.setVisibility(View.VISIBLE);
         }
         else
         {
-            mInstalledIndicator.setVisibility(View.GONE);
+            mLatestVersionInstalledIndicator.setVisibility(View.GONE);
         }
 
-        mLatestVersionText.setOnClickListener(new OnClickListener()
+        mLatestVersionDetailsButton.setOnClickListener(new OnClickListener()
         {
 
             @Override

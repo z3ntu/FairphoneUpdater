@@ -6,7 +6,7 @@
     android:orientation="vertical" >
 
     <LinearLayout
-        android:id="@+id/other_os_options_fairphone_group"
+        android:id="@+id/other_os_options_fairphone_latest_version_group"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/blue"
@@ -20,16 +20,14 @@
             android:layout_height="wrap_content"
             android:text="@string/latest_version" />
 
-        <TextView
-            android:id="@+id/other_os_options_fairphone_version_text"
-            style="@style/TextRegular16White"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/main_padding_small"
-            android:gravity="center_horizontal" />
+        <Button
+            android:id="@+id/other_os_options_fairphone_latest_version_button"
+            style="@style/ButtonTextWhite"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
         <TextView
-            android:id="@+id/other_os_options_fairphone_installed_indicator_text"
+            android:id="@+id/other_os_options_fairphone_version_installed_indicator_text"
             style="@style/TextBold16White"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
