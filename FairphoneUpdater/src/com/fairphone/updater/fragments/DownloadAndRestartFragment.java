@@ -498,9 +498,8 @@ public class DownloadAndRestartFragment extends BaseFragment
 
             // remove the update files from data
             removeUpdateFilesFromData();
+
             // reboot the device into recovery
-            // ((PowerManager)
-            // getSystemService(POWER_SERVICE)).reboot("recovery");
             try
             {
                 mainActivity.updateStatePreference(UpdaterState.NORMAL);
@@ -529,15 +528,8 @@ public class DownloadAndRestartFragment extends BaseFragment
     {
         if (canCopyToCache())
         {
-            if (RootTools.isAccessGiven())
-            {
-                CopyFileToCacheTask copyTask = new CopyFileToCacheTask();
-                copyTask.execute(file.getPath(), Environment.getDownloadCacheDirectory() + "/" + VersionParserHelper.getNameFromVersion(mSelectedVersion));
-            }
-            else
-            {
-                abortUpdateProccess();
-            }
+            CopyFileToCacheTask copyTask = new CopyFileToCacheTask();
+            copyTask.execute(file.getPath(), Environment.getDownloadCacheDirectory() + "/" + VersionParserHelper.getNameFromVersion(mSelectedVersion));
         }
         else
         {
@@ -637,6 +629,10 @@ public class DownloadAndRestartFragment extends BaseFragment
                 {
                     RootTools.copyFile(otaFilePath.getPath(), otaFileCache.getPath(), false, false);
                 }
+            }
+            else
+            {
+                abortUpdateProccess();
             }
 
             return 1;
