@@ -49,7 +49,6 @@ public class VersionDetailFragment extends BaseFragment
     private Version mSelectedVersion;
     private DownloadManager mDownloadManager;
     private DetailLayoutType mDetailLayoutType;
-    private TextView mDownload_and_update_button_version_text;
     private boolean mIsOSChange;
     private boolean mIsOlderVersion;
 
@@ -69,15 +68,11 @@ public class VersionDetailFragment extends BaseFragment
         View view = null;
         switch (mDetailLayoutType)
         {
-            case UPDATE_FAIRPHONE:
-                view = inflater.inflate(R.layout.fragment_version_detail_update_fairphone, container, false);
-                break;
             case UPDATE_ANDROID:
-                view = inflater.inflate(R.layout.fragment_version_detail_update_android, container, false);
-                break;
             case ANDROID:
                 view = inflater.inflate(R.layout.fragment_version_detail_android, container, false);
                 break;
+            case UPDATE_FAIRPHONE:
             case FAIRPHONE:
             default:
                 view = inflater.inflate(R.layout.fragment_version_detail_fairphone, container, false);
@@ -94,18 +89,11 @@ public class VersionDetailFragment extends BaseFragment
         mVersion_release_notes_text = (TextView) view.findViewById(R.id.version_release_notes_text);
 
         mDownload_and_update_button = (Button) view.findViewById(R.id.download_and_update_button);
-        mDownload_and_update_button_version_text = (TextView) view.findViewById(R.id.download_and_update_button_version_text);
     }
 
     private void setupDownloadAndUpdateButton()
     {
         setDownloadAndUpdateButtonText();
-
-        // This is only not null when coming from other OS options fragment
-        if (mDownload_and_update_button_version_text != null)
-        {
-            mDownload_and_update_button_version_text.setText(mainActivity.getVersionName(mSelectedVersion));
-        }
 
         mDownload_and_update_button.setOnClickListener(new OnClickListener()
         {
