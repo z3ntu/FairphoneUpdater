@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.fairphone.updater"
-    android:versionCode="5"
+    android:versionCode="6"
     android:versionName="FP-1.8" >
 
     <uses-sdk
@@ -42,7 +42,8 @@
             android:excludeFromRecents="true"
             android:label="activity_transparent"
             android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.Translucent" >
+            android:theme="@android:style/Theme.Translucent" 
+            android:launchMode="singleInstance">
         </activity>
 
         <meta-data
