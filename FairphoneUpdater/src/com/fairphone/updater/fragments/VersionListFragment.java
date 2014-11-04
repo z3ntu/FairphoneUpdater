@@ -33,6 +33,7 @@ public class VersionListFragment extends BaseFragment
     private LinearLayout mVersionListContainer;
     private Button mLatestVersionDetailsButton;
     private TextView mLatestVersionInstalledIndicator;
+    private LinearLayout mOlderVersionsGroup;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -55,6 +56,7 @@ public class VersionListFragment extends BaseFragment
                 view = inflater.inflate(R.layout.fragment_other_os_options_android_list, container, false);
                 mainActivity.updateHeader(HeaderType.ANDROID, resources.getString(R.string.android_os));
 
+                mOlderVersionsGroup = (LinearLayout) view.findViewById(R.id.older_versions_group);
                 mVersionListContainer = (LinearLayout) view.findViewById(R.id.version_list_container);
 
                 mLatestVersionDetailsButton = (Button) view.findViewById(R.id.other_os_options_android_latest_version_button);
@@ -68,6 +70,7 @@ public class VersionListFragment extends BaseFragment
                 view = inflater.inflate(R.layout.fragment_other_os_options_fairphone_list, container, false);
                 mainActivity.updateHeader(HeaderType.FAIRPHONE, resources.getString(R.string.fairphone_os));
 
+                mOlderVersionsGroup = (LinearLayout) view.findViewById(R.id.older_versions_group);
                 mVersionListContainer = (LinearLayout) view.findViewById(R.id.version_list_container);
 
                 mLatestVersionDetailsButton = (Button) view.findViewById(R.id.other_os_options_fairphone_latest_version_button);
@@ -123,8 +126,16 @@ public class VersionListFragment extends BaseFragment
                         }
                     }
                 });
-
             }
+        }
+                
+        if (mVersionList.size() <= 1)
+        {
+            mOlderVersionsGroup.setVisibility(View.GONE);
+        }
+        else
+        {
+            mOlderVersionsGroup.setVisibility(View.VISIBLE);
         }
     }
 
@@ -198,8 +209,16 @@ public class VersionListFragment extends BaseFragment
                         }
                     }
                 });
-
             }
+        }
+        
+        if (mVersionList.size() <= 1)
+        {
+            mOlderVersionsGroup.setVisibility(View.GONE);
+        }
+        else
+        {
+            mOlderVersionsGroup.setVisibility(View.VISIBLE);
         }
     }
 

@@ -32,7 +32,7 @@
     <string name="older_version_os_install_confirmation">Tem a certeza de que quer prosseguir?</string>
     <string name="older_version_os_install_confirmation_checkbox">Tomei conhecimento das implicações desta instalação</string>
     <string name="your_are_about_to_install">Está prestes a instalar</string>
-    <string name="an_older_version_of_os">uma versão anterior do sistema operativo instalado,</string>
+    <string name="an_older_version_of_os">uma versão anterior do sistema operativo instalado.</string>
     <string name="a_different_os_from_the_current">um sistema operativo diferente do que o que está instalado.</string>
     <string name="your_current_os_version">Versão actual do sistema operativo</string>
     <string name="your_os_is_up_to_date">O sistema operativo está actualizado</string>
