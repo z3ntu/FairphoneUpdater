@@ -339,7 +339,7 @@ public class UpdaterService extends Service
             mDownloadManager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
         }
 
-        if (mDownloadBroadCastReceiver != null)
+        if (mDownloadBroadCastReceiver == null)
         {
             mDownloadBroadCastReceiver = new DownloadBroadCastReceiver();
 
