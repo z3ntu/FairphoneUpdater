@@ -309,7 +309,15 @@ public class FairphoneUpdater extends FragmentActivity
             firstFragment.setArguments(getIntent().getExtras());
 
             // Add the fragment to the 'fragment_container' FrameLayout
-            getSupportFragmentManager().beginTransaction().add(R.id.fragment_holder, firstFragment).commit();
+            FragmentManager fragManager = getSupportFragmentManager();
+            if (fragManager != null)
+            {
+                fragManager.beginTransaction().add(R.id.fragment_holder, firstFragment).commit();
+            }
+            else
+            {
+                Log.e(TAG, "setupFragments - Couldn't get FragmentManager");
+            }
         }
     }
 
@@ -336,42 +344,64 @@ public class FairphoneUpdater extends FragmentActivity
         Fragment topFragment = getTopFragment();
         if (topFragment == null || (topFragment != null && !newFragment.getClass().equals(topFragment.getClass())))
         {
+            FragmentManager fragManager = getSupportFragmentManager();
+            if (fragManager != null)
+            {
+                FragmentTransaction transaction = fragManager.beginTransaction();
+                // Replace whatever is in the fragment_container view with this
+                // fragment,
+                // and add the transaction to the back stack so the user can
+                // navigate
+                // back
+                // transaction.setCustomAnimations(R.animator.fade_in_fragment,
+                // R.animator.fade_out_fragment, R.animator.fade_in_fragment,
+                // R.animator.fade_out_fragment);
+                transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                transaction.replace(R.id.fragment_holder, newFragment);
+                transaction.addToBackStack(null);
 
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            // Replace whatever is in the fragment_container view with this
-            // fragment,
-            // and add the transaction to the back stack so the user can
-            // navigate
-            // back
-            // transaction.setCustomAnimations(R.animator.fade_in_fragment,
-            // R.animator.fade_out_fragment, R.animator.fade_in_fragment,
-            // R.animator.fade_out_fragment);
-            transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-            transaction.replace(R.id.fragment_holder, newFragment);
-            transaction.addToBackStack(null);
-
-            // Commit the transaction
-            transaction.commit();
+                // Commit the transaction
+                transaction.commit();
+            }
+            else
+            {
+                Log.e(TAG, "changeFragment - Couldn't get FragmentManager");
+            }
         }
     }
 
     public void removeLastFragment(boolean forceFinish)
     {
-        boolean popSuccess = getSupportFragmentManager().popBackStackImmediate();
-        if (forceFinish && !popSuccess)
+        FragmentManager fragManager = getSupportFragmentManager();
+        if (fragManager != null)
         {
-            finish();
+            boolean popSuccess = fragManager.popBackStackImmediate();
+            if (forceFinish && !popSuccess)
+            {
+                finish();
+            }
+        }
+        else
+        {
+            Log.e(TAG, "removeLastFragment - Couldn't get FragmentManager");
         }
     }
 
     public int getFragmentCount()
     {
-        FragmentManager fragManager = getSupportFragmentManager();
-        List<Fragment> allFragments = fragManager.getFragments();
         int listSize = 0;
-        if (allFragments != null)
+        FragmentManager fragManager = getSupportFragmentManager();
+        if (fragManager != null)
         {
-            listSize = allFragments.size();
+            List<Fragment> allFragments = fragManager.getFragments();
+            if (allFragments != null)
+            {
+                listSize = allFragments.size();
+            }
+        }
+        else
+        {
+            Log.e(TAG, "getFragmentCount - Couldn't get FragmentManager");
         }
 
         Log.d(TAG, "Fragment list size: " + listSize);
@@ -380,9 +410,17 @@ public class FairphoneUpdater extends FragmentActivity
 
     public int getBackStackSize()
     {
+        int backStackSize = 0;
         FragmentManager fragManager = getSupportFragmentManager();
-        int backStackSize = fragManager.getBackStackEntryCount();
-
+        if (fragManager != null)
+        {
+            backStackSize = fragManager.getBackStackEntryCount();
+        }
+        else
+        {
+            Log.e(TAG, "getBackStackSize - Couldn't get FragmentManager");
+        }
+        
         Log.d(TAG, "Back stack size: " + backStackSize);
         return backStackSize;
     }
@@ -390,23 +428,38 @@ public class FairphoneUpdater extends FragmentActivity
     public void clearBackStack()
     {
         FragmentManager fragManager = getSupportFragmentManager();
-        int backStackSize = fragManager.getBackStackEntryCount();
-
-        for (int i = 0; i < backStackSize; i++)
+        if (fragManager != null)
         {
-            removeLastFragment(false);
+            int backStackSize = fragManager.getBackStackEntryCount();
+
+            for (int i = 0; i < backStackSize; i++)
+            {
+                removeLastFragment(false);
+            }
+        }
+        else
+        {
+            Log.e(TAG, "clearBackStack - Couldn't get FragmentManager");
         }
     }
 
     public Fragment getTopFragment()
     {
-        List<Fragment> allFragments = getSupportFragmentManager().getFragments();
-        Fragment topFragment = null;
-        if (allFragments != null)
-        {
-            topFragment = allFragments.get(allFragments.size() - 1);
-        }
 
+        Fragment topFragment = null;
+        FragmentManager fragManager = getSupportFragmentManager();
+        if (fragManager != null)
+        {
+            List<Fragment> allFragments = fragManager.getFragments();
+            if (allFragments != null)
+            {
+                topFragment = allFragments.get(allFragments.size() - 1);
+            }
+        }
+        else
+        {
+            Log.e(TAG, "getTopFragment - Couldn't get FragmentManager");
+        }
         return topFragment;
     }
 
