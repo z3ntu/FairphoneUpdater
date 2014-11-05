@@ -80,7 +80,7 @@ public class UpdaterData
 
     public Version getLatestVersion(String imageType)
     {
-        Version version = new Version();
+        Version version = null;
         if (Version.IMAGE_TYPE_AOSP.equalsIgnoreCase(imageType))
         {
             version = mAOSPVersionMap.get(mLatestAOSPVersionNumber);

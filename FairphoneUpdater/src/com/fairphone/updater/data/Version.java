@@ -223,12 +223,13 @@ public class Version implements Comparable<Version>
 
         boolean result = false;
 
-        try
+        if (version != null)
         {
             result = this.getNumber() > version.getNumber();
-        } catch (Throwable t)
+        }
+        else
         {
-            Log.e(Version.class.getSimpleName(), "Invalid Number for Version", t);
+            Log.e(TAG, "Invalid Number for Version");
         }
 
         return result;
@@ -348,13 +349,16 @@ public class Version implements Comparable<Version>
     public static String getImageTypeDescription(String imageType, Resources resources)
     {
         String description = resources.getString(R.string.fairphone);
-        if (imageType.equalsIgnoreCase(IMAGE_TYPE_AOSP))
+        if (!TextUtils.isEmpty(imageType))
         {
-            description = resources.getString(R.string.android);
-        }
-        if (imageType.equalsIgnoreCase(IMAGE_TYPE_FAIRPHONE))
-        {
-            description = resources.getString(R.string.fairphone);
+            if (imageType.equalsIgnoreCase(IMAGE_TYPE_AOSP))
+            {
+                description = resources.getString(R.string.android);
+            }
+            if (imageType.equalsIgnoreCase(IMAGE_TYPE_FAIRPHONE))
+            {
+                description = resources.getString(R.string.fairphone);
+            }
         }
         return description;
     }

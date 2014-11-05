@@ -69,17 +69,20 @@ public class DownloadAndRestartFragment extends BaseFragment
         View view = inflateViewByImageType(inflater, container);
 
         setupLayout(view);
-        
+
         // Setup monitoring for future connectivity status changes
-        BroadcastReceiver networkStateReceiver = new BroadcastReceiver() {
+        BroadcastReceiver networkStateReceiver = new BroadcastReceiver()
+        {
             @Override
-            public void onReceive(Context context, Intent intent) {
-                if (intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, false)) {
-                	abortUpdateProccess();
+            public void onReceive(Context context, Intent intent)
+            {
+                if (intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, false))
+                {
+                    abortUpdateProccess();
                 }
             }
         };
-        IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);        
+        IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
         mainActivity.registerReceiver(networkStateReceiver, filter);
 
         return view;
@@ -191,13 +194,13 @@ public class DownloadAndRestartFragment extends BaseFragment
                 boolean downloading = true;
 
                 long latestUpdateDownloadId = mainActivity.getLatestDownloadId();
-                while (latestUpdateDownloadId != 0 && downloading)
+                while (mDownloadManager != null && latestUpdateDownloadId != 0 && downloading)
                 {
 
                     DownloadManager.Query q = new DownloadManager.Query();
                     q.setFilterById(latestUpdateDownloadId);
 
-                    Cursor cursor = mDownloadManager.query(q);
+                    Cursor cursor = mDownloadManager != null ? mDownloadManager.query(q) : null;
                     if (cursor != null)
                     {
                         cursor.moveToFirst();
@@ -212,17 +215,22 @@ public class DownloadAndRestartFragment extends BaseFragment
                                 Toast.makeText(mainActivity, getResources().getString(R.string.no_space_available_sd_card_message), Toast.LENGTH_LONG).show();
                                 abortUpdateProccess();
                             }
-
-                            if (cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS)) == DownloadManager.STATUS_SUCCESSFUL)
+                            else
                             {
-                                downloading = false;
+                                switch (cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS)))
+                                {
+                                    case DownloadManager.STATUS_SUCCESSFUL:
+                                    case DownloadManager.STATUS_FAILED:
+                                        downloading = false;
 
-                                bytes_downloaded = 0;
-                                bytes_total = 0;
+                                        bytes_downloaded = 0;
+                                        bytes_total = 0;
+                                        break;
+                                }
+
+                                mVersionDownloadProgressBar.setProgress(bytes_downloaded);
+                                mVersionDownloadProgressBar.setMax(bytes_total);
                             }
-
-                            mVersionDownloadProgressBar.setProgress(bytes_downloaded);
-                            mVersionDownloadProgressBar.setMax(bytes_total);
                         } catch (Exception e)
                         {
                             downloading = false;
@@ -232,11 +240,17 @@ public class DownloadAndRestartFragment extends BaseFragment
                         cursor.close();
                         try
                         {
-                            // TODO WHYYYYYY???????
-                            Thread.sleep(3000);
+                            Thread.sleep(1000);
                         } catch (InterruptedException e)
                         {
                             e.printStackTrace();
+                        }
+                    }
+                    else
+                    {
+                        if (mDownloadManager == null)
+                        {
+                            downloading = false;
                         }
                     }
                 }
@@ -338,9 +352,9 @@ public class DownloadAndRestartFragment extends BaseFragment
 
             query.setFilterById(downloadId);
 
-            Cursor cursor = mDownloadManager.query(query);
+            Cursor cursor = mDownloadManager != null ? mDownloadManager.query(query) : null;
 
-            if (cursor.moveToFirst())
+            if (cursor != null && cursor.moveToFirst())
             {
                 int columnIndex = cursor.getColumnIndex(DownloadManager.COLUMN_STATUS);
                 int status = cursor.getInt(columnIndex);
@@ -374,7 +388,10 @@ public class DownloadAndRestartFragment extends BaseFragment
                 abortUpdateProccess();
             }
 
-            cursor.close();
+            if (cursor != null)
+            {
+                cursor.close();
+            }
         }
     }
 
@@ -605,7 +622,7 @@ public class DownloadAndRestartFragment extends BaseFragment
     public boolean removeLastUpdateDownload()
     {
         long latestUpdateDownloadId = mainActivity.getLatestUpdateDownloadIdFromSharedPreference();
-        if (latestUpdateDownloadId != 0)
+        if (latestUpdateDownloadId != 0 && mDownloadManager != null)
         {
             // residue download ID
             mDownloadManager.remove(latestUpdateDownloadId);
@@ -689,16 +706,16 @@ public class DownloadAndRestartFragment extends BaseFragment
     {
         if (removeLastUpdateDownload())
         {
-        	
+
             mainActivity.removeLastFragment(false);
-	        if (mainActivity.getFragmentCount() == 1 && mainActivity.getBackStackSize() == 0)
-	        {
-	            mainActivity.changeState(UpdaterState.NORMAL);
-	        }
-	        else
-	        {
-	            mainActivity.updateStatePreference(UpdaterState.NORMAL);
-	        }
+            if (mainActivity.getFragmentCount() == 1 && mainActivity.getBackStackSize() == 0)
+            {
+                mainActivity.changeState(UpdaterState.NORMAL);
+            }
+            else
+            {
+                mainActivity.updateStatePreference(UpdaterState.NORMAL);
+            }
         }
     }
 

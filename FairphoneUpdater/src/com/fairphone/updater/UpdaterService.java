@@ -91,13 +91,12 @@ public class UpdaterService extends Service
 
         mLatestFileDownloadId = mSharedPreferences.getLong(PREFERENCE_LAST_CONFIG_DOWNLOAD_ID, 0);
         
+        setupDownloadManager();
+        
         setupConnectivityMonitoring();
 
         if (hasInternetConnection())
         {
-
-            setupDownloadManager();
-
             downloadConfigFile();
         }
 
@@ -357,7 +356,6 @@ public class UpdaterService extends Service
     
     private boolean hasInternetConnection()
     {
-
     	return mInternetConnectionAvailable;
     }
 
@@ -468,9 +466,10 @@ public class UpdaterService extends Service
             DownloadManager.Query query = new DownloadManager.Query();
 
             query.setFilterById(mLatestFileDownloadId);
-            Cursor cursor = mDownloadManager.query(query);
 
-            if (cursor.moveToFirst())
+            Cursor cursor = mDownloadManager != null ? mDownloadManager.query(query) : null;
+
+            if (cursor != null && cursor.moveToFirst())
             {
                 int columnIndex = cursor.getColumnIndex(DownloadManager.COLUMN_STATUS);
                 int status = cursor.getInt(columnIndex);
@@ -502,7 +501,11 @@ public class UpdaterService extends Service
                     }
                 }
             }
-            cursor.close();
+            
+            if (cursor != null)
+            {
+                cursor.close();
+            }
 
             if (removeReceiver)
             {

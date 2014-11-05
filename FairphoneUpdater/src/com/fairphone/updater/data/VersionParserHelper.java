@@ -70,7 +70,7 @@ public class VersionParserHelper
         version.setImageType(getSystemData(context, CURRENT_VERSION_IMAGE_TYPE));
 
         Version versionData = UpdaterData.getInstance().getVersion(version.getImageType(), version.getNumber());
-        version.setThumbnailLink(versionData != null ? versionData.getThumbnailLink() : null);
+        version.setThumbnailLink(versionData != null ? versionData.getThumbnailLink() : "");
         version.setReleaseNotes(Locale.getDefault().getLanguage(), versionData != null ? versionData.getReleaseNotes(Locale.getDefault().getLanguage()) : "");
 
         return version;

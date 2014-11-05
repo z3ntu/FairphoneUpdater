@@ -155,7 +155,6 @@ public class MainFragment extends BaseFragment
                 Version latestVersion = mainActivity.getLatestVersion();
                 if (latestVersion != null)
                 {
-
                     fragment.setupFragment(latestVersion, getDetailLayoutFromDeviceVersion(latestVersion));
                     mainActivity.changeFragment(fragment);
                 }

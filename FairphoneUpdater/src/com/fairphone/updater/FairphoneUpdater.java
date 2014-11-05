@@ -11,6 +11,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -86,19 +87,29 @@ public class FairphoneUpdater extends FragmentActivity
         mIsDevModeCounter = 10;
 
         isDeviceSupported();
+
         mSharedPreferences = getSharedPreferences(FAIRPHONE_UPDATER_PREFERENCES, MODE_PRIVATE);
+
+        // check current state
+        mCurrentState = getCurrentUpdaterState();
+
+        startService();
 
         boolean isConfigLoaded = UpdaterService.readUpdaterData(this);
 
         // get system data
         mDeviceVersion = VersionParserHelper.getDeviceVersion(this);
 
-        mLatestVersion = isConfigLoaded ? UpdaterData.getInstance().getLatestVersion(mDeviceVersion.getImageType()) : new Version();
+        if (mDeviceVersion != null)
+        {
+            mLatestVersion = isConfigLoaded ? UpdaterData.getInstance().getLatestVersion(mDeviceVersion.getImageType()) : null;
+        }
+        else
+        {
+            mLatestVersion = null;
+        }
 
         getSelectedVersionFromSharedPreferences();
-
-        // check current state
-        mCurrentState = getCurrentUpdaterState();
 
         initHeaderViews();
 
@@ -134,15 +145,11 @@ public class FairphoneUpdater extends FragmentActivity
 
         String currentState = getStringPreference(PREFERENCE_CURRENT_UPDATER_STATE);
 
-        if (currentState == null || currentState.isEmpty())
+        if (TextUtils.isEmpty(currentState))
         {
             currentState = UpdaterState.NORMAL.name();
 
-            Editor editor = mSharedPreferences.edit();
-
-            editor.putString(currentState, currentState);
-
-            editor.commit();
+            updateStatePreference(UpdaterState.NORMAL);
         }
 
         return UpdaterState.valueOf(currentState);
@@ -420,7 +427,7 @@ public class FairphoneUpdater extends FragmentActivity
         {
             Log.e(TAG, "getBackStackSize - Couldn't get FragmentManager");
         }
-        
+
         Log.d(TAG, "Back stack size: " + backStackSize);
         return backStackSize;
     }
@@ -486,7 +493,12 @@ public class FairphoneUpdater extends FragmentActivity
 
     public boolean isUpdateAvailable()
     {
-        return mLatestVersion.isNewerVersionThan(mDeviceVersion);
+        boolean update = false;
+        if (mLatestVersion != null)
+        {
+            update = mLatestVersion.isNewerVersionThan(mDeviceVersion);
+        }
+        return update;
     }
 
     public String getVersionName(Version version)
@@ -565,7 +577,11 @@ public class FairphoneUpdater extends FragmentActivity
 
     private Version getLatestVersionFromConfig()
     {
-        Version latest = UpdaterData.getInstance().getLatestVersion(mDeviceVersion.getImageType());
+        Version latest = null;
+        if (mDeviceVersion != null)
+        {
+            latest = UpdaterData.getInstance().getLatestVersion(mDeviceVersion.getImageType());
+        }
         return latest;
     }
 
@@ -582,18 +598,35 @@ public class FairphoneUpdater extends FragmentActivity
         // check current state
         mCurrentState = getCurrentUpdaterState();
 
-        if (mCurrentState == UpdaterState.NORMAL)
-        {
-            Utils.startUpdaterService(this, true);
-        }
+        startService();
 
         boolean isConfigLoaded = UpdaterService.readUpdaterData(this);
         mDeviceVersion = VersionParserHelper.getDeviceVersion(this);
-        mLatestVersion = isConfigLoaded ? UpdaterData.getInstance().getLatestVersion(mDeviceVersion.getImageType()) : new Version();
+
+        if (mDeviceVersion != null)
+        {
+            mLatestVersion = isConfigLoaded ? UpdaterData.getInstance().getLatestVersion(mDeviceVersion.getImageType()) : null;
+        }
+        else
+        {
+            mLatestVersion = null;
+        }
 
         getSelectedVersionFromSharedPreferences();
 
         changeFragment(getFragmentFromState());
+    }
+
+    private void startService()
+    {
+        if (mCurrentState == UpdaterState.NORMAL)
+        {
+            Utils.startUpdaterService(this, true);
+        }
+        else
+        {
+            Utils.startUpdaterService(this, false);
+        }
     }
 
     public void changeState(UpdaterState newState)

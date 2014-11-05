@@ -65,6 +65,8 @@ public class GappsInstallerHelper
 {
 
     private static final String GOOGLE_APPS_DOWNLOAD_ID = "com.fairphone.updater.gapps.DOWNLOAD_ID";
+    private static final String GOOGLE_APPS_CONFIG_FILE_DOWNLOAD_ID = "com.fairphone.updater.gapps.CONFIG_FILE_DOWNLOAD_ID";
+    private static final String GOOGLE_APPS_IMAGE_MD5 = "com.fairphone.updater.gapps.IMAGE_MD5";
 
     public static final String GAPPS_ACTION_DISCLAIMER = "com.fairphone.updater.gapps.DISCLAIMER";
     public static final String GAPPS_ACTION_DOWNLOAD_CONFIGURATION_FILE = "com.fairphone.updater.gapps.START_DONWLOAD_CONFIGURATION";
@@ -124,40 +126,43 @@ public class GappsInstallerHelper
         {
             updateWidgetState(GAPPS_STATES_PERMISSION_CHECK);
         }
-        else if (currentState != GAPPS_STATE_INSTALLATION && currentState != GAPPS_INSTALLED_STATE)
-        {
-
-            // clean files that must be rechecked
-            forceCleanUnzipDirectory();
-            forceCleanConfigurationFile();
-
-            checkGappsAreInstalled();
-        }
         else
         {
-            checkGappsAreInstalled();
+            updateWidgetState(currentState);
+            if (currentState == GAPPS_STATES_DOWNLOAD_GOOGLE_APPS_FILE)
+            {
+                startDownloadProgressUpdateThread(mSharedPrefs.getLong(GOOGLE_APPS_DOWNLOAD_ID, 0));
+            }
+        }
+
+        if (mSharedPrefs.getBoolean(GAPPS_REINSTALL_FLAG, false))
+        {
+            showReinstallAlert();
+            forceCleanConfigurationFile();
+            forceCleanGappsZipFile();
+            forceCleanUnzipDirectory();
         }
     }
 
     private boolean checkGappsAreInstalled()
     {
-
-        if (mSharedPrefs.getBoolean(GAPPS_REINSTALL_FLAG, false))
-        {
-            showReinstallAlert();
-            forceCleanGappsZipFile();
-        }
-
         File f = new File("/system/app/OneTimeInitializer.apk");
 
         if (f.exists())
         {
             updateWidgetState(GAPPS_INSTALLED_STATE);
+
+            forceCleanConfigurationFile();
             forceCleanGappsZipFile();
+            forceCleanUnzipDirectory();
             return true;
         }
 
         updateWidgetState(GAPPS_STATES_INITIAL);
+        forceCleanConfigurationFile();
+        forceCleanGappsZipFile();
+        forceCleanUnzipDirectory();
+
         return false;
     }
 
@@ -213,67 +218,77 @@ public class GappsInstallerHelper
         mDownloadBroacastReceiver = new DownloadBroadCastReceiver();
 
         mContext.registerReceiver(mDownloadBroacastReceiver, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
-        
+
         setupConnectivityMonitoring();
     }
-    
+
     private void clearDownloadManager()
     {
         mContext.unregisterReceiver(mDownloadBroacastReceiver);
 
         mDownloadBroacastReceiver = null;
-        
+
         clearConnectivityMonitoring();
     }
 
     private void setupConnectivityMonitoring()
     {
 
-    	// Check current connectivity status
+        // Check current connectivity status
         ConnectivityManager manager = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
         boolean isWifi = manager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).isConnectedOrConnecting();
         mWifiConnectionAvailable = isWifi;
 
         // Setup monitoring for future connectivity status changes
-        mNetworkStateReceiver = new BroadcastReceiver() {
+        mNetworkStateReceiver = new BroadcastReceiver()
+        {
             @Override
-            public void onReceive(Context context, Intent intent) {
-            	ConnectivityManager manager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-            	NetworkInfo networkInfo = manager.getActiveNetworkInfo();
-                if ( networkInfo == null || !networkInfo.isConnectedOrConnecting() || networkInfo.getType() != ConnectivityManager.TYPE_WIFI) {
-                	mWifiConnectionAvailable = false;
-                	Log.d(TAG, "mDownloadManager "+mDownloadManager);
-                	if (mDownloadManager != null) {
-                		if ( mGappsFileDownloadId != 0) {
-                			mDownloadManager.remove(mGappsFileDownloadId);
-                    		mGappsFileDownloadId = 0;
-                		}
-                		if ( mConfigFileDownloadId != 0) {
-                			mDownloadManager.remove(mConfigFileDownloadId);
-                			mConfigFileDownloadId = 0;
-                		}
-                	}
-                } else {
-                	mWifiConnectionAvailable = true;
+            public void onReceive(Context context, Intent intent)
+            {
+                ConnectivityManager manager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+                NetworkInfo networkInfo = manager.getActiveNetworkInfo();
+                if (networkInfo == null || !networkInfo.isConnectedOrConnecting() || networkInfo.getType() != ConnectivityManager.TYPE_WIFI)
+                {
+                    mWifiConnectionAvailable = false;
+                    if (mDownloadManager != null)
+                    {
+                        mGappsFileDownloadId = mSharedPrefs.getLong(GOOGLE_APPS_DOWNLOAD_ID, 0);
+                        if (mGappsFileDownloadId != 0)
+                        {
+                            mDownloadManager.remove(mGappsFileDownloadId);
+                            setGappsFileDownloadId(0);
+                        }
+
+                        mConfigFileDownloadId = mSharedPrefs.getLong(GOOGLE_APPS_CONFIG_FILE_DOWNLOAD_ID, 0);
+                        if (mConfigFileDownloadId != 0)
+                        {
+                            mDownloadManager.remove(mConfigFileDownloadId);
+                            setConfigFileDownloadId(0);
+                        }
+                    }
+                }
+                else
+                {
+                    mWifiConnectionAvailable = true;
                 }
             }
         };
 
-        IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);        
+        IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
         mContext.registerReceiver(mNetworkStateReceiver, filter);
     }
-    
+
     private void clearConnectivityMonitoring()
     {
         mContext.unregisterReceiver(mNetworkStateReceiver);
 
         mNetworkStateReceiver = null;
     }
-    
+
     private boolean isWiFiEnabled()
     {
 
-    	return mWifiConnectionAvailable;
+        return mWifiConnectionAvailable;
     }
 
     private boolean hasAlreadyDownloadedZipFile(String mMD5hash)
@@ -300,11 +315,15 @@ public class GappsInstallerHelper
             br.close();
         } catch (FileNotFoundException e)
         {
-            Log.e(TAG, "Configuration file not find", e);
+            Log.e(TAG, "Configuration file not found", e);
             result = null;
         } catch (IOException e)
         {
             Log.e(TAG, "Configuration file could not be read", e);
+            result = null;
+        } catch (Exception e)
+        {
+            Log.e(TAG, "Unknown exception", e);
             result = null;
         }
 
@@ -336,10 +355,12 @@ public class GappsInstallerHelper
 
     private void forceCleanConfigurationFile()
     {
+        mConfigFileDownloadId = mSharedPrefs.getLong(GOOGLE_APPS_CONFIG_FILE_DOWNLOAD_ID, 0);
 
-        if (mConfigFileDownloadId != 0)
+        if (mConfigFileDownloadId != 0 && mDownloadManager != null)
         {
             mDownloadManager.remove(mConfigFileDownloadId);
+            setConfigFileDownloadId(0);
         }
 
         String configFileName = mContext.getResources().getString(R.string.gapps_installer_config_file);
@@ -354,10 +375,9 @@ public class GappsInstallerHelper
 
     private void forceCleanGappsZipFile()
     {
-
         long downloadID = mSharedPrefs.getLong(GOOGLE_APPS_DOWNLOAD_ID, 0);
 
-        if (downloadID != 0)
+        if (downloadID != 0 && mDownloadManager != null)
         {
             mDownloadManager.remove(downloadID);
 
@@ -430,9 +450,13 @@ public class GappsInstallerHelper
                     String configFileZip = resources.getString(R.string.gapps_installer_zip);
 
                     Request request = createDownloadRequest(getConfigDownloadLink(resources), configFileName + configFileZip);
-                    mConfigFileDownloadId = mDownloadManager.enqueue(request);
+                    if (request != null && mDownloadManager != null)
+                    {
+                        long downloadId = mDownloadManager.enqueue(request);
+                        setConfigFileDownloadId(downloadId);
 
-                    updateWidgetState(GAPPS_STATES_DOWNLOAD_CONFIGURATION_FILE);
+                        updateWidgetState(GAPPS_STATES_DOWNLOAD_CONFIGURATION_FILE);
+                    }
                 }
                 else
                 {
@@ -545,9 +569,6 @@ public class GappsInstallerHelper
             @Override
             public void onReceive(Context context, Intent intent)
             {
-                forceCleanConfigurationFile();
-                // forceCleanUnzipDirectory();
-
                 checkGappsAreInstalled();
             }
         };
@@ -775,13 +796,13 @@ public class GappsInstallerHelper
 
                 boolean downloading = true;
 
-                while (downloading)
+                while (downloading && download_id != 0)
                 {
 
                     DownloadManager.Query q = new DownloadManager.Query();
                     q.setFilterById(download_id);
 
-                    Cursor cursor = mDownloadManager.query(q);
+                    Cursor cursor = mDownloadManager != null ? mDownloadManager.query(q) : null;
                     if (cursor != null)
                     {
                         cursor.moveToFirst();
@@ -790,25 +811,46 @@ public class GappsInstallerHelper
                             int bytes_downloaded = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR));
                             int bytes_total = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_TOTAL_SIZE_BYTES));
 
-                            if (cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS)) == DownloadManager.STATUS_SUCCESSFUL)
+                            if ((bytes_total + 10000) > Utils.getAvailablePartitionSizeInBytes(Environment.getExternalStorageDirectory()))
                             {
                                 downloading = false;
-
                                 bytes_downloaded = 0;
                                 bytes_total = 0;
+                                checkGappsAreInstalled();
+                                mDownloadManager.remove(download_id);
+                                SharedPreferences.Editor prefEdit = mSharedPrefs.edit();
+                                prefEdit.putInt(GappsInstallerHelper.GOOGLE_APPS_INSTALLER_PROGRESS, 0);
+                                prefEdit.putInt(GappsInstallerHelper.GOOGLE_APPS_INSTALLER_PROGRESS_MAX, 0);
+                                prefEdit.commit();
+
+                                Toast.makeText(mContext, mContext.getResources().getString(R.string.no_space_available_sd_card_message), Toast.LENGTH_LONG)
+                                        .show();
                             }
+                            else
+                            {
 
-                            SharedPreferences.Editor prefEdit = mSharedPrefs.edit();
-                            prefEdit.putInt(GappsInstallerHelper.GOOGLE_APPS_INSTALLER_PROGRESS, bytes_downloaded);
-                            prefEdit.putInt(GappsInstallerHelper.GOOGLE_APPS_INSTALLER_PROGRESS_MAX, bytes_total);
-                            prefEdit.commit();
+                                switch (cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS)))
+                                {
+                                    case DownloadManager.STATUS_SUCCESSFUL:
+                                    case DownloadManager.STATUS_FAILED:
+                                        downloading = false;
 
-                            updateGoogleAppsIntallerWidgets();
+                                        bytes_downloaded = 0;
+                                        bytes_total = 0;
+
+                                        break;
+                                }
+
+                                SharedPreferences.Editor prefEdit = mSharedPrefs.edit();
+                                prefEdit.putInt(GappsInstallerHelper.GOOGLE_APPS_INSTALLER_PROGRESS, bytes_downloaded);
+                                prefEdit.putInt(GappsInstallerHelper.GOOGLE_APPS_INSTALLER_PROGRESS_MAX, bytes_total);
+                                prefEdit.commit();
+
+                                updateGoogleAppsIntallerWidgets();
+                            }
                         } catch (Exception e)
                         {
                             downloading = false;
-                            checkGappsAreInstalled();
-                            mDownloadManager.remove(download_id);
                             SharedPreferences.Editor prefEdit = mSharedPrefs.edit();
                             prefEdit.putInt(GappsInstallerHelper.GOOGLE_APPS_INSTALLER_PROGRESS, 0);
                             prefEdit.putInt(GappsInstallerHelper.GOOGLE_APPS_INSTALLER_PROGRESS_MAX, 0);
@@ -823,6 +865,13 @@ public class GappsInstallerHelper
                         } catch (InterruptedException e)
                         {
                             e.printStackTrace();
+                        }
+                    }
+                    else
+                    {
+                        if (mDownloadManager == null)
+                        {
+                            downloading = false;
                         }
                     }
                 }
@@ -942,10 +991,12 @@ public class GappsInstallerHelper
             switch (currentState)
             {
                 case GAPPS_STATES_DOWNLOAD_CONFIGURATION_FILE:
+                    mConfigFileDownloadId = mSharedPrefs.getLong(GOOGLE_APPS_CONFIG_FILE_DOWNLOAD_ID, 0);
                     downloadID = mConfigFileDownloadId;
                     break;
                 case GAPPS_STATES_DOWNLOAD_GOOGLE_APPS_FILE:
-                    downloadID = mSharedPrefs.getLong(GOOGLE_APPS_DOWNLOAD_ID, 0);
+                    mGappsFileDownloadId = mSharedPrefs.getLong(GOOGLE_APPS_DOWNLOAD_ID, 0);
+                    downloadID = mGappsFileDownloadId;
                     break;
                 default:
                     downloadID = 0;
@@ -956,15 +1007,13 @@ public class GappsInstallerHelper
 
             if (downloadID != 0 && (currentDownloadID == mConfigFileDownloadId || currentDownloadID == mGappsFileDownloadId))
             {
-                Cursor cursor = mDownloadManager.query(query);
+                Cursor cursor = mDownloadManager != null ? mDownloadManager.query(query) : null;
                 query.setFilterById(downloadID);
 
-                if (cursor.moveToFirst())
+                if (cursor != null && cursor.moveToFirst())
                 {
                     int columnIndex = cursor.getColumnIndex(DownloadManager.COLUMN_STATUS);
                     int status = cursor.getInt(columnIndex);
-                    int columnReason = cursor.getColumnIndex(DownloadManager.COLUMN_REASON);
-                    int reason = cursor.getInt(columnReason);
 
                     if (status == DownloadManager.STATUS_SUCCESSFUL)
                     {
@@ -986,11 +1035,15 @@ public class GappsInstallerHelper
 
                                 checkGappsAreInstalled();
 
-                                if (mConfigFileDownloadId != 0)
+                                if (mConfigFileDownloadId != 0 && mDownloadManager != null)
                                 {
                                     mDownloadManager.remove(mConfigFileDownloadId);
+                                    setConfigFileDownloadId(0);
                                 }
-                                cursor.close();
+                                if (cursor != null)
+                                {
+                                    cursor.close();
+                                }
                                 return;
                             }
 
@@ -1002,23 +1055,26 @@ public class GappsInstallerHelper
                                 Toast.makeText(mContext, R.string.google_apps_download_error, Toast.LENGTH_LONG).show();
 
                                 checkGappsAreInstalled();
-                                if (mConfigFileDownloadId != 0)
+                                if (mConfigFileDownloadId != 0 && mDownloadManager != null)
                                 {
                                     mDownloadManager.remove(mConfigFileDownloadId);
+                                    setConfigFileDownloadId(0);
                                 }
-                                cursor.close();
+                                if (cursor != null)
+                                {
+                                    cursor.close();
+                                }
                                 return;
                             }
 
                             // read the md5
-                            mMD5hash = downloadData[1];
+                            setImageMd5Hash(downloadData[1]);
 
                             String filename = mContext.getResources().getString(R.string.gapps_installer_filename);
 
                             if (hasAlreadyDownloadedZipFile(mMD5hash))
                             {
                                 updateWidgetState(GAPPS_STATES_PERMISSION_CHECK);
-                                // updateWidgetState(GAPPS_REBOOT_STATE);
                             }
                             else
                             {
@@ -1028,54 +1084,58 @@ public class GappsInstallerHelper
 
                                 // enqueue of gapps request
                                 Request request = createDownloadRequest(downloadData[0], filename);
+                                if (request != null && mDownloadManager != null)
+                                {
+                                    mGappsFileDownloadId = mDownloadManager.enqueue(request);
 
-                                mGappsFileDownloadId = mDownloadManager.enqueue(request);
+                                    SharedPreferences.Editor prefEdit = mSharedPrefs.edit();
+                                    // Save the download id
+                                    prefEdit.putLong(GOOGLE_APPS_DOWNLOAD_ID, mGappsFileDownloadId);
 
-                                SharedPreferences.Editor prefEdit = mSharedPrefs.edit();
-                                // Save the download id
-                                prefEdit.putLong(GOOGLE_APPS_DOWNLOAD_ID, mGappsFileDownloadId);
+                                    prefEdit.putInt(GappsInstallerHelper.GOOGLE_APPS_INSTALLER_PROGRESS, 0);
+                                    prefEdit.putInt(GappsInstallerHelper.GOOGLE_APPS_INSTALLER_PROGRESS_MAX, 0);
 
-                                prefEdit.putInt(GappsInstallerHelper.GOOGLE_APPS_INSTALLER_PROGRESS, 0);
-                                prefEdit.putInt(GappsInstallerHelper.GOOGLE_APPS_INSTALLER_PROGRESS_MAX, 0);
+                                    prefEdit.commit();
 
-                                prefEdit.commit();
+                                    startDownloadProgressUpdateThread(mGappsFileDownloadId);
 
-                                startDownloadProgressUpdateThread(mGappsFileDownloadId);
+                                    // alter Widget State
+                                    updateWidgetState(GAPPS_STATES_DOWNLOAD_GOOGLE_APPS_FILE);
 
-                                // alter Widget State
-                                updateWidgetState(GAPPS_STATES_DOWNLOAD_GOOGLE_APPS_FILE);
-
-                                Log.d(TAG, "Start gapps download id: " + mGappsFileDownloadId + "\n state: " + getCurrentState());
+                                    Log.d(TAG, "Start gapps download id: " + mGappsFileDownloadId + "\n state: " + getCurrentState());
+                                }
                             }
                         }
-                        else if (hasAlreadyDownloadedZipFile(mMD5hash))
+                        else if (hasAlreadyDownloadedZipFile(mSharedPrefs.getString(GOOGLE_APPS_IMAGE_MD5, "")))
                         {
                             updateWidgetState(GAPPS_STATES_PERMISSION_CHECK);
-                            // updateWidgetState(GAPPS_REBOOT_STATE);
                         }
                         else
                         {
                             Toast.makeText(mContext, R.string.google_apps_download_error, Toast.LENGTH_LONG).show();
 
                             checkGappsAreInstalled();
-                            if (mConfigFileDownloadId != 0)
+                            if (mDownloadManager != null && (mConfigFileDownloadId != 0 || mGappsFileDownloadId != 0))
                             {
                                 mDownloadManager.remove(mConfigFileDownloadId);
+                                mDownloadManager.remove(mGappsFileDownloadId);
+                                setConfigFileDownloadId(0);
+                                setGappsFileDownloadId(0);
+                                setImageMd5Hash("");
                             }
                         }
                     }
                     else if (status == DownloadManager.STATUS_FAILED)
                     {
-                        Toast.makeText(mContext, "FAILED!\n" + "reason of " + reason, Toast.LENGTH_LONG).show();
-
-                        forceCleanConfigurationFile();
-
-                        forceCleanUnzipDirectory();
+                        Toast.makeText(mContext, R.string.google_apps_download_error, Toast.LENGTH_LONG).show();
 
                         checkGappsAreInstalled();
                     }
                 }
-                cursor.close();
+                if (cursor != null)
+                {
+                    cursor.close();
+                }
             }
             else
             {
@@ -1179,6 +1239,34 @@ public class GappsInstallerHelper
     private void showWifiWarning()
     {
         showDialogOnTransparentActivity(TransparentActivity.SHOW_GAPPS_WIFI_WARNING_DIALOG);
+    }
+
+    private void setConfigFileDownloadId(long downloadId)
+    {
+        mConfigFileDownloadId = downloadId;
+
+        SharedPreferences.Editor prefEdit = mSharedPrefs.edit();
+        prefEdit.putLong(GOOGLE_APPS_CONFIG_FILE_DOWNLOAD_ID, mConfigFileDownloadId);
+        prefEdit.commit();
+    }
+
+    private void setGappsFileDownloadId(long downloadId)
+    {
+        mGappsFileDownloadId = downloadId;
+
+        SharedPreferences.Editor prefEdit = mSharedPrefs.edit();
+        prefEdit.putLong(GOOGLE_APPS_DOWNLOAD_ID, mGappsFileDownloadId);
+        prefEdit.commit();
+    }
+
+    private void setImageMd5Hash(String imageHash)
+    {
+        mMD5hash = imageHash;
+
+        SharedPreferences.Editor prefEdit = mSharedPrefs.edit();
+        // Save the image hash
+        prefEdit.putString(GOOGLE_APPS_IMAGE_MD5, imageHash);
+        prefEdit.commit();
     }
 
     private class CopyFileToCacheTask extends AsyncTask<String, Integer, Integer>

@@ -146,7 +146,7 @@ public class VersionDetailFragment extends BaseFragment
     private void setHeaderAndVersionDetailsTitles()
     {
 
-        mHeaderType = mainActivity.getHeaderTypeFromImageType(mSelectedVersion.getImageType());
+        mHeaderType = mainActivity.getHeaderTypeFromImageType(mSelectedVersion != null ? mSelectedVersion.getImageType() : "");
         Resources resources = mainActivity.getResources();
         Version deviceversion = mainActivity.getDeviceVersion();
 
@@ -218,23 +218,27 @@ public class VersionDetailFragment extends BaseFragment
         // use only on WiFi
         if (isWiFiEnabled())
         {
-            // set the download for the latest version on the download manager
-            String fileName = VersionParserHelper.getNameFromVersion(mSelectedVersion);
-            String downloadTitle = mSelectedVersion.getName() + " " + mSelectedVersion.getImageTypeDescription(getResources());
-            Request request = createDownloadRequest(mSelectedVersion.getDownloadLink() + Utils.getModelAndOS(mainActivity), fileName, downloadTitle);
-            if (request != null)
+            if (mSelectedVersion != null)
             {
-                long mLatestUpdateDownloadId = mDownloadManager.enqueue(request);
+                // set the download for the latest version on the download
+                // manager
+                String fileName = VersionParserHelper.getNameFromVersion(mSelectedVersion);
+                String downloadTitle = mSelectedVersion.getName() + " " + mSelectedVersion.getImageTypeDescription(getResources());
+                Request request = createDownloadRequest(mSelectedVersion.getDownloadLink() + Utils.getModelAndOS(mainActivity), fileName, downloadTitle);
+                if (request != null && mDownloadManager != null)
+                {
+                    long mLatestUpdateDownloadId = mDownloadManager.enqueue(request);
 
-                // save it on the shared preferences
-                mainActivity.saveLatestUpdateDownloadId(mLatestUpdateDownloadId);
+                    // save it on the shared preferences
+                    mainActivity.saveLatestUpdateDownloadId(mLatestUpdateDownloadId);
 
-                // change state to download
-                mainActivity.changeState(UpdaterState.DOWNLOAD);
-            }
-            else
-            {
-                Toast.makeText(mainActivity, getResources().getString(R.string.error_downloading) + " " + downloadTitle, Toast.LENGTH_LONG).show();
+                    // change state to download
+                    mainActivity.changeState(UpdaterState.DOWNLOAD);
+                }
+                else
+                {
+                    Toast.makeText(mainActivity, getResources().getString(R.string.error_downloading) + " " + downloadTitle, Toast.LENGTH_LONG).show();
+                }
             }
         }
         else
@@ -283,29 +287,31 @@ public class VersionDetailFragment extends BaseFragment
 
     public void startVersionDownload()
     {
-
         if (!Utils.areGappsInstalling(mainActivity))
         {
-            if (mIsOSChange || mIsOlderVersion)
+            if (mSelectedVersion != null)
             {
-                showPopupDialog(mSelectedVersion.getName(), mSelectedVersion.hasEraseAllPartitionWarning(), new ConfirmationPopupDialogListener()
+                if (mIsOSChange || mIsOlderVersion)
                 {
-
-                    @Override
-                    public void onFinishPopUpDialog(boolean isOk)
+                    showPopupDialog(mSelectedVersion.getName(), mSelectedVersion.hasEraseAllPartitionWarning(), new ConfirmationPopupDialogListener()
                     {
-                        if (isOk)
+
+                        @Override
+                        public void onFinishPopUpDialog(boolean isOk)
                         {
-                            mainActivity.setSelectedVersion(mSelectedVersion != null ? mSelectedVersion : mainActivity.getLatestVersion());
-                            showEraseAllDataWarning(true);
+                            if (isOk)
+                            {
+                                mainActivity.setSelectedVersion(mSelectedVersion);
+                                showEraseAllDataWarning(true);
+                            }
                         }
-                    }
-                });
-            }
-            else
-            {
-                mainActivity.setSelectedVersion(mSelectedVersion != null ? mSelectedVersion : mainActivity.getLatestVersion());
-                showEraseAllDataWarning(false);
+                    });
+                }
+                else
+                {
+                    mainActivity.setSelectedVersion(mSelectedVersion);
+                    showEraseAllDataWarning(false);
+                }
             }
         }
         else
@@ -319,7 +325,7 @@ public class VersionDetailFragment extends BaseFragment
 
         final UpdaterState currentState = mainActivity.getCurrentUpdaterState();
 
-        if (mSelectedVersion.hasEraseAllPartitionWarning() && !bypassEraseAllWarning)
+        if (mSelectedVersion != null && mSelectedVersion.hasEraseAllPartitionWarning() && !bypassEraseAllWarning)
         {
             new AlertDialog.Builder(mainActivity).setTitle(android.R.string.dialog_alert_title).setMessage(R.string.erase_all_partitions_warning_message)
                     .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener()
