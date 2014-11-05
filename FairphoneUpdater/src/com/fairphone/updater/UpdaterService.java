@@ -70,6 +70,7 @@ public class UpdaterService extends Service
     private static final int MAX_DOWNLOAD_RETRIES = 3;
     private int mDownloadRetries;
     private long mLatestFileDownloadId;
+    private boolean mInternetConnectionAvailable;
 
     private SharedPreferences mSharedPreferences;
 
@@ -89,6 +90,8 @@ public class UpdaterService extends Service
         mSharedPreferences = getApplicationContext().getSharedPreferences(FairphoneUpdater.FAIRPHONE_UPDATER_PREFERENCES, MODE_PRIVATE);
 
         mLatestFileDownloadId = mSharedPreferences.getLong(PREFERENCE_LAST_CONFIG_DOWNLOAD_ID, 0);
+        
+        setupConnectivityMonitoring();
 
         if (hasInternetConnection())
         {
@@ -320,16 +323,42 @@ public class UpdaterService extends Service
         return request;
     }
 
+    private void setupConnectivityMonitoring()
+    {
+
+    	// Check current connectivity status
+        ConnectivityManager manager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        boolean is3g = manager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).isConnectedOrConnecting();
+        boolean isWifi = manager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).isConnectedOrConnecting();
+        mInternetConnectionAvailable = isWifi || is3g;
+
+        // Setup monitoring for future connectivity status changes
+        BroadcastReceiver networkStateReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, false)) {
+                	mInternetConnectionAvailable = false;
+                	if (mLatestFileDownloadId != 0 && mDownloadManager != null) {
+                		mDownloadManager.remove(mLatestFileDownloadId);
+                		mLatestFileDownloadId = 0;
+                	}
+                } else {
+                	if(!mInternetConnectionAvailable) {
+                		downloadConfigFile();
+                	}
+                	mInternetConnectionAvailable = true;
+                }
+            }
+        };
+
+        IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);        
+        registerReceiver(networkStateReceiver, filter);
+    }
+    
     private boolean hasInternetConnection()
     {
 
-        ConnectivityManager manager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-
-        boolean is3g = manager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).isConnectedOrConnecting();
-
-        boolean isWifi = manager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).isConnectedOrConnecting();
-
-        return isWifi || is3g;
+    	return mInternetConnectionAvailable;
     }
 
     private void setupDownloadManager()

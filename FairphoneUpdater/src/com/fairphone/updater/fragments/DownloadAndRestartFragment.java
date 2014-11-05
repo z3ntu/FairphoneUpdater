@@ -15,6 +15,7 @@ import android.content.IntentFilter;
 import android.content.res.Resources;
 import android.content.res.Resources.NotFoundException;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
@@ -68,6 +69,18 @@ public class DownloadAndRestartFragment extends BaseFragment
         View view = inflateViewByImageType(inflater, container);
 
         setupLayout(view);
+        
+        // Setup monitoring for future connectivity status changes
+        BroadcastReceiver networkStateReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, false)) {
+                	abortUpdateProccess();
+                }
+            }
+        };
+        IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);        
+        mainActivity.registerReceiver(networkStateReceiver, filter);
 
         return view;
     }
@@ -589,7 +602,7 @@ public class DownloadAndRestartFragment extends BaseFragment
         }
     }
 
-    public void removeLastUpdateDownload()
+    public boolean removeLastUpdateDownload()
     {
         long latestUpdateDownloadId = mainActivity.getLatestUpdateDownloadIdFromSharedPreference();
         if (latestUpdateDownloadId != 0)
@@ -599,6 +612,7 @@ public class DownloadAndRestartFragment extends BaseFragment
 
             mainActivity.resetLastUpdateDownloadId();
         }
+        return latestUpdateDownloadId != 0; // report if something was canceled
     }
 
     private class CopyFileToCacheTask extends AsyncTask<String, Integer, Integer>
@@ -673,17 +687,19 @@ public class DownloadAndRestartFragment extends BaseFragment
 
     public void abortUpdateProccess()
     {
-        removeLastUpdateDownload();
+        if (removeLastUpdateDownload())
+        {
 
-        if (mainActivity.getFragmentCount() == 1 && mainActivity.getBackStackSize() == 0)
-        {
-            mainActivity.removeLastFragment(false);
-            mainActivity.changeState(UpdaterState.NORMAL);
-        }
-        else
-        {
-            mainActivity.removeLastFragment(false);
-            mainActivity.updateStatePreference(UpdaterState.NORMAL);
+	        if (mainActivity.getFragmentCount() == 1 && mainActivity.getBackStackSize() == 0)
+	        {
+	            mainActivity.removeLastFragment(false);
+	            mainActivity.changeState(UpdaterState.NORMAL);
+	        }
+	        else
+	        {
+	            mainActivity.removeLastFragment(false);
+	            mainActivity.updateStatePreference(UpdaterState.NORMAL);
+	        }
         }
     }
 
