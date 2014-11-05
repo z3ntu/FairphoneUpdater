@@ -689,15 +689,14 @@ public class DownloadAndRestartFragment extends BaseFragment
     {
         if (removeLastUpdateDownload())
         {
-
+        	
+            mainActivity.removeLastFragment(false);
 	        if (mainActivity.getFragmentCount() == 1 && mainActivity.getBackStackSize() == 0)
 	        {
-	            mainActivity.removeLastFragment(false);
 	            mainActivity.changeState(UpdaterState.NORMAL);
 	        }
 	        else
 	        {
-	            mainActivity.removeLastFragment(false);
 	            mainActivity.updateStatePreference(UpdaterState.NORMAL);
 	        }
         }

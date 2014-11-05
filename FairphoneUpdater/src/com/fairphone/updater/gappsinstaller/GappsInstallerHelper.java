@@ -44,6 +44,7 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -103,6 +104,8 @@ public class GappsInstallerHelper
     private SharedPreferences mSharedPrefs;
 
     private DownloadBroadCastReceiver mDownloadBroacastReceiver;
+    private BroadcastReceiver mNetworkStateReceiver;
+    private boolean mWifiConnectionAvailable;
     private long mConfigFileDownloadId;
     private long mGappsFileDownloadId;
     private String mMD5hash;
@@ -210,23 +213,67 @@ public class GappsInstallerHelper
         mDownloadBroacastReceiver = new DownloadBroadCastReceiver();
 
         mContext.registerReceiver(mDownloadBroacastReceiver, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
+        
+        setupConnectivityMonitoring();
     }
-
+    
     private void clearDownloadManager()
     {
         mContext.unregisterReceiver(mDownloadBroacastReceiver);
 
         mDownloadBroacastReceiver = null;
+        
+        clearConnectivityMonitoring();
     }
 
+    private void setupConnectivityMonitoring()
+    {
+
+    	// Check current connectivity status
+        ConnectivityManager manager = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
+        boolean isWifi = manager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).isConnectedOrConnecting();
+        mWifiConnectionAvailable = isWifi;
+
+        // Setup monitoring for future connectivity status changes
+        mNetworkStateReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+            	ConnectivityManager manager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+            	NetworkInfo networkInfo = manager.getActiveNetworkInfo();
+                if ( networkInfo == null || !networkInfo.isConnectedOrConnecting() || networkInfo.getType() != ConnectivityManager.TYPE_WIFI) {
+                	mWifiConnectionAvailable = false;
+                	Log.d(TAG, "mDownloadManager "+mDownloadManager);
+                	if (mDownloadManager != null) {
+                		if ( mGappsFileDownloadId != 0) {
+                			mDownloadManager.remove(mGappsFileDownloadId);
+                    		mGappsFileDownloadId = 0;
+                		}
+                		if ( mConfigFileDownloadId != 0) {
+                			mDownloadManager.remove(mConfigFileDownloadId);
+                			mConfigFileDownloadId = 0;
+                		}
+                	}
+                } else {
+                	mWifiConnectionAvailable = true;
+                }
+            }
+        };
+
+        IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);        
+        mContext.registerReceiver(mNetworkStateReceiver, filter);
+    }
+    
+    private void clearConnectivityMonitoring()
+    {
+        mContext.unregisterReceiver(mNetworkStateReceiver);
+
+        mNetworkStateReceiver = null;
+    }
+    
     private boolean isWiFiEnabled()
     {
 
-        ConnectivityManager manager = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
-
-        boolean isWifi = manager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).isConnectedOrConnecting();
-
-        return isWifi;
+    	return mWifiConnectionAvailable;
     }
 
     private boolean hasAlreadyDownloadedZipFile(String mMD5hash)
