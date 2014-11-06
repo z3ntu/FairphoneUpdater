@@ -6,9 +6,9 @@
 
     <!-- HEADER -->
     <string name="install_update">Instalar actualização</string>
-    <string name="other_os_options">Outras opções de sistema operativo</string>
-    <string name="fairphone_os">Sistema Operativo Fairphone</string>
-    <string name="android_os">Sistema Operativo Android</string>
+    <string name="other_os_options">Outras opções</string>
+    <string name="fairphone_os">Fairphone Android</string>
+    <string name="android_os">Stock Android</string>
 
     <!-- TITLES -->
     <string name="update_version">Versão da actualização</string>
@@ -21,22 +21,22 @@
     <string name="older_versions">Versões anteriores</string>
     <string name="take_me_back">Voltar atrás</string>
     <string name="go_ahead_and_install_it">Prosseguir com a instalação</string>
-    <string name="new_os">Novo sistema operativo</string>
+    <string name="new_os">Novo Sistema Operativo</string>
     <string name="error_downloading">Erro ao descarregar</string>
     <string name="wifi_disabled">Wi-Fi desligado</string>
 
     <!-- MESSAGES -->
-    <string name="os_update_has_started_message">A actualização do sistema operativo foi iniciada. Isto pode levar algum tempo, dependendo da velocidade da sua ligação.</string>
-    <string name="restart_your_phone_message">Reinicie o seu telefone para finalizar a actualizaçãoo.</string>
-    <string name="important_notice_message">É importante relembrar que a instalação de uma versão anterior do sistema operativo pode implicar perda de certas funcionalidades.</string>
+    <string name="os_update_has_started_message">A actualização foi iniciada. Isto pode levar algum tempo, dependendo da velocidade da sua ligação.</string>
+    <string name="restart_your_phone_message">Reinicie o seu telefone para finalizar a actualização.</string>
+    <string name="important_notice_message">É importante relembrar que a instalação diferentes Sistemas Operativos pode alterar a experiênciea de utilização.</string>
     <string name="older_version_os_install_confirmation">Tem a certeza de que quer prosseguir?</string>
     <string name="older_version_os_install_confirmation_checkbox">Tomei conhecimento das implicações desta instalação</string>
     <string name="your_are_about_to_install">Está prestes a instalar</string>
-    <string name="an_older_version_of_os">uma versão anterior do sistema operativo instalado.</string>
-    <string name="a_different_os_from_the_current">um sistema operativo diferente do que o que está instalado.</string>
-    <string name="your_current_os_version">Versão actual do sistema operativo</string>
-    <string name="your_os_is_up_to_date">O sistema operativo está actualizado</string>
-    <string name="want_to_change_your_os">Quer mudar o seu sistema operativo?</string>
+    <string name="an_older_version_of_os">uma versão anterior do Sistema Operativo instalado.</string>
+    <string name="a_different_os_from_the_current">um Sistema Operativo diferente do que o que está instalado.</string>
+    <string name="your_current_os_version">Versão actual do Sistema Operativo</string>
+    <string name="your_os_is_up_to_date">O Sistema Operativo está actualizado</string>
+    <string name="want_to_change_your_os">Quer mudar o seu Sistema Operativo?</string>
     <string name="update_is_available">Nova actualização disponível</string>
     <string name="please_be_patient">Por favor aguarde&#8230;</string>
     <string name="config_file_download_error_message">Erro ao descarregar o ficheiro de configuração.</string>
@@ -63,7 +63,7 @@
     <!-- GOOGLE -->
     <string name="google_apps_connection_description">O ficheiro que está a tentar descarregar é muito grande para ligações móveis (~100mb). Por favor ligue-se ao Wi-Fi e tente outra vez.</string>
     <string name="google_apps_connection_title">Wi-Fi desligado</string>
-    <string name="google_apps_denied_permissions_description">Fairphone OS não conseguiu obter as permissões para instalar o Google Apps. Se escolheu NEGAR, reinicie o instalador e seleccione PERMITIR.</string>
+    <string name="google_apps_denied_permissions_description">Fairphone Updater não conseguiu obter as permissões para instalar o Google Apps. Se escolheu NEGAR, reinicie o instalador e seleccione PERMITIR.</string>
     <string name="google_apps_denied_permissions_title">Permissões negadas</string>
     <string name="google_apps_disclaimer_agree">Concordo</string>
     <string name="google_apps_disclaimer_description">Para ter acesso à experiência Android e Google completa como a Google Play Store, o seu telefone precisa de conteúdo e software adicional. Infelizmente, como a Fairphone ainda não tem a licença necessária, não podemos pré-instalar este conteúdo, nem o podemos providenciar directamente. Estamos a trabalhar com o proprietário dos conteúdos para alterar isto.\nEscolha «Concordo» de seguida para descarregar o conteúdo de uma fonte externa segura. A instalação deste conteúdo é da sua responsabilidade.\nSe não concordar, o seu telefone continua a trabalhar com aplicações de Android básicas, mas irá perder alguns serviços Google.</string>
@@ -77,17 +77,17 @@
     <string name="google_apps_install_title">A instalar Google Apps</string>
     <string name="google_apps_permissions_description">Fairphone Updater vai pedir-lhe a permissão Superuser. Garantimos que esta operação é completamente segura. Por favor escolha PERMITIR ao ser questionado.</string>
     <string name="google_apps_permissions_title">Permissões de sistema</string>
-    <string name="google_apps_reboot_description">O sistema precisa de reiniciar para completar a instalaçãoo.\n\nDepois da instalaçãoo, siga os passos para configurar o Google Apps.</string>
+    <string name="google_apps_reboot_description">O sistema precisa de reiniciar para completar a instalação.\n\nDepois da instalação, siga os passos para configurar o Google Apps.</string>
     <string name="google_apps_reboot_failed_description">O Google Apps está instalado. Falha ao reiniciar, por favor reinicie manualmente.</string>
     <string name="google_apps_reboot_failed_title">Falha ao reiniciar</string>
     <string name="google_apps_reboot_title">A reiniciar dispositivo</string>
-    <string name="google_apps_reinstall_description">Para voltar a instalar a Play store no seu telefone, deve ir ao All Apps, Widgets, e depois arrastar o Instalador das Google Apps para o painel do Home e selecioná-lo.</string>
+    <string name="google_apps_reinstall_description">Para voltar a instalar a Play store no seu telefone, deve pressionar no painel do Home, Widgets, e depois arrastar o Instalador das Google Apps para o painel do Home e selecioná-lo.</string>
     <string name="google_apps_reinstall_request_title">Não esquecer</string>
     <string name="google_apps_re_install_description">Remova isto ou\npressione para reinstalar</string>
     <string name="google_apps_re_install_title">Google Apps instalado</string>
     <string name="google_apps_uninstall_description">Apagar\neste instalador</string>
     <string name="google_apps_uninstall_title">Google Apps instalado</string>
     <string name="google_apps_unzip_title">A extrair Google Apps</string>
-    <string name="google_apps_updater_installing_description">Fairphone Updater está a actualizar o seu sistema operativo neste momento. Por favor volte a tentar mais tarde.</string>
+    <string name="google_apps_updater_installing_description">Fairphone Updater está a actualizar o seu Sistema Operativo neste momento. Por favor volte a tentar mais tarde.</string>
 
 </resources>
