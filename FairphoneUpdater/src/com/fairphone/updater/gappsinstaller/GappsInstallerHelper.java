@@ -148,21 +148,17 @@ public class GappsInstallerHelper
     {
         File f = new File("/system/app/OneTimeInitializer.apk");
 
-        if (f.exists())
-        {
-            updateWidgetState(GAPPS_INSTALLED_STATE);
-
-            forceCleanConfigurationFile();
-            forceCleanGappsZipFile();
-            forceCleanUnzipDirectory();
-            return true;
-        }
-
-        updateWidgetState(GAPPS_STATES_INITIAL);
         forceCleanConfigurationFile();
         forceCleanGappsZipFile();
         forceCleanUnzipDirectory();
 
+        if (f.exists())
+        {
+            updateWidgetState(GAPPS_INSTALLED_STATE);
+            return true;
+        }
+
+        updateWidgetState(GAPPS_STATES_INITIAL);
         return false;
     }
 
@@ -252,19 +248,7 @@ public class GappsInstallerHelper
                     mWifiConnectionAvailable = false;
                     if (mDownloadManager != null)
                     {
-                        mGappsFileDownloadId = mSharedPrefs.getLong(GOOGLE_APPS_DOWNLOAD_ID, 0);
-                        if (mGappsFileDownloadId != 0)
-                        {
-                            mDownloadManager.remove(mGappsFileDownloadId);
-                            setGappsFileDownloadId(0);
-                        }
-
-                        mConfigFileDownloadId = mSharedPrefs.getLong(GOOGLE_APPS_CONFIG_FILE_DOWNLOAD_ID, 0);
-                        if (mConfigFileDownloadId != 0)
-                        {
-                            mDownloadManager.remove(mConfigFileDownloadId);
-                            setConfigFileDownloadId(0);
-                        }
+                        checkGappsAreInstalled();
                     }
                 }
                 else
@@ -803,9 +787,8 @@ public class GappsInstallerHelper
                     q.setFilterById(download_id);
 
                     Cursor cursor = mDownloadManager != null ? mDownloadManager.query(q) : null;
-                    if (cursor != null)
+                    if (cursor != null && cursor.moveToFirst())
                     {
-                        cursor.moveToFirst();
                         try
                         {
                             int bytes_downloaded = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR));
@@ -813,18 +796,18 @@ public class GappsInstallerHelper
 
                             if ((bytes_total + 10000) > Utils.getAvailablePartitionSizeInBytes(Environment.getExternalStorageDirectory()))
                             {
+                                Toast.makeText(mContext, mContext.getResources().getString(R.string.no_space_available_sd_card_message), Toast.LENGTH_LONG)
+                                        .show();
                                 downloading = false;
                                 bytes_downloaded = 0;
                                 bytes_total = 0;
+
                                 checkGappsAreInstalled();
-                                mDownloadManager.remove(download_id);
+
                                 SharedPreferences.Editor prefEdit = mSharedPrefs.edit();
                                 prefEdit.putInt(GappsInstallerHelper.GOOGLE_APPS_INSTALLER_PROGRESS, 0);
                                 prefEdit.putInt(GappsInstallerHelper.GOOGLE_APPS_INSTALLER_PROGRESS_MAX, 0);
                                 prefEdit.commit();
-
-                                Toast.makeText(mContext, mContext.getResources().getString(R.string.no_space_available_sd_card_message), Toast.LENGTH_LONG)
-                                        .show();
                             }
                             else
                             {
@@ -869,6 +852,11 @@ public class GappsInstallerHelper
                     }
                     else
                     {
+                        if (cursor != null)
+                        {
+                            cursor.close();
+                            downloading = false;
+                        }
                         if (mDownloadManager == null)
                         {
                             downloading = false;
@@ -1003,7 +991,7 @@ public class GappsInstallerHelper
             }
 
             Log.d(TAG, "Current download id = " + currentDownloadID + "\ndownload id = " + downloadID + "\n state = " + currentState
-                    + "\n mGappsFileDownloadId: " + mGappsFileDownloadId);
+                    + "\n mGappsFileDownloadId: " + mGappsFileDownloadId + "\n mConfigFileDownloadId: " + mConfigFileDownloadId);
 
             if (downloadID != 0 && (currentDownloadID == mConfigFileDownloadId || currentDownloadID == mGappsFileDownloadId))
             {
@@ -1035,11 +1023,6 @@ public class GappsInstallerHelper
 
                                 checkGappsAreInstalled();
 
-                                if (mConfigFileDownloadId != 0 && mDownloadManager != null)
-                                {
-                                    mDownloadManager.remove(mConfigFileDownloadId);
-                                    setConfigFileDownloadId(0);
-                                }
                                 if (cursor != null)
                                 {
                                     cursor.close();
@@ -1055,11 +1038,7 @@ public class GappsInstallerHelper
                                 Toast.makeText(mContext, R.string.google_apps_download_error, Toast.LENGTH_LONG).show();
 
                                 checkGappsAreInstalled();
-                                if (mConfigFileDownloadId != 0 && mDownloadManager != null)
-                                {
-                                    mDownloadManager.remove(mConfigFileDownloadId);
-                                    setConfigFileDownloadId(0);
-                                }
+
                                 if (cursor != null)
                                 {
                                     cursor.close();
@@ -1115,14 +1094,7 @@ public class GappsInstallerHelper
                             Toast.makeText(mContext, R.string.google_apps_download_error, Toast.LENGTH_LONG).show();
 
                             checkGappsAreInstalled();
-                            if (mDownloadManager != null && (mConfigFileDownloadId != 0 || mGappsFileDownloadId != 0))
-                            {
-                                mDownloadManager.remove(mConfigFileDownloadId);
-                                mDownloadManager.remove(mGappsFileDownloadId);
-                                setConfigFileDownloadId(0);
-                                setGappsFileDownloadId(0);
-                                setImageMd5Hash("");
-                            }
+                            setImageMd5Hash("");
                         }
                     }
                     else if (status == DownloadManager.STATUS_FAILED)

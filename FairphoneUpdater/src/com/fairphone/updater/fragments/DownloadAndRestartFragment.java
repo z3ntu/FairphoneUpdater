@@ -201,9 +201,8 @@ public class DownloadAndRestartFragment extends BaseFragment
                     q.setFilterById(latestUpdateDownloadId);
 
                     Cursor cursor = mDownloadManager != null ? mDownloadManager.query(q) : null;
-                    if (cursor != null)
+                    if (cursor != null && cursor.moveToFirst())
                     {
-                        cursor.moveToFirst();
                         try
                         {
                             int bytes_downloaded = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR));
@@ -248,6 +247,11 @@ public class DownloadAndRestartFragment extends BaseFragment
                     }
                     else
                     {
+                        if (cursor != null)
+                        {
+                            downloading = false;
+                            cursor.close();
+                        }
                         if (mDownloadManager == null)
                         {
                             downloading = false;
