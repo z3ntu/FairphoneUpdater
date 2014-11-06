@@ -30,6 +30,7 @@
         style="@style/TextRegular14GreenDark"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:gravity="center"
         android:text="@string/an_older_version_of_os" />
 
     <TextView
@@ -58,7 +59,7 @@
 
         <Button
             android:id="@+id/confirmation_no_button"
-            style="@style/Button"
+            style="@style/ButtonGreenDarkGrey"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingBottom="25dp"

@@ -6,9 +6,9 @@
 
     <!-- HEADER -->
     <string name="install_update">Install Update</string>
-    <string name="other_os_options">Other OS Options</string>
-    <string name="fairphone_os">Fairphone OS</string>
-    <string name="android_os">Android OS</string>
+    <string name="other_os_options">Other options</string>
+    <string name="fairphone_os">Fairphone Android</string>
+    <string name="android_os">Stock Android</string>
 
     <!-- TITLES -->
     <string name="update_version">Update version</string>
@@ -21,22 +21,22 @@
     <string name="older_versions">Older versions</string>
     <string name="take_me_back">Take me back</string>
     <string name="go_ahead_and_install_it">Go ahead and install it</string>
-    <string name="new_os">New OS</string>
+    <string name="new_os">New Operating System</string>
     <string name="error_downloading">Error downloading</string>
     <string name="wifi_disabled">Wi-Fi disabled</string>
 
     <!-- MESSAGES -->
-    <string name="os_update_has_started_message">The OS update has started. This may take some time depending on your network connection speed.</string>
+    <string name="os_update_has_started_message">The update has started. This may take some time depending on your network connection speed.</string>
     <string name="restart_your_phone_message">Restart your phone to complete the update.</string>
-    <string name="important_notice_message">It\'s important that you keep in mind that installing an older OS version will make loose features.</string>
+    <string name="important_notice_message">It\'s important that you keep in mind that installing other Operating Systems may change the user experience.</string>
     <string name="older_version_os_install_confirmation">Are you sure you want to go forward with it despite all the implications?</string>
-    <string name="older_version_os_install_confirmation_checkbox">I know and understand all implication of performing this installation</string>
+    <string name="older_version_os_install_confirmation_checkbox">I know and understand all implications of performing this installation</string>
     <string name="your_are_about_to_install">You are about to install</string>
-    <string name="an_older_version_of_os">an older version of your current OS.</string>
-    <string name="a_different_os_from_the_current">a different OS from your current one.</string>
-    <string name="your_current_os_version">Your current OS version</string>
-    <string name="your_os_is_up_to_date">Your OS is up to date</string>
-    <string name="want_to_change_your_os">Want to change your OS?</string>
+    <string name="an_older_version_of_os">an older version of your current Operating System.</string>
+    <string name="a_different_os_from_the_current">a different Operating System from your current one.</string>
+    <string name="your_current_os_version">Your current Operating System version</string>
+    <string name="your_os_is_up_to_date">Your Operating System is up to date</string>
+    <string name="want_to_change_your_os">Want to change your Operating System?</string>
     <string name="update_is_available">Update is available</string>
     <string name="please_be_patient">Please be patient&#8230;</string>
     <string name="config_file_download_error_message">Error downloading config file.</string>
@@ -69,14 +69,14 @@
     <string name="google_apps_disclaimer_description">For the full Android and Google mobile experience like the Google Play store, your phone needs extra content and software. Unfortunately, as Fairphone doesn\'t have a license yet, we cannot pre-install this content, nor can we provide it directly ourselves. We are working with the content owner to achieve this.\nPress "I Agree" below to download this content from an external secured source. Installing this content is your own responsibility.\nIf you do not agree, your phone will still work with basic Android apps, of course, but you will miss some services from Google.</string>
     <string name="google_apps_disclaimer_agree">I Agree</string>
     <string name="google_apps_denied_permissions_title">Denied permissions</string>
-    <string name="google_apps_denied_permissions_description">Fairphone OS could not obtain the necessary permissions to install Google Apps. If you chose DENY, please restart the installer and ALLOW permissions.</string>
+    <string name="google_apps_denied_permissions_description">Fairphone Updater could not obtain the necessary permissions to install Google Apps. If you chose DENY, please restart the installer and ALLOW permissions.</string>
     <string name="google_apps_reboot_failed_title">Failed reboot</string>
     <string name="google_apps_reboot_failed_description">Google Apps are installed. Could not reboot device, please reboot manually.</string>
     <string name="google_apps_download_title">Downloading Google Apps</string>
     <string name="google_apps_unzip_title">Extracting Google Apps</string>
     <string name="google_apps_install_title">Installing Google Apps</string>
     <string name="google_apps_reboot_title">Rebooting device</string>
-    <string name="google_apps_permissions_description">Fairphone OS will now ask you for Superuser access. We assure you it\'s perfectly safe. Please choose ALLOW when asked.</string>
+    <string name="google_apps_permissions_description">Fairphone Updater will now ask you for Superuser access. We assure you it\'s perfectly safe. Please choose ALLOW when asked.</string>
     <string name="google_apps_permissions_title">System permissions</string>
     <string name="google_apps_reboot_description">The system needs to reboot to complete the installation.\n\nAfter the reboot, follow the steps to set up Google Apps.</string>
     <string name="google_apps_uninstall_title">Google Apps installed</string>
@@ -89,7 +89,7 @@
     <string name="google_apps_connection_title">Wi-Fi disabled</string>
     <string name="google_apps_connection_description">The file you\'re trying to download is too large for mobile connections (~100MB). Please enable Wi-Fi connection and try again.</string>
     <string name="google_apps_reinstall_request_title">Remember</string>
-    <string name="google_apps_reinstall_description">To reinstall the Play store on your phone, you must go to All Apps, Widgets, then drag the Google Apps Installer widget to your Home panel and select it.</string>
-    <string name="google_apps_updater_installing_description">Fairphone Updater is updating your OS on the background. Please try again later.</string>
+    <string name="google_apps_reinstall_description">To reinstall the Play store on your phone, you must long press on the Home panel, press Widgets then drag the Google Apps Installer widget to your Home panel and select it.</string>
+    <string name="google_apps_updater_installing_description">Fairphone Updater is updating your Operating System on the background. Please try again later.</string>
 
 </resources>

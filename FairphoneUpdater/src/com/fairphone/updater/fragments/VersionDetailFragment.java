@@ -293,7 +293,7 @@ public class VersionDetailFragment extends BaseFragment
             {
                 if (mIsOSChange || mIsOlderVersion)
                 {
-                    showPopupDialog(mSelectedVersion.getName(), mSelectedVersion.hasEraseAllPartitionWarning(), new ConfirmationPopupDialogListener()
+                    showPopupDialog(mainActivity.getVersionName(mSelectedVersion), mSelectedVersion.hasEraseAllPartitionWarning(), new ConfirmationPopupDialogListener()
                     {
 
                         @Override
