@@ -28,7 +28,7 @@
     <!-- MESSAGES -->
     <string name="os_update_has_started_message">A actualização foi iniciada. Isto pode levar algum tempo, dependendo da velocidade da sua ligação.</string>
     <string name="restart_your_phone_message">Reinicie o seu telefone para finalizar a actualização.</string>
-    <string name="important_notice_message">É importante relembrar que a instalação diferentes Sistemas Operativos pode alterar a experiênciea de utilização.</string>
+    <string name="important_notice_message">É importante relembrar que a instalação de diferentes Sistemas Operativos pode alterar a experiência de utilização.</string>
     <string name="older_version_os_install_confirmation">Tem a certeza de que quer prosseguir?</string>
     <string name="older_version_os_install_confirmation_checkbox">Tomei conhecimento das implicações desta instalação</string>
     <string name="your_are_about_to_install">Está prestes a instalar</string>
