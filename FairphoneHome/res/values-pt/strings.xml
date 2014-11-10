@@ -183,29 +183,4 @@
 	<string name="oobe_next">Seguinte</string>
 	<string name="oobe_done">Terminar</string>
 	
-	<!-- Google Apps Install Widget -->
-    <string name="google_apps_installer_name">Instalador Google Apps</string>
-	<string name="google_apps_initial_title">Instalar\nGoogle Apps</string>
-	<string name="google_apps_disclaimer_title">Instalar Google Apps</string>
-	<string name="google_apps_disclaimer_description">Para ter acesso à experiência Android e Google completa como a Google Play Store, o seu telefone precisa de conteúdo e software adicional. Infelizmente, como a Fairphone ainda não tem a licença necessária, não podemos pré-instalar este conteúdo, nem o podemos providenciar directamente. Estamos a trabalhar com o proprietário dos conteúdos para alterar isto.\nEscolha “Concordo” de seguida para descarregar o conteúdo de uma fonte externa segura. A instalação deste conteúdo é da sua responsabilidade.\nSe não concordar, o seu telefone continua a trabalhar com aplicações de Android básicas, mas irá perder alguns serviços Google.</string>
-	<string name="google_apps_disclaimer_agree">Concordo</string>
-	<string name="google_apps_denied_permissions_title">Permissões negadas</string>
-	<string name="google_apps_denied_permissions_description">Fairphone OS não conseguiu obter as permissões para instalar o Google Apps. Se escolheu NEGAR, reinicie o instalador e seleccione PERMITIR.</string>
-	<string name="google_apps_reboot_failed_title">Falha ao reiniciar</string>
-	<string name="google_apps_reboot_failed_description">O Google Apps está instalado. Falha ao reiniciar, por favor reinicie manualmente.</string>
-	<string name="google_apps_download_title">A descarregar Google Apps</string>
-	<string name="google_apps_unzip_title">A extrair Google Apps</string>
-	<string name="google_apps_install_title">A instalar Google Apps</string>
-	<string name="google_apps_reboot_title">A reiniciar dispositivo</string>
-	<string name="google_apps_permissions_description">Fairphone OS vai pedir-lhe a permissão Superuser. Garantimos que esta operação é completamente segura. Por favor escolha PERMITIR ao ser questionado.</string>
-	<string name="google_apps_permissions_title">Permissões de sistema</string>
-	<string name="google_apps_reboot_description">O sistema precisa de reiniciar para completar a instalação.\n\nDepois da instalação, siga os passos para configurar o Google Apps.</string>
-	<string name="google_apps_uninstall_title">Google Apps instalado</string>
-	<string name="google_apps_uninstall_description">Apagar\neste instalador</string>
-	<string name="google_apps_failed_download_title">Falha ao descarregar</string>
-	<string name="google_apps_failed_download_description">Os ficheiros descarregados estão corrompidos. Tentar outra vez?</string>
-	<string name="google_apps_download_error">Erro ao descarregar os ficheiros. Por favor tente outra vez.</string>
-	<string name="google_apps_connection_title">Wi-Fi desligado</string>
-	<string name="google_apps_connection_description">O ficheiro que está a tentar descarregar é muito grande para ligações móveis (~100mb). Por favor ligue-se ao Wi-Fi e tente outra vez.</string>
-	
 </resources>

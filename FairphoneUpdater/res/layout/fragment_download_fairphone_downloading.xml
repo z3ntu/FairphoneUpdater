@@ -1,0 +1,42 @@
+<merge xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <LinearLayout
+        android:id="@+id/version_downloading_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:background="@color/blue"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:visibility="gone" >
+
+        <TextView
+            style="@style/TextBold16White"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/download_started" />
+
+        <TextView
+            style="@style/TextRegular14BlueLight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/main_small_text_margin_top"
+            android:gravity="center_horizontal"
+            android:text="@string/os_update_has_started_message" />
+
+        <TextView
+            style="@style/TextRegular14BlueLight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/main_small_text_margin_top"
+            android:text="@string/please_be_patient" />
+
+        <ProgressBar
+            android:id="@+id/version_download_progress_bar"
+            style="@style/ProgressBar"
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:layout_marginTop="@dimen/main_button_margin_top" />
+    </LinearLayout>
+
+</merge>

@@ -46,8 +46,8 @@
         launcher:spanY="3" />
      
      <appwidget
-        launcher:packageName="org.fairphone.launcher"
-        launcher:className="org.fairphone.widgets.gapps.GoogleAppsInstallerWidget"
+        launcher:packageName="com.fairphone.updater"
+        launcher:className="com.fairphone.updater.widgets.gapps.GoogleAppsInstallerWidget"
         launcher:screen="2"
         launcher:x="0"
         launcher:y="3"

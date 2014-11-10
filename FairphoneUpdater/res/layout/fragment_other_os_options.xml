@@ -1,0 +1,50 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:id="@+id/other_os_options_group"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingLeft="@dimen/main_padding"
+        android:paddingRight="@dimen/main_padding" >
+
+        <TextView
+            style="@style/TextLight24GreyDark"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/main_small_text_margin_top"
+            android:text="@string/important_notice" />
+
+        <TextView
+            style="@style/TextRegular14GreyLight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/main_button_margin_top"
+            android:gravity="center_horizontal"
+            android:maxLines="10"
+            android:text="@string/important_notice_message" />
+
+        <Button
+            android:id="@+id/older_fairphone_os_button"
+            style="@style/ButtonTextBlue"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/main_small_text_margin_top"
+            android:text="@string/fairphone_os" />
+
+        <Button
+            android:id="@+id/android_os_button"
+            style="@style/ButtonTextGreen"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/main_button_margin_top"
+            android:text="@string/android_os" />
+    </LinearLayout>
+
+</LinearLayout>

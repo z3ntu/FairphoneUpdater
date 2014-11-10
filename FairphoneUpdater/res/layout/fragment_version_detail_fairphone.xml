@@ -1,0 +1,49 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/blue"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/main_padding"
+    android:paddingLeft="@dimen/main_padding"
+    android:paddingRight="@dimen/main_padding" >
+
+    <TextView
+        android:id="@+id/version_details_title_text"
+        style="@style/TextRegular16White"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/main_small_text_margin_top" />
+
+    <TextView
+        android:id="@+id/version_details_name_text"
+        style="@style/TextLight24White"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/main_small_text_margin_top"
+        android:layout_weight="1"
+        android:gravity="center_horizontal"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/version_release_notes_text"
+            style="@style/TextRegular14White"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal" />
+    </ScrollView>
+
+    <Button
+        android:id="@+id/download_and_update_button"
+        style="@style/ButtonWhiteBlue"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/main_padding" />
+
+</LinearLayout>

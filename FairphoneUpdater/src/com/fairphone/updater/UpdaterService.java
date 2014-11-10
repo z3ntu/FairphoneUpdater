@@ -16,6 +16,10 @@
 
 package com.fairphone.updater;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.concurrent.TimeoutException;
+
 import android.app.DownloadManager;
 import android.app.DownloadManager.Request;
 import android.app.Notification;
@@ -23,7 +27,9 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.app.TaskStackBuilder;
+import android.appwidget.AppWidgetManager;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -34,288 +40,477 @@ import android.database.Cursor;
 import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
+import android.widget.Toast;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Locale;
+import com.fairphone.updater.data.Version;
+import com.fairphone.updater.data.VersionParserHelper;
+import com.fairphone.updater.gappsinstaller.GappsInstallerHelper;
+import com.fairphone.updater.tools.RSAUtils;
+import com.fairphone.updater.tools.Utils;
+import com.fairphone.updater.widgets.gapps.GoogleAppsInstallerWidget;
+import com.stericson.RootTools.execution.CommandCapture;
+import com.stericson.RootTools.execution.Shell;
 
-public class UpdaterService extends Service {
+public class UpdaterService extends Service
+{
 
-	private static final String TAG = UpdaterService.class.getSimpleName();
-	private static final String PREFERENCE_DATE_LAST_TIME_CHECKED = "LastTimeUpdateChecked";
-	private DownloadManager mDownloadManager;
-	private DownloadBroadCastReceiver mDownloadBroadCastReceiver;
+    public static final String ACTION_FAIRPHONE_UPDATER_CONFIG_FILE_DOWNLOAD = "FAIRPHONE_UPDATER_CONFIG_FILE_DOWNLOAD";
 
-	private long mLatestFileDownloadId;
+    private static final String TAG = UpdaterService.class.getSimpleName();
 
-	private SharedPreferences mSharedPreferences;
-	private SimpleDateFormat mDateFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss", Locale.getDefault());
-	
-	final static long DAY_IN_MILLIS = 1000 * 60 * 60 * 24;
-	private static final int MAX_DAYS_BEFORE_CHECKING = 8;
-	
-	@Override
-	public int onStartCommand(Intent intent, int flags, int startId) {
-		
-		mSharedPreferences = getApplicationContext().getSharedPreferences(FairphoneUpdater.FAIRPHONE_UPDATER_PREFERENCES, MODE_PRIVATE);
+    private static final String PREFERENCE_LAST_CONFIG_DOWNLOAD_ID = "LastConfigDownloadId";
+    private DownloadManager mDownloadManager = null;
+    private DownloadBroadCastReceiver mDownloadBroadCastReceiver = null;
 
-	    if(hasInternetConnection() ){
-			// remove the old file if its still there for some reason
-			removeLatestFile(getApplicationContext());
-	
-			setupDownloadManager();
-	
-			// start the download of the latest file
-			startDownloadLatest();
-		}
-		
-		return Service.START_NOT_STICKY;
-	}
+    private static final int MAX_DOWNLOAD_RETRIES = 3;
+    private int mDownloadRetries;
+    private long mLatestFileDownloadId;
+    private boolean mInternetConnectionAvailable;
 
-	private void removeLatestFile(Context context) {
-        VersionParserHelper.removeFiles(context);
+    private SharedPreferences mSharedPreferences;
+
+    final static long DAY_IN_MILLIS = 1000 * 60 * 60 * 24;
+
+    private GappsInstallerHelper mGappsInstaller;
+
+    private BroadcastReceiver mBCastConfigFileDownload;
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId)
+    {
+
+        // remove the logs
+        clearDataLogs();
+
+        mSharedPreferences = getApplicationContext().getSharedPreferences(FairphoneUpdater.FAIRPHONE_UPDATER_PREFERENCES, MODE_PRIVATE);
+
+        mLatestFileDownloadId = mSharedPreferences.getLong(PREFERENCE_LAST_CONFIG_DOWNLOAD_ID, 0);
         
-		updateLastChecked("2013.01.01 00:00:00");
-	}
+        setupDownloadManager();
+        
+        setupConnectivityMonitoring();
 
-	private boolean isFileStillValid() {
-		Date lastTimeChecked = getLastTimeCheckedDate();
-		
-		int diffInDays = (int) ((System.currentTimeMillis() - lastTimeChecked.getTime())/ DAY_IN_MILLIS );
-		
-		return diffInDays < MAX_DAYS_BEFORE_CHECKING;
-	}
+        if (hasInternetConnection())
+        {
+            downloadConfigFile();
+        }
 
-	private Date getLastTimeCheckedDate() {
-		
-		String lastTimeDatePreference = mSharedPreferences.getString(PREFERENCE_DATE_LAST_TIME_CHECKED, "2013.01.01 00:00:00");
-		
-		Date lastTimeDate = null;
-		try {
-			lastTimeDate = mDateFormat.parse(lastTimeDatePreference);
-		} catch (ParseException e) {
-			Calendar cal = Calendar.getInstance();
-			cal.add(Calendar.YEAR, -1);
-			
-			lastTimeDate = cal.getTime();
-		}
-		
-		return lastTimeDate;
-	}
+        // setup the gapps installer
+        mGappsInstaller = new GappsInstallerHelper(getApplicationContext());
 
-	@Override
-	public IBinder onBind(Intent intent) {
-		return null;
-	}
+        mBCastConfigFileDownload = new BroadcastReceiver()
+        {
 
-	public void startDownloadLatest() {
-		if(hasConnection()){
-			Resources resources = getApplicationContext().getResources();
-	            
-			// set the download for the latest version on the download manager
-			Request request = createDownloadRequest(resources.getString(R.string.downloadUrl), resources.getString(R.string.versionFilename) + resources.getString(R.string.versionFilename_zip));
-			mLatestFileDownloadId = mDownloadManager.enqueue(request);
-		}
-	}
+            @Override
+            public void onReceive(Context context, Intent intent)
+            {
+                if (hasInternetConnection())
+                {
+                    downloadConfigFile();
+                }
+            }
+        };
 
-	private boolean hasConnection() {
-		return isWiFiEnabled();
-	}
-	
-	private boolean isWiFiEnabled() {
+        getApplicationContext().registerReceiver(mBCastConfigFileDownload, new IntentFilter(ACTION_FAIRPHONE_UPDATER_CONFIG_FILE_DOWNLOAD));
 
-		ConnectivityManager manager = (ConnectivityManager) getApplicationContext()
-				.getSystemService(Context.CONNECTIVITY_SERVICE);
+        return Service.START_STICKY;
+    }
 
-		boolean isWifi = manager.getNetworkInfo(ConnectivityManager.TYPE_WIFI)
-				.isConnectedOrConnecting();
+    private void downloadConfigFile()
+    {
+        // remove the old file if its still there for some reason
+        removeLatestFileDownload(getApplicationContext());
 
-		return isWifi;
-	}
+        // start the download of the latest file
+        startDownloadLatest();
+    }
 
-	private void setNotification() {
+    public void updateGoogleAppsIntallerWidgets()
+    {
+        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
+        int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(this, GoogleAppsInstallerWidget.class));
+        if (appWidgetIds.length > 0)
+        {
+            new GoogleAppsInstallerWidget().onUpdate(this, appWidgetManager, appWidgetIds);
+        }
+    }
 
-		Context context = getApplicationContext();
+    protected void clearDataLogs()
+    {
+        try
+        {
+            Log.d(TAG, "Clearing dump log data...");
+            Shell.runCommand(new CommandCapture(0, "rm /data/log_other_mode/*_log"));
+        } catch (IOException e)
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (TimeoutException e)
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
 
-		NotificationManager manager = (NotificationManager) context
-				.getSystemService(Context.NOTIFICATION_SERVICE);
+    @Override
+    public IBinder onBind(Intent intent)
+    {
+        return null;
+    }
 
-		NotificationCompat.Builder builder = new NotificationCompat.Builder(
-				context)
-				.setSmallIcon(R.drawable.fairphone_updater_tray_icon_small)
-				.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.fairphone_updater_tray_icon))
-				.setContentTitle(
-						context.getResources().getString(R.string.app_name))
-				.setContentText(getResources().getString(R.string.fairphoneUpdateMessage));
+    public void startDownloadLatest()
+    {
+        if (hasConnection())
+        {
+            Resources resources = getApplicationContext().getResources();
+            String downloadLink = getConfigDownloadLink(getApplicationContext());
+            // set the download for the latest version on the download manager
+            Request request = createDownloadRequest(downloadLink, resources.getString(R.string.configFilename) + resources.getString(R.string.config_zip));
 
-		Intent resultIntent = new Intent(context, FairphoneUpdater.class);
-		TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
+            if (request != null && mDownloadManager != null)
+            {
+                mLatestFileDownloadId = mDownloadManager.enqueue(request);
 
-		stackBuilder.addParentStack(FairphoneUpdater.class);
+                Editor editor = mSharedPreferences.edit();
+                editor.putLong(PREFERENCE_LAST_CONFIG_DOWNLOAD_ID, mLatestFileDownloadId);
+                editor.commit();
+            }
+            else
+            {
+                Log.e(TAG, "Invalid request for link " + downloadLink);
+                Intent i = new Intent(FairphoneUpdater.FAIRPHONE_UPDATER_CONFIG_DOWNLOAD_FAILED);
+                i.putExtra(FairphoneUpdater.FAIRPHONE_UPDATER_CONFIG_DOWNLOAD_LINK, downloadLink);
+                sendBroadcast(i);
+            }
+        }
+    }
 
-		stackBuilder.addNextIntent(resultIntent);
-		PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0,
-				PendingIntent.FLAG_UPDATE_CURRENT);
+    private String getConfigDownloadLink(Context context)
+    {
 
-		builder.setContentIntent(resultPendingIntent);
+        Resources resources = context.getResources();
 
-		Notification notificationWhileRunnig = builder.build();
-		
-		// Add notification
-		manager.notify(0, notificationWhileRunnig);
-		
-		//to update the activity
-		Intent updateIntent = new Intent(FairphoneUpdater.FAIRPHONE_UPDATER_NEW_VERSION_RECEIVED);
-        sendBroadcast(updateIntent);
-	}
+        StringBuilder sb = new StringBuilder();
+        if (FairphoneUpdater.DEV_MODE_ENABLED)
+        {
+            sb.append(resources.getString(R.string.downloadDevUrl));
+        }
+        else
+        {
+            sb.append(resources.getString(R.string.downloadUrl));
+        }
+        sb.append(Build.MODEL.replaceAll("\\s", ""));
+        sb.append(getPartitionDownloadPath(resources));
+        sb.append("/");
 
-	private Request createDownloadRequest(String url, String fileName) {
+        sb.append(resources.getString(R.string.configFilename));
 
-	    
-		Request request = new Request(Uri.parse(url));
-		Environment.getExternalStoragePublicDirectory(
-				Environment.getExternalStorageDirectory()
-						+ VersionParserHelper.UPDATER_FOLDER).mkdirs();
+        sb.append(resources.getString(R.string.config_zip));
 
-		request.setDestinationInExternalPublicDir(
-				VersionParserHelper.UPDATER_FOLDER, fileName);
-		request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI);
-		request.setAllowedOverRoaming(false);
-		
-		Resources resources = getApplicationContext().getResources();
-		request.setTitle(resources.getString(R.string.downloadUpdateTitle));
+        addModelAndOS(context, sb);
 
-		return request;
-	}
+        String downloadLink = sb.toString();
 
-	private boolean hasInternetConnection() {
+        Log.d(TAG, "Download link: " + downloadLink);
 
-		ConnectivityManager manager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        return downloadLink;
+    }
 
-		boolean is3g = manager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE)
-				.isConnectedOrConnecting();
+    private void addModelAndOS(Context context, StringBuilder sb)
+    {
+        // attach the model and the os
+        sb.append("?");
+        sb.append("model=" + Build.MODEL.replaceAll("\\s", ""));
+        Version currentVersion = VersionParserHelper.getDeviceVersion(context.getApplicationContext());
 
-		boolean isWifi = manager.getNetworkInfo(ConnectivityManager.TYPE_WIFI)
-				.isConnectedOrConnecting();
+        if (currentVersion != null)
+        {
+            sb.append("&");
+            sb.append("os=" + currentVersion.getAndroidVersion());
+        }
+    }
 
-		return isWifi || is3g;
-	}
+    private String getPartitionDownloadPath(Resources resources)
+    {
+        String downloadPath = "";
+        String modelWithoutSpaces = Build.MODEL.replaceAll("\\s", "");
+        if (modelWithoutSpaces.equals(resources.getString(R.string.FP1Model)))
+        {
+            File path = Environment.getDataDirectory();
+            double sizeInGB = Utils.getPartitionSizeInGBytes(path);
+            double roundedSize = (double) Math.ceil(sizeInGB * 100d) / 100d;
+            Log.d(TAG, path.getPath() + " size: " + roundedSize + "Gb");
 
-	private void setupDownloadManager() {
-		mDownloadManager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
+            double fp1DataPartitionSize = (double) resources.getInteger(R.integer.FP1DataPartitionSizeMb) / 100d;
+            // Add a little buffer to the 1gb default just in case
+            downloadPath =
+                    roundedSize <= fp1DataPartitionSize ? resources.getString(R.string.oneGBDataPartition) : resources.getString(R.string.unifiedDataPartition);
+        }
+        return downloadPath;
+    }
 
-		mDownloadBroadCastReceiver = new DownloadBroadCastReceiver();
+    private boolean hasConnection()
+    {
+        return isWiFiEnabled();
+    }
 
-		getApplicationContext().registerReceiver(mDownloadBroadCastReceiver,
-				new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
-	}
+    private boolean isWiFiEnabled()
+    {
 
-	private void removeBroadcastReceiver() {
-		getApplicationContext().unregisterReceiver(mDownloadBroadCastReceiver);
-	}
-	
-	private void checkVersionValidation(Context context){
-	    
-		Version latestVersion = VersionParserHelper
-				.getLastestVersion(getApplicationContext());
-		Version currentVersion = VersionParserHelper
-				.getDeviceVersion(getApplicationContext());
-		
-		if(latestVersion != null){
-			
-			String versionName = null;
-			String versionNumber = null;
-			String versionUrl = null;
-			String versionMd5 = null;
-			String versionAndroid = null;
-			
-			if(latestVersion.isNewerVersionThan(currentVersion)){
-				// save the version in the share preferences
-				versionName = latestVersion.getName();
-				versionNumber = latestVersion.getNumber();
-				versionUrl = latestVersion.getDownloadLink();
-				versionMd5 = latestVersion.getMd5Sum();
-				versionAndroid = latestVersion.getAndroid();
-				
-				setNotification();
-			} else {
-				VersionParserHelper.removeLatestVersionFile(getApplicationContext());
-			}
-			
-			Editor editor = mSharedPreferences.edit();
-			
-			editor.putString(FairphoneUpdater.PREFERENCE_NEW_VERSION_NAME, versionName);
-			editor.putString(FairphoneUpdater.PREFERENCE_NEW_VERSION_NUMBER, versionNumber);
-			editor.putString(FairphoneUpdater.PREFERENCE_NEW_VERSION_MD5_SUM, versionMd5);
-			editor.putString(FairphoneUpdater.PREFERENCE_NEW_VERSION_URL, versionUrl);
-			editor.putString(FairphoneUpdater.PREFERENCE_NEW_VERSION_ANDROID, versionAndroid);
-			
-			editor.commit();
-    		
-    		removeLatestFileDownload(context);
-		}
-	}
+        ConnectivityManager manager = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
 
-    private void removeLatestFileDownload(Context context) {
-        if(mLatestFileDownloadId != 0){
-        	mDownloadManager.remove(mLatestFileDownloadId);
-        	mLatestFileDownloadId = 0;
+        boolean isWifi = manager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).isConnectedOrConnecting();
+
+        return isWifi;
+    }
+
+    private static void setNotification(Context currentContext)
+    {
+
+        Context context = currentContext.getApplicationContext();
+
+        NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+
+        NotificationCompat.Builder builder =
+                new NotificationCompat.Builder(context).setSmallIcon(R.drawable.updater_tray_icon_small)
+                        .setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.drawable.updater_tray_icon))
+                        .setContentTitle(context.getResources().getString(R.string.app_name))
+                        .setContentText(context.getResources().getString(R.string.fairphone_update_message));
+
+        Intent resultIntent = new Intent(context, FairphoneUpdater.class);
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
+
+        stackBuilder.addParentStack(FairphoneUpdater.class);
+
+        stackBuilder.addNextIntent(resultIntent);
+        PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        builder.setContentIntent(resultPendingIntent);
+
+        Notification notificationWhileRunnig = builder.build();
+
+        // Add notification
+        manager.notify(0, notificationWhileRunnig);
+    }
+
+    private Request createDownloadRequest(String url, String fileName)
+    {
+
+        Resources resources = getApplicationContext().getResources();
+        Request request;
+
+        try
+        {
+            request = new Request(Uri.parse(url));
+            Environment.getExternalStoragePublicDirectory(Environment.getExternalStorageDirectory() + resources.getString(R.string.updaterFolder)).mkdirs();
+
+            request.setDestinationInExternalPublicDir(resources.getString(R.string.updaterFolder), fileName);
+            request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI);
+            request.setAllowedOverRoaming(false);
+            request.setTitle(resources.getString(R.string.fairphone_update_message_title));
+        } catch (Exception e)
+        {
+            Log.e(TAG, "Error creating request: " + e.getMessage());
+            request = null;
+        }
+
+        return request;
+    }
+
+    private void setupConnectivityMonitoring()
+    {
+
+    	// Check current connectivity status
+        ConnectivityManager manager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        boolean is3g = manager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).isConnectedOrConnecting();
+        boolean isWifi = manager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).isConnectedOrConnecting();
+        mInternetConnectionAvailable = isWifi || is3g;
+
+        // Setup monitoring for future connectivity status changes
+        BroadcastReceiver networkStateReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, false)) {
+                	mInternetConnectionAvailable = false;
+                	if (mLatestFileDownloadId != 0 && mDownloadManager != null) {
+                		mDownloadManager.remove(mLatestFileDownloadId);
+                		mLatestFileDownloadId = 0;
+                	}
+                } else {
+                	if(!mInternetConnectionAvailable) {
+                		downloadConfigFile();
+                	}
+                	mInternetConnectionAvailable = true;
+                }
+            }
+        };
+
+        IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);        
+        registerReceiver(networkStateReceiver, filter);
+    }
+    
+    private boolean hasInternetConnection()
+    {
+    	return mInternetConnectionAvailable;
+    }
+
+    private void setupDownloadManager()
+    {
+        if (mDownloadManager == null)
+        {
+            mDownloadManager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
+        }
+
+        if (mDownloadBroadCastReceiver == null)
+        {
+            mDownloadBroadCastReceiver = new DownloadBroadCastReceiver();
+
+            getApplicationContext().registerReceiver(mDownloadBroadCastReceiver, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
+        }
+    }
+
+    private void removeBroadcastReceiver()
+    {
+        getApplicationContext().unregisterReceiver(mDownloadBroadCastReceiver);
+        mDownloadBroadCastReceiver = null;
+    }
+
+    private static void checkVersionValidation(Context context)
+    {
+
+        Version latestVersion = VersionParserHelper.getLatestVersion(context.getApplicationContext());
+        Version currentVersion = VersionParserHelper.getDeviceVersion(context.getApplicationContext());
+
+        if (latestVersion != null)
+        {
+            if (latestVersion.isNewerVersionThan(currentVersion))
+            {
+                setNotification(context);
+            }
+            // to update the activity
+            Intent updateIntent = new Intent(FairphoneUpdater.FAIRPHONE_UPDATER_NEW_VERSION_RECEIVED);
+            context.sendBroadcast(updateIntent);
+        }
+    }
+
+    public static boolean readUpdaterData(Context context)
+    {
+
+        boolean retVal = false;
+        Resources resources = context.getApplicationContext().getResources();
+        String targetPath = Environment.getExternalStorageDirectory() + resources.getString(R.string.updaterFolder);
+
+        String filePath = targetPath + resources.getString(R.string.configFilename) + resources.getString(R.string.config_zip);
+
+        File file = new File(filePath);
+
+        if (file.exists())
+        {
+            if (RSAUtils.checkFileSignature(context, filePath, targetPath))
+            {
+                checkVersionValidation(context);
+                retVal = true;
+            }
+            else
+            {
+                Toast.makeText(context, resources.getString(R.string.invalid_signature_download_message), Toast.LENGTH_LONG).show();
+                file.delete();
+            }
+        }
+
+        return retVal;
+    }
+
+    private void removeLatestFileDownload(Context context)
+    {
+        if (mLatestFileDownloadId != 0 && mDownloadManager != null)
+        {
+            mDownloadManager.remove(mLatestFileDownloadId);
+            mLatestFileDownloadId = 0;
         }
         VersionParserHelper.removeFiles(context);
     }
 
-	private float parseVersion(String number) {
-		String finalNumber = number.replaceAll("\\.", "");
-		return Float.parseFloat(finalNumber);
-	}
-
-	private void updateLastChecked(String date) {
-        Editor editor = mSharedPreferences.edit();
-        editor.putString(PREFERENCE_DATE_LAST_TIME_CHECKED, date);
-        
-        editor.commit();
+    private boolean retryDownload(Context context)
+    {
+        // invalid file
+        boolean removeReceiver = true;
+        removeLatestFileDownload(context);
+        if (mDownloadRetries < MAX_DOWNLOAD_RETRIES)
+        {
+            startDownloadLatest();
+            mDownloadRetries++;
+            removeReceiver = false;
+        }
+        if (removeReceiver)
+        {
+            Toast.makeText(getApplicationContext(), getResources().getString(R.string.config_file_download_error_message), Toast.LENGTH_LONG).show();
+        }
+        return removeReceiver;
     }
 
-    private class DownloadBroadCastReceiver extends BroadcastReceiver {
+    private class DownloadBroadCastReceiver extends BroadcastReceiver
+    {
 
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			DownloadManager.Query query = new DownloadManager.Query();
+        @Override
+        public void onReceive(Context context, Intent intent)
+        {
 
-			query.setFilterById(mLatestFileDownloadId);
-			Cursor cursor = mDownloadManager.query(query);
-			
-			if (cursor.moveToFirst()) {
-				int columnIndex = cursor
-						.getColumnIndex(DownloadManager.COLUMN_STATUS);
-				int status = cursor.getInt(columnIndex);
+            boolean removeReceiver = false;
 
-				if (status == DownloadManager.STATUS_SUCCESSFUL) {
-				    
-				    String filePath = mDownloadManager.getUriForDownloadedFile(
-				            mLatestFileDownloadId).getPath();
-				    
-				    String targetPath = Environment.getExternalStorageDirectory()
-		                    + VersionParserHelper.UPDATER_FOLDER;
-                    
-				    if(RSAUtils.checkFileSignature(context, filePath, targetPath)){
-    				    updateLastChecked(mDateFormat.format(Calendar.getInstance().getTime()));
-    					checkVersionValidation(context);
-					}else{
-					    //invalid file
-					    removeLatestFileDownload(context);
-					}
-				}
-			}
+            DownloadManager.Query query = new DownloadManager.Query();
 
-			cursor.close();
+            query.setFilterById(mLatestFileDownloadId);
 
-			removeBroadcastReceiver();
-		}
-	}
+            Cursor cursor = mDownloadManager != null ? mDownloadManager.query(query) : null;
+
+            if (cursor != null && cursor.moveToFirst())
+            {
+                int columnIndex = cursor.getColumnIndex(DownloadManager.COLUMN_STATUS);
+                int status = cursor.getInt(columnIndex);
+                Resources resources = context.getApplicationContext().getResources();
+
+                switch (status)
+                {
+                    case DownloadManager.STATUS_SUCCESSFUL:
+                    {
+                        String filePath = mDownloadManager.getUriForDownloadedFile(mLatestFileDownloadId).getPath();
+
+                        String targetPath = Environment.getExternalStorageDirectory() + resources.getString(R.string.updaterFolder);
+
+                        if (RSAUtils.checkFileSignature(context, filePath, targetPath))
+                        {
+                            checkVersionValidation(context);
+                        }
+                        else
+                        {
+                            Toast.makeText(getApplicationContext(), resources.getString(R.string.invalid_signature_download_message), Toast.LENGTH_LONG).show();
+                            removeReceiver = retryDownload(context);
+                        }
+                        break;
+                    }
+                    case DownloadManager.STATUS_FAILED:
+                    {
+                        removeReceiver = retryDownload(context);
+                        break;
+                    }
+                }
+            }
+            
+            if (cursor != null)
+            {
+                cursor.close();
+            }
+
+            if (removeReceiver)
+            {
+                removeBroadcastReceiver();
+            }
+        }
+    }
 }

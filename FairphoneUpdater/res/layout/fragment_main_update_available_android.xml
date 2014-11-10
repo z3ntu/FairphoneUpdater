@@ -1,0 +1,49 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/update_available_group"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/green"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:paddingLeft="@dimen/main_padding"
+    android:paddingRight="@dimen/main_padding"
+    android:visibility="visible" >
+
+    <TextView
+        style="@style/TextRegular16GreenDark"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/main_small_text_margin_top"
+        android:text="@string/your_current_os_version" />
+
+    <TextView
+        android:id="@+id/update_available_current_version_name_text"
+        style="@style/TextLight24GreenDark"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal" />
+
+    <TextView
+        style="@style/TextRegular16White"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/main_small_text_margin_top"
+        android:text="@string/update_is_available" />
+
+    <TextView
+        android:id="@+id/update_available_name_text"
+        style="@style/TextLight24White"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal" />
+
+    <Button
+        android:id="@+id/install_update_button"
+        style="@style/ButtonWhiteGreen"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/main_button_margin_top"
+        android:text="@string/install_update" />
+
+</LinearLayout>

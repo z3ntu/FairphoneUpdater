@@ -1,8 +1,276 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <style name="AppTheme" parent="android:Theme.Holo">
+    <style name="AppTheme" parent="android:Theme.Holo.Light">
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowFullscreen">false</item>
+        <item name="android:buttonStyle">@style/Button</item>
+        <item name="android:progressBarStyle">@style/ProgressBar</item>
+        <item name="android:checkboxStyle">@style/CheckBox</item>
+        <item name="android:alertDialogTheme">@style/AlertDialog</item>
+    </style>
+
+    <!-- ALERT DIALOG -->
+    <style name="AlertDialog" parent="android:Theme.Holo.Light">
+        <item name="android:windowFrame">@color/transparent</item>
+        <item name="android:windowBackground">@color/transparent</item>
+        <item name="android:windowTitleStyle">@style/DialogTitleText</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:textAppearance">@style/DialogContentText</item>
+        <item name="android:textAppearanceMedium">@style/DialogContentText</item>
+        <item name="android:textAppearanceInverse">@style/DialogContentText</item>
+        <!-- <item name="android:buttonBarStyle">@style/DialogButtonBar</item> -->
+        <item name="android:buttonBarButtonStyle">@style/DialogButtonSmall</item>
+    </style>
+
+    <style name="DialogTitleText" parent="@style/TextLight24BlueDark">
+        <item name="android:gravity">center</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+
+    <style name="DialogContentText" parent="@style/TextRegular16BlueDark">
+        <item name="android:gravity">center</item>
+        <item name="android:paddingTop">20dp</item>
+        <item name="android:paddingBottom">20dp</item>
+    </style>
+
+    <style name="DialogButtonSmall" parent="@android:style/Widget.Holo.Light.ActionButton">
+        <item name="android:textSize">14sp</item>
+        <item name="android:fontFamily">sans-serif-light</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+
+    <!-- CHECK BOX -->
+    <style name="CheckBox" parent="@android:style/Widget.CompoundButton.CheckBox">
+        <item name="android:button">@drawable/checkbox_button_grey</item>
+        <item name="android:textColor">@color/grey</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:gravity">top|left</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:paddingLeft">8dp</item>
+    </style>
+
+    <style name="CheckBoxBlue" parent="@style/CheckBox">
+        <item name="android:button">@drawable/checkbox_button_blue</item>
+        <item name="android:textColor">@color/blue</item>
+    </style>
+
+    <style name="CheckBoxGreen" parent="@style/CheckBox">
+        <item name="android:button">@drawable/checkbox_button_green</item>
+        <item name="android:textColor">@color/green</item>
+    </style>
+
+    <!-- PROGRESS BAR -->
+    <style name="ProgressBar" parent="@android:style/Widget.ProgressBar">
+        <item name="android:indeterminate">false</item>
+        <item name="android:indeterminateOnly">false</item>
+        <item name="android:progressDrawable">@drawable/progress_bar_background</item>
+        <item name="android:max">100</item>
+        <item name="android:progress">1</item>
+    </style>
+
+    <!-- BUTTONS -->
+    <style name="Button" parent="@android:style/Widget.Button">
+        <item name="android:background">@drawable/button_grey_background</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">24sp</item>
+        <item name="android:paddingTop">15dp</item>
+        <item name="android:paddingBottom">15dp</item>
+        <item name="android:paddingRight">15dp</item>
+        <item name="android:paddingLeft">15dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+
+    <style name="ButtonBlue" parent="@style/Button">
+        <item name="android:background">@drawable/button_blue_background</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="ButtonGreen" parent="@style/Button">
+        <item name="android:background">@drawable/button_green_background</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+    
+    <style name="ButtonBlueDarkGrey" parent="@style/Button">
+        <item name="android:background">@drawable/button_blue_dark_grey_background</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+    
+    <style name="ButtonGreenDarkGrey" parent="@style/Button">
+        <item name="android:background">@drawable/button_green_dark_grey_background</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="ButtonWhiteBlue" parent="@style/Button">
+        <item name="android:background">@drawable/button_white_blue_background</item>
+        <item name="android:textColor">@color/button_white_blue_text</item>
+    </style>
+
+    <style name="ButtonWhiteGreen" parent="@style/Button">
+        <item name="android:background">@drawable/button_white_green_background</item>
+        <item name="android:textColor">@color/button_white_green_text</item>
+    </style>
+
+    <style name="ButtonSmall" parent="@android:style/Widget.Button">
+        <item name="android:background">@drawable/button_grey_background</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:padding">15dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+
+    <style name="ButtonSmallBlueDark" parent="@style/ButtonSmall">
+        <item name="android:background">@drawable/button_blue_dark_background</item>
+        <item name="android:textColor">@color/button_blue_dark_text</item>
+    </style>
+
+    <style name="ButtonSmallGreenDark" parent="@style/ButtonSmall">
+        <item name="android:background">@drawable/button_green_dark_background</item>
+        <item name="android:textColor">@color/button_green_dark_text</item>
+    </style>
+
+    <style name="ButtonText" parent="@android:style/Widget.Button">
+        <item name="android:background">@color/transparent</item>
+        <item name="android:textColor">@color/button_text_grey_text</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:padding">10dp</item>
+    </style>
+
+    <style name="ButtonTextBlue" parent="@style/ButtonText">
+        <item name="android:textColor">@color/button_text_blue_text</item>
+    </style>
+
+    <style name="ButtonTextGreen" parent="@style/ButtonText">
+        <item name="android:textColor">@color/button_text_green_text</item>
+    </style>
+
+    <style name="ButtonTextWhite" parent="@style/ButtonText">
+        <item name="android:textColor">@color/button_text_white_text</item>
+    </style>
+
+    <!-- TEXT REGULAR -->
+    <style name="TextRegular">
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+
+    <style name="TextRegular14" parent="@style/TextRegular">
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="TextRegular16" parent="@style/TextRegular">
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="TextRegular14White" parent="@style/TextRegular14">
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="TextRegular14GreyLight" parent="@style/TextRegular14">
+        <item name="android:textColor">@color/grey_light</item>
+    </style>
+
+    <style name="TextRegular14Blue" parent="@style/TextRegular14">
+        <item name="android:textColor">@color/blue</item>
+    </style>
+
+    <style name="TextRegular14BlueLight" parent="@style/TextRegular14">
+        <item name="android:textColor">@color/blue_light</item>
+    </style>
+
+    <style name="TextRegular14GreenLight" parent="@style/TextRegular14">
+        <item name="android:textColor">@color/green_light</item>
+    </style>
+
+    <style name="TextRegular14BlueDark" parent="@style/TextRegular14">
+        <item name="android:textColor">@color/blue_dark</item>
+    </style>
+
+    <style name="TextRegular14GreenDark" parent="@style/TextRegular14">
+        <item name="android:textColor">@color/green_dark</item>
+    </style>
+
+    <style name="TextRegular16GreenDark" parent="@style/TextRegular16">
+        <item name="android:textColor">@color/green_dark</item>
+    </style>
+
+    <style name="TextRegular16BlueDark" parent="@style/TextRegular16">
+        <item name="android:textColor">@color/blue_dark</item>
+    </style>
+
+    <style name="TextRegular16White" parent="@style/TextRegular16">
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <!-- TEXT LIGHT -->
+    <style name="TextLight">
+        <item name="android:fontFamily">sans-serif-light</item>
+    </style>
+
+    <style name="TextLight24" parent="@style/TextLight">
+        <item name="android:textSize">24sp</item>
+    </style>
+
+    <style name="TextLight24BlueDark" parent="@style/TextLight24">
+        <item name="android:textColor">@color/blue_dark</item>
+    </style>
+
+    <style name="TextLight24GreenDark" parent="@style/TextLight24">
+        <item name="android:textColor">@color/green_dark</item>
+    </style>
+
+    <style name="TextLight24White" parent="@style/TextLight24">
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="TextLight24GreyDark" parent="@style/TextLight24">
+        <item name="android:textColor">@color/grey_dark</item>
+    </style>
+
+    <!-- TEXT BOLD -->
+    <style name="TextBold">
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="TextBold14" parent="@style/TextBold">
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="TextBold14White" parent="@style/TextBold14">
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="TextBold14BlueDark" parent="@style/TextBold14">
+        <item name="android:textColor">@color/blue_dark</item>
+    </style>
+
+    <style name="TextBold14GreenDark" parent="@style/TextBold14">
+        <item name="android:textColor">@color/green_dark</item>
+    </style>
+
+    <style name="TextBold14Red" parent="@style/TextBold14">
+        <item name="android:textColor">@color/red</item>
+    </style>
+
+    <style name="TextBold16" parent="@style/TextBold">
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="TextBold16White" parent="@style/TextBold16">
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="TextBold16BlueDark" parent="@style/TextBold16">
+        <item name="android:textColor">@color/blue_dark</item>
+    </style>
+
+    <style name="TextBold16GreenDark" parent="@style/TextBold16">
+        <item name="android:textColor">@color/green_dark</item>
     </style>
 
 </resources>

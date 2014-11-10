@@ -1,0 +1,112 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:padding="@dimen/alert_padding" >
+
+    <TextView
+        style="@style/TextLight24GreenDark"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/alert_title_margin_bottom"
+        android:text="@string/warning" />
+
+    <TextView
+        style="@style/TextRegular14GreenDark"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/your_are_about_to_install" />
+
+    <TextView
+        android:id="@+id/installing_version"
+        style="@style/TextBold14GreenDark"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/version_type_text"
+        style="@style/TextRegular14GreenDark"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/an_older_version_of_os" />
+
+    <TextView
+        android:id="@+id/erase_all_data_warning_text"
+        style="@style/TextBold14Red"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/alert_padding"
+        android:layout_marginTop="@dimen/alert_padding"
+        android:text="@string/erase_all_data_warning_message"
+        android:visibility="gone" />
+
+    <TextView
+        style="@style/TextRegular14GreyLight"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/alert_padding"
+        android:layout_marginTop="@dimen/alert_padding"
+        android:gravity="center_horizontal"
+        android:text="@string/older_version_os_install_confirmation" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/alert_padding" >
+
+        <Button
+            android:id="@+id/confirmation_no_button"
+            style="@style/ButtonGreenDarkGrey"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="25dp"
+            android:paddingTop="5dp"
+            android:text="@android:string/no" />
+
+        <TextView
+            style="@style/TextRegular16White"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center_horizontal"
+            android:clickable="false"
+            android:focusable="false"
+            android:paddingBottom="5dp"
+            android:text="@string/take_me_back" />
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/alert_padding" >
+
+        <Button
+            android:id="@+id/confirmation_yes_button"
+            style="@style/ButtonGreen"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="25dp"
+            android:paddingTop="5dp"
+            android:text="@android:string/yes" />
+
+        <TextView
+            style="@style/TextRegular16White"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center_horizontal"
+            android:clickable="false"
+            android:focusable="false"
+            android:paddingBottom="5dp"
+            android:text="@string/go_ahead_and_install_it" />
+    </FrameLayout>
+
+    <CheckBox
+        android:id="@+id/confirmation_checkbox"
+        style="@style/CheckBoxGreen"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/older_version_os_install_confirmation_checkbox" />
+
+</LinearLayout>

@@ -1,15 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="updaterService">Aktualisierungsservice</string>
-    <string name="currentVersion">Aktuelle Version</string>
-    <string name="newVersion">Neue Version</string>
-    <string name="installVersion">Neue Version installieren</string>
-    <string name="rebootDevice">Gerät neustarten</string>
-    <string name="messageReadyToInstall">Neue Version bereit zur Installation&#8230;</string>
-    <string name="invalidDownloadMessage">Ungültige Datei runtergeladen</string>
-    <string name="fairphoneUpdateMessage">Neues Fairphone Update verfügbar</string>
-    <string name="downloadMessage">Lade Datei, bitte warten&#8230;</string>
-    <string name="downloadUpdateTitle">Neue Fairphone Version</string>
-    <string name="wifiDiscaimerTitle">WLAN deaktiviert</string>
-	<string name="wifiDiscaimerMessage">Die Datei, die Sie herunterladen möchten, ist zu groß für mobile Verbindungen (~200 MB). Bitte aktivieren Sie die WLAN-Verbindung und versuchen Sie es erneut.</string>    
+
+    <!-- Google Apps Install Widget -->
+    <string name="google_apps_installer_name">Google Apps-Installer</string>
+    <string name="google_apps_initial_title">Installieren Sie\ndie Google Apps</string>
+    <string name="google_apps_disclaimer_title">Installieren Sie die Google Apps</string>
+    <string name="google_apps_disclaimer_description">Für das vollkommene mobile Android- und Google-Erlebnis, wie z. B. Google Play store, benötigt Ihr Handy zusätzlichen Inhalt und eine Extra-Software. Leider können wir weder diesen Inhalt vorinstallieren noch können wir ihn direkt zur Verfügung stellen, da Fairphone noch keine Lizenz für diesen besitzt. Wir verhandeln aber im Moment mit dem Inhaltseigentümer, um diese Lizenz zu erhalten.\nTippen Sie unten auf "Ich akzeptiere", um diesen Inhalt von einer externen sicheren Quelle herunterzuladen. Sie installieren diesen Inhalt auf Ihre eigene Verantwortung.\nWenn Sie nicht zustimmen, wird Ihr Handy natürlich immer noch mit den grundlegenden Android-Apps arbeiten, aber Sie werden einige Dienste von Google nicht durchführen können.</string>
+    <string name="google_apps_disclaimer_agree">Ich akzeptiere</string>
+    <string name="google_apps_denied_permissions_title">Berechtigungen verweigert</string>
+    <string name="google_apps_denied_permissions_description">Fairphone Launcher konnte nicht die erforderlichen Berechtigungen erhalten, um die Google Apps zu installieren. Wenn Sie VERWEIGERN ausgewählt haben, starten Sie bitte Ihren Installer neu und ERLAUBEN Sie die Berechtigungen.</string>
+    <string name="google_apps_reboot_failed_title">Fehlgeschlagener Neustart</string>
+    <string name="google_apps_reboot_failed_description">Google Apps sind installiert. Konnte das Gerät nicht neu gestartet werden, starten Sie es bitte manuell.</string>
+    <string name="google_apps_download_title">Google Apps werden heruntergeladen</string>
+    <string name="google_apps_unzip_title">Google Apps werden extrahiert</string>
+    <string name="google_apps_install_title">Google Apps werden installiert</string>
+    <string name="google_apps_reboot_title">Gerät wird neugestartet</string>
+    <string name="google_apps_permissions_description">Der Fairphone OS wird Sie jetzt nach einem Superuser-Zugriff fragen. Wir versichern Ihnen, dass dieser absolut sicher ist. Wählen Sie bitte ERLAUBEN aus, wenn gefragt.</string>
+    <string name="google_apps_permissions_title">Systemberechtigungen</string>
+    <string name="google_apps_reboot_description">Das System muss neu gestartet werden, um die Installation abzuschließen.\nBefolgen Sie nach dem Neustart die Schritte, um die Google Apps einzurichten.</string>
+    <string name="google_apps_uninstall_title">Google Apps wurden installiert</string>
+    <string name="google_apps_uninstall_description">Löschen Sie\ndiesen Installer</string>
+    <string name="google_apps_failed_download_title">Download fehlgeschlagen</string>
+    <string name="google_apps_failed_download_description">Heruntergeladene Dateien sind beschädigt. Möchten Sie es erneut versuchen?</string>
+    <string name="google_apps_download_error">Fehler beim Herunterladen der Dateien. Bitte versuchen Sie es erneut.</string>
+    <string name="google_apps_connection_title">WLAN deaktiviert</string>
+    <string name="google_apps_connection_description">Die Datei, die Sie herunterladen möchten, ist zu groß für mobile Verbindungen (~100 MB). Bitte aktivieren Sie die WLAN-Verbindung und versuchen Sie es erneut.</string>
+    <string name="google_apps_reinstall_request_title">Kleine Erinnerungshilfe</string>
+    <string name="google_apps_reinstall_description">Um den Play Store auf deinem Telefon neu zu installieren, musst du zu all deinen Apps gehen, dort den Reiter Widgets anwählen, um von dort den Google Apps-Installer wieder auf dein Startfeld zu ziehen.</string>
+
 </resources>

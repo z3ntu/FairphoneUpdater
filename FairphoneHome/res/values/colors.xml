@@ -34,9 +34,5 @@
     <color name="text_shadow_color">#000</color>
     <color name="white">#FFFFFF</color>
     <color name="transparent">#00000000</color>
-    <color name="google_blue">#33b5e5</color>
-    <color name="google_progressbar_grey">#4a4d51</color>
     
-    
-
 </resources>

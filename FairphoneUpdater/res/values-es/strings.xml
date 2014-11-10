@@ -1,15 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="updaterService">Servicio de actualización</string>
-    <string name="currentVersion">Versión actual</string>
-    <string name="newVersion">Nueva versión</string>
-    <string name="installVersion">Instalar nueva versión</string>
-    <string name="rebootDevice">Reiniciar dispositivo</string>
-    <string name="messageReadyToInstall">La nueva versión está lista para instalar&#8230;</string>
-    <string name="invalidDownloadMessage">Archivo descargado incorrecto</string>
-    <string name="fairphoneUpdateMessage">Nueva actualización para Fairphone disponible</string>
-    <string name="downloadMessage">Descargando actualización, ten paciencia&#8230;</string>
-    <string name="downloadUpdateTitle">Nueva actualización para Fairphone</string>
-    <string name="wifiDiscaimerTitle">Wi-Fi desconectado</string>
-	<string name="wifiDiscaimerMessage">El archivo que está intentando descargar demasiado grande para conexiones móviles (~200mb). Por favor conéctese al Wi-Fi e intente otra vez.</string>
+
+    <!-- Google Apps Install Widget -->
+    <string name="google_apps_installer_name">Instalador Google Apps</string>
+    <string name="google_apps_initial_title">Instalar\nGoogle Apps</string>
+    <string name="google_apps_disclaimer_title">Instalar Google Apps</string>
+    <string name="google_apps_disclaimer_description">Para tener acceso a la experiencia Google y Android completa como la Google Play Store, su teléfono necesita contenido y software adicional. Desafortunadamente, como Fairphone no tiene la licencia necesaria, no podemos pre-instalar este contenido, ni lo podemos proveer directamente. Estamos trabajando con el propietario de los contenidos para lograr hacerlo.\nElija “Acepto” a continuación para descargar el contenido desde una fuente externa segura. La instalación de este contenido es su responsabilidad.\nSi no acepta, su teléfono continuará funcionando con aplicaciones Android básicas, pero va a perder algunos servicios de Google.</string>
+    <string name="google_apps_disclaimer_agree">Acepto</string>
+    <string name="google_apps_denied_permissions_title">Permisos denegados</string>
+    <string name="google_apps_denied_permissions_description">Fairphone OS no ha podido obtener los permisos para instalar Google Apps. Si ha elegido DENEGAR, reinicie el instalador y elija AUTORIZAR.</string>
+    <string name="google_apps_reboot_failed_title">Fallo al reiniciar</string>
+    <string name="google_apps_reboot_failed_description">Google Apps ha sido instalado, pero ha habido un fallo al reiniciar. Por favor, reinicie manualmente.</string>
+    <string name="google_apps_download_title">Descargando Google Apps</string>
+    <string name="google_apps_unzip_title">Extrayendo Google Apps</string>
+    <string name="google_apps_install_title">Instalando Google Apps</string>
+    <string name="google_apps_reboot_title">Reiniciando dispositivo</string>
+    <string name="google_apps_permissions_description">Fairphone OS le pedirá acceso de Superusuario. Le garantizamos que esta operación es completamente segura. Por favor, elija PERMITIR cuando sea solicitado.</string>
+    <string name="google_apps_permissions_title">Permisos de sistema</string>
+    <string name="google_apps_reboot_description">Necesita reiniciar el sistema para completar la instalación.\nDespués de la instalación, siga los pasos para configurar Google Apps.</string>
+    <string name="google_apps_uninstall_title">Desisntalador de Google Apps</string>
+    <string name="google_apps_uninstall_description">Borrar\neste instalador.</string>
+    <string name="google_apps_failed_download_title">Fallo al descargar</string>
+    <string name="google_apps_failed_download_description">Los archivos descargados están corrompidos. ¿Intentar de nuevo?</string>
+    <string name="google_apps_download_error">Error al descargar los archivos. Por favor, inténtelo de nuevo.</string>
+    <string name="google_apps_connection_title">Wi-Fi desconectado</string>
+    <string name="google_apps_connection_description">El archivo que está intentando descargar es muy grande para conexiones móviles (~100mb). Por favor, conéctese a un punto Wi-Fi e inténtelo de nuevo.</string>
+
 </resources>

@@ -17,20 +17,36 @@
 
 package org.fairphone.launcher;
 
-import com.flurry.android.FlurryAgent;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.FileDescriptor;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.fairphone.launcher.DropTarget.DragObject;
 import org.fairphone.launcher.edgeswipe.EdgeSwipeAppMenuHelper;
+import org.fairphone.launcher.edgeswipe.edit.EdgeSwipeAppDiscoverer;
 import org.fairphone.launcher.edgeswipe.edit.EditFavoritesActivity;
 import org.fairphone.launcher.edgeswipe.edit.FavoritesStorageHelper;
 import org.fairphone.launcher.edgeswipe.ui.EdgeSwipeInterceptorViewListener;
-import org.fairphone.launcher.gappsinstaller.GappsInstallerHelper;
-import org.fairphone.launcher.util.FlurryHelper;
 import org.fairphone.oobe.OOBEActivity;
 import org.fairphone.widgets.appswitcher.AppDiscoverer;
 import org.fairphone.widgets.appswitcher.ApplicationRunInformation;
 import org.fairphone.widgets.appswitcher.WidgetProvider;
-import org.fairphone.widgets.gapps.GoogleAppsInstallerWidget;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
@@ -114,26 +130,6 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.FileDescriptor;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * Default launcher application.
@@ -365,7 +361,7 @@ public final class Launcher extends Activity implements View.OnClickListener,
 			}
 		}
 	};
-	private GappsInstallerHelper mGappsInstaller;
+	
 	
 	private FrameLayout mSystemUpdaterWindow;
 
@@ -506,8 +502,6 @@ public final class Launcher extends Activity implements View.OnClickListener,
 		// setup favorites
 		setupFavoriteApps();
 		
-		// setup the gapps installer
-		mGappsInstaller = new GappsInstallerHelper(this);
 	}
 	
 	public void persistAppRunInfo(Context context) {
@@ -2455,7 +2449,11 @@ public final class Launcher extends Activity implements View.OnClickListener,
 
 			AppDiscoverer.getInstance().applicationRemoved(
 					appInfo.componentName);
-
+			
+			EdgeSwipeAppDiscoverer.getInstance().removeUninstalledApp(appInfo.componentName);
+			
+			saveAppSwitcherData();
+			
 			updateAppSwitcherWidgets();
 		}
 	}
@@ -2525,15 +2523,6 @@ public final class Launcher extends Activity implements View.OnClickListener,
 				.getAppWidgetIds(new ComponentName(this, WidgetProvider.class));
 		if (appWidgetIds.length > 0) {
 			new WidgetProvider().onUpdate(this, appWidgetManager, appWidgetIds);
-		}
-	}
-	
-	public void updateGoogleAppsIntallerWidgets() {
-		AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
-		int[] appWidgetIds = appWidgetManager
-				.getAppWidgetIds(new ComponentName(this, GoogleAppsInstallerWidget.class));
-		if (appWidgetIds.length > 0) {
-			new GoogleAppsInstallerWidget().onUpdate(this, appWidgetManager, appWidgetIds);
 		}
 	}
 
@@ -4114,6 +4103,7 @@ public final class Launcher extends Activity implements View.OnClickListener,
 					appToRemove.getComponentName());
 			
 			FavoritesStorageHelper.updateFavorites(this, appToRemove.getComponentName());
+			EdgeSwipeAppDiscoverer.getInstance().removeUninstalledApp(appToRemove.getComponentName());
         }
         
         if(!appsToRemove.isEmpty()){

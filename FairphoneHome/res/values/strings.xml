@@ -390,31 +390,6 @@ s
 	<string name="oobe_next">Next</string>
 	<string name="oobe_done">Done</string>
 	
-	<!-- Google Apps Install Widget -->
-    <string name="google_apps_installer_name">Google Apps Installer</string>
-	<string name="google_apps_initial_title">Install\nGoogle Apps</string>
-	<string name="google_apps_disclaimer_title">Install Google Apps</string>
-	<string name="google_apps_disclaimer_description">For the full Android and Google mobile experience like the Google Play store, your phone needs extra content and software. Unfortunately, as Fairphone doesn\'t have a license yet, we cannot pre-install this content, nor can we provide it directly ourselves. We are working with the content owner to achieve this.\nPress "I Agree" below to download this content from an external secured source. Installing this content is your own responsibility.\nIf you do not agree, your phone will still work with basic Android apps, of course, but you will miss some services from Google.</string>
-	<string name="google_apps_disclaimer_agree">I Agree</string>
-	<string name="google_apps_denied_permissions_title">Denied permissions</string>
-	<string name="google_apps_denied_permissions_description">Fairphone OS could not obtain the necessary permissions to install Google Apps. If you chose DENY, please restart the installer and ALLOW permissions.</string>
-	<string name="google_apps_reboot_failed_title">Failed reboot</string>
-	<string name="google_apps_reboot_failed_description">Google Apps are installed. Could not reboot device, please reboot manually.</string>
-	<string name="google_apps_download_title">Downloading Google Apps</string>
-	<string name="google_apps_unzip_title">Extracting Google Apps</string>
-	<string name="google_apps_install_title">Installing Google Apps</string>
-	<string name="google_apps_reboot_title">Rebooting device</string>
-	<string name="google_apps_permissions_description">Fairphone OS will now ask you for Superuser access. We assure you it\’s perfectly safe. Please choose ALLOW when asked.</string>
-	<string name="google_apps_permissions_title">System permissions</string>
-	<string name="google_apps_reboot_description">The system needs to reboot to complete the installation.\n\nAfter the reboot, follow the steps to set up Google Apps.</string>
-	<string name="google_apps_uninstall_title">Google Apps installed</string>
-	<string name="google_apps_uninstall_description">Delete this\nInstaller</string>
-	<string name="google_apps_failed_download_title">Download failed</string>
-	<string name="google_apps_failed_download_description">Downloaded files are corrupted. Retry?</string>
-	<string name="google_apps_download_error">Error downloading files, please try again.</string>
-	<string name="google_apps_connection_title">Wi-Fi disabled</string>
-	<string name="google_apps_connection_description">The file you’re trying to download is too large for mobile connections (~100MB). Please enable Wi-Fi connection and try again.</string>
 	<string name="updatingSystem">Updating System #8230;</string>
-	
 	
 </resources>

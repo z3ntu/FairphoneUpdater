@@ -1,0 +1,36 @@
+<merge xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <LinearLayout
+        android:id="@+id/version_up_to_date_group"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/background"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingLeft="@dimen/main_padding"
+        android:paddingRight="@dimen/main_padding"
+        android:visibility="visible" >
+
+        <TextView
+            style="@style/TextRegular16BlueDark"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/main_small_text_margin_top"
+            android:text="@string/your_current_os_version" />
+
+        <TextView
+            android:id="@+id/version_up_to_date_current_version_name_text"
+            style="@style/TextLight24BlueDark"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal" />
+
+        <TextView
+            style="@style/TextRegular14GreyLight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/main_padding"
+            android:text="@string/your_os_is_up_to_date" />
+    </LinearLayout>
+
+</merge>

@@ -1,0 +1,34 @@
+<merge xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <LinearLayout
+        android:id="@+id/version_install_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:visibility="gone" >
+
+        <TextView
+            style="@style/TextBold16White"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/download_complete" />
+
+        <TextView
+            style="@style/TextRegular14GreenLight"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_marginTop="@dimen/main_small_text_margin_top"
+            android:layout_weight="1"
+            android:text="@string/restart_your_phone_message" />
+
+        <Button
+            android:id="@+id/restart_button"
+            style="@style/ButtonWhiteGreen"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/restart" />
+    </LinearLayout>
+
+</merge>
