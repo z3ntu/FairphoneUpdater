@@ -19,8 +19,7 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE_TAGS := optional
 
-LOCAL_STATIC_JAVA_LIBRARIES := android-common android-support-v4 roottoolslib
-LOCAL_JAVA_LIBRARIES += mediatek-framework
+LOCAL_STATIC_JAVA_LIBRARIES := android-common android-support-v4 roottoolslib fpucrashlytics
 
 LOCAL_SRC_FILES := $(call all-java-files-under, src) $(call all-renderscript-files-under, src)
 #LOCAL_SDK_VERSION := current
@@ -28,11 +27,13 @@ LOCAL_SRC_FILES := $(call all-java-files-under, src) $(call all-renderscript-fil
 LOCAL_PACKAGE_NAME := FairphoneUpdater
 LOCAL_CERTIFICATE := platform
 
+LOCAL_PRIVILEGED_MODULE := true
+
 include $(BUILD_PACKAGE)
 
 include $(CLEAR_VARS)
 
-LOCAL_PREBUILT_STATIC_JAVA_LIBRARIES := roottoolslib:libs/RootTools-3.3.jar
+LOCAL_PREBUILT_STATIC_JAVA_LIBRARIES := roottoolslib:libs/RootTools-3.3.jar fpucrashlytics:libs/crashlytics.jar
 
 include $(BUILD_MULTI_PREBUILT)
 
