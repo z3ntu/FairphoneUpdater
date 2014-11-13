@@ -1,29 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <!-- Google Apps Install Widget -->
     <string name="google_apps_installer_name">Instal·lador Google Apps</string>
-    <string name="google_apps_initial_title">Instal·lar\nGoogle Apps</string>
-    <string name="google_apps_disclaimer_title">Instal·lar Google Apps</string>
-    <string name="google_apps_disclaimer_description">Per tenir accéss a l\'experiència de Google i Android completa com la Google Play Store, el seu telèfon necessita contingut i software addicional. Desafortunadament, com Fairphone no té la llicència necessària, no podem pre-instal·lar aquest contingut, ni el podem proveir directament. Estem treballant amb el propietari dels continguts per aconseguir-ho.\nEsculli "Accepto" a continuació per a descarregar el contingut des d\'una font externa segura. La instal·lació d\'aquest contingut és la seva responsabilitat.\nSi no accepta, el seu telèfon continuarà funcionant amb aplicacions Android bàsiques, però perdrà alguns serveis de Google.</string>
-    <string name="google_apps_disclaimer_agree">Accepto</string>
-    <string name="google_apps_denied_permissions_title">Permisos denegats</string>
-    <string name="google_apps_denied_permissions_description">Fairphone OS no ha pogut obtenir els permisos per instal·lar Google Apps. Si ha escollit DENEGAR, reinicii l\'instal·lador i escolli AUTORITZAR.</string>
-    <string name="google_apps_reboot_failed_title">Error al reiniciar</string>
-    <string name="google_apps_reboot_failed_description">Google Apps ha estat instal·lat, però hi ha hagut un error al reiniciar. Si us plau, reinicii manualment.</string>
-    <string name="google_apps_download_title">Descarregant Google Apps</string>
-    <string name="google_apps_unzip_title">Extraient Google Apps</string>
-    <string name="google_apps_install_title">Instal·lant Google Apps</string>
-    <string name="google_apps_reboot_title">Reiniciant dispositiu</string>
-    <string name="google_apps_permissions_description">Fairphone OS li demanarà access de Superusuari. Li garantim que aquesta operació és completament segura. Si us plau, escolli PERMETRE quan ho demani.</string>
-    <string name="google_apps_permissions_title">Permisos de sistema</string>
-    <string name="google_apps_reboot_description">Necessita reiniciar el sistema per completar la instal·lació.\nDesprés de la instal·lació, segueixi els passos per configurar Google Apps.</string>
-    <string name="google_apps_uninstall_title">Google Apps instal·lat</string>
-    <string name="google_apps_uninstall_description">Esborrar\naquest instal·lador.</string>
-    <string name="google_apps_failed_download_title">Error al descarregar</string>
-    <string name="google_apps_failed_download_description">Els arxius descarregats estan corromputs. Intentar de nou?</string>
-    <string name="google_apps_download_error">Error al descarregar els arxius. Si us plau, intenti-ho de nou.</string>
-    <string name="google_apps_connection_title">Wi-Fi desconnectat</string>
     <string name="google_apps_connection_description">L\'arxiu que està intentant descarregar és massa gran per connexions mòbils (~100mb). Si us plau, connecti amb un punt Wi-Fi i provi de nou.</string>
+    <string name="google_apps_connection_title">Wi-Fi desconnectat</string>
+    <string name="google_apps_denied_permissions_description">Fairphone Updater no ha pogut obtenir els permisos per instal·lar Google Apps. Si ha escollit DENEGAR, reinicii l\'instal·lador i escolli AUTORITZAR.</string>
+    <string name="google_apps_denied_permissions_title">Permisos denegats</string>
+    <string name="google_apps_disclaimer_agree">Accepto</string>
+    <string name="google_apps_disclaimer_description">Per tenir accéss a l\'experiència de Google i Android completa com la Google Play Store, el seu telèfon necessita contingut i software addicional. Desafortunadament, com Fairphone no té la llicència necessària, no podem pre-instal·lar aquest contingut, ni el podem proveir directament. Estem treballant amb el propietari dels continguts per aconseguir-ho. Esculli "Accepto" a continuació per a descarregar el contingut des d\'una font externa segura. La instal·lació d\'aquest contingut és la seva responsabilitat. Si no accepta, el seu telèfon continuarà funcionant amb aplicacions Android bàsiques, però perdrà alguns serveis de Google.</string>
+    <string name="google_apps_disclaimer_title">Instal·lar Google Apps</string>
+    <string name="google_apps_download_error">Error al descarregar els arxius. Si us plau, intenti-ho de nou.</string>
+    <string name="google_apps_download_title">Descarregant Google Apps</string>
+    <string name="google_apps_failed_download_description">Els arxius descarregats estan corromputs. Intentar de nou?</string>
+    <string name="google_apps_failed_download_title">Error al descarregar</string>
+    <string name="google_apps_install_title">Instal·lant Google Apps</string>
+    <string name="google_apps_permissions_description">Fairphone Updater li demanarà access de Superusuari. Li garantim que aquesta operació és completament segura. Si us plau, escolli PERMETRE quan ho demani.</string>
+    <string name="google_apps_permissions_title">Permisos de sistema</string>
+    <string name="google_apps_re_install_title">Google Apps instal·lat</string>
+    <string name="google_apps_reboot_description">Necessita reiniciar el sistema per completar la instal·lació. Després de la instal·lació, segueixi els passos per configurar Google Apps.</string>
+    <string name="google_apps_reboot_failed_description">Google Apps ha estat instal·lat, però hi ha hagut un error al reiniciar. Si us plau, reinicii manualment.</string>
+    <string name="google_apps_reboot_failed_title">Error al reiniciar</string>
+    <string name="google_apps_reboot_title">Reiniciant dispositiu</string>
+    <string name="google_apps_uninstall_description">Esborrar aquest instal·lador.</string>
+    <string name="google_apps_uninstall_title">Google Apps instal·lat</string>
+    <string name="google_apps_unzip_title">Extraient Google Apps</string>
+    <string name="wifi_discaimer_message">L\'arxiu que està intentant descarregar és massa gran per connexions mòbils (~200mb). Si us plau, connecti amb un punt Wi-Fi i provi de nou.</string>
 
 </resources>
