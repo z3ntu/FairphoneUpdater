@@ -175,7 +175,7 @@
             android:paddingLeft="10dp"
             android:paddingTop="5dp"
             android:textColor="@color/google_blue"
-            android:textSize="14sp" />
+            android:textSize="16sp" />
 
         <ProgressBar
             android:id="@+id/progressBar"
@@ -258,7 +258,7 @@
             android:padding="15dp"
             android:text="@string/google_apps_permissions_title"
             android:textColor="@color/google_blue"
-            android:textSize="15sp" />
+            android:textSize="18.5sp" />
 
         <TextView
             android:layout_width="match_parent"
@@ -326,7 +326,7 @@
                 android:layout_gravity="center_vertical"
                 android:text="@string/google_apps_uninstall_description"
                 android:textColor="#c8c8c8"
-                android:textSize="18.5sp" />
+                android:textSize="17.5sp" />
         </LinearLayout>
     </FrameLayout>
 

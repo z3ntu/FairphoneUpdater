@@ -17,6 +17,7 @@
         style="@style/TextRegular14GreenDark"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:gravity="center"
         android:text="@string/your_are_about_to_install" />
 
     <TextView
@@ -40,6 +41,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/alert_padding"
         android:layout_marginTop="@dimen/alert_padding"
+        android:gravity="center"
         android:text="@string/erase_all_data_warning_message"
         android:visibility="gone" />
 

@@ -4,6 +4,7 @@
     <string name="app_name">Fairphone Updater</string>
     <string name="fairphone">Fairphone</string>
     <string name="android">Android</string>
+    <string name="about">about</string>
     <string name="updater_service">Updater Service</string>
     <string name="a_different_os_from_the_current">un système d\'exploitation différent de l\'actuel.</string>
     <string name="an_older_version_of_os">une version antérieure de votre système d\'exploitation actuel.</string>
@@ -26,20 +27,20 @@
     <string name="google_apps_denied_permissions_description">Le Fairphone Updater ne parvient pas à obtenir les permissions nécessaires pour installer les Google Apps. Si vous avez choisi l’option REFUSER, redémarrez le programme d’installation et cliquez sur AUTORISER afin d’activer cette option.</string>
     <string name="google_apps_denied_permissions_title">Autorisations refusées</string>
     <string name="google_apps_disclaimer_agree">J’accepte</string>
-    <string name="google_apps_disclaimer_description">Pour une expérience mobile Android et Google complète, telle que la boutique Google Play, votre téléphone a besoin de contenus et de logiciels supplémentaires. Comme Fairphone ne possède pas, pour l’heure, de licence, il ne nous est malheureusement pas possible de préinstaller ce contenu ni de le fournir directement. Nous travaillons actuellement avec le propriétaire du contenu en vue d’atteindre cet objectif. Cliquez sur « J’accepte », ci-dessous, pour télécharger ce contenu à partir d’une source externe sécurisée. L’installation de ce contenu est de votre entière responsabilité. Si vous n’acceptez pas, votre téléphone fonctionnera, bien entendu, avec les applications de base pour Android, mais vous regretterez certainement de ne pas pouvoir utiliser certains services proposés par Google.</string>
+    <string name="google_apps_disclaimer_description">Pour une expérience mobile Android et Google complète, telle que la boutique Google Play, votre téléphone a besoin de contenus et de logiciels supplémentaires. Comme Fairphone ne possède pas, pour l’heure, de licence, il ne nous est malheureusement pas possible de préinstaller ce contenu ni de le fournir directement. Nous travaillons actuellement avec le propriétaire du contenu en vue d’atteindre cet objectif.\nCliquez sur « J’accepte », ci-dessous, pour télécharger ce contenu à partir d’une source externe sécurisée. L’installation de ce contenu est de votre entière responsabilité.\nSi vous n’acceptez pas, votre téléphone fonctionnera, bien entendu, avec les applications de base pour Android, mais vous regretterez certainement de ne pas pouvoir utiliser certains services proposés par Google.</string>
     <string name="google_apps_disclaimer_title">Installer les Google Apps</string>
     <string name="google_apps_download_error">Une erreur est survenue lors du téléchargement des fichiers. Réessayez.</string>
     <string name="google_apps_download_title">Téléchargement des Google Apps</string>
     <string name="google_apps_failed_download_description">Les fichiers téléchargés sont endommagés. Souhaitez-vous réessayer ?</string>
     <string name="google_apps_failed_download_title">Échec du téléchargement</string>
-    <string name="google_apps_initial_title">Installer les Google Apps</string>
+    <string name="google_apps_initial_title">Installer\nles Google Apps</string>
     <string name="google_apps_install_title">Installation des Google Apps</string>
     <string name="google_apps_installer_name">Programme d’installation de Google Apps</string>
     <string name="google_apps_permissions_description">Le Fairphone Updater va maintenant vous demander d’activer l’accès en mode superutilisateur. Nous vous assurons que cela est absolument sans risque. Vous devrez alors sélectionner l’option AUTORISER.</string>
     <string name="google_apps_permissions_title">Autorisations du système</string>
-    <string name="google_apps_re_install_description">Supprimer ou cliquer pour réinstaller</string>
+    <string name="google_apps_re_install_description">Supprimer ou\ncliquer pour réinstaller</string>
     <string name="google_apps_re_install_title">Google Apps installées</string>
-    <string name="google_apps_reboot_description">Pour conclure l’installation, il est nécessaire de redémarrer le système. Après le redémarrage de l’appareil, suivez la procédure pour configurer les Google Apps.</string>
+    <string name="google_apps_reboot_description">Pour conclure l’installation, il est nécessaire de redémarrer le système.\n\nAprès le redémarrage de l’appareil, suivez la procédure pour configurer les Google Apps.</string>
     <string name="google_apps_reboot_failed_description">Les Google Apps sont installées. Si vous ne parvenez pas à redémarrer l’appareil, faites-le manuellement.</string>
     <string name="google_apps_reboot_failed_title">Échec du redémarrage</string>
     <string name="google_apps_reboot_title">Redémarrage de l’appareil</string>
@@ -79,7 +80,7 @@
     <string name="wifi_discaimer_message">Le fichier que vous essayez de télécharger est trop volumineux pour les connexions mobiles (~200 Mo). Activez la connexion Wi-Fi et réessayez.</string>
     <string name="your_are_about_to_install">Vous êtes sur le point d\'installer</string>
     <string name="your_current_os_version">Version actuelle de votre système d\'exploitation actuel</string>
-    <string name="your_os_is_up_to_date">Pour profiter pleinement de votre Fairphone, nous vous conseillons d\'installer Fairphone Android.</string>
+    <string name="your_os_is_up_to_date">Pour profiter pleinement de votre Fairphone, nous vous conseillons</string>
     <string name="fairphone_os_info">Ce système d\'exploitation Fairphone Android intègre une couche Fairphone comprenant les widgets Peace of Mind, Edge Swipe, Last Used/Most Used Apps, Battery Mood Sensor et plusieurs papiers peints Fairphone.</string>
     <string name="android_os_info">Ce système d\'exploitation Stock Android est une version pure d\'Android, sans aucune modification par Fairphone.</string>
 

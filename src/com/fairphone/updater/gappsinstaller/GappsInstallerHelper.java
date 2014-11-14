@@ -126,6 +126,10 @@ public class GappsInstallerHelper
         {
             updateWidgetState(GAPPS_STATES_PERMISSION_CHECK);
         }
+        else if (currentState == GAPPS_STATES_INITIAL)
+        {
+            checkGappsAreInstalled();
+        }
         else
         {
             updateWidgetState(currentState);

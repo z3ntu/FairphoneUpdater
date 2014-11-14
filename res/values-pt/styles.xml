@@ -73,7 +73,7 @@
     <style name="Button" parent="@android:style/Widget.Button">
         <item name="android:background">@drawable/button_grey_background</item>
         <item name="android:textColor">@color/white</item>
-        <item name="android:textSize">24sp</item>
+        <item name="android:textSize">22sp</item>
         <item name="android:paddingTop">15dp</item>
         <item name="android:paddingBottom">15dp</item>
         <item name="android:paddingRight">15dp</item>
@@ -131,16 +131,6 @@
     <style name="ButtonSmallGreenDark" parent="@style/ButtonSmall">
         <item name="android:background">@drawable/button_green_dark_background</item>
         <item name="android:textColor">@color/button_green_dark_text</item>
-    </style>
-    
-    <style name="ButtonSmallBlueDarkGrey" parent="@style/ButtonSmall">
-        <item name="android:background">@drawable/button_blue_dark_grey_background</item>
-        <item name="android:textColor">@color/white</item>
-    </style>
-    
-    <style name="ButtonSmallGreenDarkGrey" parent="@style/ButtonSmall">
-        <item name="android:background">@drawable/button_green_dark_grey_background</item>
-        <item name="android:textColor">@color/white</item>
     </style>
 
     <style name="ButtonText" parent="@android:style/Widget.Button">

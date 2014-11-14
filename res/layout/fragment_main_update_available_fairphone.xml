@@ -15,6 +15,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/main_small_text_margin_top"
+        android:gravity="center_horizontal"
         android:text="@string/your_current_os_version" />
 
     <TextView
@@ -29,6 +30,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/main_small_text_margin_top"
+        android:gravity="center_horizontal"
         android:text="@string/update_is_available" />
 
     <TextView

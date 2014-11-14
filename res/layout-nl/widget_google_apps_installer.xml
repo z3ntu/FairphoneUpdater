@@ -364,7 +364,7 @@
                 android:layout_gravity="center_vertical"
                 android:text="@string/google_apps_re_install_description"
                 android:textColor="#c8c8c8"
-                android:textSize="18.5sp" />
+                android:textSize="17.5sp" />
         </LinearLayout>
     </FrameLayout>
 
