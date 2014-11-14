@@ -36,6 +36,10 @@ public class FairphoneUpdater extends FragmentActivity
 
     public static final String FAIRPHONE_UPDATER_NEW_VERSION_RECEIVED = "FairphoneUpdater.NEW.VERSION.RECEIVED";
 
+    public static final String PREFERENCE_FIRST_TIME_ANDROID = "FirstTimeAndroid";
+    
+    public static final String PREFERENCE_FIRST_TIME_FAIRPHONE = "FirstTimeFairphone";
+    
     public static final String PREFERENCE_CURRENT_UPDATER_STATE = "CurrentUpdaterState";
 
     private static final String PREFERENCE_DOWNLOAD_ID = "LatestUpdateDownloadId";
@@ -75,6 +79,9 @@ public class FairphoneUpdater extends FragmentActivity
     private ImageView headerFairphoneInfoButton;
     private ImageView headerAndroidInfoButton;
     
+    private boolean mIsFirstTimeAndroid;
+    private boolean mIsFirstTimeFairphone;
+    
     public static enum HeaderType
     {
         MAIN_FAIRPHONE, MAIN_ANDROID, FAIRPHONE, ANDROID, OTHER_OS
@@ -95,6 +102,11 @@ public class FairphoneUpdater extends FragmentActivity
 
         mSharedPreferences = getSharedPreferences(FAIRPHONE_UPDATER_PREFERENCES, MODE_PRIVATE);
 
+        // update first times
+        mIsFirstTimeAndroid = mSharedPreferences.getBoolean(PREFERENCE_FIRST_TIME_ANDROID, true);
+        
+        mIsFirstTimeFairphone = mSharedPreferences.getBoolean(PREFERENCE_FIRST_TIME_FAIRPHONE, true);
+        
         // check current state
         mCurrentState = getCurrentUpdaterState();
 
@@ -290,6 +302,16 @@ public class FairphoneUpdater extends FragmentActivity
 
                 headerFairphoneText.setText(headerText);
                 
+                if(showInfo && mIsFirstTimeFairphone){
+                    showInfoPopupDialog(DetailLayoutType.UPDATE_FAIRPHONE);
+                    Editor editor = mSharedPreferences.edit();
+                    
+                    mIsFirstTimeFairphone = false;
+                    
+                    editor.putBoolean(PREFERENCE_FIRST_TIME_FAIRPHONE, mIsFirstTimeFairphone);
+                    editor.commit();
+                }
+                
                 headerFairphoneInfoButton.setVisibility(showInfo ? View.VISIBLE : View.GONE);
                 headerAndroidInfoButton.setVisibility(View.GONE);
                 break;
@@ -302,6 +324,16 @@ public class FairphoneUpdater extends FragmentActivity
                 headerOtherOSText.setVisibility(View.GONE);
 
                 headerAndroidText.setText(headerText);
+                
+                if(showInfo && mIsFirstTimeAndroid){
+                    showInfoPopupDialog(DetailLayoutType.UPDATE_ANDROID);
+                    Editor editor = mSharedPreferences.edit();
+                    
+                    mIsFirstTimeAndroid = false;
+                    
+                    editor.putBoolean(PREFERENCE_FIRST_TIME_FAIRPHONE, mIsFirstTimeAndroid);
+                    editor.commit();
+                }
                 
                 headerFairphoneInfoButton.setVisibility(View.GONE);
                 headerAndroidInfoButton.setVisibility(showInfo ? View.VISIBLE : View.GONE);
