@@ -4,7 +4,6 @@
     <string name="app_name">Fairphone Updater</string>
     <string name="fairphone">Fairphone</string>
     <string name="android">Android</string>
-    <string name="about">about</string>
     <string name="updater_service">Updater Service</string>
     <string name="a_different_os_from_the_current">ein anderes Betriebssystem als das aktuelle.</string>
     <string name="an_older_version_of_os">eine ältere Version von deinem aktuellen Betriebssytem. </string>
@@ -18,7 +17,7 @@
     <string name="erase_all_data_warning_message">Dieses Update wird alle deine Daten löschen.</string>
     <string name="erase_all_partitions_warning_message">Dieses Update wird alle deine Daten löschen. Willst du fortfahren?</string>
     <string name="error_downloading">Fehler beim runterladen</string>
-    <string name="fairphone_os">Fairphone Android</string>
+    <string name="fairphone_os">Android for Fairphone</string>
     <string name="fairphone_update_message">Neues Fairphone Update verfügbar</string>
     <string name="fairphone_update_message_title">Neues Fairphone Update</string>
     <string name="go_ahead_and_install_it">Installiere es</string>
@@ -44,7 +43,7 @@
     <string name="google_apps_reboot_failed_description">Google Apps sind installiert. Konnte das Gerät nicht neu gestartet werden, starte es bitte manuell.</string>
     <string name="google_apps_reboot_failed_title">Fehlgeschlagener Neustart</string>
     <string name="google_apps_reboot_title">Gerät wird neugestartet</string>
-    <string name="google_apps_reinstall_description">Um den App Store neu zu installieren, musst du lange auf den Startbildschirm drücken, zu den Widgets gehen, dann den Google Apps Installer suchen und diesen auf den Startbildschirm ziehen. Danach musst du ihn nur noch anklicken.</string>
+    <string name="google_apps_reinstall_description">Um den app store neu zu installieren, musst du lange auf den Startbildschirm drücken, zu den Widgets gehen, dann den Google Apps Installer suchen und diesen auf den Startbildschirm ziehen. Danach musst du ihn nur noch anklicken.</string>
     <string name="google_apps_reinstall_request_title">Kleine Erinnerungshilfe</string>
     <string name="google_apps_uninstall_description">Diesen Installer löschen</string>
     <string name="google_apps_uninstall_title">Google Apps wurden installiert</string>
@@ -83,5 +82,6 @@
     <string name="your_os_is_up_to_date">Dein Betriebssystem ist auf dem neusten Stand</string>
     <string name="fairphone_os_info">Dieses Fairphone Android Betriebssystem hat den besonderen Fairphone Touch mit Eigenschaften wie dem Geniess die Ruhe Widget, Edge Swipe, Zuletzt benutzt/Meist benutzt Widget, Batterie Stimmungs Sensor und verschiedenen Fairphone Hintergründen. Wir empfehlen das Fairphone Android Betriebssystem zu installieren für die beste Fairphone Erfahrung.</string>
     <string name="android_os_info">Dieses Stock Android Betriebssystem ist die pure Android Erfahrung ohne zusätzliche Fairphone Änderungen. </string>
+    <string name="about">über</string>
 
 </resources>

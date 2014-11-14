@@ -4,25 +4,24 @@
     <string name="app_name">Fairphone Updater</string>
     <string name="fairphone">Fairphone</string>
     <string name="android">Android</string>
-    <string name="about">Acerca do</string>
     <string name="updater_service">Updater Service</string>
     <string name="a_different_os_from_the_current">um Sistema Operativo diferente do que o que está instalado.</string>
     <string name="an_older_version_of_os">uma versão anterior do Sistema Operativo instalado.</string>
     <string name="android_os">Stock Android</string>
-    <string name="config_file_download_error_message">Erro ao descarregar o ficheiro de configuração.</string>
+    <string name="config_file_download_error_message">Erro ao descarregar o ficheiro de configuração</string>
     <string name="config_file_download_link_error_message">Erro ao descarregar o ficheiro de configuração. Link usado:</string>
     <string name="dev_mode_message">Modo de desenvolvimento activo para esta sessão</string>
     <string name="device_not_supported_message">Dispositivo não suportado</string>
-    <string name="download_complete">transferência concluída</string>
-    <string name="download_started">a descarregar</string>
+    <string name="download_complete">Transferência concluída</string>
+    <string name="download_started">A descarregar</string>
     <string name="erase_all_data_warning_message">Esta actualização irá apagar todos os seus dados.</string>
     <string name="erase_all_partitions_warning_message">Esta actualização irá apagar todos os seus dados. Quer continuar?</string>
     <string name="error_downloading">Erro ao descarregar</string>
-    <string name="fairphone_os">Fairphone Android</string>
+    <string name="fairphone_os">Android para Fairphone</string>
     <string name="fairphone_update_message">Nova actualização Fairphone disponível</string>
     <string name="fairphone_update_message_title">Nova actualização Fairphone</string>
     <string name="go_ahead_and_install_it">Prosseguir com a instalação</string>
-    <string name="google_apps_connection_description">O ficheiro que está a tentar descarregar é muito grande para ligações móveis (~100mb). Por favor ligue-se ao Wi-Fi e tente outra vez.</string>
+    <string name="google_apps_connection_description">O ficheiro que está a tentar descarregar é muito grande para ligações móveis (~100mb). Por favor ligue o Wi-Fi e tente outra vez.</string>
     <string name="google_apps_connection_title">Wi-Fi desligado</string>
     <string name="google_apps_denied_permissions_description">Fairphone Updater não conseguiu obter as permissões para instalar o Google Apps. Se escolheu NEGAR, reinicie o instalador e seleccione PERMITIR.</string>
     <string name="google_apps_denied_permissions_title">Permissões negadas</string>
@@ -31,12 +30,12 @@
     <string name="google_apps_disclaimer_title">Instalar Google Apps</string>
     <string name="google_apps_download_error">Erro ao descarregar os ficheiros. Por favor tente outra vez.</string>
     <string name="google_apps_download_title">A descarregar Google Apps</string>
-    <string name="google_apps_failed_download_description">Os ficheiros descarregados estão corrompidos. Tentar outra vez?</string>
+    <string name="google_apps_failed_download_description">Os ficheiros descarregados estão corrompidos. Quer tentar novamente?</string>
     <string name="google_apps_failed_download_title">Falha ao descarregar</string>
     <string name="google_apps_initial_title">Instalar\nGoogle Apps</string>
     <string name="google_apps_install_title">A instalar Google Apps</string>
     <string name="google_apps_installer_name">Instalador Google Apps</string>
-    <string name="google_apps_permissions_description">Fairphone Updater vai pedir-lhe a permissão Superuser. Garantimos que esta operação é completamente segura. Por favor escolha PERMITIR ao ser questionado.</string>
+    <string name="google_apps_permissions_description">Fairphone Updater vai pedir-lhe a permissão Superuser. Garantimos que esta operação é completamente segura. Por favor escolha PERMITIR  e LEMBRAR ESTA ESCOLHA PARA SEMPRE ao ser questionado.</string>
     <string name="google_apps_permissions_title">Permissões de sistema</string>
     <string name="google_apps_re_install_description">Remova isto ou\npressione para reinstalar</string>
     <string name="google_apps_re_install_title">Google Apps instalado</string>
@@ -44,7 +43,7 @@
     <string name="google_apps_reboot_failed_description">O Google Apps está instalado. Falha ao reiniciar, por favor reinicie manualmente.</string>
     <string name="google_apps_reboot_failed_title">Falha ao reiniciar</string>
     <string name="google_apps_reboot_title">A reiniciar dispositivo</string>
-    <string name="google_apps_reinstall_description">Para voltar a instalar a Play store no seu telefone, deve pressionar no painel do Home, Widgets, e depois arrastar o Instalador das Google Apps para o painel do Home e selecioná-lo.</string>
+    <string name="google_apps_reinstall_description">Para voltar a instalar a app store no seu telefone, deve pressionar no painel do Home, pressionar Widgets e depois arrastar o Instalador das Google Apps para o painel do Home e selecioná-lo.</string>
     <string name="google_apps_reinstall_request_title">Não esquecer</string>
     <string name="google_apps_uninstall_description">Apagar este instalador</string>
     <string name="google_apps_uninstall_title">Google Apps instalado</string>
@@ -81,7 +80,8 @@
     <string name="your_are_about_to_install">Está prestes a instalar</string>
     <string name="your_current_os_version">Versão actual do Sistema Operativo</string>
     <string name="your_os_is_up_to_date">O Sistema Operativo está actualizado</string>
-    <string name="fairphone_os_info">Falta traduzir</string>
-    <string name="android_os_info">Falta traduzir</string>
+    <string name="fairphone_os_info">Este sistema operativo consiste numa adaptação do Android para o Fairphone com funcionalidades como o Peace of Mind, Edge Swipe, Your Apps Widget, Sensor de Batery Mood e vários fundos de ecrã Fairphone.\n\nRecomendamos a instalação do Android para o Fairphone no seu dispositivo para que tenha a melhor experiência.</string>
+    <string name="android_os_info">Este sistema operativo é a mais pura experência Android sem qualquer modificação para o Fairphone.</string>
+    <string name="about">Sobre</string>
 
 </resources>

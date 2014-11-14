@@ -4,7 +4,6 @@
     <string name="app_name">Fairphone Updater</string>
     <string name="fairphone">Fairphone</string>
     <string name="android">Android</string>
-    <string name="about">about</string>
     <string name="updater_service">Updater Service</string>
     <string name="a_different_os_from_the_current">un système d\'exploitation différent de l\'actuel.</string>
     <string name="an_older_version_of_os">une version antérieure de votre système d\'exploitation actuel.</string>
@@ -18,7 +17,7 @@
     <string name="erase_all_data_warning_message">Cette mise à jour effacera toutes vos données.</string>
     <string name="erase_all_partitions_warning_message">Cette mise à jour effacera toutes vos données. Voulez-vous continuer ?</string>
     <string name="error_downloading">Erreur lors du téléchargement</string>
-    <string name="fairphone_os">Fairphone Android</string>
+    <string name="fairphone_os">Android pour Fairphone</string>
     <string name="fairphone_update_message">Nouvelle mise à jour Fairphone disponible</string>
     <string name="fairphone_update_message_title">Nouvelle mise à jour Fairphone</string>
     <string name="go_ahead_and_install_it">L\'installer</string>
@@ -44,7 +43,7 @@
     <string name="google_apps_reboot_failed_description">Les Google Apps sont installées. Si vous ne parvenez pas à redémarrer l’appareil, faites-le manuellement.</string>
     <string name="google_apps_reboot_failed_title">Échec du redémarrage</string>
     <string name="google_apps_reboot_title">Redémarrage de l’appareil</string>
-    <string name="google_apps_reinstall_description">Pour réinstaller App Store sur votre téléphone, maintenez le doigt appuyé sur l\'écran d\'accueil. Ensuite, appuyez sur le bouton Widgets, faites glisser Google Apps Installer sur l\'écran d\'accueil puis sélectionnez-le.</string>
+    <string name="google_apps_reinstall_description">Pour réinstaller app store sur votre téléphone, maintenez le doigt appuyé sur l\'écran d\'accueil. Ensuite, appuyez sur le bouton Widgets, faites glisser Google Apps Installer sur l\'écran d\'accueil puis sélectionnez-le.</string>
     <string name="google_apps_reinstall_request_title">Mémoriser</string>
     <string name="google_apps_uninstall_description">Supprimer ce programme d’installation</string>
     <string name="google_apps_uninstall_title">Google Apps installées</string>
@@ -80,8 +79,9 @@
     <string name="wifi_discaimer_message">Le fichier que vous essayez de télécharger est trop volumineux pour les connexions mobiles (~200 Mo). Activez la connexion Wi-Fi et réessayez.</string>
     <string name="your_are_about_to_install">Vous êtes sur le point d\'installer</string>
     <string name="your_current_os_version">Version actuelle de votre système d\'exploitation actuel</string>
-    <string name="your_os_is_up_to_date">Pour profiter pleinement de votre Fairphone, nous vous conseillons</string>
-    <string name="fairphone_os_info">Ce système d\'exploitation Fairphone Android intègre une couche Fairphone comprenant les widgets Peace of Mind, Edge Swipe, Last Used/Most Used Apps, Battery Mood Sensor et plusieurs papiers peints Fairphone.</string>
+    <string name="your_os_is_up_to_date">Missing translation</string>
+    <string name="fairphone_os_info">Ce système d\'exploitation Android pour Fairphone intègre une couche Fairphone comprenant les widgets Peace of Mind, Edge Swipe, Last Used/Most Used Apps, Battery Mood Sensor et plusieurs papiers peints Fairphone. Pour profiter pleinement de votre Fairphone, nous vous conseillons d\'installer Android pour Fairphone.</string>
     <string name="android_os_info">Ce système d\'exploitation Stock Android est une version pure d\'Android, sans aucune modification par Fairphone.</string>
+    <string name="about">environ</string>
 
 </resources>
