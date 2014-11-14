@@ -169,16 +169,16 @@ public class DownloadAndRestartFragment extends BaseFragment
         {
             if (Version.IMAGE_TYPE_FAIRPHONE.equalsIgnoreCase(mSelectedVersion.getImageType()))
             {
-                mainActivity.updateHeader(HeaderType.MAIN_FAIRPHONE, "");
+                mainActivity.updateHeader(HeaderType.MAIN_FAIRPHONE, "", false);
             }
             else if (Version.IMAGE_TYPE_AOSP.equalsIgnoreCase(mSelectedVersion.getImageType()))
             {
-                mainActivity.updateHeader(HeaderType.MAIN_ANDROID, "");
+                mainActivity.updateHeader(HeaderType.MAIN_ANDROID, "", false);
             }
         }
         else
         {
-            mainActivity.updateHeader(HeaderType.MAIN_FAIRPHONE, "");
+            mainActivity.updateHeader(HeaderType.MAIN_FAIRPHONE, "", false);
         }
     }
 

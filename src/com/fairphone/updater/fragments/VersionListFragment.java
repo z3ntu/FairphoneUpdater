@@ -54,7 +54,7 @@ public class VersionListFragment extends BaseFragment
 
             case ANDROID:
                 view = inflater.inflate(R.layout.fragment_other_os_options_android_list, container, false);
-                mainActivity.updateHeader(HeaderType.ANDROID, resources.getString(R.string.android_os));
+                mainActivity.updateHeader(HeaderType.ANDROID, resources.getString(R.string.android_os), true);
 
                 mOlderVersionsGroup = (LinearLayout) view.findViewById(R.id.older_versions_group);
                 mVersionListContainer = (LinearLayout) view.findViewById(R.id.version_list_container);
@@ -68,7 +68,7 @@ public class VersionListFragment extends BaseFragment
             case FAIRPHONE:
             default:
                 view = inflater.inflate(R.layout.fragment_other_os_options_fairphone_list, container, false);
-                mainActivity.updateHeader(HeaderType.FAIRPHONE, resources.getString(R.string.fairphone_os));
+                mainActivity.updateHeader(HeaderType.FAIRPHONE, resources.getString(R.string.fairphone_os), true);
 
                 mOlderVersionsGroup = (LinearLayout) view.findViewById(R.id.older_versions_group);
                 mVersionListContainer = (LinearLayout) view.findViewById(R.id.version_list_container);

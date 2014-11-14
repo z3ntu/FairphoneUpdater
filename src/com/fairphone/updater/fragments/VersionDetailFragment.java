@@ -271,7 +271,7 @@ public class VersionDetailFragment extends BaseFragment
         mDownloadManager = (DownloadManager) mainActivity.getSystemService(Context.DOWNLOAD_SERVICE);
 
         setHeaderAndVersionDetailsTitles();
-        mainActivity.updateHeader(mHeaderType, mHeaderText);
+        mainActivity.updateHeader(mHeaderType, mHeaderText, false);
         updateVersionName();
         updateReleaseNotesText();
         setupDownloadAndUpdateButton();

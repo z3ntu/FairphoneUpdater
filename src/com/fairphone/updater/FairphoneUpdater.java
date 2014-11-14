@@ -15,6 +15,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,7 +24,9 @@ import com.fairphone.updater.data.UpdaterData;
 import com.fairphone.updater.data.Version;
 import com.fairphone.updater.data.VersionParserHelper;
 import com.fairphone.updater.fragments.DownloadAndRestartFragment;
+import com.fairphone.updater.fragments.InfoPopupDialog;
 import com.fairphone.updater.fragments.MainFragment;
+import com.fairphone.updater.fragments.VersionDetailFragment.DetailLayoutType;
 import com.fairphone.updater.tools.Utils;
 
 public class FairphoneUpdater extends FragmentActivity
@@ -69,7 +72,9 @@ public class FairphoneUpdater extends FragmentActivity
     private TextView headerFairphoneText;
     private TextView headerAndroidText;
     private TextView headerOtherOSText;
-
+    private ImageView headerFairphoneInfoButton;
+    private ImageView headerAndroidInfoButton;
+    
     public static enum HeaderType
     {
         MAIN_FAIRPHONE, MAIN_ANDROID, FAIRPHONE, ANDROID, OTHER_OS
@@ -204,6 +209,7 @@ public class FairphoneUpdater extends FragmentActivity
         headerFairphoneText = (TextView) findViewById(R.id.header_fairphone_text);
         headerAndroidText = (TextView) findViewById(R.id.header_android_text);
         headerOtherOSText = (TextView) findViewById(R.id.header_other_os_text);
+        
 
         OnClickListener headerBackPressListener = new OnClickListener()
         {
@@ -217,8 +223,40 @@ public class FairphoneUpdater extends FragmentActivity
         headerFairphoneText.setOnClickListener(headerBackPressListener);
         headerAndroidText.setOnClickListener(headerBackPressListener);
         headerOtherOSText.setOnClickListener(headerBackPressListener);
+        
+        headerFairphoneInfoButton = (ImageView)findViewById(R.id.header_fairphone_info_button);
+        headerAndroidInfoButton = (ImageView)findViewById(R.id.header_android_info_button);
+        
+        headerFairphoneInfoButton.setOnClickListener(new OnClickListener()
+        {
+            
+            @Override
+            public void onClick(View v)
+            {
+                showInfoPopupDialog(DetailLayoutType.FAIRPHONE);
+            }
+        });
+        
+        headerAndroidInfoButton.setOnClickListener(new OnClickListener()
+        {
+            
+            @Override
+            public void onClick(View v)
+            {
+                showInfoPopupDialog(DetailLayoutType.ANDROID);
+            }
+        });
     }
+    
 
+    private void showInfoPopupDialog(DetailLayoutType layoutType)
+    {
+        FragmentManager fm = getSupportFragmentManager();
+        InfoPopupDialog popupDialog =
+                new InfoPopupDialog(layoutType);
+        popupDialog.show(fm, layoutType.name());
+    }
+    
     @Override
     public void onBackPressed()
     {
@@ -238,7 +276,7 @@ public class FairphoneUpdater extends FragmentActivity
         }
     }
 
-    public void updateHeader(HeaderType type, String headerText)
+    public void updateHeader(HeaderType type, String headerText, boolean showInfo)
     {
 
         switch (type)
@@ -251,6 +289,9 @@ public class FairphoneUpdater extends FragmentActivity
                 headerOtherOSText.setVisibility(View.GONE);
 
                 headerFairphoneText.setText(headerText);
+                
+                headerFairphoneInfoButton.setVisibility(showInfo ? View.VISIBLE : View.GONE);
+                headerAndroidInfoButton.setVisibility(View.GONE);
                 break;
 
             case ANDROID:
@@ -261,6 +302,9 @@ public class FairphoneUpdater extends FragmentActivity
                 headerOtherOSText.setVisibility(View.GONE);
 
                 headerAndroidText.setText(headerText);
+                
+                headerFairphoneInfoButton.setVisibility(View.GONE);
+                headerAndroidInfoButton.setVisibility(showInfo ? View.VISIBLE : View.GONE);
                 break;
 
             case OTHER_OS:
@@ -271,6 +315,9 @@ public class FairphoneUpdater extends FragmentActivity
                 headerOtherOSText.setVisibility(View.VISIBLE);
 
                 headerOtherOSText.setText(headerText);
+                
+                headerFairphoneInfoButton.setVisibility(View.GONE);
+                headerAndroidInfoButton.setVisibility(View.GONE);
                 break;
 
             case MAIN_ANDROID:
@@ -279,6 +326,9 @@ public class FairphoneUpdater extends FragmentActivity
                 headerFairphoneText.setVisibility(View.GONE);
                 headerAndroidText.setVisibility(View.GONE);
                 headerOtherOSText.setVisibility(View.GONE);
+                
+                headerFairphoneInfoButton.setVisibility(View.GONE);
+                headerAndroidInfoButton.setVisibility(View.GONE);
                 break;
 
             case MAIN_FAIRPHONE:
@@ -288,6 +338,9 @@ public class FairphoneUpdater extends FragmentActivity
                 headerFairphoneText.setVisibility(View.GONE);
                 headerAndroidText.setVisibility(View.GONE);
                 headerOtherOSText.setVisibility(View.GONE);
+                
+                headerFairphoneInfoButton.setVisibility(View.GONE);
+                headerAndroidInfoButton.setVisibility(View.GONE);
                 break;
         }
     }
@@ -672,4 +725,6 @@ public class FairphoneUpdater extends FragmentActivity
         mLatestUpdateDownloadId = latestUpdateDownloadId;
         savePreference(PREFERENCE_DOWNLOAD_ID, mLatestUpdateDownloadId);
     }
+
+    
 }

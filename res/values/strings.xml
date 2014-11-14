@@ -4,6 +4,7 @@
     <string name="app_name">Fairphone Updater</string>
     <string name="fairphone">Fairphone</string>
     <string name="android">Android</string>
+    <string name="about">ABOUT</string>
     <string name="updater_service">Updater Service</string>
     <string name="a_different_os_from_the_current">a different operating system from your current one.</string>
     <string name="an_older_version_of_os">an older version of your current operating system.</string>
