@@ -205,7 +205,7 @@ public class UpdaterService extends Service
             sb.append(resources.getString(R.string.downloadUrl));
         }
         sb.append(Build.MODEL.replaceAll("\\s", ""));
-        sb.append(getPartitionDownloadPath(resources));
+        sb.append(Utils.getPartitionDownloadPath(resources));
         sb.append("/");
 
         sb.append(resources.getString(R.string.configFilename));
@@ -233,25 +233,6 @@ public class UpdaterService extends Service
             sb.append("&");
             sb.append("os=" + currentVersion.getAndroidVersion());
         }
-    }
-
-    private String getPartitionDownloadPath(Resources resources)
-    {
-        String downloadPath = "";
-        String modelWithoutSpaces = Build.MODEL.replaceAll("\\s", "");
-        if (modelWithoutSpaces.equals(resources.getString(R.string.FP1Model)))
-        {
-            File path = Environment.getDataDirectory();
-            double sizeInGB = Utils.getPartitionSizeInGBytes(path);
-            double roundedSize = (double) Math.ceil(sizeInGB * 100d) / 100d;
-            Log.d(TAG, path.getPath() + " size: " + roundedSize + "Gb");
-
-            double fp1DataPartitionSize = (double) resources.getInteger(R.integer.FP1DataPartitionSizeMb) / 100d;
-            // Add a little buffer to the 1gb default just in case
-            downloadPath =
-                    roundedSize <= fp1DataPartitionSize ? resources.getString(R.string.oneGBDataPartition) : resources.getString(R.string.unifiedDataPartition);
-        }
-        return downloadPath;
     }
 
     private boolean hasConnection()

@@ -30,10 +30,13 @@ import android.app.ActivityManager.RunningServiceInfo;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.os.Build;
+import android.os.Environment;
 import android.util.Log;
 
 import com.fairphone.updater.FairphoneUpdater;
+import com.fairphone.updater.R;
 import com.fairphone.updater.FairphoneUpdater.UpdaterState;
 import com.fairphone.updater.UpdaterService;
 import com.fairphone.updater.data.Version;
@@ -254,5 +257,56 @@ public class Utils
         }
 
         return sb.toString();
+    }
+
+    public static void clearCache()
+    {
+        File f = Environment.getDownloadCacheDirectory();
+        File files[] = f.listFiles();
+        if (files != null)
+        {
+            Log.d(TAG, "Size: " + files.length);
+            for (int i = 0; i < files.length; i++)
+            {
+                String filename = files[i].getName();
+
+                if (filename.endsWith(".zip"))
+                {
+                    files[i].delete();
+                    Log.d(TAG, "Deleted file " + filename);
+                }
+            }
+        }
+    }
+
+    public static boolean hasUnifiedPartition(Resources resources)
+    {
+        File path = Environment.getDataDirectory();
+        double sizeInGB = Utils.getPartitionSizeInGBytes(path);
+        double roundedSize = (double) Math.ceil(sizeInGB * 100d) / 100d;
+        Log.d(TAG, "/data size: " + roundedSize + "Gb");
+
+        double fp1DataPartitionSize = (double) resources.getInteger(R.integer.FP1DataPartitionSizeMb) / 100d;
+        // Add a little buffer to the 1gb default just in case
+        return roundedSize > fp1DataPartitionSize;
+    }
+
+    public static String getPartitionDownloadPath(Resources resources)
+    {
+        String downloadPath = "";
+        if (Build.MODEL.equals(resources.getString(R.string.FP1Model)))
+        {
+            downloadPath =
+                    Utils.hasUnifiedPartition(resources) ? resources.getString(R.string.unifiedDataPartition) : resources
+                            .getString(R.string.oneGBDataPartition);
+        }
+        return downloadPath;
+    }
+
+    public static boolean canCopyToCache(File file)
+    {
+        double fileSize = file.length();
+        double cacheSize = Utils.getPartitionSizeInBytes(Environment.getDownloadCacheDirectory());
+        return cacheSize >= fileSize;
     }
 }

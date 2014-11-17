@@ -566,35 +566,16 @@ public class GappsInstallerHelper
 
     private String getConfigDownloadLink(Resources resources)
     {
-
         StringBuilder sb = new StringBuilder();
         sb.append(resources.getString(R.string.gapps_installer_download_url));
         sb.append(Build.MODEL);
-        sb.append(getPartitionDownloadPath(resources));
+        sb.append(Utils.getPartitionDownloadPath(resources));
         sb.append("/");
         sb.append(resources.getString(R.string.gapps_installer_config_file));
         sb.append(resources.getString(R.string.gapps_installer_zip));
         String downloadLink = sb.toString();
         Log.d(TAG, "Download link: " + downloadLink);
         return downloadLink;
-    }
-
-    private String getPartitionDownloadPath(Resources resources)
-    {
-        String downloadPath = "";
-        if (Build.MODEL.equals(resources.getString(R.string.FP1Model)))
-        {
-            File path = Environment.getDataDirectory();
-            double sizeInGB = Utils.getPartitionSizeInGBytes(path);
-            double roundedSize = (double) Math.ceil(sizeInGB * 100d) / 100d;
-            Log.d(TAG, "/data size: " + roundedSize + "Gb");
-
-            double fp1DataPartitionSize = (double) resources.getInteger(R.integer.FP1DataPartitionSizeMb) / 100d;
-            // Add a little buffer to the 1gb default just in case
-            downloadPath =
-                    roundedSize <= fp1DataPartitionSize ? resources.getString(R.string.oneGBDataPartition) : resources.getString(R.string.unifiedDataPartition);
-        }
-        return downloadPath;
     }
 
     public void pushFileToRecovery(String fileName)
@@ -613,8 +594,9 @@ public class GappsInstallerHelper
 
                 Shell.runRootCommand(new CommandCapture(0, "echo '--wipe_cache' >> /cache/recovery/command"));
 
-                Shell.runRootCommand(new CommandCapture(0, "echo '--update_package=/" + (canCopyToCache() ? RECOVERY_CACHE_PATH : RECOVERY_SDCARD_PATH)
-                        + fileName + "' >> /cache/recovery/command"));
+                Shell.runRootCommand(new CommandCapture(0, "echo '--update_package=/"
+                        + (Utils.hasUnifiedPartition(mContext.getResources()) ? RECOVERY_CACHE_PATH : RECOVERY_SDCARD_PATH) + fileName
+                        + "' >> /cache/recovery/command"));
 
                 /*
                  * p = Runtime.getRuntime().exec("su");
@@ -660,42 +642,20 @@ public class GappsInstallerHelper
 
     private void copyGappsToCache()
     {
-        if (canCopyToCache())
+        String filename = mContext.getResources().getString(R.string.gapps_installer_filename);
+        File file = new File(DOWNLOAD_PATH + "/" + filename);
+        if (Utils.canCopyToCache(file))
         {
-            String filename = mContext.getResources().getString(R.string.gapps_installer_filename);
-            File file = new File(DOWNLOAD_PATH + "/" + filename);
             CopyFileToCacheTask copyTask = new CopyFileToCacheTask();
             copyTask.execute(file.getPath(), Environment.getDownloadCacheDirectory() + "/" + filename);
         }
         else
         {
-            Log.d(TAG, "No space on cache. Defaulting to Sdcard");
-        }
-    }
-
-    public boolean canCopyToCache()
-    {
-        Resources resources = mContext.getResources();
-        double cacheSize = Utils.getPartitionSizeInMBytes(Environment.getDownloadCacheDirectory());
-        return cacheSize > resources.getInteger(R.integer.FP1CachePartitionSizeMb) && cacheSize > resources.getInteger(R.integer.minimalCachePartitionSizeMb);
-    }
-
-    private void clearCache()
-    {
-        File f = Environment.getDownloadCacheDirectory();
-        File files[] = f.listFiles();
-        if (files != null)
-        {
-            Log.d(TAG, "Size: " + files.length);
-            for (int i = 0; i < files.length; i++)
+            if (Utils.hasUnifiedPartition(mContext.getResources()))
             {
-                String filename = files[i].getName();
-
-                if (filename.endsWith(".zip"))
-                {
-                    files[i].delete();
-                    Log.d(TAG, "Deleted file " + filename);
-                }
+                Log.d(TAG, "No space on cache. Defaulting to Sdcard");
+                Toast.makeText(mContext, mContext.getResources().getString(R.string.no_space_available_cache_message), Toast.LENGTH_LONG).show();
+                checkGappsAreInstalled();
             }
         }
     }
@@ -1264,7 +1224,7 @@ public class GappsInstallerHelper
 
             if (RootTools.isAccessGiven())
             {
-                clearCache();
+                Utils.clearCache();
 
                 File otaFilePath = new File(originalFilePath);
                 File otaFileCache = new File(destinyFilePath);

@@ -491,7 +491,7 @@ public class DownloadAndRestartFragment extends BaseFragment
 
                 Shell.runRootCommand(new CommandCapture(0, "echo '--wipe_cache' >> /cache/recovery/command"));
 
-                if (canCopyToCache())
+                if (Utils.hasUnifiedPartition(resources))
                 {
                     Shell.runRootCommand(new CommandCapture(0, "echo '--update_package=/" + resources.getString(R.string.recoveryCachePath) + "/"
                             + VersionParserHelper.getNameFromVersion(mSelectedVersion) + "' >> /cache/recovery/command"));
@@ -525,7 +525,7 @@ public class DownloadAndRestartFragment extends BaseFragment
             broadcastIntent.setAction(GappsInstallerHelper.GAPPS_REINSTALATION);
             mainActivity.sendBroadcast(broadcastIntent);
 
-            if (canCopyToCache())
+            if (Utils.hasUnifiedPartition(resources))
             {
                 removeLastUpdateDownload();
             }
@@ -560,41 +560,19 @@ public class DownloadAndRestartFragment extends BaseFragment
 
     private void copyUpdateToCache(File file)
     {
-        if (canCopyToCache())
+        if (Utils.canCopyToCache(file))
         {
             CopyFileToCacheTask copyTask = new CopyFileToCacheTask();
             copyTask.execute(file.getPath(), Environment.getDownloadCacheDirectory() + "/" + VersionParserHelper.getNameFromVersion(mSelectedVersion));
         }
         else
         {
-            Log.d(TAG, "No space on cache. Defaulting to Sdcard");
-            Toast.makeText(mainActivity, getResources().getString(R.string.no_space_available_cache_message), Toast.LENGTH_LONG).show();
-        }
-    }
-
-    public boolean canCopyToCache()
-    {
-        Resources resources = getResources();
-        double cacheSize = Utils.getPartitionSizeInMBytes(Environment.getDownloadCacheDirectory());
-        return cacheSize > resources.getInteger(R.integer.FP1CachePartitionSizeMb) && cacheSize > resources.getInteger(R.integer.minimalCachePartitionSizeMb);
-    }
-
-    private void clearCache()
-    {
-        File f = Environment.getDownloadCacheDirectory();
-        File files[] = f.listFiles();
-        if (files != null)
-        {
-            Log.d(TAG, "Size: " + files.length);
-            for (int i = 0; i < files.length; i++)
+            if (Utils.hasUnifiedPartition(getResources()))
             {
-                String filename = files[i].getName();
+                Log.d(TAG, "No space on cache. Defaulting to Sdcard");
+                Toast.makeText(mainActivity, getResources().getString(R.string.no_space_available_cache_message), Toast.LENGTH_LONG).show();
 
-                if (filename.endsWith(".zip"))
-                {
-                    files[i].delete();
-                    Log.d(TAG, "Deleted file " + filename);
-                }
+                abortUpdateProccess();
             }
         }
     }
@@ -655,7 +633,7 @@ public class DownloadAndRestartFragment extends BaseFragment
 
             if (RootTools.isAccessGiven())
             {
-                clearCache();
+                Utils.clearCache();
 
                 File otaFilePath = new File(originalFilePath);
                 File otaFileCache = new File(destinyFilePath);
