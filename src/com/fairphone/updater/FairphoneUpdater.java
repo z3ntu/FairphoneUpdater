@@ -15,6 +15,8 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -76,8 +78,8 @@ public class FairphoneUpdater extends FragmentActivity
     private TextView headerFairphoneText;
     private TextView headerAndroidText;
     private TextView headerOtherOSText;
-    private ImageView headerFairphoneInfoButton;
-    private ImageView headerAndroidInfoButton;
+    private ImageButton headerFairphoneInfoButton;
+    private ImageButton headerAndroidInfoButton;
     
     private boolean mIsFirstTimeAndroid;
     private boolean mIsFirstTimeFairphone;
@@ -236,8 +238,8 @@ public class FairphoneUpdater extends FragmentActivity
         headerAndroidText.setOnClickListener(headerBackPressListener);
         headerOtherOSText.setOnClickListener(headerBackPressListener);
         
-        headerFairphoneInfoButton = (ImageView)findViewById(R.id.header_fairphone_info_button);
-        headerAndroidInfoButton = (ImageView)findViewById(R.id.header_android_info_button);
+        headerFairphoneInfoButton = (ImageButton)findViewById(R.id.header_fairphone_info_button);
+        headerAndroidInfoButton = (ImageButton)findViewById(R.id.header_android_info_button);
         
         headerFairphoneInfoButton.setOnClickListener(new OnClickListener()
         {
