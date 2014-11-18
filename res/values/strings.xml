@@ -26,7 +26,7 @@
     <string name="google_apps_denied_permissions_description">Fairphone Updater could not obtain the necessary permissions to install Google Apps. If you chose DENY, please restart the installer and select ALLOW and REMEMBER CHOICE FOREVER.</string>
     <string name="google_apps_denied_permissions_title">Denied permissions</string>
     <string name="google_apps_disclaimer_agree">I Agree</string>
-    <string name="google_apps_disclaimer_description">For the full Android and Google mobile experience like the app store, your phone needs extra content and software. Unfortunately, as Fairphone doesn\'t have a license yet, we cannot pre-install this content, nor can we provide it directly ourselves. We are working with the content owner to achieve this.\nPress "I Agree" below to download this content from an external secured source. Installing this content is your own responsibility.\nIf you do not agree, your phone will still work with basic Android apps, of course, but you will miss some services from Google.</string>
+    <string name="google_apps_disclaimer_description">For the full Android and Google mobile experience like the app store, your phone needs extra content and software. Unfortunately, as Fairphone doesn\'t have a license yet, we cannot pre-install this content, nor can we provide it directly ourselves. We are working with the content owner to achieve this.\nPress « I Agree » below to download this content from an external secured source. Installing this content is your own responsibility.\nIf you do not agree, your phone will still work with basic Android apps, of course, but you will miss some services from Google.</string>
     <string name="google_apps_disclaimer_title">Install Google Apps</string>
     <string name="google_apps_download_error">Error downloading files, please try again.</string>
     <string name="google_apps_download_title">Downloading Google Apps</string>
@@ -43,8 +43,8 @@
     <string name="google_apps_reboot_failed_description">Google Apps are installed. Could not reboot device, please reboot manually.</string>
     <string name="google_apps_reboot_failed_title">Failed reboot</string>
     <string name="google_apps_reboot_title">Rebooting device</string>
-    <string name="google_apps_reinstall_description">To reinstall the app store on your phone, you must long press on the Home screen, press Widgets button, search for the Google Apps Installer widget and drag it to your Home screen and select it.</string>
-    <string name="google_apps_reinstall_request_title">Remember</string>
+    <string name="google_apps_reinstall_description">To reinstall the app store on your phone, press and hold the Home screen, press the Widgets icon, search for the Google Apps Installer widget and drag it to your Home screen and select it.</string>
+    <string name="google_apps_reinstall_request_title">Reminder</string>
     <string name="google_apps_uninstall_description">Delete this\nInstaller</string>
     <string name="google_apps_uninstall_title">Google Apps installed</string>
     <string name="google_apps_unzip_title">Extracting Google Apps</string>
@@ -66,7 +66,7 @@
     <string name="older_versions">Older versions</string>
     <string name="os_update_has_started_message">The update has started. This may take some time depending on your network connection speed.</string>
     <string name="other_os_options">Enter advanced mode</string>
-    <string name="please_be_patient">Please be patient&#8230;</string>
+    <string name="please_be_patient">Just a moment&#8230;</string>
     <string name="restart">Restart</string>
     <string name="restart_your_phone_message">Restart your phone to complete the update.</string>
     <string name="take_me_back">Take me back</string>
@@ -80,7 +80,7 @@
     <string name="your_are_about_to_install">You are about to install</string>
     <string name="your_current_os_version">Your current operating system version</string>
     <string name="your_os_is_up_to_date">Your operating system is up-to-date</string>
-    <string name="fairphone_os_info">This Android for Fairphone operating system has an extra layer of Fairphone flavor with features like the Peace of Mind widget, Edge Swipe, Last Used / Most Used Apps widget, Battery Mood Sensor and several Fairphone wallpapers.\n\nWe recommend installing Android for Fairphone on your device to have the best Fairphone experience.</string>
+    <string name="fairphone_os_info">This Android for Fairphone operating system has an extra layer of Fairphone flavor with features like the Peace of Mind widget, Edge Swipe, and the Last Used / Most Used Apps widget.\n\nWe recommend installing Android for Fairphone on your device to have the best Fairphone experience.</string>
     <string name="android_os_info">This Stock Android operating system is the pure Android experience without any additional Fairphone modifications.</string>
     <string name="about">about</string>
 

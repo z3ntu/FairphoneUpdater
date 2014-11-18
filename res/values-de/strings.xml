@@ -6,7 +6,7 @@
     <string name="android">Android</string>
     <string name="updater_service">Updater Service</string>
     <string name="a_different_os_from_the_current">ein anderes Betriebssystem als das aktuelle.</string>
-    <string name="an_older_version_of_os">eine ältere Version von deinem aktuellen Betriebssytem. </string>
+    <string name="an_older_version_of_os">eine ältere Version von deinem aktuellen Betriebssytem.</string>
     <string name="android_os">Stock Android</string>
     <string name="config_file_download_error_message">Fehler beim runterladen von config file</string>
     <string name="config_file_download_link_error_message">Fehler beim runterladen von config file. Benutzter Link:</string>
@@ -17,7 +17,7 @@
     <string name="erase_all_data_warning_message">Dieses Update wird alle deine Daten löschen.</string>
     <string name="erase_all_partitions_warning_message">Dieses Update wird alle deine Daten löschen. Willst du fortfahren?</string>
     <string name="error_downloading">Fehler beim runterladen</string>
-    <string name="fairphone_os">Android for Fairphone</string>
+    <string name="fairphone_os">Android für Fairphone</string>
     <string name="fairphone_update_message">Neues Fairphone Update verfügbar</string>
     <string name="fairphone_update_message_title">Neues Fairphone Update</string>
     <string name="go_ahead_and_install_it">Installiere es</string>
@@ -26,7 +26,7 @@
     <string name="google_apps_denied_permissions_description">Fairphone Updater konnte nicht die erforderlichen Berechtigungen erhalten, um die Google Apps zu installieren. Wenn du VERWEIGERN ausgewählt hast, starte bitte deinen Installer neu und ERLAUBE die Berechtigungen.</string>
     <string name="google_apps_denied_permissions_title">Berechtigungen verweigert</string>
     <string name="google_apps_disclaimer_agree">Ich akzeptiere</string>
-    <string name="google_apps_disclaimer_description">Für das vollkommene mobile Android- und Google-Erlebnis, wie z. B. Google Play store, benötigt dein Handy zusätzlichen Inhalt und eine Extra-Software. Leider können wir weder diesen Inhalt vorinstallieren noch können wir ihn direkt zur Verfügung stellen, da Fairphone noch keine Lizenz für diesen besitzt. Wir verhandeln aber im Moment mit dem Inhaltseigentümer, um diese Lizenz zu erhalten\nTippe erneut unten auf «Ich akzeptiere», um diesen Inhalt von einer externen sicheren Quelle herunterzuladen. Du installierst diesen Inhalt auf deine eigene Verantwortung.\nWenn du nicht zustimmst, wird dein Handy natürlich immer noch mit den grundlegenden Android-Apps arbeiten, aber du wirst einige Dienste von Google nicht benutzen können.</string>
+    <string name="google_apps_disclaimer_description">Für das vollkommene mobile Android- und Google-Erlebnis, wie z. B. Google app store, benötigt dein Handy zusätzlichen Inhalt und eine Extra-Software. Leider können wir weder diesen Inhalt vorinstallieren noch können wir ihn direkt zur Verfügung stellen, da Fairphone noch keine Lizenz für diesen besitzt. Wir verhandeln aber im Moment mit dem Inhaltseigentümer, um diese Lizenz zu erhalten.\nTippe erneut unten auf « Ich akzeptiere », um diesen Inhalt von einer externen sicheren Quelle herunterzuladen. Du installierst diesen Inhalt auf deine eigene Verantwortung.\nWenn du nicht zustimmst, wird dein Handy natürlich immer noch mit den grundlegenden Android-Apps arbeiten, aber du wirst einige Dienste von Google nicht benutzen können.</string>
     <string name="google_apps_disclaimer_title">Installiere Google Apps</string>
     <string name="google_apps_download_error">Fehler beim Herunterladen der Dateien. Bitte versuche es erneut.</string>
     <string name="google_apps_download_title">Google Apps werden heruntergeladen</string>
@@ -35,7 +35,7 @@
     <string name="google_apps_initial_title">Installiere\nGoogle Apps</string>
     <string name="google_apps_install_title">Google Apps werden installiert</string>
     <string name="google_apps_installer_name">Google Apps-Installer</string>
-    <string name="google_apps_permissions_description">Der Fairphone Updater wird dich jetzt nach einem Superuser-Zugriff fragen. Wir versichern dir, dass dieser absolut sicher ist. Wähle bitte ERLAUBEN aus, wenn du gefragt wirst.</string>
+    <string name="google_apps_permissions_description">Der Fairphone Updater wird dich jetzt nach einem Superuser-Zugriff fragen. Wir versichern dir, dass dieser absolut sicher ist. Wähle bitte ERLAUBEN und AUSWAHL MERKEN aus, wenn du gefragt wirst.</string>
     <string name="google_apps_permissions_title">Systemberechtigungen</string>
     <string name="google_apps_re_install_description">Entferne das oder\nklicke um zu reinstallieren</string>
     <string name="google_apps_re_install_title">Google Apps wurden installiert</string>
@@ -48,9 +48,9 @@
     <string name="google_apps_uninstall_description">Diesen Installer löschen</string>
     <string name="google_apps_uninstall_title">Google Apps wurden installiert</string>
     <string name="google_apps_unzip_title">Google Apps werden extrahiert</string>
-    <string name="google_apps_updater_installing_description">Fairphone Updater aktualisiert dein Betriebssystem im Hintergrund. Bitte probier es später noch einmal. </string>
-    <string name="important_notice">Wichtige Information. </string>
-    <string name="important_notice_message">Es ist wichtig, dass du dir bewusst bist: die Installation von einem anderen Betriebssystem kann deine Nutzer Erfahrung beeinflussen. </string>
+    <string name="google_apps_updater_installing_description">Fairphone Updater aktualisiert dein Betriebssystem im Hintergrund. Bitte probier es später noch einmal.</string>
+    <string name="important_notice">Wichtige Information.</string>
+    <string name="important_notice_message">Es ist wichtig, dass du dir bewusst bist: die Installation von einem anderen Betriebssystem kann deine Nutzer Erfahrung beeinflussen.</string>
     <string name="install">Installiere</string>
     <string name="install_update">Installier Update</string>
     <string name="installed">Installiert</string>
@@ -67,21 +67,21 @@
     <string name="os_update_has_started_message">Das Update hat begonnen. Dies kann ein wenig dauern, abhängig von der Gechwindigkeit deiner Internet Verbindung.</string>
     <string name="other_os_options">Betrete den fortgeschrittenen Modus</string>
     <string name="please_be_patient">Bitte gedulde dich noch ein wenig&#8230;</string>
-    <string name="restart">Neustarten </string>
+    <string name="restart">Neustarten</string>
     <string name="restart_your_phone_message">Neustarte dein Fairphone um das Update abzuschliessen.</string>
     <string name="take_me_back">Bring mich zurück</string>
     <string name="update_is_available">Update ist verfügbar</string>
     <string name="update_version">Aktualisiere die Version</string>
-    <string name="updater_google_apps_installing_description">Google Apps wird im Hintergrund installiert. Bitte probiere es später noch einmal. </string>
+    <string name="updater_google_apps_installing_description">Google Apps wird im Hintergrund installiert. Bitte probiere es später noch einmal.</string>
     <string name="want_to_change_your_os">Bist du ein fortgeschrittener Nutzer?</string>
-    <string name="warning">Warnung </string>
+    <string name="warning">Warnung</string>
     <string name="wifi_disabled">WLAN deaktiviert</string>
     <string name="wifi_discaimer_message">Die Datei, die du herunterladen möchten, ist zu groß für mobile Verbindungen (~200 MB). Bitte aktiviere die WLAN-Verbindung und versuche es erneut.</string>
     <string name="your_are_about_to_install">Du bist dabei zu installieren</string>
-    <string name="your_current_os_version">Dein aktuelles Betriebssystem </string>
+    <string name="your_current_os_version">Dein aktuelles Betriebssystem</string>
     <string name="your_os_is_up_to_date">Dein Betriebssystem ist auf dem neusten Stand</string>
-    <string name="fairphone_os_info">Dieses Fairphone Android Betriebssystem hat den besonderen Fairphone Touch mit Eigenschaften wie dem Geniess die Ruhe Widget, Edge Swipe, Zuletzt benutzt/Meist benutzt Widget, Batterie Stimmungs Sensor und verschiedenen Fairphone Hintergründen. Wir empfehlen das Fairphone Android Betriebssystem zu installieren für die beste Fairphone Erfahrung.</string>
-    <string name="android_os_info">Dieses Stock Android Betriebssystem ist die pure Android Erfahrung ohne zusätzliche Fairphone Änderungen. </string>
+    <string name="fairphone_os_info">Dieses Fairphone Android Betriebssystem hat den besonderen Fairphone Touch mit Eigenschaften wie dem Geniess die Ruhe Widget, Edge Swipe und Zuletzt benutzt/Meist benutzt Widget.\n\nWir empfehlen das Fairphone Android Betriebssystem zu installieren für die beste Fairphone Erfahrung.</string>
+    <string name="android_os_info">Dieses Stock Android Betriebssystem ist die pure Android Erfahrung ohne zusätzliche Fairphone Änderungen.</string>
     <string name="about">über</string>
 
 </resources>
