@@ -59,6 +59,8 @@ public class DownloadAndRestartFragment extends BaseFragment
 
     private DownloadBroadCastReceiver mDownloadBroadCastReceiver;
 
+    private BroadcastReceiver mNetworkStateReceiver;
+
     private long mLatestUpdateDownloadId;
 
     @Override
@@ -69,21 +71,6 @@ public class DownloadAndRestartFragment extends BaseFragment
         View view = inflateViewByImageType(inflater, container);
 
         setupLayout(view);
-
-        // Setup monitoring for future connectivity status changes
-        BroadcastReceiver networkStateReceiver = new BroadcastReceiver()
-        {
-            @Override
-            public void onReceive(Context context, Intent intent)
-            {
-                if (intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, false))
-                {
-                    abortUpdateProccess();
-                }
-            }
-        };
-        IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
-        mainActivity.registerReceiver(networkStateReceiver, filter);
 
         return view;
     }
@@ -138,7 +125,7 @@ public class DownloadAndRestartFragment extends BaseFragment
 
     private void showEraseAllDataWarning()
     {
-        if (mSelectedVersion.hasEraseAllPartitionWarning())
+        if (mSelectedVersion != null && mSelectedVersion.hasEraseAllPartitionWarning())
         {
             new AlertDialog.Builder(mainActivity).setTitle(android.R.string.dialog_alert_title).setMessage(R.string.erase_all_partitions_warning_message)
                     .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener()
@@ -302,9 +289,43 @@ public class DownloadAndRestartFragment extends BaseFragment
         setupInstallationReceivers();
         registerDownloadBroadCastReceiver();
 
+        registerNetworkStatusBoradcastReceiver();
+
         updateHeader();
         mDownloadVersionName.setText(mainActivity.getVersionName(mSelectedVersion));
         toggleDownloadProgressAndRestart();
+    }
+
+    private void registerNetworkStatusBoradcastReceiver()
+    {
+        // Setup monitoring for future connectivity status changes
+        if (mNetworkStateReceiver != null)
+        {
+            mNetworkStateReceiver = new BroadcastReceiver()
+            {
+                @Override
+                public void onReceive(Context context, Intent intent)
+                {
+                    if (intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, false))
+                    {
+                        abortUpdateProccess();
+                    }
+                }
+            };
+        }
+
+        IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        mainActivity.registerReceiver(mNetworkStateReceiver, filter);
+    }
+
+    private void unregisterNetworkStatusBoradcastReceiver()
+    {
+        if (mNetworkStateReceiver != null)
+        {
+            mainActivity.unregisterReceiver(mNetworkStateReceiver);
+
+            mNetworkStateReceiver = null;
+        }
     }
 
     @Override
@@ -313,6 +334,8 @@ public class DownloadAndRestartFragment extends BaseFragment
         super.onPause();
 
         unregisterBroadCastReceiver();
+
+        unregisterNetworkStatusBoradcastReceiver();
     }
 
     private void setupInstallationReceivers()
@@ -686,19 +709,26 @@ public class DownloadAndRestartFragment extends BaseFragment
 
     public void abortUpdateProccess()
     {
-        if (removeLastUpdateDownload())
+        removeLastUpdateDownload();
+
+        mainActivity.runOnUiThread(new Runnable()
         {
 
-            mainActivity.removeLastFragment(false);
-            if (mainActivity.getFragmentCount() == 1 && mainActivity.getBackStackSize() == 0)
+            @Override
+            public void run()
             {
-                mainActivity.changeState(UpdaterState.NORMAL);
+                mainActivity.removeLastFragment(false);
+                if (mainActivity.getFragmentCount() == 1 && mainActivity.getBackStackSize() == 0)
+                {
+                    mainActivity.changeState(UpdaterState.NORMAL);
+                }
+                else
+                {
+                    mainActivity.updateStatePreference(UpdaterState.NORMAL);
+                }
             }
-            else
-            {
-                mainActivity.updateStatePreference(UpdaterState.NORMAL);
-            }
-        }
+        });
+
     }
 
 }
