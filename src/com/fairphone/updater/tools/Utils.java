@@ -228,7 +228,9 @@ public class Utils
             return output;
         } catch (IOException e)
         {
-            throw new RuntimeException("Unable to process file for MD5", e);
+            Log.e(TAG, "Error digesting MD5", e);
+            return null;
+//            throw new RuntimeException("Unable to process file for MD5", e);
         } finally
         {
             try

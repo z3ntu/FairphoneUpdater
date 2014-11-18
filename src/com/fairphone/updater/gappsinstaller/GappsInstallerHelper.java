@@ -746,11 +746,24 @@ public class GappsInstallerHelper
 
                 while (downloading && download_id != 0)
                 {
-
                     DownloadManager.Query q = new DownloadManager.Query();
                     q.setFilterById(download_id);
+                    
+                    Cursor cursor = null;
+                    int count = 3;
+                    if(mDownloadManager != null){
+                        while(((cursor = mDownloadManager.query(q)) == null) && count > 0){
+                            try{
+                            Thread.sleep(1000);
+                            count--;
+                            }catch(Exception e){}
+                        }
+                    }
+                    if(cursor == null){
+                        System.out.println("Cursor is null");
+                    }
 
-                    Cursor cursor = mDownloadManager != null ? mDownloadManager.query(q) : null;
+//                    Cursor cursor = mDownloadManager != null ? mDownloadManager.query(q) : null;
                     if (cursor != null && cursor.moveToFirst())
                     {
                         try
@@ -779,7 +792,9 @@ public class GappsInstallerHelper
                                 switch (cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS)))
                                 {
                                     case DownloadManager.STATUS_SUCCESSFUL:
+                                        System.out.println("*************************** in THREAD status == DownloadManager.STATUS_SUCCESSFUL");
                                     case DownloadManager.STATUS_FAILED:
+                                        System.out.println("*************************** in THREAD status == DownloadManager.STATUS_FAILED");
                                         downloading = false;
 
                                         bytes_downloaded = 0;
@@ -938,6 +953,8 @@ public class GappsInstallerHelper
 
             long currentDownloadID = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, 0);
             int currentState = getCurrentState();
+            
+            System.out.println("*************************** state = " + currentDownloadID);
             long downloadID = 0;
 
             switch (currentState)
@@ -969,10 +986,11 @@ public class GappsInstallerHelper
 
                     if (status == DownloadManager.STATUS_SUCCESSFUL)
                     {
+                        System.out.println("*************************** status == DownloadManager.STATUS_SUCCESSFUL");
                         // Retrieve the saved download id
                         if (downloadID == mConfigFileDownloadId)
                         {
-
+                            
                             String targetPath = DOWNLOAD_PATH + ZIP_CONTENT_PATH;
                             String cfgFilename = mContext.getResources().getString(R.string.gapps_installer_config_file);
                             String fileCfgExt = mContext.getResources().getString(R.string.gapps_installer_cfg);
@@ -1063,9 +1081,12 @@ public class GappsInstallerHelper
                     }
                     else if (status == DownloadManager.STATUS_FAILED)
                     {
+                        System.out.println("*************************** status == DownloadManager.STATUS_FAILED");
                         Toast.makeText(mContext, R.string.google_apps_download_error, Toast.LENGTH_LONG).show();
 
                         checkGappsAreInstalled();
+                    }else {
+                        System.out.println("*************************** status == " + status);
                     }
                 }
                 if (cursor != null)

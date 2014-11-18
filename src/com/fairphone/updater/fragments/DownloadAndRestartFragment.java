@@ -178,9 +178,26 @@ public class DownloadAndRestartFragment extends BaseFragment
             public void run()
             {
 
+                System.out.println(" +++++++++++++++++++++++++++++++ running startDownloadProgressUpdateThread +++++++++++++++++++++++++++++++ ");
                 boolean downloading = true;
 
-                long latestUpdateDownloadId = mainActivity.getLatestDownloadId();
+                long latestUpdateDownloadId = 0;
+
+                int count = 3;
+
+                while (((latestUpdateDownloadId = mainActivity.getLatestDownloadId()) <= 0) && count > 0){
+                    try
+                    {
+                        Thread.sleep(2000);
+                        System.out.println(" +++++++++++++++++++++++++++++++ count: " + count + " +++++++++++++++++++++++++++++++ ");
+                        count--;
+                    } catch (InterruptedException e)
+                    {
+                        e.printStackTrace();
+                    }
+                }
+                System.out.println(" +++++++++++++++++++++++++++++++ " + latestUpdateDownloadId + " +++++++++++++++++++++++++++++++ ");
+
                 while (mDownloadManager != null && latestUpdateDownloadId != 0 && downloading)
                 {
 
@@ -188,6 +205,10 @@ public class DownloadAndRestartFragment extends BaseFragment
                     q.setFilterById(latestUpdateDownloadId);
 
                     Cursor cursor = mDownloadManager != null ? mDownloadManager.query(q) : null;
+                    
+                    if(cursor == null){
+                        System.out.println(" +++++++++++++++++++++++++++++++ cursor is null +++++++++++++++++++++++++++++++ ");
+                    }
                     if (cursor != null && cursor.moveToFirst())
                     {
                         try
@@ -381,18 +402,24 @@ public class DownloadAndRestartFragment extends BaseFragment
 
             Cursor cursor = mDownloadManager != null ? mDownloadManager.query(query) : null;
 
+            System.out.println(" ---------------------- cursor : " + cursor + " ----------------------------------");
+            
             if (cursor != null && cursor.moveToFirst())
             {
                 int columnIndex = cursor.getColumnIndex(DownloadManager.COLUMN_STATUS);
                 int status = cursor.getInt(columnIndex);
 
+                System.out.println("status from cursor: " + status);
+                
                 switch (status)
                 {
+                    
                     case DownloadManager.STATUS_SUCCESSFUL:
                         mainActivity.updateStatePreference(UpdaterState.PREINSTALL);
                         toggleDownloadProgressAndRestart();
                         break;
                     case DownloadManager.STATUS_RUNNING:
+                    case DownloadManager.STATUS_PENDING:
                         startDownloadProgressUpdateThread();
                         break;
                     case DownloadManager.STATUS_FAILED:

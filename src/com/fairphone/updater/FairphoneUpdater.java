@@ -464,21 +464,30 @@ public class FairphoneUpdater extends FragmentActivity
         }
     }
 
-    public void removeLastFragment(boolean forceFinish)
+    public void removeLastFragment(final boolean  forceFinish)
     {
-        FragmentManager fragManager = getSupportFragmentManager();
-        if (fragManager != null)
+        runOnUiThread(new Runnable()
         {
-            boolean popSuccess = fragManager.popBackStackImmediate();
-            if (forceFinish && !popSuccess)
+            
+            @Override
+            public void run()
             {
-                finish();
+                FragmentManager fragManager = getSupportFragmentManager();
+                if (fragManager != null)
+                {
+                    boolean popSuccess = fragManager.popBackStackImmediate();
+                    if (forceFinish && !popSuccess)
+                    {
+                        finish();
+                    }
+                }
+                else
+                {
+                    Log.e(TAG, "removeLastFragment - Couldn't get FragmentManager");
+                }
             }
-        }
-        else
-        {
-            Log.e(TAG, "removeLastFragment - Couldn't get FragmentManager");
-        }
+        });
+        
     }
 
     public int getFragmentCount()
