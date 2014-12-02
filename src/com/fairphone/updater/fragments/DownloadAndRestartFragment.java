@@ -12,6 +12,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.content.res.Resources;
 import android.content.res.Resources.NotFoundException;
 import android.database.Cursor;
@@ -30,12 +32,13 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.fairphone.updater.FairphoneUpdater;
+import com.fairphone.updater.UpdaterService;
 import com.fairphone.updater.FairphoneUpdater.HeaderType;
 import com.fairphone.updater.FairphoneUpdater.UpdaterState;
 import com.fairphone.updater.R;
 import com.fairphone.updater.data.Version;
 import com.fairphone.updater.data.VersionParserHelper;
-import com.fairphone.updater.gappsinstaller.GappsInstallerHelper;
 import com.fairphone.updater.tools.Utils;
 import com.stericson.RootTools.RootTools;
 import com.stericson.RootTools.exceptions.RootDeniedException;
@@ -570,10 +573,12 @@ public class DownloadAndRestartFragment extends BaseFragment
                 e.printStackTrace();
             }
 
-            // send broadcast intent
-            Intent broadcastIntent = new Intent();
-            broadcastIntent.setAction(GappsInstallerHelper.GAPPS_REINSTALATION);
-            mainActivity.sendBroadcast(broadcastIntent);
+            SharedPreferences sharedPreferences = getActivity().getSharedPreferences(FairphoneUpdater.FAIRPHONE_UPDATER_PREFERENCES, Context.MODE_PRIVATE);
+            
+            Editor editor = sharedPreferences.edit();
+            editor.remove(UpdaterService.PREFERENCE_REINSTALL_GAPPS);
+
+            editor.commit();
 
             if (Utils.hasUnifiedPartition(resources))
             {

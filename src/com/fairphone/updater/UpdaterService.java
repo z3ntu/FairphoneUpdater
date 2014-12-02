@@ -22,6 +22,7 @@ import java.util.concurrent.TimeoutException;
 
 import android.app.DownloadManager;
 import android.app.DownloadManager.Request;
+import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -31,6 +32,7 @@ import android.appwidget.AppWidgetManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -50,6 +52,8 @@ import android.widget.Toast;
 import com.fairphone.updater.data.Version;
 import com.fairphone.updater.data.VersionParserHelper;
 import com.fairphone.updater.gappsinstaller.GappsInstallerHelper;
+import com.fairphone.updater.gappsinstaller.TransparentActivity;
+import com.fairphone.updater.tools.Cleaner;
 import com.fairphone.updater.tools.RSAUtils;
 import com.fairphone.updater.tools.Utils;
 import com.fairphone.updater.widgets.gapps.GoogleAppsInstallerWidget;
@@ -64,6 +68,7 @@ public class UpdaterService extends Service
     private static final String TAG = UpdaterService.class.getSimpleName();
 
     private static final String PREFERENCE_LAST_CONFIG_DOWNLOAD_ID = "LastConfigDownloadId";
+    public static final String PREFERENCE_REINSTALL_GAPPS = "ReinstallGappsOmnStartUp";
     private DownloadManager mDownloadManager = null;
     private DownloadBroadCastReceiver mDownloadBroadCastReceiver = null;
 
@@ -71,6 +76,7 @@ public class UpdaterService extends Service
     private int mDownloadRetries;
     private long mLatestFileDownloadId;
     private boolean mInternetConnectionAvailable;
+    private NotificationCompat.Builder mBuilder;
 
     private SharedPreferences mSharedPreferences;
 
@@ -79,20 +85,20 @@ public class UpdaterService extends Service
     private GappsInstallerHelper mGappsInstaller;
 
     private BroadcastReceiver mBCastConfigFileDownload;
+    private NotificationManager mNotificationManager;
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId)
     {
-
         // remove the logs
         clearDataLogs();
 
         mSharedPreferences = getApplicationContext().getSharedPreferences(FairphoneUpdater.FAIRPHONE_UPDATER_PREFERENCES, MODE_PRIVATE);
 
         mLatestFileDownloadId = mSharedPreferences.getLong(PREFERENCE_LAST_CONFIG_DOWNLOAD_ID, 0);
-        
+
         setupDownloadManager();
-        
+
         setupConnectivityMonitoring();
 
         if (hasInternetConnection())
@@ -118,7 +124,60 @@ public class UpdaterService extends Service
 
         getApplicationContext().registerReceiver(mBCastConfigFileDownload, new IntentFilter(ACTION_FAIRPHONE_UPDATER_CONFIG_FILE_DOWNLOAD));
 
+        runInstallationDisclaimer();
+
         return Service.START_STICKY;
+    }
+
+    private void runInstallationDisclaimer()
+    {
+
+        if (mSharedPreferences.getBoolean(PREFERENCE_REINSTALL_GAPPS, true))
+        {
+            // clean all files
+            // configuration files
+            Context context = getApplicationContext();
+
+            Cleaner.forceCleanConfigurationFiles(context, GappsInstallerHelper.DOWNLOAD_PATH);
+            // Clean GAPPS file
+            String gappsFileName = context.getResources().getString(R.string.gapps_installer_filename);
+
+            Cleaner.deleteFile("/" + gappsFileName, GappsInstallerHelper.DOWNLOAD_PATH);
+
+            // unzip directory
+            Cleaner.deleteFile(GappsInstallerHelper.ZIP_CONTENT_PATH, GappsInstallerHelper.DOWNLOAD_PATH);
+
+            if(!GappsInstallerHelper.areGappsInstalled()){
+                showReinstallAlert();
+            }
+
+            Editor editor = mSharedPreferences.edit();
+            editor.putBoolean(PREFERENCE_REINSTALL_GAPPS, false);
+
+            editor.commit();
+        }
+    }
+
+    public void showReinstallAlert()
+    {
+        Context context = getApplicationContext();
+        
+        mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        
+        Intent notificationIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(context.getResources().getString(R.string.supportAppStoreUrl)));
+
+        PendingIntent contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, 0);
+        
+        
+        mBuilder =
+                new NotificationCompat.Builder(context).setSmallIcon(R.drawable.updater_tray_icon)
+                        .setContentTitle(getResources().getString(R.string.app_name))
+                        .setContentText(context.getResources().getString(R.string.appStoreReinstall))
+                        .setAutoCancel(true)
+                        .setDefaults(Notification.DEFAULT_SOUND)
+                        .setContentIntent(contentIntent);
+        
+        mNotificationManager.notify(0, mBuilder.build());
     }
 
     private void downloadConfigFile()
@@ -306,38 +365,45 @@ public class UpdaterService extends Service
     private void setupConnectivityMonitoring()
     {
 
-    	// Check current connectivity status
+        // Check current connectivity status
         ConnectivityManager manager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         boolean is3g = manager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).isConnectedOrConnecting();
         boolean isWifi = manager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).isConnectedOrConnecting();
         mInternetConnectionAvailable = isWifi || is3g;
 
         // Setup monitoring for future connectivity status changes
-        BroadcastReceiver networkStateReceiver = new BroadcastReceiver() {
+        BroadcastReceiver networkStateReceiver = new BroadcastReceiver()
+        {
             @Override
-            public void onReceive(Context context, Intent intent) {
-                if (intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, false)) {
-                	mInternetConnectionAvailable = false;
-                	if (mLatestFileDownloadId != 0 && mDownloadManager != null) {
-                		mDownloadManager.remove(mLatestFileDownloadId);
-                		mLatestFileDownloadId = 0;
-                	}
-                } else {
-                	if(!mInternetConnectionAvailable) {
-                		downloadConfigFile();
-                	}
-                	mInternetConnectionAvailable = true;
+            public void onReceive(Context context, Intent intent)
+            {
+                if (intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, false))
+                {
+                    mInternetConnectionAvailable = false;
+                    if (mLatestFileDownloadId != 0 && mDownloadManager != null)
+                    {
+                        mDownloadManager.remove(mLatestFileDownloadId);
+                        mLatestFileDownloadId = 0;
+                    }
+                }
+                else
+                {
+                    if (!mInternetConnectionAvailable)
+                    {
+                        downloadConfigFile();
+                    }
+                    mInternetConnectionAvailable = true;
                 }
             }
         };
 
-        IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);        
+        IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
         registerReceiver(networkStateReceiver, filter);
     }
-    
+
     private boolean hasInternetConnection()
     {
-    	return mInternetConnectionAvailable;
+        return mInternetConnectionAvailable;
     }
 
     private void setupDownloadManager()
@@ -482,7 +548,7 @@ public class UpdaterService extends Service
                     }
                 }
             }
-            
+
             if (cursor != null)
             {
                 cursor.close();

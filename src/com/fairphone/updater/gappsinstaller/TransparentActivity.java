@@ -22,7 +22,7 @@ public class TransparentActivity extends Activity
     public static final String SHOW_GAPPS_PROGRESS_SPINNER = "SHOW_GAPPS_PROGRESS_SPINNER";
     public static final String SHOW_GAPPS_WIFI_WARNING_DIALOG = "SHOW_GAPPS_WIFI_WARNING_DIALOG";
     public static final String SHOW_GAPPS_DISCLAIMER_DIALOG = "SHOW_GAPPS_DISCLAIMER_DIALOG";
-    public static final String SHOW_GAPPS_REINSTALL_DIALOG = "SHOW_GAPPS_REINSTALL_DIALOG";
+//    public static final String SHOW_GAPPS_REINSTALL_DIALOG = "SHOW_GAPPS_REINSTALL_DIALOG";
     public static final String SHOW_GAPPS_PERMISSIONS_DIALOG = "SHOW_GAPPS_PERMISSIONS_DIALOG";
 
     public static final String ACTION_GAPPS_DENIED_PERMISSIONS = "ACTION_GAPPS_DENIED_PERMISSIONS";
@@ -41,11 +41,12 @@ public class TransparentActivity extends Activity
 
         String action = getIntent().getAction();
 
-        if (SHOW_GAPPS_REINSTALL_DIALOG.equals(action))
-        {
-            showReinstallAlert();
-        }
-        else if (SHOW_GAPPS_DISCLAIMER_DIALOG.equals(action))
+//        if (SHOW_GAPPS_REINSTALL_DIALOG.equals(action))
+//        {
+//            showReinstallAlert();
+//        }
+//        else 
+            if (SHOW_GAPPS_DISCLAIMER_DIALOG.equals(action))
         {
             showDisclaimer();
         }

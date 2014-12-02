@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="downloadUrl">http://www.fairphone.com/ota/</string>
+    <string name="supportAppStoreUrl">https://fairphone.zendesk.com/hc/en-us/articles/201295267-How-to-re-install-the-App-Store</string>
     <string name="downloadDevUrl">http://www.fairphone.com/ota/dev/</string>
     <string name="configFilename">updater</string>
     <string name="config_zip">.zip</string>
