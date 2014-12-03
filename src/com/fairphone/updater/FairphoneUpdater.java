@@ -333,7 +333,7 @@ public class FairphoneUpdater extends FragmentActivity
                     
                     mIsFirstTimeAndroid = false;
                     
-                    editor.putBoolean(PREFERENCE_FIRST_TIME_FAIRPHONE, mIsFirstTimeAndroid);
+                    editor.putBoolean(PREFERENCE_FIRST_TIME_ANDROID, mIsFirstTimeAndroid);
                     editor.commit();
                 }
                 
