@@ -23,6 +23,7 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.widget.Toast;
 
 public class BootBroadcastReceiver extends BroadcastReceiver
 {
@@ -32,17 +33,23 @@ public class BootBroadcastReceiver extends BroadcastReceiver
     @Override
     public void onReceive(Context context, Intent intent)
     {
-
+        //
+        // if (Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction()))
+        // {
         AlarmManager service = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Intent i = new Intent(context, UpdaterService.class);
         PendingIntent pending = PendingIntent.getService(context, 0, i, PendingIntent.FLAG_CANCEL_CURRENT);
 
+        // start service for the first time
+        context.startService(i);
         Calendar cal = Calendar.getInstance();
         // Start 30 seconds after boot completed
         cal.add(Calendar.SECOND, 30);
 
-        // InexactRepeating allows Android to optimize the energy consumption
-        service.setInexactRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), NOTIFICATION_INTERVAL_MILLIS, pending);
+        // InexactRepeating allows Android to optimize the energy
+        // consumption
+        service.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), NOTIFICATION_INTERVAL_MILLIS, pending);
+        // }
     }
 
 }

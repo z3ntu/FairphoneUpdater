@@ -465,7 +465,7 @@ public class UpdaterService extends Service
             }
             else
             {
-                Toast.makeText(context, resources.getString(R.string.invalid_signature_download_message), Toast.LENGTH_LONG).show();
+                //Toast.makeText(context, resources.getString(R.string.invalid_signature_download_message), Toast.LENGTH_LONG).show();
                 file.delete();
             }
         }
