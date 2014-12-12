@@ -15,9 +15,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -582,7 +580,7 @@ public class FairphoneUpdater extends FragmentActivity
 
                 Log.d(TAG, "Developer mode enabled for this session");
 
-                Utils.downloadConfigFile(this);
+                Utils.downloadConfigFile(this, true);
             }
         }
     }

@@ -18,11 +18,8 @@ package com.fairphone.updater;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.concurrent.TimeoutException;
-
 import android.app.DownloadManager;
 import android.app.DownloadManager.Request;
-import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -32,7 +29,6 @@ import android.appwidget.AppWidgetManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -48,11 +44,11 @@ import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
+import java.util.concurrent.TimeoutException;
 
 import com.fairphone.updater.data.Version;
 import com.fairphone.updater.data.VersionParserHelper;
 import com.fairphone.updater.gappsinstaller.GappsInstallerHelper;
-import com.fairphone.updater.gappsinstaller.TransparentActivity;
 import com.fairphone.updater.tools.Cleaner;
 import com.fairphone.updater.tools.RSAUtils;
 import com.fairphone.updater.tools.Utils;
@@ -64,7 +60,8 @@ public class UpdaterService extends Service
 {
 
     public static final String ACTION_FAIRPHONE_UPDATER_CONFIG_FILE_DOWNLOAD = "FAIRPHONE_UPDATER_CONFIG_FILE_DOWNLOAD";
-
+    public static final String EXTRA_FORCE_CONFIG_FILE_DOWNLOAD = "FORCE_DOWNLOAD";
+    
     private static final String TAG = UpdaterService.class.getSimpleName();
 
     private static final String PREFERENCE_LAST_CONFIG_DOWNLOAD_ID = "LastConfigDownloadId";
@@ -80,9 +77,7 @@ public class UpdaterService extends Service
 
     private SharedPreferences mSharedPreferences;
 
-    final static long DAY_IN_MILLIS = 1000 * 60 * 60 * 24;
-
-    private GappsInstallerHelper mGappsInstaller;
+    final static long DOWNLOAD_GRACE_PERIOD_IN_MS = 4 /* hour */ * 60 /* minute */ * 60 /* second */ * 1000 /* millisecond */;
 
     private BroadcastReceiver mBCastConfigFileDownload;
     private NotificationManager mNotificationManager;
@@ -103,11 +98,11 @@ public class UpdaterService extends Service
 
         if (hasInternetConnection())
         {
-            downloadConfigFile();
+            downloadConfigFile(false);
         }
 
         // setup the gapps installer
-        mGappsInstaller = new GappsInstallerHelper(getApplicationContext());
+        new GappsInstallerHelper(getApplicationContext());
 
         mBCastConfigFileDownload = new BroadcastReceiver()
         {
@@ -117,7 +112,8 @@ public class UpdaterService extends Service
             {
                 if (hasInternetConnection())
                 {
-                    downloadConfigFile();
+                    boolean forceDownload = intent.getBooleanExtra(EXTRA_FORCE_CONFIG_FILE_DOWNLOAD, false);
+                    downloadConfigFile(forceDownload);
                 }
             }
         };
@@ -180,13 +176,19 @@ public class UpdaterService extends Service
         mNotificationManager.notify(0, mBuilder.build());
     }
 
-    private void downloadConfigFile()
+    private void downloadConfigFile(boolean forceDownload)
     {
-        // remove the old file if its still there for some reason
-        removeLatestFileDownload(getApplicationContext());
+        long now = System.currentTimeMillis();
+        long last_download = mSharedPreferences.getLong("LAST_CONFIG_DOWNLOAD_IN_MS", 0L);
+        if( forceDownload || now > (last_download + DOWNLOAD_GRACE_PERIOD_IN_MS) ) {
+            // remove the old file if its still there for some reason
+            removeLatestFileDownload(getApplicationContext());
+    
+            // start the download of the latest file
+            startDownloadLatest();
 
-        // start the download of the latest file
-        startDownloadLatest();
+            mSharedPreferences.edit().putLong("LAST_CONFIG_DOWNLOAD_IN_MS", now).commit();
+        }
     }
 
     public void updateGoogleAppsIntallerWidgets()
@@ -390,7 +392,7 @@ public class UpdaterService extends Service
                 {
                     if (!mInternetConnectionAvailable)
                     {
-                        downloadConfigFile();
+                        downloadConfigFile(false);
                     }
                     mInternetConnectionAvailable = true;
                 }
@@ -556,6 +558,7 @@ public class UpdaterService extends Service
 
             if (removeReceiver)
             {
+                mSharedPreferences.edit().remove("LAST_CONFIG_DOWNLOAD_IN_MS").commit();
                 removeBroadcastReceiver();
             }
         }

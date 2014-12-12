@@ -155,10 +155,15 @@ public class Utils
             }
         }
     }
+    
+    public static void downloadConfigFile(Context context) {
+        downloadConfigFile(context, false);
+    }
 
-    public static void downloadConfigFile(Context context)
+    public static void downloadConfigFile(Context context, boolean forceDownload)
     {
         Intent i = new Intent(UpdaterService.ACTION_FAIRPHONE_UPDATER_CONFIG_FILE_DOWNLOAD);
+        i.putExtra(UpdaterService.EXTRA_FORCE_CONFIG_FILE_DOWNLOAD, forceDownload);
         context.sendBroadcast(i);
     }
 

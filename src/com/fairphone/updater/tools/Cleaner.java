@@ -2,7 +2,6 @@ package com.fairphone.updater.tools;
 
 import java.io.File;
 
-import android.app.DownloadManager;
 import android.content.Context;
 
 import com.fairphone.updater.R;
