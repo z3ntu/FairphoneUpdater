@@ -46,6 +46,7 @@ public class VersionParserHelper
     private static final String CURRENT_VERSION_BUILD_NUMBER = "fairphone.ota.build_number";
     private static final String CURRENT_ANDROID_VERSION = "fairphone.ota.android_version";
     private static final String CURRENT_VERSION_IMAGE_TYPE = "fairphone.ota.image_type";
+    private static final String CURRENT_VERSION_BUILD_DATE = "ro.build.date";
 
     public static String getNameFromVersion(Version version)
     {
@@ -68,6 +69,7 @@ public class VersionParserHelper
         version.setBuildNumber(getSystemData(context, CURRENT_VERSION_BUILD_NUMBER));
         version.setAndroidVersion(getSystemData(context, CURRENT_ANDROID_VERSION));
         version.setImageType(getSystemData(context, CURRENT_VERSION_IMAGE_TYPE));
+        version.setReleaseDate(getSystemData(context, CURRENT_VERSION_BUILD_DATE));
 
         Version versionData = UpdaterData.getInstance().getVersion(version.getImageType(), version.getNumber());
         version.setThumbnailLink(versionData != null ? versionData.getThumbnailLink() : "");

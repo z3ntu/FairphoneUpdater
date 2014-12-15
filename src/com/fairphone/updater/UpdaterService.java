@@ -18,6 +18,10 @@ package com.fairphone.updater;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.Charset;
+
 import android.app.DownloadManager;
 import android.app.DownloadManager.Request;
 import android.app.Notification;
@@ -44,6 +48,7 @@ import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
+
 import java.util.concurrent.TimeoutException;
 
 import com.fairphone.updater.data.Version;
@@ -55,6 +60,7 @@ import com.fairphone.updater.tools.Utils;
 import com.fairphone.updater.widgets.gapps.GoogleAppsInstallerWidget;
 import com.stericson.RootTools.execution.CommandCapture;
 import com.stericson.RootTools.execution.Shell;
+
 
 public class UpdaterService extends Service
 {
@@ -291,8 +297,15 @@ public class UpdaterService extends Service
 
         if (currentVersion != null)
         {
-            sb.append("&");
-            sb.append("os=" + currentVersion.getAndroidVersion());
+            try {
+                final String defaultCharset = Charset.defaultCharset().displayName();
+                sb.append("&os=" + URLEncoder.encode(currentVersion.getAndroidVersion(), defaultCharset));
+                sb.append("&b_n=" + URLEncoder.encode(currentVersion.getBuildNumber(), defaultCharset));
+                sb.append("&ota_v_n=" + URLEncoder.encode(String.valueOf(currentVersion.getNumber()), defaultCharset));
+                sb.append("&d=" + URLEncoder.encode(currentVersion.getReleaseDate(), defaultCharset));
+            } catch (UnsupportedEncodingException e) {
+                Log.e(TAG, "Failed to add extra info on update request: "+e.getLocalizedMessage());
+            }
         }
     }
 

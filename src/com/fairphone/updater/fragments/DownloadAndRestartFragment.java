@@ -1,3 +1,4 @@
+
 package com.fairphone.updater.fragments;
 
 import java.io.File;
@@ -121,7 +122,7 @@ public class DownloadAndRestartFragment extends BaseFragment
             @Override
             public void onClick(View v)
             {
-                abortUpdateProccess();
+                abortUpdateProcess();
             }
         });
     }
@@ -223,7 +224,7 @@ public class DownloadAndRestartFragment extends BaseFragment
                             {
                                 downloading = false;
                                 Toast.makeText(mainActivity, getResources().getString(R.string.no_space_available_sd_card_message), Toast.LENGTH_LONG).show();
-                                abortUpdateProccess();
+                                abortUpdateProcess();
                             }
                             else
                             {
@@ -332,7 +333,7 @@ public class DownloadAndRestartFragment extends BaseFragment
                 {
                     if (intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, false))
                     {
-                        abortUpdateProccess();
+                        abortUpdateProcess();
                     }
                 }
             };
@@ -436,13 +437,13 @@ public class DownloadAndRestartFragment extends BaseFragment
                         {
                             Toast.makeText(mainActivity, resources.getString(R.string.error_downloading), Toast.LENGTH_LONG).show();
                         }
-                        abortUpdateProccess();
+                        abortUpdateProcess();
                         break;
                 }
             }
             else
             {
-                abortUpdateProccess();
+                abortUpdateProcess();
             }
 
             if (cursor != null)
@@ -487,7 +488,7 @@ public class DownloadAndRestartFragment extends BaseFragment
         fileDir.delete();
 
         // else if the perfect case does not happen, reset the download
-        abortUpdateProccess();
+        abortUpdateProcess();
     }
 
     // ************************************************************************************
@@ -506,7 +507,7 @@ public class DownloadAndRestartFragment extends BaseFragment
 
             updateDir.delete();
 
-            abortUpdateProccess();
+            abortUpdateProcess();
 
             return;
         }
@@ -519,7 +520,7 @@ public class DownloadAndRestartFragment extends BaseFragment
             // invalid download Id
             if (mLatestUpdateDownloadId == 0)
             {
-                abortUpdateProccess();
+                abortUpdateProcess();
                 return;
             }
         }
@@ -609,7 +610,7 @@ public class DownloadAndRestartFragment extends BaseFragment
         }
         else
         {
-            abortUpdateProccess();
+            abortUpdateProcess();
         }
     }
 
@@ -627,7 +628,7 @@ public class DownloadAndRestartFragment extends BaseFragment
                 Log.d(TAG, "No space on cache. Defaulting to Sdcard");
                 Toast.makeText(mainActivity, getResources().getString(R.string.no_space_available_cache_message), Toast.LENGTH_LONG).show();
 
-                abortUpdateProccess();
+                abortUpdateProcess();
             }
         }
     }
@@ -700,7 +701,7 @@ public class DownloadAndRestartFragment extends BaseFragment
             }
             else
             {
-                abortUpdateProccess();
+                abortUpdateProcess();
             }
 
             return 1;
@@ -739,7 +740,7 @@ public class DownloadAndRestartFragment extends BaseFragment
         return Environment.getExternalStorageDirectory() + resources.getString(R.string.updaterFolder) + VersionParserHelper.getNameFromVersion(version);
     }
 
-    public void abortUpdateProccess()
+    public void abortUpdateProcess()
     {
         removeLastUpdateDownload();
 

@@ -283,7 +283,7 @@ public class FairphoneUpdater extends FragmentActivity
         Fragment fragment = getTopFragment();
         if (fragment != null && fragment instanceof DownloadAndRestartFragment && !getCurrentUpdaterState().equals(UpdaterState.NORMAL))
         {
-            ((DownloadAndRestartFragment) fragment).abortUpdateProccess();
+            ((DownloadAndRestartFragment) fragment).abortUpdateProcess();
         }
         else if (fragment != null && fragment instanceof MainFragment)
         {
