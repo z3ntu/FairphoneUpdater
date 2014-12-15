@@ -97,9 +97,6 @@ public class GappsInstallerHelper
 
     public static String DOWNLOAD_PATH = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
 
-    private static String RECOVERY_CACHE_PATH = "cache/";
-    private static String RECOVERY_SDCARD_PATH = "sdcard/Download/";
-
     public static String ZIP_CONTENT_PATH = "/googleapps/";
 
     private DownloadManager mDownloadManager;
@@ -467,10 +464,7 @@ public class GappsInstallerHelper
             @Override
             public void onReceive(Context context, Intent intent)
             {
-
-                String filename = mContext.getResources().getString(R.string.gapps_installer_filename);
-
-                pushFileToRecovery(filename);
+                copyGappsToCache();
             }
         };
 
@@ -573,7 +567,12 @@ public class GappsInstallerHelper
 
     public void pushFileToRecovery(String fileName)
     {
-        if (RootTools.isAccessGiven())
+        File f = new File(fileName);
+        if (!f.exists())
+        {
+            updateWidgetState(GAPPS_DOWNLOAD_FAILED_STATE);
+        }
+        else if (RootTools.isAccessGiven())
         {
             // set the command for the recovery
 
@@ -587,8 +586,7 @@ public class GappsInstallerHelper
 
                 Shell.runRootCommand(new CommandCapture(0, "echo '--wipe_cache' >> /cache/recovery/command"));
 
-                Shell.runRootCommand(new CommandCapture(0, "echo '--update_package=/"
-                        + (Utils.hasUnifiedPartition(mContext.getResources()) ? RECOVERY_CACHE_PATH : RECOVERY_SDCARD_PATH) + fileName
+                Shell.runRootCommand(new CommandCapture(0, "echo '--update_package=/" + fileName
                         + "' >> /cache/recovery/command"));
 
                 /*
@@ -1200,15 +1198,6 @@ public class GappsInstallerHelper
         prefEdit.commit();
     }
 
-    private void setGappsFileDownloadId(long downloadId)
-    {
-        mGappsFileDownloadId = downloadId;
-
-        SharedPreferences.Editor prefEdit = mSharedPrefs.edit();
-        prefEdit.putLong(GOOGLE_APPS_DOWNLOAD_ID, mGappsFileDownloadId);
-        prefEdit.commit();
-    }
-
     private void setImageMd5Hash(String imageHash)
     {
         mMD5hash = imageHash;
@@ -1223,6 +1212,7 @@ public class GappsInstallerHelper
     {
 
         boolean isProgressShowing = false;
+        String mOtaFileCachePath;
 
         @Override
         protected Integer doInBackground(String... params)
@@ -1234,14 +1224,14 @@ public class GappsInstallerHelper
             }
 
             String originalFilePath = params[0];
-            String destinyFilePath = params[1];
+            mOtaFileCachePath = params[1];
 
             if (RootTools.isAccessGiven())
             {
                 Utils.clearCache();
 
                 File otaFilePath = new File(originalFilePath);
-                File otaFileCache = new File(destinyFilePath);
+                File otaFileCache = new File(mOtaFileCachePath);
 
                 if (!otaFileCache.exists())
                 {
@@ -1276,6 +1266,8 @@ public class GappsInstallerHelper
                 mContext.sendBroadcast(i);
                 isProgressShowing = false;
             }
+
+            pushFileToRecovery(mOtaFileCachePath);
         }
     }
 }

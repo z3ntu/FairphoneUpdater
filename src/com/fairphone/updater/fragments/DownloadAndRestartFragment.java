@@ -530,12 +530,17 @@ public class DownloadAndRestartFragment extends BaseFragment
 
     private void startPreInstall()
     {
-
-        if (RootTools.isAccessGiven())
+        Resources resources = getResources();
+        File f = new File("/" + resources.getString(R.string.recoveryCachePath) + "/"
+                + VersionParserHelper.getNameFromVersion(mSelectedVersion));
+        if (!f.exists())
+        {
+            abortUpdateProcess();
+        } else if (RootTools.isAccessGiven())
         {
             // set the command for the recovery
-            Resources resources = getResources();
             // Process p;
+
             try
             {
 
