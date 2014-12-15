@@ -115,6 +115,25 @@ public class UpdaterData
         ArrayList<Version> retval = mapToOrderedList(mFairphoneVersionMap.values());
         return retval;
     }
+    
+    public List<Store> getAppStoreVersionList()
+    {
+        ArrayList<Store> retval = new ArrayList<Store>();
+        
+        Store gappsStore = new Store();
+        gappsStore.setName("Gapp Store");
+        gappsStore.setDownloadLink("");
+        
+        retval.add(gappsStore);
+        
+        Store fdroidStore = new Store();
+        fdroidStore.setName("FDroid Store");
+        fdroidStore.setDownloadLink("");
+        
+        retval.add(fdroidStore);
+        
+        return retval;
+    }
 
     public Version getVersion(String imageType, int versionNumber)
     {

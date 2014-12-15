@@ -84,6 +84,6 @@
     <string name="android_os_info">This Stock Android operating system is the pure Android experience without any additional Fairphone modifications.</string>
     <string name="about">about</string>
     <string name="appStoreReinstall">Learn how to reinstall the AppStore</string>
-    
+    <string name="app_store">App Stores</string>
 
 </resources>

@@ -148,6 +148,10 @@
     <style name="ButtonTextGreen" parent="@style/ButtonText">
         <item name="android:textColor">@color/button_text_green_text</item>
     </style>
+    
+    <style name="ButtonTextPink" parent="@style/ButtonText">
+        <item name="android:textColor">@color/button_text_green_text</item>
+    </style>
 
     <style name="ButtonTextWhite" parent="@style/ButtonText">
         <item name="android:textColor">@color/button_text_white_text</item>

@@ -59,6 +59,20 @@
             android:textColor="@color/green"
             android:textSize="@dimen/header_small_text_size"
             android:visibility="gone" />
+        
+        <TextView
+            android:id="@+id/header_app_store_text"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/header_small_height"
+            android:drawableLeft="@drawable/button_back_states_green"
+            android:ellipsize="end"
+            android:gravity="center_vertical|center_horizontal"
+            android:lines="1"
+            android:paddingRight="@dimen/header_horizontal_padding_right"
+            android:textAllCaps="true"
+            android:textColor="@color/pink"
+            android:textSize="@dimen/header_small_text_size"
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/header_other_os_text"

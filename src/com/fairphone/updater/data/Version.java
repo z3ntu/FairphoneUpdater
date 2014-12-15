@@ -25,20 +25,12 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.res.Resources;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.fairphone.updater.FairphoneUpdater;
 import com.fairphone.updater.R;
 
-public class Version implements Comparable<Version>
+public class Version extends DownloadableItem implements Comparable<Version>
 {
-
-    public static final String DEFAULT_NOTES_LANG = "en";
-
-    private static final String TAG = Version.class.getSimpleName();
-
-    private static final String DEPENDENCY_SEPARATOR = ",";
-
     public static final String FAIRPHONE_VERSION_NUMBER = "FairphoneUpdateVersionNumber";
 
     public static final String FAIRPHONE_VERSION_NAME = "FairphoneUpdateVersionName";
@@ -57,29 +49,13 @@ public class Version implements Comparable<Version>
 
     public static final String IMAGE_TYPE_FAIRPHONE = "FAIRPHONE";
 
-    private int mNumber;
+    protected Map<String, String> mReleaseNotesMap;
 
-    private String mName;
+    protected String mImageType;
 
-    private String mAndroidVersion;
+    protected String mAndroidVersion;
 
-    private String mOTADownloadLink;
-
-    private String mOTAMd5Sum;
-
-    private String mBuildNumber;
-
-    private Map<String, String> mReleaseNotesMap;
-
-    private String mReleaseDate;
-
-    private String mThumbnailImageLink;
-
-    private ArrayList<Integer> mDependencies;
-
-    private String mImageType;
-
-    private boolean mErasePartitionsWarning;
+    protected boolean mErasePartitionsWarning;
 
     public Version()
     {
@@ -147,92 +123,14 @@ public class Version implements Comparable<Version>
         editor.commit();
     }
 
-    public boolean hasEraseAllPartitionWarning()
-    {
-        return mErasePartitionsWarning;
-    }
-
     public void setEraseAllPartitionWarning(boolean erasePartitionsWarning)
     {
         mErasePartitionsWarning = erasePartitionsWarning;
     }
 
-    public int getNumber()
+    public boolean hasEraseAllPartitionWarning()
     {
-        return mNumber;
-    }
-
-    public void setNumber(String number)
-    {
-        try
-        {
-            this.mNumber = Integer.valueOf(number);
-        } catch (NumberFormatException e)
-        {
-            this.mNumber = 0;
-        }
-    }
-
-    public void setNumber(int number)
-    {
-        this.mNumber = number;
-    }
-
-    public String getName()
-    {
-        return mName;
-    }
-
-    public void setName(String mName)
-    {
-        this.mName = mName;
-    }
-
-    public String getDownloadLink()
-    {
-        return mOTADownloadLink;
-    }
-
-    public void setDownloadLink(String mDownloadLink)
-    {
-        this.mOTADownloadLink = mDownloadLink;
-    }
-
-    public String getMd5Sum()
-    {
-        return mOTAMd5Sum;
-    }
-
-    public void setMd5Sum(String mMd5Sum)
-    {
-        this.mOTAMd5Sum = mMd5Sum;
-    }
-
-    public String getAndroidVersion()
-    {
-        return mAndroidVersion;
-    }
-
-    public void setAndroidVersion(String mAndroid)
-    {
-        this.mAndroidVersion = mAndroid;
-    }
-
-    public boolean isNewerVersionThan(Version version)
-    {
-
-        boolean result = false;
-
-        if (version != null)
-        {
-            result = this.getNumber() > version.getNumber();
-        }
-        else
-        {
-            Log.e(TAG, "Invalid Number for Version");
-        }
-
-        return result;
+        return mErasePartitionsWarning;
     }
 
     public void deleteFromSharedPreferences(Context context)
@@ -249,14 +147,14 @@ public class Version implements Comparable<Version>
         saveToSharedPreferences(context);
     }
 
-    public void setBuildNumber(String buildNumber)
+    public String getAndroidVersion()
     {
-        mBuildNumber = buildNumber;
+        return mAndroidVersion;
     }
 
-    public String getBuildNumber()
+    public void setAndroidVersion(String mAndroid)
     {
-        return mBuildNumber;
+        this.mAndroidVersion = mAndroid;
     }
 
     public void setReleaseNotes(String language, String releaseNotes)
@@ -282,53 +180,6 @@ public class Version implements Comparable<Version>
     public void resetReleaseNotes()
     {
         mReleaseNotesMap.clear();
-    }
-
-    public void setReleaseDate(String releaseDate)
-    {
-        mReleaseDate = releaseDate;
-    }
-
-    public String getReleaseDate()
-    {
-        return mReleaseDate;
-    }
-
-    public void setThumbnailLink(String thumbnailImageLink)
-    {
-        mThumbnailImageLink = thumbnailImageLink;
-    }
-
-    public String getThumbnailLink()
-    {
-        return mThumbnailImageLink;
-    }
-
-    public void setVersionDependencies(String dependencyList)
-    {
-        if (TextUtils.isEmpty(dependencyList))
-        {
-            mDependencies.clear();
-        }
-        else
-        {
-            String[] dependencies = dependencyList.split(DEPENDENCY_SEPARATOR);
-            for (String dependency : dependencies)
-            {
-                try
-                {
-                    mDependencies.add(Integer.valueOf(dependency));
-                } catch (NumberFormatException e)
-                {
-                    Log.e(TAG, "Invalid dependency");
-                }
-            }
-        }
-    }
-
-    public ArrayList<Integer> getVersionDependencies()
-    {
-        return mDependencies;
     }
 
     public void setImageType(String imageType)
@@ -376,7 +227,7 @@ public class Version implements Comparable<Version>
         }
         return retVal;
     }
-
+    
     @Override
     public int compareTo(Version another)
     {
@@ -402,4 +253,5 @@ public class Version implements Comparable<Version>
         }
         return retVal;
     }
+
 }

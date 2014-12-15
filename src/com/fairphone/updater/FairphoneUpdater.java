@@ -40,6 +40,8 @@ public class FairphoneUpdater extends FragmentActivity
     
     public static final String PREFERENCE_FIRST_TIME_FAIRPHONE = "FirstTimeFairphone";
     
+    public static final String PREFERENCE_FIRST_TIME_APP_STORE = "FirstTimeAppStore";
+    
     public static final String PREFERENCE_CURRENT_UPDATER_STATE = "CurrentUpdaterState";
 
     private static final String PREFERENCE_DOWNLOAD_ID = "LatestUpdateDownloadId";
@@ -75,16 +77,18 @@ public class FairphoneUpdater extends FragmentActivity
     private TextView headerMainAndroidText;
     private TextView headerFairphoneText;
     private TextView headerAndroidText;
+    private TextView headerAppStoreText;
     private TextView headerOtherOSText;
     private ImageButton headerFairphoneInfoButton;
     private ImageButton headerAndroidInfoButton;
     
     private boolean mIsFirstTimeAndroid;
+    private boolean mIsFirstTimeAppStore;
     private boolean mIsFirstTimeFairphone;
     
     public static enum HeaderType
     {
-        MAIN_FAIRPHONE, MAIN_ANDROID, FAIRPHONE, ANDROID, OTHER_OS
+        MAIN_FAIRPHONE, MAIN_ANDROID, FAIRPHONE, ANDROID, OTHER_OS, APP_STORE
     };
 
     @Override
@@ -106,6 +110,8 @@ public class FairphoneUpdater extends FragmentActivity
         mIsFirstTimeAndroid = mSharedPreferences.getBoolean(PREFERENCE_FIRST_TIME_ANDROID, true);
         
         mIsFirstTimeFairphone = mSharedPreferences.getBoolean(PREFERENCE_FIRST_TIME_FAIRPHONE, true);
+        
+        mIsFirstTimeAppStore = mSharedPreferences.getBoolean(PREFERENCE_FIRST_TIME_APP_STORE, true);
         
         // check current state
         mCurrentState = getCurrentUpdaterState();
@@ -221,6 +227,7 @@ public class FairphoneUpdater extends FragmentActivity
         headerFairphoneText = (TextView) findViewById(R.id.header_fairphone_text);
         headerAndroidText = (TextView) findViewById(R.id.header_android_text);
         headerOtherOSText = (TextView) findViewById(R.id.header_other_os_text);
+        headerAppStoreText = (TextView) findViewById(R.id.header_app_store_text);
         
 
         OnClickListener headerBackPressListener = new OnClickListener()
@@ -234,6 +241,7 @@ public class FairphoneUpdater extends FragmentActivity
 
         headerFairphoneText.setOnClickListener(headerBackPressListener);
         headerAndroidText.setOnClickListener(headerBackPressListener);
+        headerAppStoreText.setOnClickListener(headerBackPressListener);
         headerOtherOSText.setOnClickListener(headerBackPressListener);
         
         headerFairphoneInfoButton = (ImageButton)findViewById(R.id.header_fairphone_info_button);
@@ -298,6 +306,7 @@ public class FairphoneUpdater extends FragmentActivity
                 headerMainAndroidText.setVisibility(View.GONE);
                 headerFairphoneText.setVisibility(View.VISIBLE);
                 headerAndroidText.setVisibility(View.GONE);
+                headerAppStoreText.setVisibility(View.GONE);
                 headerOtherOSText.setVisibility(View.GONE);
 
                 headerFairphoneText.setText(headerText);
@@ -321,6 +330,7 @@ public class FairphoneUpdater extends FragmentActivity
                 headerMainAndroidText.setVisibility(View.GONE);
                 headerFairphoneText.setVisibility(View.GONE);
                 headerAndroidText.setVisibility(View.VISIBLE);
+                headerAppStoreText.setVisibility(View.GONE);
                 headerOtherOSText.setVisibility(View.GONE);
 
                 headerAndroidText.setText(headerText);
@@ -339,11 +349,37 @@ public class FairphoneUpdater extends FragmentActivity
                 headerAndroidInfoButton.setVisibility(showInfo ? View.VISIBLE : View.GONE);
                 break;
 
+            case APP_STORE:
+                headerMainFairphoneText.setVisibility(View.GONE);
+                headerMainAndroidText.setVisibility(View.GONE);
+                headerFairphoneText.setVisibility(View.GONE);
+                headerAndroidText.setVisibility(View.GONE);
+                headerAppStoreText.setVisibility(View.VISIBLE);
+                headerOtherOSText.setVisibility(View.GONE);
+
+                headerAppStoreText.setText(headerText);
+                
+                if(showInfo && mIsFirstTimeAndroid){
+                    showInfoPopupDialog(DetailLayoutType.UPDATE_ANDROID);
+                    Editor editor = mSharedPreferences.edit();
+                    
+                    mIsFirstTimeAppStore = false;
+                    
+                    editor.putBoolean(PREFERENCE_FIRST_TIME_APP_STORE, mIsFirstTimeAppStore);
+                    editor.commit();
+                }
+                
+                headerFairphoneInfoButton.setVisibility(View.GONE);
+                headerAndroidInfoButton.setVisibility(showInfo ? View.VISIBLE : View.GONE);
+                break;
+
+                
             case OTHER_OS:
                 headerMainFairphoneText.setVisibility(View.GONE);
                 headerMainAndroidText.setVisibility(View.GONE);
                 headerFairphoneText.setVisibility(View.GONE);
                 headerAndroidText.setVisibility(View.GONE);
+                headerAppStoreText.setVisibility(View.GONE);
                 headerOtherOSText.setVisibility(View.VISIBLE);
 
                 headerOtherOSText.setText(headerText);
@@ -357,6 +393,7 @@ public class FairphoneUpdater extends FragmentActivity
                 headerMainAndroidText.setVisibility(View.VISIBLE);
                 headerFairphoneText.setVisibility(View.GONE);
                 headerAndroidText.setVisibility(View.GONE);
+                headerAppStoreText.setVisibility(View.GONE);
                 headerOtherOSText.setVisibility(View.GONE);
                 
                 headerFairphoneInfoButton.setVisibility(View.GONE);
@@ -369,6 +406,7 @@ public class FairphoneUpdater extends FragmentActivity
                 headerMainAndroidText.setVisibility(View.GONE);
                 headerFairphoneText.setVisibility(View.GONE);
                 headerAndroidText.setVisibility(View.GONE);
+                headerAppStoreText.setVisibility(View.GONE);
                 headerOtherOSText.setVisibility(View.GONE);
                 
                 headerFairphoneInfoButton.setVisibility(View.GONE);

@@ -22,6 +22,10 @@
     <color name="green_dark">#17717A</color>
     <color name="green_light">#a0d7c4</color>
     <color name="green_transparent">#666BC1A3</color>
+    <color name="pink">#c1454a</color>
+    <color name="pink_dark">#823a3d</color>
+    <color name="pink_light">#f286b6</color>
+    <color name="pink_transparent">#66c1454a</color>
     <color name="red">#c3474c</color>
 
     <!-- GOOGLE COLORS (DEPENDENCIES) -->

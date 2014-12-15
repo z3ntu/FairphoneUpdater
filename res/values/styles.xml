@@ -159,6 +159,10 @@
         <item name="android:textColor">@color/button_text_green_text</item>
     </style>
 
+    <style name="ButtonTextPink" parent="@style/ButtonText">
+        <item name="android:textColor">@color/button_text_pink_text</item>
+    </style>
+    
     <style name="ButtonTextWhite" parent="@style/ButtonText">
         <item name="android:textColor">@color/button_text_white_text</item>
     </style>
@@ -203,9 +207,13 @@
     <style name="TextRegular14GreenDark" parent="@style/TextRegular14">
         <item name="android:textColor">@color/green_dark</item>
     </style>
-
+    
     <style name="TextRegular16GreenDark" parent="@style/TextRegular16">
         <item name="android:textColor">@color/green_dark</item>
+    </style>
+    
+    <style name="TextRegular16PinkDark" parent="@style/TextRegular16">
+        <item name="android:textColor">@color/pink_dark</item>
     </style>
 
     <style name="TextRegular16BlueDark" parent="@style/TextRegular16">

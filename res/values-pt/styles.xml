@@ -92,12 +92,12 @@
         <item name="android:background">@drawable/button_green_background</item>
         <item name="android:textColor">@color/white</item>
     </style>
-    
+
     <style name="ButtonBlueDarkGrey" parent="@style/Button">
         <item name="android:background">@drawable/button_blue_dark_grey_background</item>
         <item name="android:textColor">@color/white</item>
     </style>
-    
+
     <style name="ButtonGreenDarkGrey" parent="@style/Button">
         <item name="android:background">@drawable/button_green_dark_grey_background</item>
         <item name="android:textColor">@color/white</item>
@@ -147,6 +147,10 @@
 
     <style name="ButtonTextGreen" parent="@style/ButtonText">
         <item name="android:textColor">@color/button_text_green_text</item>
+    </style>
+
+    <style name="ButtonTextPink" parent="@style/ButtonText">
+        <item name="android:textColor">@color/button_text_pink_text</item>
     </style>
 
     <style name="ButtonTextWhite" parent="@style/ButtonText">

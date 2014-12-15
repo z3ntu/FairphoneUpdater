@@ -1,0 +1,69 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:id="@+id/app_store_list_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/pink"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:padding="@dimen/main_padding" >
+
+        <TextView
+            style="@style/TextRegular16PinkDark"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/latest_version" />
+
+        <Button
+            android:id="@+id/app_store_list_group_version_button"
+            style="@style/ButtonTextWhite"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/app_store_list_group_version_installed_indicator_text"
+            style="@style/TextBold16White"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:text="@string/installed" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/older_versions_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical" >
+
+        <TextView
+            style="@style/TextRegular16PinkDark"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/main_padding_small"
+            android:layout_marginTop="@dimen/main_padding"
+            android:text="@string/older_versions" />
+
+        <ScrollView
+            android:id="@+id/version_list_scroll"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical" >
+
+            <LinearLayout
+                android:id="@+id/version_list_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:orientation="vertical" />
+        </ScrollView>
+    </LinearLayout>
+
+</LinearLayout>

@@ -25,7 +25,7 @@ public class VersionListFragment extends BaseFragment
 
     public static enum ListLayoutType
     {
-        FAIRPHONE, ANDROID
+        FAIRPHONE, ANDROID, APP_STORE
     }
 
     private ListLayoutType mListLayoutType;
@@ -51,7 +51,21 @@ public class VersionListFragment extends BaseFragment
         Resources resources = mainActivity.getResources();
         switch (mListLayoutType)
         {
+            case APP_STORE:
+                view = inflater.inflate(R.layout.fragment_app_store_options_list, container, false);
+                mainActivity.updateHeader(HeaderType.APP_STORE, resources.getString(R.string.app_store), true);
 
+                mOlderVersionsGroup = (LinearLayout) view.findViewById(R.id.older_versions_group);
+                mVersionListContainer = (LinearLayout) view.findViewById(R.id.version_list_container);
+
+                mLatestVersionDetailsButton = (Button) view.findViewById(R.id.other_os_options_android_latest_version_button);
+                mLatestVersionInstalledIndicator = (TextView) view.findViewById(R.id.other_os_options_android_version_installed_indicator_text);
+
+                setupAppStoresLatestVersion();
+                setupAppStoreVersions(container);
+//                setupAndroidLatestVersion();
+//                setupAndroidVersions(container);
+                break;
             case ANDROID:
                 view = inflater.inflate(R.layout.fragment_other_os_options_android_list, container, false);
                 mainActivity.updateHeader(HeaderType.ANDROID, resources.getString(R.string.android_os), true);
@@ -81,6 +95,62 @@ public class VersionListFragment extends BaseFragment
                 break;
         }
         return view;
+    }
+
+    private void setupAppStoreVersions(ViewGroup root)
+    {
+        Button versionLayout;
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+
+        mVersionList = UpdaterData.getInstance().getFairphoneVersionList();
+        Version latestFairphoneVersion = UpdaterData.getInstance().getLatestVersion(Version.IMAGE_TYPE_FAIRPHONE);
+
+        for (Version version : mVersionList)
+        {
+            if (version.compareTo(latestFairphoneVersion) != 0)
+            {
+                versionLayout = (Button) inflater.inflate(R.layout.fragment_app_store_options_list_button, root, false);
+                versionLayout.setTag(version);
+                versionLayout.setClickable(true);
+
+                mVersionListContainer.addView(versionLayout);
+
+                versionLayout.setText(mainActivity.getVersionName(version));
+
+                versionLayout.setOnClickListener(new OnClickListener()
+                {
+                    @Override
+                    public void onClick(View v)
+                    {
+                        Version selectedVersion = (Version) v.getTag();
+
+                        if (selectedVersion != null)
+                        {
+                            VersionDetailFragment versionDetail = new VersionDetailFragment();
+
+                            versionDetail.setupFragment(selectedVersion, DetailLayoutType.FAIRPHONE);
+
+                            mainActivity.changeFragment(versionDetail);
+                        }
+                    }
+                });
+            }
+        }
+                
+        if (mVersionList.size() <= 1)
+        {
+            mOlderVersionsGroup.setVisibility(View.GONE);
+        }
+        else
+        {
+            mOlderVersionsGroup.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void setupAppStoresLatestVersion()
+    {
+        // TODO Auto-generated method stub
+        
     }
 
     @Override
