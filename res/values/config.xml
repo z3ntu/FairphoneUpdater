@@ -11,6 +11,7 @@
     <integer name="defaultVersionNumber">1</integer>
     <string name="defaultVersionName">Almond</string>
     <string name="defaultBuildNumber">1.0</string>
+    <string name="defaultBuildDate">0</string>
     <string name="defaultAndroidVersionNumber">4.2.2</string>
     <string name="defaultImageType">fairphone</string>
     
