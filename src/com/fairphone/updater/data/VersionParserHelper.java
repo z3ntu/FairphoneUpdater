@@ -46,7 +46,7 @@ public class VersionParserHelper
     private static final String CURRENT_VERSION_BUILD_NUMBER = "fairphone.ota.build_number";
     private static final String CURRENT_ANDROID_VERSION = "fairphone.ota.android_version";
     private static final String CURRENT_VERSION_IMAGE_TYPE = "fairphone.ota.image_type";
-    private static final String CURRENT_VERSION_BUILD_DATE = "ro.build.date";
+    private static final String CURRENT_VERSION_BUILD_DATE = "ro.build.date.utc";
 
     public static String getNameFromVersion(Version version)
     {
@@ -100,6 +100,10 @@ public class VersionParserHelper
         else if (property.equals(CURRENT_VERSION_IMAGE_TYPE))
         {
             return getprop(CURRENT_VERSION_IMAGE_TYPE, context.getResources().getString(R.string.defaultImageType));
+        }
+        else if (property.equals(CURRENT_VERSION_BUILD_DATE))
+        {
+            return getprop(CURRENT_VERSION_BUILD_DATE, context.getResources().getString(R.string.defaultBuildDate));
         }
 
         return null;
