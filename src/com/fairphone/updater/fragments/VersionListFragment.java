@@ -60,9 +60,6 @@ public class VersionListFragment extends BaseFragment
                 mOlderVersionsGroup = (LinearLayout) view.findViewById(R.id.older_versions_group);
                 mVersionListContainer = (LinearLayout) view.findViewById(R.id.version_list_container);
 
-                mLatestVersionDetailsButton = (Button) view.findViewById(R.id.other_os_options_android_latest_version_button);
-                mLatestVersionInstalledIndicator = (TextView) view.findViewById(R.id.other_os_options_android_version_installed_indicator_text);
-
                 setupAppStoresLatestVersion();
                 setupAppStoreVersions(container);
                 break;
@@ -103,40 +100,36 @@ public class VersionListFragment extends BaseFragment
         LayoutInflater inflater = getActivity().getLayoutInflater();
 
         mStoreList = UpdaterData.getInstance().getAppStoreList();
-        Version latestFairphoneVersion = UpdaterData.getInstance().getLatestVersion(Version.IMAGE_TYPE_FAIRPHONE);
 
         for (Store store : mStoreList)
         {
-//            if (store.compareTo(latestFairphoneVersion) != 0)
-//            {
-                storeLayout = (Button) inflater.inflate(R.layout.fragment_app_store_options_list_button, root, false);
-                storeLayout.setTag(store);
-                storeLayout.setClickable(true);
+            storeLayout = (Button) inflater.inflate(R.layout.fragment_app_store_options_list_button, root, false);
+            storeLayout.setTag(store);
+            storeLayout.setClickable(true);
 
-                mVersionListContainer.addView(storeLayout);
+            mVersionListContainer.addView(storeLayout);
 
-                storeLayout.setText(store.getName());
+            storeLayout.setText(store.getName());
 
-                storeLayout.setOnClickListener(new OnClickListener()
+            storeLayout.setOnClickListener(new OnClickListener()
+            {
+                @Override
+                public void onClick(View v)
                 {
-                    @Override
-                    public void onClick(View v)
+                    Store selectedStore = (Store) v.getTag();
+
+                    if (selectedStore != null)
                     {
-                        Store selectedStore = (Store) v.getTag();
+                        VersionDetailFragment versionDetail = new VersionDetailFragment();
 
-                        if (selectedStore != null)
-                        {
-                            VersionDetailFragment versionDetail = new VersionDetailFragment();
+                        versionDetail.setupFragment(selectedStore, DetailLayoutType.APP_STORE);
 
-                            versionDetail.setupFragment(selectedStore, DetailLayoutType.APP_STORE);
-
-                            mainActivity.changeFragment(versionDetail);
-                        }
+                        mainActivity.changeFragment(versionDetail);
                     }
-                });
-//            }
+                }
+            });
         }
-                
+
         if (mStoreList.size() <= 1)
         {
             mOlderVersionsGroup.setVisibility(View.GONE);

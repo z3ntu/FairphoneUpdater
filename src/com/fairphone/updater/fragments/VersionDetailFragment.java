@@ -137,12 +137,23 @@ public class VersionDetailFragment extends BaseFragment
         {
             mVersion_release_notes_text.setText(mSelectedVersion.getReleaseNotes(Locale.getDefault().getLanguage()));
         }
+        else if (mSelectedStore != null)
+        {
+            mVersion_release_notes_text.setText(mSelectedStore.getReleaseNotes(Locale.getDefault().getLanguage()));
+        }
     }
 
     private void updateVersionName()
     {
         mVersion_details_title_text.setText(mVersionDetailsTitle);
-        mVersion_details_name_text.setText(mainActivity.getVersionName(mSelectedVersion));
+        if (mSelectedVersion != null)
+        {
+            mVersion_details_name_text.setText(mainActivity.getVersionName(mSelectedVersion));
+        }
+        else if (mSelectedStore != null)
+        {
+            mVersion_details_name_text.setText(mSelectedStore.getName());
+        }
     }
 
     public void setupFragment(Version selectedVersion, DetailLayoutType detailType)
@@ -150,6 +161,7 @@ public class VersionDetailFragment extends BaseFragment
         mSelectedVersion = selectedVersion;
 
         mDetailLayoutType = detailType;
+        mSelectedStore = null;
     }
 
     public void setupFragment(Store selectedStore, DetailLayoutType detailType)
@@ -157,14 +169,27 @@ public class VersionDetailFragment extends BaseFragment
         mSelectedStore = selectedStore;
 
         mDetailLayoutType = detailType;
+        mSelectedVersion = null;
     }
 
     private void setHeaderAndVersionDetailsTitles()
     {
 
-        mHeaderType = mainActivity.getHeaderTypeFromImageType(mSelectedVersion != null ? mSelectedVersion.getImageType() : "");
         Resources resources = mainActivity.getResources();
-        Version deviceversion = mainActivity.getDeviceVersion();
+        Version deviceVersion = mainActivity.getDeviceVersion();
+        
+        if (mSelectedVersion != null)
+        {
+            mHeaderType = mainActivity.getHeaderTypeFromImageType(mSelectedVersion != null ? mSelectedVersion.getImageType() : "");
+        }
+        else if (mSelectedStore != null)
+        {
+            mHeaderType = HeaderType.APP_STORE;
+        }
+        else
+        {
+            mHeaderType = HeaderType.FAIRPHONE;
+        }
 
         switch (mDetailLayoutType)
         {
@@ -179,18 +204,23 @@ public class VersionDetailFragment extends BaseFragment
             case ANDROID:
                 mHeaderText = mainActivity.getVersionName(mSelectedVersion);
                 mVersionDetailsTitle = resources.getString(R.string.new_os);
-                mIsOSChange = deviceversion.getImageType().equalsIgnoreCase(Version.IMAGE_TYPE_FAIRPHONE);
+                mIsOSChange = deviceVersion.getImageType().equalsIgnoreCase(Version.IMAGE_TYPE_FAIRPHONE);
                 mIsOlderVersion =
-                        (deviceversion.getImageType().equalsIgnoreCase(Version.IMAGE_TYPE_AOSP) && deviceversion.isNewerVersionThan(mSelectedVersion));
+                        (deviceVersion.getImageType().equalsIgnoreCase(Version.IMAGE_TYPE_AOSP) && deviceVersion.isNewerVersionThan(mSelectedVersion));
                 break;
-
+            case APP_STORE:
+                mHeaderText = mSelectedStore.getName();
+                mVersionDetailsTitle = resources.getString(R.string.install);
+                mIsOSChange = false;
+                mIsOlderVersion = false;
+                break;
             case FAIRPHONE:
             default:
                 mHeaderText = mainActivity.getVersionName(mSelectedVersion);
                 mVersionDetailsTitle = resources.getString(R.string.older_version);
-                mIsOSChange = deviceversion.getImageType().equalsIgnoreCase(Version.IMAGE_TYPE_AOSP);
+                mIsOSChange = deviceVersion.getImageType().equalsIgnoreCase(Version.IMAGE_TYPE_AOSP);
                 mIsOlderVersion =
-                        (deviceversion.getImageType().equalsIgnoreCase(Version.IMAGE_TYPE_FAIRPHONE) && deviceversion.isNewerVersionThan(mSelectedVersion));
+                        (deviceVersion.getImageType().equalsIgnoreCase(Version.IMAGE_TYPE_FAIRPHONE) && deviceVersion.isNewerVersionThan(mSelectedVersion));
                 break;
         }
     }
@@ -238,7 +268,7 @@ public class VersionDetailFragment extends BaseFragment
             {
                 // set the download for the latest version on the download
                 // manager
-                String fileName = mSelectedStore.getName();
+                String fileName = VersionParserHelper.getNameFromStore(mSelectedStore);
                 String downloadTitle = mSelectedStore.getName();
                 Request request = createDownloadRequest(mSelectedStore.getDownloadLink() + Utils.getModelAndOS(mainActivity), fileName, downloadTitle);
                 if (request != null && mDownloadManager != null)
@@ -369,7 +399,6 @@ public class VersionDetailFragment extends BaseFragment
         if (mSelectedStore != null)
         {
             mainActivity.setSelectedStore(mSelectedStore);
-            //showEraseAllDataWarning(false);
             startStoreInstall();
         }
     }

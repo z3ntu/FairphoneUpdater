@@ -68,7 +68,7 @@ public class GoogleAppsInstallerWidget extends AppWidgetProvider
     private void setupButtonClickIntents(Context context, RemoteViews widget)
     {
         Intent updater = new Intent(context, FairphoneUpdater.class);
-        updater.setAction(GappsInstallerHelper.ACTION_START_GAPPS_INSTALL);
+        updater.putExtra(GappsInstallerHelper.EXTRA_START_GAPPS_INSTALL, true);
         PendingIntent launchUpdaterIntent = PendingIntent.getActivity(context, 0, updater, PendingIntent.FLAG_UPDATE_CURRENT);
 
         widget.setOnClickPendingIntent(R.id.installButton, launchUpdaterIntent);

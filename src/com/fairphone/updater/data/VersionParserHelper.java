@@ -50,7 +50,12 @@ public class VersionParserHelper
 
     public static String getNameFromVersion(Version version)
     {
-        return "fp_update_" + version.getNumber() + ".zip";
+        return "fp_update_" + (version != null ? version.getNumber() : "") + ".zip";
+    }
+
+    public static String getNameFromStore(Store store)
+    {
+        return "fp_store_" + (store != null ? store.getNumber() : "") + ".zip";
     }
 
     public static Version getDeviceVersion(Context context)
@@ -243,6 +248,8 @@ public class VersionParserHelper
 
             eventType = xpp.next();
         }
+        fis.close();
+
         removeZipContents(context);
         return update.getLatestVersion(getSystemData(context, CURRENT_VERSION_IMAGE_TYPE));
     }
@@ -254,9 +261,9 @@ public class VersionParserHelper
         {
             version = new Version();
         }
-        
+
         readDownloadableItem(version, xpp, tagName);
-        
+
         if (tagName.equalsIgnoreCase(XML_TAGS.VERSION.name()))
         {
             version.setNumber(xpp.getAttributeValue(0));
@@ -272,7 +279,7 @@ public class VersionParserHelper
 
         return version;
     }
-    
+
     public static Store readStore(Store store, XmlPullParser xpp, String tagName) throws XmlPullParserException, IOException
     {
 
@@ -280,9 +287,9 @@ public class VersionParserHelper
         {
             store = new Store();
         }
-        
+
         readDownloadableItem(store, xpp, tagName);
-        
+
         if (tagName.equalsIgnoreCase(XML_TAGS.STORE.name()))
         {
             store.setNumber(xpp.getAttributeValue(0));

@@ -33,12 +33,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fairphone.updater.FairphoneUpdater;
-import com.fairphone.updater.UpdaterService;
 import com.fairphone.updater.FairphoneUpdater.HeaderType;
 import com.fairphone.updater.FairphoneUpdater.UpdaterState;
 import com.fairphone.updater.R;
+import com.fairphone.updater.UpdaterService;
 import com.fairphone.updater.data.Store;
-import com.fairphone.updater.data.Version;
 import com.fairphone.updater.data.VersionParserHelper;
 import com.fairphone.updater.tools.Utils;
 import com.stericson.RootTools.RootTools;
@@ -122,7 +121,7 @@ public class DownloadStoreAndRestartFragment extends BaseFragment
             @Override
             public void onClick(View v)
             {
-                abortUpdateProccess();
+                abortUpdateProcess();
             }
         });
     }
@@ -217,7 +216,7 @@ public class DownloadStoreAndRestartFragment extends BaseFragment
                             {
                                 downloading = false;
                                 Toast.makeText(mainActivity, getResources().getString(R.string.no_space_available_sd_card_message), Toast.LENGTH_LONG).show();
-                                abortUpdateProccess();
+                                abortUpdateProcess();
                             }
                             else
                             {
@@ -316,7 +315,7 @@ public class DownloadStoreAndRestartFragment extends BaseFragment
                 {
                     if (intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, false))
                     {
-                        abortUpdateProccess();
+                        abortUpdateProcess();
                     }
                 }
             };
@@ -420,13 +419,13 @@ public class DownloadStoreAndRestartFragment extends BaseFragment
                         {
                             Toast.makeText(mainActivity, resources.getString(R.string.error_downloading), Toast.LENGTH_LONG).show();
                         }
-                        abortUpdateProccess();
+                        abortUpdateProcess();
                         break;
                 }
             }
             else
             {
-                abortUpdateProccess();
+                abortUpdateProcess();
             }
 
             if (cursor != null)
@@ -449,7 +448,7 @@ public class DownloadStoreAndRestartFragment extends BaseFragment
         {
 
             // check the md5 of the file
-            File file = new File(getVersionDownloadPath(mSelectedStore));
+            File file = new File(getStoreDownloadPath(mSelectedStore));
 
             if (file.exists())
             {
@@ -471,7 +470,7 @@ public class DownloadStoreAndRestartFragment extends BaseFragment
         fileDir.delete();
 
         // else if the perfect case does not happen, reset the download
-        abortUpdateProccess();
+        abortUpdateProcess();
     }
 
     // ************************************************************************************
@@ -490,7 +489,7 @@ public class DownloadStoreAndRestartFragment extends BaseFragment
 
             updateDir.delete();
 
-            abortUpdateProccess();
+            abortUpdateProcess();
 
             return;
         }
@@ -503,7 +502,7 @@ public class DownloadStoreAndRestartFragment extends BaseFragment
             // invalid download Id
             if (mLatestUpdateDownloadId == 0)
             {
-                abortUpdateProccess();
+                abortUpdateProcess();
                 return;
             }
         }
@@ -514,10 +513,15 @@ public class DownloadStoreAndRestartFragment extends BaseFragment
     private void startPreInstall()
     {
 
+        Resources resources = getResources();
+        File f = new File("/" + resources.getString(R.string.recoveryCachePath) + "/" + VersionParserHelper.getNameFromStore(mSelectedStore));
+        if (!f.exists())
+        {
+            abortUpdateProcess();
+        }
         if (RootTools.isAccessGiven())
         {
             // set the command for the recovery
-            Resources resources = getResources();
             // Process p;
             try
             {
@@ -530,14 +534,14 @@ public class DownloadStoreAndRestartFragment extends BaseFragment
 
                 if (Utils.hasUnifiedPartition(resources))
                 {
-//                    Shell.runRootCommand(new CommandCapture(0, "echo '--update_package=/" + resources.getString(R.string.recoveryCachePath) + "/"
-//                            + VersionParserHelper.getNameFromVersion(mSelectedStore) + "' >> /cache/recovery/command"));
+                    Shell.runRootCommand(new CommandCapture(0, "echo '--update_package=/" + resources.getString(R.string.recoveryCachePath) + "/"
+                            + VersionParserHelper.getNameFromStore(mSelectedStore) + "' >> /cache/recovery/command"));
                 }
                 else
                 {
-//                    Shell.runRootCommand(new CommandCapture(0, "echo '--update_package=/" + resources.getString(R.string.recoverySdCardPath)
-//                            + resources.getString(R.string.updaterFolder) + VersionParserHelper.getNameFromVersion(mSelectedVersion)
-//                            + "' >> /cache/recovery/command"));
+                    Shell.runRootCommand(new CommandCapture(0, "echo '--update_package=/" + resources.getString(R.string.recoverySdCardPath)
+                            + resources.getString(R.string.updaterFolder) + VersionParserHelper.getNameFromStore(mSelectedStore)
+                            + "' >> /cache/recovery/command"));
                 }
             } catch (IOException e)
             {
@@ -593,7 +597,7 @@ public class DownloadStoreAndRestartFragment extends BaseFragment
         }
         else
         {
-            abortUpdateProccess();
+            abortUpdateProcess();
         }
     }
 
@@ -601,8 +605,8 @@ public class DownloadStoreAndRestartFragment extends BaseFragment
     {
         if (Utils.canCopyToCache(file))
         {
-//            CopyFileToCacheTask copyTask = new CopyFileToCacheTask();
-//            copyTask.execute(file.getPath(), Environment.getDownloadCacheDirectory() + "/" + VersionParserHelper.getNameFromVersion(mSelectedVersion));
+            CopyFileToCacheTask copyTask = new CopyFileToCacheTask();
+            copyTask.execute(file.getPath(), Environment.getDownloadCacheDirectory() + "/" + VersionParserHelper.getNameFromStore(mSelectedStore));
         }
         else
         {
@@ -611,7 +615,7 @@ public class DownloadStoreAndRestartFragment extends BaseFragment
                 Log.d(TAG, "No space on cache. Defaulting to Sdcard");
                 Toast.makeText(mainActivity, getResources().getString(R.string.no_space_available_cache_message), Toast.LENGTH_LONG).show();
 
-                abortUpdateProccess();
+                abortUpdateProcess();
             }
         }
     }
@@ -684,7 +688,7 @@ public class DownloadStoreAndRestartFragment extends BaseFragment
             }
             else
             {
-                abortUpdateProccess();
+                abortUpdateProcess();
             }
 
             return 1;
@@ -717,13 +721,13 @@ public class DownloadStoreAndRestartFragment extends BaseFragment
         }
     }
 
-    private String getVersionDownloadPath(Store selectedStore)
+    private String getStoreDownloadPath(Store store)
     {
-//        Resources resources = mainActivity.getResources();
-        return "";//Environment.getExternalStorageDirectory() + resources.getString(R.string.updaterFolder) + VersionParserHelper.getNameFromVersion(selectedStore);
+        Resources resources = mainActivity.getResources();
+        return Environment.getExternalStorageDirectory() + resources.getString(R.string.updaterFolder) + VersionParserHelper.getNameFromStore(store);
     }
 
-    public void abortUpdateProccess()
+    public void abortUpdateProcess()
     {
         removeLastUpdateDownload();
 

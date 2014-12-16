@@ -28,9 +28,7 @@ public class OtherOSOptionsFragment extends BaseFragment
 
         olderFairphoneOSButton = (Button) view.findViewById(R.id.older_fairphone_os_button);
         androidOSButton = (Button) view.findViewById(R.id.android_os_button);
-
         mAppStoreButton = (Button) view.findViewById(R.id.app_store_install_button);
-        
         
         mainActivity.updateHeader(HeaderType.OTHER_OS, mainActivity.getResources().getString(R.string.other_os_options), false);
 
@@ -49,18 +47,25 @@ public class OtherOSOptionsFragment extends BaseFragment
 
     private void setupAppStoreButton()
     {
-        mAppStoreButton.setVisibility(View.VISIBLE);
-        mAppStoreButton.setOnClickListener(new OnClickListener()
+        if (!UpdaterData.getInstance().isAppStoreListEmpty())
         {
-
-            @Override
-            public void onClick(View v)
+            mAppStoreButton.setVisibility(View.VISIBLE);
+            mAppStoreButton.setOnClickListener(new OnClickListener()
             {
-                VersionListFragment newFragment = new VersionListFragment();
-                newFragment.setupFragment(ListLayoutType.APP_STORE);
-                mainActivity.changeFragment(newFragment);
-            }
-        });
+
+                @Override
+                public void onClick(View v)
+                {
+                    VersionListFragment newFragment = new VersionListFragment();
+                    newFragment.setupFragment(ListLayoutType.APP_STORE);
+                    mainActivity.changeFragment(newFragment);
+                }
+            });
+        }
+        else
+        {
+            androidOSButton.setVisibility(View.GONE);
+        }
     }
 
     private void setupAndroidVersionsButton()
@@ -83,9 +88,7 @@ public class OtherOSOptionsFragment extends BaseFragment
         else
         {
             androidOSButton.setVisibility(View.GONE);
-        }
-        
-        
+        } 
     }
 
     private void setupOlderFairphoneVersionsButton()

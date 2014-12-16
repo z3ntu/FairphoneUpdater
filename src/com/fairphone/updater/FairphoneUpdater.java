@@ -2,6 +2,7 @@ package com.fairphone.updater;
 
 import java.util.List;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.res.Resources;
@@ -25,9 +26,11 @@ import com.fairphone.updater.data.UpdaterData;
 import com.fairphone.updater.data.Version;
 import com.fairphone.updater.data.VersionParserHelper;
 import com.fairphone.updater.fragments.DownloadAndRestartFragment;
+import com.fairphone.updater.fragments.DownloadStoreAndRestartFragment;
 import com.fairphone.updater.fragments.InfoPopupDialog;
 import com.fairphone.updater.fragments.MainFragment;
 import com.fairphone.updater.fragments.VersionDetailFragment.DetailLayoutType;
+import com.fairphone.updater.gappsinstaller.GappsInstallerHelper;
 import com.fairphone.updater.tools.Utils;
 
 public class FairphoneUpdater extends FragmentActivity
@@ -56,6 +59,8 @@ public class FairphoneUpdater extends FragmentActivity
     public static final String FAIRPHONE_UPDATER_CONFIG_DOWNLOAD_FAILED = "FairphoneUpdater.Config.File.Download.FAILED";
 
     public static final String FAIRPHONE_UPDATER_CONFIG_DOWNLOAD_LINK = "FairphoneUpdater.ConfigFile.Download.LINK";
+    
+    public static final String PREFERENCE_SELECTED_STORE_NUMBER = "SelectedStoreNumber";
 
     public static enum UpdaterState
     {
@@ -86,6 +91,9 @@ public class FairphoneUpdater extends FragmentActivity
     private boolean mIsFirstTimeAndroid;
     private boolean mIsFirstTimeAppStore;
     private boolean mIsFirstTimeFairphone;
+    
+    
+    private Store mSelectedStore;
     
     public static enum HeaderType
     {
@@ -134,6 +142,7 @@ public class FairphoneUpdater extends FragmentActivity
         }
 
         getSelectedVersionFromSharedPreferences();
+        getSelectedStoreFromSharedPreferences();
 
         initHeaderViews();
 
@@ -162,6 +171,12 @@ public class FairphoneUpdater extends FragmentActivity
         String versionImageType = mSharedPreferences.getString(PREFERENCE_SELECTED_VERSION_TYPE, "");
         int versionNumber = mSharedPreferences.getInt(PREFERENCE_SELECTED_VERSION_NUMBER, 0);
         mSelectedVersion = UpdaterData.getInstance().getVersion(versionImageType, versionNumber);
+    }
+    
+    protected void getSelectedStoreFromSharedPreferences()
+    {
+        int storeNumber = mSharedPreferences.getInt(PREFERENCE_SELECTED_STORE_NUMBER, 0);
+        mSelectedStore = UpdaterData.getInstance().getStore(storeNumber);
     }
 
     public UpdaterState getCurrentUpdaterState()
@@ -360,8 +375,8 @@ public class FairphoneUpdater extends FragmentActivity
 
                 headerAppStoreText.setText(headerText);
                 
-                if(showInfo && mIsFirstTimeAndroid){
-                    showInfoPopupDialog(DetailLayoutType.UPDATE_ANDROID);
+                if(showInfo && mIsFirstTimeAppStore){
+                    showInfoPopupDialog(DetailLayoutType.APP_STORE);
                     Editor editor = mSharedPreferences.edit();
                     
                     mIsFirstTimeAppStore = false;
@@ -459,10 +474,13 @@ public class FairphoneUpdater extends FragmentActivity
         {
             case PREINSTALL:
             case DOWNLOAD:
-                if(mSelectedVersion != null){
+                if (mSelectedVersion != null)
+                {
                     firstFragment = new DownloadAndRestartFragment(true);
-                } else if(mSelectedStore != null){
-                    firstFragment = new DownloadAndRestartFragment(false);
+                }
+                else if (mSelectedStore != null)
+                {
+                    firstFragment = new DownloadStoreAndRestartFragment();
                 }
                 break;
             case NORMAL:
@@ -678,6 +696,11 @@ public class FairphoneUpdater extends FragmentActivity
     {
         return mSelectedVersion;
     }
+    
+    public Store getSelectedStore()
+    {
+        return mSelectedStore;
+    }
 
     public HeaderType getHeaderTypeFromImageType(String imageType)
     {
@@ -698,19 +721,39 @@ public class FairphoneUpdater extends FragmentActivity
         int versionNumber = selectedVersion != null ? selectedVersion.getNumber() : 0;
         String versionImageType = selectedVersion != null ? selectedVersion.getImageType() : "";
 
+        clearSelectedVersion(versionNumber, versionImageType);
+
+        mSelectedVersion = UpdaterData.getInstance().getVersion(versionImageType, versionNumber);
+        clearSelectedStore(0);
+    }
+
+    private void clearSelectedVersion(int versionNumber, String versionImageType)
+    {
         Editor editor = mSharedPreferences.edit();
         editor.putInt(PREFERENCE_SELECTED_VERSION_NUMBER, versionNumber);
         editor.putString(PREFERENCE_SELECTED_VERSION_TYPE, versionImageType);
         editor.commit();
-
-        mSelectedVersion = UpdaterData.getInstance().getVersion(versionImageType, versionNumber);
+        
+        mSelectedVersion = null;
     }
-    
-    private Store mSelectedStore;
     
     public void setSelectedStore(Store selectedStore)
     {
-        mSelectedStore = selectedStore;
+        int storeNumber = selectedStore != null ? selectedStore.getNumber() : 0;
+
+        clearSelectedStore(storeNumber);
+
+        mSelectedStore = UpdaterData.getInstance().getStore(storeNumber);
+        clearSelectedVersion(0, "");
+    }
+
+    private void clearSelectedStore(int storeNumber)
+    {
+        Editor editor = mSharedPreferences.edit();
+        editor.putInt(PREFERENCE_SELECTED_STORE_NUMBER, storeNumber);
+        editor.commit();
+        
+        mSelectedStore = null;
     }
 
     public void resetLastUpdateDownloadId()
@@ -740,6 +783,12 @@ public class FairphoneUpdater extends FragmentActivity
     {
         super.onResume();
 
+        Intent i = getIntent();
+        if (i != null && i.getBooleanExtra(GappsInstallerHelper.EXTRA_START_GAPPS_INSTALL, false))
+        {
+            Toast.makeText(this, "Widget start", Toast.LENGTH_LONG).show();
+        }
+        
         // check current state
         mCurrentState = getCurrentUpdaterState();
 
@@ -758,6 +807,7 @@ public class FairphoneUpdater extends FragmentActivity
         }
 
         getSelectedVersionFromSharedPreferences();
+        getSelectedStoreFromSharedPreferences();
 
         changeFragment(getFragmentFromState());
     }
@@ -816,14 +866,5 @@ public class FairphoneUpdater extends FragmentActivity
     {
         mLatestUpdateDownloadId = latestUpdateDownloadId;
         savePreference(PREFERENCE_DOWNLOAD_ID, mLatestUpdateDownloadId);
-    }
-
-    public Store getSelectedStore()
-    {
-        return mSelectedStore;
-    }
-
-    
-
-    
+    }  
 }

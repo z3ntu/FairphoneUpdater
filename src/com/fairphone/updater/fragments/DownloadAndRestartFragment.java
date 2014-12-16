@@ -204,7 +204,7 @@ public class DownloadAndRestartFragment extends BaseFragment
     
     private void updateAppStoreHeader()
     {
-        mainActivity.updateHeader(HeaderType.APP_STORE, "", false);
+        mainActivity.updateHeader(HeaderType.MAIN_FAIRPHONE, "", false);
     }
 
     private void updateVersionHeader()
@@ -863,12 +863,7 @@ public class DownloadAndRestartFragment extends BaseFragment
     private String getStoreDownloadPath(Store store)
     {
         Resources resources = mainActivity.getResources();
-        return Environment.getExternalStorageDirectory() + resources.getString(R.string.updaterFolder) + getNameFromStore(store);
-    }
-
-    private String getNameFromStore(Store store)
-    {
-        return "fp_updater_" + store.getNumber() + ".zip";
+        return Environment.getExternalStorageDirectory() + resources.getString(R.string.updaterFolder) + VersionParserHelper.getNameFromStore(store);
     }
 
     public void abortUpdateProcess()
