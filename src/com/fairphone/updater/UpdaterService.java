@@ -136,19 +136,6 @@ public class UpdaterService extends Service
 
         if (mSharedPreferences.getBoolean(PREFERENCE_REINSTALL_GAPPS, true))
         {
-            // clean all files
-            // configuration files
-            Context context = getApplicationContext();
-
-            Cleaner.forceCleanConfigurationFiles(context, GappsInstallerHelper.DOWNLOAD_PATH);
-            // Clean GAPPS file
-            String gappsFileName = context.getResources().getString(R.string.gapps_installer_filename);
-
-            Cleaner.deleteFile("/" + gappsFileName, GappsInstallerHelper.DOWNLOAD_PATH);
-
-            // unzip directory
-            Cleaner.deleteFile(GappsInstallerHelper.ZIP_CONTENT_PATH, GappsInstallerHelper.DOWNLOAD_PATH);
-
             if(!GappsInstallerHelper.areGappsInstalled()){
                 showReinstallAlert();
             }

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-<!--  <string name="downloadUrl">http://www.fairphone.com/ota/</string> -->
-    <string name="downloadUrl">http://192.168.0.94:7777/download/</string>
+
+    <string name="downloadUrl">http://www.fairphone.com/ota/</string>
     <string name="supportAppStoreUrl">https://fairphone.zendesk.com/hc/en-us/articles/201295267-How-to-re-install-the-App-Store</string>
     <string name="downloadDevUrl">http://www.fairphone.com/ota/dev/</string>
     <string name="configFilename">updater</string>
@@ -38,13 +38,5 @@
 	<string name="removeQuicksearchCommand">rm /data/app/com.google.android.googlequicksearchbox-*.apk</string>
 	<string name="removeTalkbackCommand">rm /data/app/com.google.android.marvin.talkback-*.apk</string>
 	<string name="removeText2SpeechCommand">rm /data/app/com.google.android.tts-*.apk</string>
-	
-	<!-- Google Apps Instaler -->
-	<string name="gapps_installer_download_url">http://www.fairphone.com/externalcontent/</string>
-	<string name="gapps_installer_config_file">fairphonegapps</string>
-	<string name="gapps_installer_zip">.zip</string>
-	<string name="gapps_installer_cfg">.cfg</string>
-	<string name="gapps_installer_sig">.sig</string>
-	<string name="gapps_installer_filename">googleapps.zip</string>
 	
 </resources>
