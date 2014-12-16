@@ -1,26 +1,50 @@
 package com.fairphone.updater.data;
 
-import java.util.ArrayList;
 
-public class Store extends DownloadableItem
+public class Store extends DownloadableItem  implements Comparable<Store>
 {
-    private String mStoreDescription;
+    private boolean mShowDisclaimer;
     
-    public Store(String name, String link, String md5)
+    public Store()
     {
         super();
-        
-        mDependencies = new ArrayList<Integer>();
+        setShowDisclaimer(false);
+    }
+    
+    public boolean showDisclaimer()
+    {
+        return mShowDisclaimer;
     }
 
-    public String getDescription()
+    public void setShowDisclaimer(boolean showDisclaimer)
     {
-        return mStoreDescription;
+        this.mShowDisclaimer = showDisclaimer;
     }
 
-    public void setDescription(String storeDescription)
+    @Override
+    public int compareTo(Store another)
     {
-        this.mStoreDescription = storeDescription;
+        int retVal;
+        if (another != null)
+        {
+            if (this.getNumber() > another.getNumber())
+            {
+                retVal = 1;
+            }
+            else if (this.getNumber() == another.getNumber())
+            {
+                retVal = 0;
+            }
+            else
+            {
+                retVal = -1;
+            }
+        }
+        else
+        {
+            retVal = 1;
+        }
+        return retVal;
     }
     
 }

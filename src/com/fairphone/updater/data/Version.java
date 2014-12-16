@@ -49,8 +49,6 @@ public class Version extends DownloadableItem implements Comparable<Version>
 
     public static final String IMAGE_TYPE_FAIRPHONE = "FAIRPHONE";
 
-    protected Map<String, String> mReleaseNotesMap;
-
     protected String mImageType;
 
     protected String mAndroidVersion;
@@ -60,7 +58,6 @@ public class Version extends DownloadableItem implements Comparable<Version>
     public Version()
     {
         mDependencies = new ArrayList<Integer>();
-        mReleaseNotesMap = new HashMap<String, String>();
 
         mNumber = 0;
         mName = "";
@@ -155,31 +152,6 @@ public class Version extends DownloadableItem implements Comparable<Version>
     public void setAndroidVersion(String mAndroid)
     {
         this.mAndroidVersion = mAndroid;
-    }
-
-    public void setReleaseNotes(String language, String releaseNotes)
-    {
-        mReleaseNotesMap.put(language.toLowerCase(), releaseNotes);
-    }
-
-    public String getReleaseNotes(String language)
-    {
-        String releaseNotes = "";
-
-        if (mReleaseNotesMap.containsKey(language))
-        {
-            releaseNotes = mReleaseNotesMap.get(language);
-        }
-        else if (mReleaseNotesMap.containsKey(DEFAULT_NOTES_LANG))
-        {
-            releaseNotes = mReleaseNotesMap.get(DEFAULT_NOTES_LANG);
-        }
-        return TextUtils.isEmpty(releaseNotes) ? "" : releaseNotes;
-    }
-
-    public void resetReleaseNotes()
-    {
-        mReleaseNotesMap.clear();
     }
 
     public void setImageType(String imageType)

@@ -136,12 +136,12 @@ public class VersionParserHelper
     // @formatter:off
     public enum XML_LEVEL_TAGS
     {
-        NONE, AOSP, FAIRPHONE
+        NONE, AOSP, FAIRPHONE, STORES
     }
 
     public enum XML_TAGS
     {
-        RELEASES, AOSP, FAIRPHONE, VERSION, NAME, BUILD_NUMBER, ANDROID_VERSION, RELEASE_NOTES, RELEASE_DATE, MD5SUM, THUMBNAIL_LINK, UPDATE_LINK, ERASE_DATA_WARNING, DEPENDENCIES;
+        RELEASES, AOSP, FAIRPHONE, VERSION, NAME, BUILD_NUMBER, ANDROID_VERSION, RELEASE_NOTES, RELEASE_DATE, MD5SUM, THUMBNAIL_LINK, UPDATE_LINK, ERASE_DATA_WARNING, DEPENDENCIES, STORES, STORE, SHOW_DISCLAIMER;
     }
 
     // @formatter:on
@@ -150,6 +150,7 @@ public class VersionParserHelper
     {
 
         Version version = null;
+        Store store = null;
 
         UpdaterData update = UpdaterData.getInstance();
         update.resetUpdaterData();
@@ -195,6 +196,9 @@ public class VersionParserHelper
                             version = readVersion(version, xpp, tagName);
                             version.setImageType(Version.IMAGE_TYPE_FAIRPHONE);
                             break;
+                        case STORES:
+                            store = readStore(store, xpp, tagName);
+                            break;
                         default:
                             break;
                     }
@@ -218,6 +222,13 @@ public class VersionParserHelper
                                 version = null;
                             }
                             break;
+                        case STORES:
+                            if (tagName.equalsIgnoreCase(XML_TAGS.STORE.name()))
+                            {
+                                update.addAppStore(store);
+                                store = null;
+                            }
+                            break;
                         default:
                             break;
                     }
@@ -237,50 +248,16 @@ public class VersionParserHelper
         {
             version = new Version();
         }
-
+        
+        readDownloadableItem(version, xpp, tagName);
+        
         if (tagName.equalsIgnoreCase(XML_TAGS.VERSION.name()))
         {
             version.setNumber(xpp.getAttributeValue(0));
         }
-        else if (tagName.equalsIgnoreCase(XML_TAGS.NAME.name()))
-        {
-            version.setName(xpp.nextText());
-        }
-        else if (tagName.equalsIgnoreCase(XML_TAGS.BUILD_NUMBER.name()))
-        {
-            version.setBuildNumber(xpp.nextText());
-        }
         else if (tagName.equalsIgnoreCase(XML_TAGS.ANDROID_VERSION.name()))
         {
             version.setAndroidVersion(xpp.nextText());
-        }
-        else if (tagName.equalsIgnoreCase(XML_TAGS.DEPENDENCIES.name()))
-        {
-            version.setVersionDependencies(xpp.nextText());
-        }
-        else if (tagName.equalsIgnoreCase(XML_TAGS.RELEASE_NOTES.name()))
-        {
-            version.setReleaseNotes(Version.DEFAULT_NOTES_LANG, xpp.nextText());
-        }
-        else if (tagName.equalsIgnoreCase(XML_TAGS.RELEASE_NOTES.name() + "_" + Locale.getDefault().getLanguage()))
-        {
-            version.setReleaseNotes(Locale.getDefault().getLanguage(), xpp.nextText());
-        }
-        else if (tagName.equalsIgnoreCase(XML_TAGS.RELEASE_DATE.name()))
-        {
-            version.setReleaseDate(xpp.nextText());
-        }
-        else if (tagName.equalsIgnoreCase(XML_TAGS.MD5SUM.name()))
-        {
-            version.setMd5Sum(xpp.nextText());
-        }
-        else if (tagName.equalsIgnoreCase(XML_TAGS.THUMBNAIL_LINK.name()))
-        {
-            version.setThumbnailLink(xpp.nextText());
-        }
-        else if (tagName.equalsIgnoreCase(XML_TAGS.UPDATE_LINK.name()))
-        {
-            version.setDownloadLink(xpp.nextText());
         }
         else if (tagName.equalsIgnoreCase(XML_TAGS.ERASE_DATA_WARNING.name()))
         {
@@ -288,6 +265,68 @@ public class VersionParserHelper
         }
 
         return version;
+    }
+    
+    public static Store readStore(Store store, XmlPullParser xpp, String tagName) throws XmlPullParserException, IOException
+    {
+
+        if (store == null)
+        {
+            store = new Store();
+        }
+        
+        readDownloadableItem(store, xpp, tagName);
+        
+        if (tagName.equalsIgnoreCase(XML_TAGS.STORE.name()))
+        {
+            store.setNumber(xpp.getAttributeValue(0));
+        }
+        else if (tagName.equalsIgnoreCase(XML_TAGS.SHOW_DISCLAIMER.name()))
+        {
+            store.setShowDisclaimer(true);
+        }
+
+        return store;
+    }
+
+    private static void readDownloadableItem(DownloadableItem item, XmlPullParser xpp, String tagName) throws XmlPullParserException, IOException
+    {
+        if (tagName.equalsIgnoreCase(XML_TAGS.NAME.name()))
+        {
+            item.setName(xpp.nextText());
+        }
+        else if (tagName.equalsIgnoreCase(XML_TAGS.BUILD_NUMBER.name()))
+        {
+            item.setBuildNumber(xpp.nextText());
+        }
+        else if (tagName.equalsIgnoreCase(XML_TAGS.DEPENDENCIES.name()))
+        {
+            item.setVersionDependencies(xpp.nextText());
+        }
+        else if (tagName.equalsIgnoreCase(XML_TAGS.RELEASE_NOTES.name()))
+        {
+            item.setReleaseNotes(Version.DEFAULT_NOTES_LANG, xpp.nextText());
+        }
+        else if (tagName.equalsIgnoreCase(XML_TAGS.RELEASE_NOTES.name() + "_" + Locale.getDefault().getLanguage()))
+        {
+            item.setReleaseNotes(Locale.getDefault().getLanguage(), xpp.nextText());
+        }
+        else if (tagName.equalsIgnoreCase(XML_TAGS.RELEASE_DATE.name()))
+        {
+            item.setReleaseDate(xpp.nextText());
+        }
+        else if (tagName.equalsIgnoreCase(XML_TAGS.MD5SUM.name()))
+        {
+            item.setMd5Sum(xpp.nextText());
+        }
+        else if (tagName.equalsIgnoreCase(XML_TAGS.THUMBNAIL_LINK.name()))
+        {
+            item.setThumbnailLink(xpp.nextText());
+        }
+        else if (tagName.equalsIgnoreCase(XML_TAGS.UPDATE_LINK.name()))
+        {
+            item.setDownloadLink(xpp.nextText());
+        }
     }
 
     private static XML_LEVEL_TAGS getCurrentXmlElement(String tagName, XML_LEVEL_TAGS current)
@@ -301,6 +340,10 @@ public class VersionParserHelper
         else if (tagName.equalsIgnoreCase(XML_LEVEL_TAGS.FAIRPHONE.name()))
         {
             retval = XML_LEVEL_TAGS.FAIRPHONE;
+        }
+        else if (tagName.equalsIgnoreCase(XML_LEVEL_TAGS.STORES.name()))
+        {
+            retval = XML_LEVEL_TAGS.STORES;
         }
         return retval;
     }

@@ -17,6 +17,8 @@
 package com.fairphone.updater.data;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import android.text.TextUtils;
 import android.util.Log;
@@ -38,6 +40,8 @@ public abstract class DownloadableItem
     protected String mOTAMd5Sum;
 
     protected String mBuildNumber;
+    
+    protected Map<String, String> mReleaseNotesMap;
 
     protected String mReleaseDate;
 
@@ -54,6 +58,8 @@ public abstract class DownloadableItem
         setBuildNumber("");
         setReleaseDate("");
         setThumbnailLink("");
+
+        mReleaseNotesMap = new HashMap<String, String>();
     }
 
     public int getNumber()
@@ -179,5 +185,30 @@ public abstract class DownloadableItem
     public ArrayList<Integer> getVersionDependencies()
     {
         return mDependencies;
+    }
+    
+    public void setReleaseNotes(String language, String releaseNotes)
+    {
+        mReleaseNotesMap.put(language.toLowerCase(), releaseNotes);
+    }
+
+    public String getReleaseNotes(String language)
+    {
+        String releaseNotes = "";
+
+        if (mReleaseNotesMap.containsKey(language))
+        {
+            releaseNotes = mReleaseNotesMap.get(language);
+        }
+        else if (mReleaseNotesMap.containsKey(DEFAULT_NOTES_LANG))
+        {
+            releaseNotes = mReleaseNotesMap.get(DEFAULT_NOTES_LANG);
+        }
+        return TextUtils.isEmpty(releaseNotes) ? "" : releaseNotes;
+    }
+
+    public void resetReleaseNotes()
+    {
+        mReleaseNotesMap.clear();
     }
 }

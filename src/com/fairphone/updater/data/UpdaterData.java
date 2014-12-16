@@ -19,6 +19,8 @@ public class UpdaterData
     private Map<Integer, Version> mAOSPVersionMap;
 
     private Map<Integer, Version> mFairphoneVersionMap;
+    
+    private Map<Integer, Store> mAppStoresMap;
 
     public static UpdaterData getInstance()
     {
@@ -35,6 +37,7 @@ public class UpdaterData
         mLatestFairphoneVersionNumber = 0;
         mAOSPVersionMap = new HashMap<Integer, Version>();
         mFairphoneVersionMap = new HashMap<Integer, Version>();
+        mAppStoresMap = new HashMap<Integer, Store>();
     }
 
     public void resetUpdaterData()
@@ -43,6 +46,7 @@ public class UpdaterData
         mLatestFairphoneVersionNumber = 0;
         mAOSPVersionMap.clear();
         mFairphoneVersionMap.clear();
+        mAppStoresMap.clear();
     }
 
     public void setLatestAOSPVersionNumber(String latestVersion)
@@ -77,6 +81,11 @@ public class UpdaterData
     {
         mFairphoneVersionMap.put(version.getNumber(), version);
     }
+    
+    public void addAppStore(Store store)
+    {
+        mAppStoresMap.put(store.getNumber(), store);
+    }
 
     public Version getLatestVersion(String imageType)
     {
@@ -93,7 +102,7 @@ public class UpdaterData
         return version;
     }
 
-    public ArrayList<Version> mapToOrderedList(Collection<Version> a)
+    public ArrayList<Version> mapToOrderedVersionList(Collection<Version> a)
     {
         ArrayList<Version> retval = new ArrayList<Version>();
         for (Version version : a)
@@ -103,35 +112,33 @@ public class UpdaterData
         Collections.sort(retval);
         return retval;
     }
+    
+    public ArrayList<Store> mapToOrderedStoreList(Collection<Store> a)
+    {
+        ArrayList<Store> retval = new ArrayList<Store>();
+        for (Store store : a)
+        {
+            retval.add(store);
+        }
+        Collections.sort(retval);
+        return retval;
+    }
 
     public List<Version> getAOSPVersionList()
     {
-        ArrayList<Version> retval = mapToOrderedList(mAOSPVersionMap.values());
+        ArrayList<Version> retval = mapToOrderedVersionList(mAOSPVersionMap.values());
         return retval;
     }
 
     public List<Version> getFairphoneVersionList()
     {
-        ArrayList<Version> retval = mapToOrderedList(mFairphoneVersionMap.values());
+        ArrayList<Version> retval = mapToOrderedVersionList(mFairphoneVersionMap.values());
         return retval;
     }
     
-    public List<Store> getAppStoreVersionList()
+    public List<Store> getAppStoreList()
     {
-        ArrayList<Store> retval = new ArrayList<Store>();
-        
-        Store gappsStore = new Store();
-        gappsStore.setName("Gapp Store");
-        gappsStore.setDownloadLink("");
-        
-        retval.add(gappsStore);
-        
-        Store fdroidStore = new Store();
-        fdroidStore.setName("FDroid Store");
-        fdroidStore.setDownloadLink("");
-        
-        retval.add(fdroidStore);
-        
+        ArrayList<Store> retval = mapToOrderedStoreList(mAppStoresMap.values());
         return retval;
     }
 
@@ -149,6 +156,11 @@ public class UpdaterData
 
         return version;
     }
+    
+    public Store getStore(int storeNumber)
+    {
+        return mAppStoresMap.get(storeNumber);
+    }
 
     public boolean isAOSPVersionListEmpty()
     {
@@ -158,5 +170,10 @@ public class UpdaterData
     public boolean isFairphoneVersionListEmpty()
     {
         return mFairphoneVersionMap.isEmpty();
+    }
+    
+    public boolean isAppStoreListEmpty()
+    {
+        return mAppStoresMap.isEmpty();
     }
 }
