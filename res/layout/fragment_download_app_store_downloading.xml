@@ -17,7 +17,7 @@
             android:text="@string/download_started" />
 
         <TextView
-            style="@style/TextRegular14GreenLight"
+            style="@style/TextRegular14PinkLight"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/main_small_text_margin_top"

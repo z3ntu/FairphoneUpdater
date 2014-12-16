@@ -454,18 +454,23 @@ public class FairphoneUpdater extends FragmentActivity
 
     public Fragment getFragmentFromState()
     {
-        Fragment firstFragment;
+        Fragment firstFragment = null;
         switch (mCurrentState)
         {
             case PREINSTALL:
             case DOWNLOAD:
-                firstFragment = new DownloadAndRestartFragment();
+                if(mSelectedVersion != null){
+                    firstFragment = new DownloadAndRestartFragment(true);
+                } else if(mSelectedStore != null){
+                    firstFragment = new DownloadAndRestartFragment(false);
+                }
                 break;
             case NORMAL:
             default:
                 firstFragment = new MainFragment();
                 break;
         }
+        
         return firstFragment;
     }
 

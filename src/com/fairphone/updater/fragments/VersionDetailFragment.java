@@ -78,7 +78,7 @@ public class VersionDetailFragment extends BaseFragment
                 view = inflater.inflate(R.layout.fragment_version_detail_android, container, false);
                 break;
             case APP_STORE:
-                view = inflater.inflate(R.layout.fragment_version_detail_fairphone, container, false);
+                view = inflater.inflate(R.layout.fragment_app_store_detail, container, false);
                 break;
             case UPDATE_FAIRPHONE:
             case FAIRPHONE:

@@ -38,6 +38,7 @@ import com.fairphone.updater.UpdaterService;
 import com.fairphone.updater.FairphoneUpdater.HeaderType;
 import com.fairphone.updater.FairphoneUpdater.UpdaterState;
 import com.fairphone.updater.R;
+import com.fairphone.updater.data.Store;
 import com.fairphone.updater.data.Version;
 import com.fairphone.updater.data.VersionParserHelper;
 import com.fairphone.updater.tools.Utils;
@@ -58,7 +59,10 @@ public class DownloadAndRestartFragment extends BaseFragment
     private Button mRestartButton;
     private Button mCancelButton;
     private Version mSelectedVersion;
+    private Store mSelectedStore;
 
+    private boolean mIsVersion;
+    
     private DownloadManager mDownloadManager;
 
     private DownloadBroadCastReceiver mDownloadBroadCastReceiver;
@@ -67,15 +71,51 @@ public class DownloadAndRestartFragment extends BaseFragment
 
     private long mLatestUpdateDownloadId;
 
+    public DownloadAndRestartFragment(boolean isVersion){
+        super();
+        
+        mIsVersion = isVersion;
+    }
+    
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         // Inflate the layout for this fragment
-        mSelectedVersion = mainActivity.getSelectedVersion();
-        View view = inflateViewByImageType(inflater, container);
-
+        View view = null;
+        if(mIsVersion){
+            mSelectedVersion = mainActivity.getSelectedVersion();
+            view = inflateViewByImageType(inflater, container);
+        } else {
+            mSelectedStore = mainActivity.getSelectedStore();
+            view = inflateStoreView(inflater, container);
+        }
+        
         setupLayout(view);
 
+        return view;
+    }
+    
+    private View inflateViewByImageType(LayoutInflater inflater, ViewGroup container)
+    {
+        View view = inflater.inflate(R.layout.fragment_download_fairphone, container, false);
+        if (mSelectedVersion != null)
+        {
+            if (Version.IMAGE_TYPE_AOSP.equalsIgnoreCase(mSelectedVersion.getImageType()))
+            {
+                view = inflater.inflate(R.layout.fragment_download_android, container, false);
+            }
+            else if (Version.IMAGE_TYPE_FAIRPHONE.equalsIgnoreCase(mSelectedVersion.getImageType()))
+            {
+                view = inflater.inflate(R.layout.fragment_download_fairphone, container, false);
+            }
+        }
+        return view;
+    }
+
+    private View inflateStoreView(LayoutInflater inflater, ViewGroup container)
+    {
+        View view = inflater.inflate(R.layout.fragment_download_app_store, container, false);
+        
         return view;
     }
 
@@ -154,7 +194,20 @@ public class DownloadAndRestartFragment extends BaseFragment
         }
     }
 
-    private void updateHeader()
+    private void updateHeader(){
+        if(mIsVersion){
+            updateVersionHeader();
+        } else {
+            updateAppStoreHeader();   
+        }
+    }
+    
+    private void updateAppStoreHeader()
+    {
+        mainActivity.updateHeader(HeaderType.APP_STORE, "", false);
+    }
+
+    private void updateVersionHeader()
     {
         if (mSelectedVersion != null)
         {
@@ -274,23 +327,6 @@ public class DownloadAndRestartFragment extends BaseFragment
         }).start();
     }
 
-    private View inflateViewByImageType(LayoutInflater inflater, ViewGroup container)
-    {
-        View view = inflater.inflate(R.layout.fragment_download_fairphone, container, false);
-        if (mSelectedVersion != null)
-        {
-            if (Version.IMAGE_TYPE_AOSP.equalsIgnoreCase(mSelectedVersion.getImageType()))
-            {
-                view = inflater.inflate(R.layout.fragment_download_android, container, false);
-            }
-            else if (Version.IMAGE_TYPE_FAIRPHONE.equalsIgnoreCase(mSelectedVersion.getImageType()))
-            {
-                view = inflater.inflate(R.layout.fragment_download_fairphone, container, false);
-            }
-        }
-        return view;
-    }
-
     private void setupLayout(View view)
     {
         mDownloadVersionName = (TextView) view.findViewById(R.id.download_version_name_text);
@@ -317,7 +353,13 @@ public class DownloadAndRestartFragment extends BaseFragment
         registerNetworkStatusBoradcastReceiver();
 
         updateHeader();
-        mDownloadVersionName.setText(mainActivity.getVersionName(mSelectedVersion));
+        
+        if(mIsVersion){
+            mDownloadVersionName.setText(mainActivity.getVersionName(mSelectedVersion));
+        } else {
+            mDownloadVersionName.setText(mSelectedStore.getName());
+        }
+        
         toggleDownloadProgressAndRestart();
     }
 
@@ -457,7 +499,38 @@ public class DownloadAndRestartFragment extends BaseFragment
     // PRE INSTALL
     // ************************************************************************************
 
-    private void setupPreInstallState()
+    private void setupPreInstallState(){
+        if(mIsVersion){
+            setupVersionPreInstallState();
+        } else{
+            setupAppStorePreInstallState();
+        }
+    }
+    
+    private void setupAppStorePreInstallState()
+    {
+        Resources resources = mainActivity.getResources();
+        
+        if(mSelectedStore != null){
+            File file = new File(getStoreDownloadPath(mSelectedStore));
+
+            if (file.exists())
+            {
+                if (Utils.checkMD5(mSelectedVersion.getMd5Sum(), file))
+                {
+                    copyUpdateToCache(file);
+                    return;
+                }
+                else
+                {
+                    Toast.makeText(mainActivity, resources.getString(R.string.invalid_md5_download_message), Toast.LENGTH_LONG).show();
+                    removeLastUpdateDownload();
+                }
+            }
+        }
+    }
+
+    private void setupVersionPreInstallState()
     {
 
         Resources resources = mainActivity.getResources();
@@ -496,6 +569,48 @@ public class DownloadAndRestartFragment extends BaseFragment
     // ************************************************************************************
 
     public void setupDownloadState()
+    {
+        if(mIsVersion){
+            setupVersionDownloadState();
+        } else {
+            setupAppStoreDownloadState();
+        }
+    }
+    
+    private void setupAppStoreDownloadState()
+    {
+     // setup the download state views
+        if (mSelectedStore == null)
+        {
+            Resources resources = getResources();
+
+            // we don't have the lastest.xml so get back to initial state
+            File updateDir = new File(Environment.getExternalStorageDirectory() + resources.getString(R.string.updaterFolder));
+
+            updateDir.delete();
+
+            abortUpdateProcess();
+
+            return;
+        }
+
+        // if there is a download ID on the shared preferences
+        if (mLatestUpdateDownloadId == 0)
+        {
+            mLatestUpdateDownloadId = mainActivity.getLatestUpdateDownloadIdFromSharedPreference();
+
+            // invalid download Id
+            if (mLatestUpdateDownloadId == 0)
+            {
+                abortUpdateProcess();
+                return;
+            }
+        }
+
+        updateDownloadFile();
+    }
+
+    public void setupVersionDownloadState()
     {
         // setup the download state views
         if (mSelectedVersion == null)
@@ -743,6 +858,17 @@ public class DownloadAndRestartFragment extends BaseFragment
     {
         Resources resources = mainActivity.getResources();
         return Environment.getExternalStorageDirectory() + resources.getString(R.string.updaterFolder) + VersionParserHelper.getNameFromVersion(version);
+    }
+    
+    private String getStoreDownloadPath(Store store)
+    {
+        Resources resources = mainActivity.getResources();
+        return Environment.getExternalStorageDirectory() + resources.getString(R.string.updaterFolder) + getNameFromStore(store);
+    }
+
+    private String getNameFromStore(Store store)
+    {
+        return "fp_updater_" + store.getNumber() + ".zip";
     }
 
     public void abortUpdateProcess()

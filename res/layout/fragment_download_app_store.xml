@@ -3,7 +3,7 @@
     android:id="@+id/download_info_group"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/blue"
+    android:background="@color/pink"
     android:gravity="center_horizontal"
     android:orientation="vertical"
     android:paddingBottom="@dimen/main_padding"
@@ -18,13 +18,13 @@
         android:layout_marginTop="@dimen/main_small_text_margin_top"
         android:gravity="center_horizontal" />
 
-    <include layout="@layout/fragment_download_fairphone_downloading" />
+    <include layout="@layout/fragment_download_app_store_downloading" />
 
     <include layout="@layout/fragment_download_fairphone_install" />
 
     <Button
         android:id="@+id/cancel_button"
-        style="@style/ButtonSmallBlueDark"
+        style="@style/ButtonSmallPinkDark"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/main_padding_small"

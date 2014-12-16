@@ -52,7 +52,12 @@
 
     <style name="CheckBoxBlue" parent="@style/CheckBox">
         <item name="android:button">@drawable/checkbox_button_blue</item>
-        <item name="android:textColor">@color/blue</item>
+        <item name="android:textColor">@color/pink</item>
+    </style>
+
+    <style name="CheckBoxPink" parent="@style/CheckBox">
+        <item name="android:button">@drawable/checkbox_button_pink</item>
+        <item name="android:textColor">@color/pink</item>
     </style>
 
     <style name="CheckBoxGreen" parent="@style/CheckBox">
@@ -92,12 +97,12 @@
         <item name="android:background">@drawable/button_green_background</item>
         <item name="android:textColor">@color/white</item>
     </style>
-    
+
     <style name="ButtonBlueDarkGrey" parent="@style/Button">
         <item name="android:background">@drawable/button_blue_dark_grey_background</item>
         <item name="android:textColor">@color/white</item>
     </style>
-    
+
     <style name="ButtonGreenDarkGrey" parent="@style/Button">
         <item name="android:background">@drawable/button_green_dark_grey_background</item>
         <item name="android:textColor">@color/white</item>
@@ -106,6 +111,11 @@
     <style name="ButtonWhiteBlue" parent="@style/Button">
         <item name="android:background">@drawable/button_white_blue_background</item>
         <item name="android:textColor">@color/button_white_blue_text</item>
+    </style>
+
+    <style name="ButtonWhitePink" parent="@style/Button">
+        <item name="android:background">@drawable/button_white_pink_background</item>
+        <item name="android:textColor">@color/button_white_pink_text</item>
     </style>
 
     <style name="ButtonWhiteGreen" parent="@style/Button">
@@ -128,16 +138,21 @@
         <item name="android:textColor">@color/button_blue_dark_text</item>
     </style>
 
+    <style name="ButtonSmallPinkDark" parent="@style/ButtonSmall">
+        <item name="android:background">@drawable/button_pink_dark_background</item>
+        <item name="android:textColor">@color/button_pink_dark_text</item>
+    </style>
+
     <style name="ButtonSmallGreenDark" parent="@style/ButtonSmall">
         <item name="android:background">@drawable/button_green_dark_background</item>
         <item name="android:textColor">@color/button_green_dark_text</item>
     </style>
-    
+
     <style name="ButtonSmallBlueDarkGrey" parent="@style/ButtonSmall">
         <item name="android:background">@drawable/button_blue_dark_grey_background</item>
         <item name="android:textColor">@color/white</item>
     </style>
-    
+
     <style name="ButtonSmallGreenDarkGrey" parent="@style/ButtonSmall">
         <item name="android:background">@drawable/button_green_dark_grey_background</item>
         <item name="android:textColor">@color/white</item>
@@ -162,7 +177,7 @@
     <style name="ButtonTextPink" parent="@style/ButtonText">
         <item name="android:textColor">@color/button_text_pink_text</item>
     </style>
-    
+
     <style name="ButtonTextWhite" parent="@style/ButtonText">
         <item name="android:textColor">@color/button_text_white_text</item>
     </style>
@@ -200,6 +215,10 @@
         <item name="android:textColor">@color/green_light</item>
     </style>
 
+    <style name="TextRegular14PinkLight" parent="@style/TextRegular14">
+        <item name="android:textColor">@color/pink_light</item>
+    </style>
+
     <style name="TextRegular14BlueDark" parent="@style/TextRegular14">
         <item name="android:textColor">@color/blue_dark</item>
     </style>
@@ -207,11 +226,11 @@
     <style name="TextRegular14GreenDark" parent="@style/TextRegular14">
         <item name="android:textColor">@color/green_dark</item>
     </style>
-    
+
     <style name="TextRegular16GreenDark" parent="@style/TextRegular16">
         <item name="android:textColor">@color/green_dark</item>
     </style>
-    
+
     <style name="TextRegular16PinkDark" parent="@style/TextRegular16">
         <item name="android:textColor">@color/pink_dark</item>
     </style>
