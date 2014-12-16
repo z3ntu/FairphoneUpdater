@@ -575,9 +575,6 @@ public class GappsInstallerHelper
         else if (RootTools.isAccessGiven())
         {
             // set the command for the recovery
-
-            copyGappsToCache();
-
             try
             {
                 Shell.runRootCommand(new CommandCapture(0, "rm -f /cache/recovery/command"));
@@ -586,7 +583,7 @@ public class GappsInstallerHelper
 
                 Shell.runRootCommand(new CommandCapture(0, "echo '--wipe_cache' >> /cache/recovery/command"));
 
-                Shell.runRootCommand(new CommandCapture(0, "echo '--update_package=/" + fileName
+                Shell.runRootCommand(new CommandCapture(0, "echo '--update_package=" + f.getAbsolutePath()
                         + "' >> /cache/recovery/command"));
 
                 /*
