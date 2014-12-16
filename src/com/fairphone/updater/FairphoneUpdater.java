@@ -20,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
+import com.fairphone.updater.data.Store;
 import com.fairphone.updater.data.UpdaterData;
 import com.fairphone.updater.data.Version;
 import com.fairphone.updater.data.VersionParserHelper;
@@ -699,6 +700,13 @@ public class FairphoneUpdater extends FragmentActivity
 
         mSelectedVersion = UpdaterData.getInstance().getVersion(versionImageType, versionNumber);
     }
+    
+    private Store mSelectedStore;
+    
+    public void setSelectedStore(Store selectedStore)
+    {
+        mSelectedStore = selectedStore;
+    }
 
     public void resetLastUpdateDownloadId()
     {
@@ -804,6 +812,13 @@ public class FairphoneUpdater extends FragmentActivity
         mLatestUpdateDownloadId = latestUpdateDownloadId;
         savePreference(PREFERENCE_DOWNLOAD_ID, mLatestUpdateDownloadId);
     }
+
+    public Store getSelectedStore()
+    {
+        return mSelectedStore;
+    }
+
+    
 
     
 }

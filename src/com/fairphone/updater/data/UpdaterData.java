@@ -7,6 +7,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import android.os.Build;
+
+import com.fairphone.updater.R;
+import com.fairphone.updater.gappsinstaller.GappsInstallerHelper;
+import com.fairphone.updater.tools.Utils;
+
 public class UpdaterData
 {
 
@@ -139,6 +145,7 @@ public class UpdaterData
     public List<Store> getAppStoreList()
     {
         ArrayList<Store> retval = mapToOrderedStoreList(mAppStoresMap.values());
+
         return retval;
     }
 

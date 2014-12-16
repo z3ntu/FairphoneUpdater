@@ -24,9 +24,11 @@ import android.widget.Toast;
 import com.fairphone.updater.FairphoneUpdater.HeaderType;
 import com.fairphone.updater.FairphoneUpdater.UpdaterState;
 import com.fairphone.updater.R;
+import com.fairphone.updater.data.Store;
 import com.fairphone.updater.data.Version;
 import com.fairphone.updater.data.VersionParserHelper;
 import com.fairphone.updater.fragments.ConfirmationPopupDialog.ConfirmationPopupDialogListener;
+import com.fairphone.updater.fragments.VersionDetailFragment.DetailLayoutType;
 import com.fairphone.updater.tools.Utils;
 
 public class VersionDetailFragment extends BaseFragment
@@ -36,7 +38,7 @@ public class VersionDetailFragment extends BaseFragment
 
     public static enum DetailLayoutType
     {
-        UPDATE_FAIRPHONE, UPDATE_ANDROID, FAIRPHONE, ANDROID
+        UPDATE_FAIRPHONE, UPDATE_ANDROID, FAIRPHONE, ANDROID, APP_STORE
     }
 
     private HeaderType mHeaderType;
@@ -51,6 +53,9 @@ public class VersionDetailFragment extends BaseFragment
     private DetailLayoutType mDetailLayoutType;
     private boolean mIsOSChange;
     private boolean mIsOlderVersion;
+
+    // store download
+    private Store mSelectedStore;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -71,6 +76,9 @@ public class VersionDetailFragment extends BaseFragment
             case UPDATE_ANDROID:
             case ANDROID:
                 view = inflater.inflate(R.layout.fragment_version_detail_android, container, false);
+                break;
+            case APP_STORE:
+                view = inflater.inflate(R.layout.fragment_version_detail_fairphone, container, false);
                 break;
             case UPDATE_FAIRPHONE:
             case FAIRPHONE:
@@ -101,7 +109,7 @@ public class VersionDetailFragment extends BaseFragment
             @Override
             public void onClick(View v)
             {
-                startVersionDownload();
+                startItemDownload();
             }
         });
     }
@@ -114,6 +122,7 @@ public class VersionDetailFragment extends BaseFragment
             case UPDATE_FAIRPHONE:
                 mDownload_and_update_button.setText(R.string.install_update);
                 break;
+            case APP_STORE:
             case FAIRPHONE:
             case ANDROID:
             default:
@@ -139,6 +148,13 @@ public class VersionDetailFragment extends BaseFragment
     public void setupFragment(Version selectedVersion, DetailLayoutType detailType)
     {
         mSelectedVersion = selectedVersion;
+
+        mDetailLayoutType = detailType;
+    }
+
+    public void setupFragment(Store selectedStore, DetailLayoutType detailType)
+    {
+        mSelectedStore = selectedStore;
 
         mDetailLayoutType = detailType;
     }
@@ -210,6 +226,57 @@ public class VersionDetailFragment extends BaseFragment
         }
 
         return request;
+    }
+    
+    public void startUpdateStoreDownload()
+    {
+
+        // use only on WiFi
+        if (isWiFiEnabled())
+        {
+            if (mSelectedStore != null)
+            {
+                // set the download for the latest version on the download
+                // manager
+                String fileName = mSelectedStore.getName();
+                String downloadTitle = mSelectedStore.getName();
+                Request request = createDownloadRequest(mSelectedStore.getDownloadLink() + Utils.getModelAndOS(mainActivity), fileName, downloadTitle);
+                if (request != null && mDownloadManager != null)
+                {
+                    long mLatestUpdateDownloadId = mDownloadManager.enqueue(request);
+
+                    // save it on the shared preferences
+                    mainActivity.saveLatestUpdateDownloadId(mLatestUpdateDownloadId);
+
+                    // change state to download
+                    mainActivity.changeState(UpdaterState.DOWNLOAD);
+                }
+                else
+                {
+                    Toast.makeText(mainActivity, getResources().getString(R.string.error_downloading) + " " + downloadTitle, Toast.LENGTH_LONG).show();
+                }
+            }
+        }
+        else
+        {
+            Resources resources = this.getResources();
+
+            AlertDialog.Builder disclaimerDialog = new AlertDialog.Builder(mainActivity);
+
+            disclaimerDialog.setTitle(resources.getString(R.string.wifi_disabled));
+
+            // Setting Dialog Message
+            disclaimerDialog.setMessage(resources.getString(R.string.wifi_discaimer_message));
+            disclaimerDialog.setPositiveButton(resources.getString(android.R.string.ok), new DialogInterface.OnClickListener()
+            {
+                public void onClick(DialogInterface dialog, int id)
+                {
+                    // do nothing, since the state is still the same
+                }
+            });
+            disclaimerDialog.create();
+            disclaimerDialog.show();
+        }
     }
 
     public void startUpdateDownload()
@@ -285,6 +352,28 @@ public class VersionDetailFragment extends BaseFragment
         popupDialog.show(fm, version);
     }
 
+    public void startItemDownload()
+    {
+        if (mDetailLayoutType == DetailLayoutType.APP_STORE)
+        {
+            startStoreDownload();
+        }
+        else
+        {
+            startVersionDownload();
+        }
+    }
+
+    private void startStoreDownload()
+    {
+        if (mSelectedStore != null)
+        {
+            mainActivity.setSelectedStore(mSelectedStore);
+            //showEraseAllDataWarning(false);
+            startStoreInstall();
+        }
+    }
+
     public void startVersionDownload()
     {
         if (!Utils.areGappsInstalling(mainActivity))
@@ -293,19 +382,20 @@ public class VersionDetailFragment extends BaseFragment
             {
                 if (mIsOSChange || mIsOlderVersion)
                 {
-                    showPopupDialog(mainActivity.getVersionName(mSelectedVersion), mSelectedVersion.hasEraseAllPartitionWarning(), new ConfirmationPopupDialogListener()
-                    {
-
-                        @Override
-                        public void onFinishPopUpDialog(boolean isOk)
-                        {
-                            if (isOk)
+                    showPopupDialog(mainActivity.getVersionName(mSelectedVersion), mSelectedVersion.hasEraseAllPartitionWarning(),
+                            new ConfirmationPopupDialogListener()
                             {
-                                mainActivity.setSelectedVersion(mSelectedVersion);
-                                showEraseAllDataWarning(true);
-                            }
-                        }
-                    });
+
+                                @Override
+                                public void onFinishPopUpDialog(boolean isOk)
+                                {
+                                    if (isOk)
+                                    {
+                                        mainActivity.setSelectedVersion(mSelectedVersion);
+                                        showEraseAllDataWarning(true);
+                                    }
+                                }
+                            });
                 }
                 else
                 {
@@ -320,6 +410,24 @@ public class VersionDetailFragment extends BaseFragment
         }
     }
 
+    private void startStoreInstall()
+    {
+
+        final UpdaterState currentState = mainActivity.getCurrentUpdaterState();
+
+        if (mSelectedStore != null)
+        {
+            if (currentState == UpdaterState.NORMAL)
+            {
+                startUpdateStoreDownload();
+            }
+            else
+            {
+                mainActivity.setSelectedStore(null);
+            }
+        }
+    }
+    
     private void showEraseAllDataWarning(boolean bypassEraseAllWarning)
     {
 
@@ -373,4 +481,5 @@ public class VersionDetailFragment extends BaseFragment
                     }
                 }).show();
     }
+
 }

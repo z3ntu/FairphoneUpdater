@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.fairphone.updater.FairphoneUpdater.HeaderType;
 import com.fairphone.updater.R;
+import com.fairphone.updater.data.Store;
 import com.fairphone.updater.data.UpdaterData;
 import com.fairphone.updater.data.Version;
 import com.fairphone.updater.fragments.VersionDetailFragment.DetailLayoutType;
@@ -30,6 +31,7 @@ public class VersionListFragment extends BaseFragment
 
     private ListLayoutType mListLayoutType;
     private List<Version> mVersionList;
+    private List<Store> mStoreList;
     private LinearLayout mVersionListContainer;
     private Button mLatestVersionDetailsButton;
     private TextView mLatestVersionInstalledIndicator;
@@ -63,8 +65,6 @@ public class VersionListFragment extends BaseFragment
 
                 setupAppStoresLatestVersion();
                 setupAppStoreVersions(container);
-//                setupAndroidLatestVersion();
-//                setupAndroidVersions(container);
                 break;
             case ANDROID:
                 view = inflater.inflate(R.layout.fragment_other_os_options_android_list, container, false);
@@ -99,45 +99,45 @@ public class VersionListFragment extends BaseFragment
 
     private void setupAppStoreVersions(ViewGroup root)
     {
-        Button versionLayout;
+        Button storeLayout;
         LayoutInflater inflater = getActivity().getLayoutInflater();
 
-        mVersionList = UpdaterData.getInstance().getFairphoneVersionList();
+        mStoreList = UpdaterData.getInstance().getAppStoreList();
         Version latestFairphoneVersion = UpdaterData.getInstance().getLatestVersion(Version.IMAGE_TYPE_FAIRPHONE);
 
-        for (Version version : mVersionList)
+        for (Store store : mStoreList)
         {
-            if (version.compareTo(latestFairphoneVersion) != 0)
-            {
-                versionLayout = (Button) inflater.inflate(R.layout.fragment_app_store_options_list_button, root, false);
-                versionLayout.setTag(version);
-                versionLayout.setClickable(true);
+//            if (store.compareTo(latestFairphoneVersion) != 0)
+//            {
+                storeLayout = (Button) inflater.inflate(R.layout.fragment_app_store_options_list_button, root, false);
+                storeLayout.setTag(store);
+                storeLayout.setClickable(true);
 
-                mVersionListContainer.addView(versionLayout);
+                mVersionListContainer.addView(storeLayout);
 
-                versionLayout.setText(mainActivity.getVersionName(version));
+                storeLayout.setText(store.getName());
 
-                versionLayout.setOnClickListener(new OnClickListener()
+                storeLayout.setOnClickListener(new OnClickListener()
                 {
                     @Override
                     public void onClick(View v)
                     {
-                        Version selectedVersion = (Version) v.getTag();
+                        Store selectedStore = (Store) v.getTag();
 
-                        if (selectedVersion != null)
+                        if (selectedStore != null)
                         {
                             VersionDetailFragment versionDetail = new VersionDetailFragment();
 
-                            versionDetail.setupFragment(selectedVersion, DetailLayoutType.FAIRPHONE);
+                            versionDetail.setupFragment(selectedStore, DetailLayoutType.APP_STORE);
 
                             mainActivity.changeFragment(versionDetail);
                         }
                     }
                 });
-            }
+//            }
         }
                 
-        if (mVersionList.size() <= 1)
+        if (mStoreList.size() <= 1)
         {
             mOlderVersionsGroup.setVisibility(View.GONE);
         }
