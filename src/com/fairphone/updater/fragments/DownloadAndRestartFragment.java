@@ -1,4 +1,3 @@
-
 package com.fairphone.updater.fragments;
 
 import java.io.File;
@@ -38,6 +37,7 @@ import com.fairphone.updater.UpdaterService;
 import com.fairphone.updater.FairphoneUpdater.HeaderType;
 import com.fairphone.updater.FairphoneUpdater.UpdaterState;
 import com.fairphone.updater.R;
+import com.fairphone.updater.data.DownloadableItem;
 import com.fairphone.updater.data.Store;
 import com.fairphone.updater.data.Version;
 import com.fairphone.updater.data.VersionParserHelper;
@@ -62,7 +62,7 @@ public class DownloadAndRestartFragment extends BaseFragment
     private Store mSelectedStore;
 
     private boolean mIsVersion;
-    
+
     private DownloadManager mDownloadManager;
 
     private DownloadBroadCastReceiver mDownloadBroadCastReceiver;
@@ -71,30 +71,36 @@ public class DownloadAndRestartFragment extends BaseFragment
 
     private long mLatestUpdateDownloadId;
 
-    public DownloadAndRestartFragment(boolean isVersion){
+    public DownloadAndRestartFragment(boolean isVersion)
+    {
         super();
-        
+
         mIsVersion = isVersion;
     }
-    
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         // Inflate the layout for this fragment
         View view = null;
-        if(mIsVersion){
+        if (mIsVersion)
+        {
             mSelectedVersion = mainActivity.getSelectedVersion();
             view = inflateViewByImageType(inflater, container);
-        } else {
+            mSelectedStore = null;
+        }
+        else
+        {
             mSelectedStore = mainActivity.getSelectedStore();
             view = inflateStoreView(inflater, container);
+            mSelectedVersion = null;
         }
-        
+
         setupLayout(view);
 
         return view;
     }
-    
+
     private View inflateViewByImageType(LayoutInflater inflater, ViewGroup container)
     {
         View view = inflater.inflate(R.layout.fragment_download_fairphone, container, false);
@@ -115,7 +121,7 @@ public class DownloadAndRestartFragment extends BaseFragment
     private View inflateStoreView(LayoutInflater inflater, ViewGroup container)
     {
         View view = inflater.inflate(R.layout.fragment_download_app_store, container, false);
-        
+
         return view;
     }
 
@@ -143,7 +149,14 @@ public class DownloadAndRestartFragment extends BaseFragment
                     @Override
                     public void onClick(View v)
                     {
-                        showEraseAllDataWarning();
+                        if (mIsVersion)
+                        {
+                            showEraseAllDataWarning();
+                        }
+                        else if (mSelectedStore != null)
+                        {
+                            startPreInstall();
+                        }
                     }
                 });
 
@@ -194,14 +207,18 @@ public class DownloadAndRestartFragment extends BaseFragment
         }
     }
 
-    private void updateHeader(){
-        if(mIsVersion){
+    private void updateHeader()
+    {
+        if (mIsVersion)
+        {
             updateVersionHeader();
-        } else {
-            updateAppStoreHeader();   
+        }
+        else
+        {
+            updateAppStoreHeader();
         }
     }
-    
+
     private void updateAppStoreHeader()
     {
         mainActivity.updateHeader(HeaderType.MAIN_FAIRPHONE, "", false);
@@ -242,7 +259,8 @@ public class DownloadAndRestartFragment extends BaseFragment
 
                 int count = 3;
 
-                while (((latestUpdateDownloadId = mainActivity.getLatestDownloadId()) <= 0) && count > 0){
+                while (((latestUpdateDownloadId = mainActivity.getLatestDownloadId()) <= 0) && count > 0)
+                {
                     try
                     {
                         Thread.sleep(2000);
@@ -262,8 +280,9 @@ public class DownloadAndRestartFragment extends BaseFragment
                     q.setFilterById(latestUpdateDownloadId);
 
                     Cursor cursor = mDownloadManager != null ? mDownloadManager.query(q) : null;
-                    
-                    if(cursor == null){
+
+                    if (cursor == null)
+                    {
                         System.out.println(" +++++++++++++++++++++++++++++++ cursor is null +++++++++++++++++++++++++++++++ ");
                     }
                     if (cursor != null && cursor.moveToFirst())
@@ -353,13 +372,16 @@ public class DownloadAndRestartFragment extends BaseFragment
         registerNetworkStatusBoradcastReceiver();
 
         updateHeader();
-        
-        if(mIsVersion){
+
+        if (mIsVersion)
+        {
             mDownloadVersionName.setText(mainActivity.getVersionName(mSelectedVersion));
-        } else {
+        }
+        else
+        {
             mDownloadVersionName.setText(mSelectedStore.getName());
         }
-        
+
         toggleDownloadProgressAndRestart();
     }
 
@@ -448,18 +470,14 @@ public class DownloadAndRestartFragment extends BaseFragment
 
             Cursor cursor = mDownloadManager != null ? mDownloadManager.query(query) : null;
 
-            System.out.println(" ---------------------- cursor : " + cursor + " ----------------------------------");
-            
             if (cursor != null && cursor.moveToFirst())
             {
                 int columnIndex = cursor.getColumnIndex(DownloadManager.COLUMN_STATUS);
                 int status = cursor.getInt(columnIndex);
 
-                System.out.println("status from cursor: " + status);
-                
                 switch (status)
                 {
-                    
+
                     case DownloadManager.STATUS_SUCCESSFUL:
                         mainActivity.updateStatePreference(UpdaterState.PREINSTALL);
                         toggleDownloadProgressAndRestart();
@@ -473,6 +491,11 @@ public class DownloadAndRestartFragment extends BaseFragment
                         if (mSelectedVersion != null)
                         {
                             String downloadTitle = mSelectedVersion.getName() + " " + mSelectedVersion.getImageTypeDescription(resources);
+                            Toast.makeText(mainActivity, resources.getString(R.string.error_downloading) + " " + downloadTitle, Toast.LENGTH_LONG).show();
+                        }
+                        else if (mSelectedStore != null)
+                        {
+                            String downloadTitle = mSelectedStore.getName();
                             Toast.makeText(mainActivity, resources.getString(R.string.error_downloading) + " " + downloadTitle, Toast.LENGTH_LONG).show();
                         }
                         else
@@ -499,51 +522,17 @@ public class DownloadAndRestartFragment extends BaseFragment
     // PRE INSTALL
     // ************************************************************************************
 
-    private void setupPreInstallState(){
-        if(mIsVersion){
-            setupVersionPreInstallState();
-        } else{
-            setupAppStorePreInstallState();
-        }
-    }
-    
-    private void setupAppStorePreInstallState()
+    private void setupPreInstallState()
     {
         Resources resources = mainActivity.getResources();
-        
-        if(mSelectedStore != null){
-            File file = new File(getStoreDownloadPath(mSelectedStore));
-
-            if (file.exists())
-            {
-                if (Utils.checkMD5(mSelectedVersion.getMd5Sum(), file))
-                {
-                    copyUpdateToCache(file);
-                    return;
-                }
-                else
-                {
-                    Toast.makeText(mainActivity, resources.getString(R.string.invalid_md5_download_message), Toast.LENGTH_LONG).show();
-                    removeLastUpdateDownload();
-                }
-            }
-        }
-    }
-
-    private void setupVersionPreInstallState()
-    {
-
-        Resources resources = mainActivity.getResources();
-        // the latest version data must exist
-        if (mSelectedVersion != null)
+        DownloadableItem item = mIsVersion ? mSelectedVersion : mSelectedStore;
+        if (item != null)
         {
-
-            // check the md5 of the file
-            File file = new File(getVersionDownloadPath(mSelectedVersion));
+            File file = new File(getDownloadPath(item));
 
             if (file.exists())
             {
-                if (Utils.checkMD5(mSelectedVersion.getMd5Sum(), file))
+                if (Utils.checkMD5(item.getMd5Sum(), file))
                 {
                     copyUpdateToCache(file);
                     return;
@@ -555,13 +544,6 @@ public class DownloadAndRestartFragment extends BaseFragment
                 }
             }
         }
-
-        // remove the updater directory
-        File fileDir = new File(Environment.getExternalStorageDirectory() + resources.getString(R.string.updaterFolder));
-        fileDir.delete();
-
-        // else if the perfect case does not happen, reset the download
-        abortUpdateProcess();
     }
 
     // ************************************************************************************
@@ -570,50 +552,10 @@ public class DownloadAndRestartFragment extends BaseFragment
 
     public void setupDownloadState()
     {
-        if(mIsVersion){
-            setupVersionDownloadState();
-        } else {
-            setupAppStoreDownloadState();
-        }
-    }
-    
-    private void setupAppStoreDownloadState()
-    {
-     // setup the download state views
-        if (mSelectedStore == null)
-        {
-            Resources resources = getResources();
+        DownloadableItem item = mIsVersion ? mSelectedVersion : mSelectedStore;
 
-            // we don't have the lastest.xml so get back to initial state
-            File updateDir = new File(Environment.getExternalStorageDirectory() + resources.getString(R.string.updaterFolder));
-
-            updateDir.delete();
-
-            abortUpdateProcess();
-
-            return;
-        }
-
-        // if there is a download ID on the shared preferences
-        if (mLatestUpdateDownloadId == 0)
-        {
-            mLatestUpdateDownloadId = mainActivity.getLatestUpdateDownloadIdFromSharedPreference();
-
-            // invalid download Id
-            if (mLatestUpdateDownloadId == 0)
-            {
-                abortUpdateProcess();
-                return;
-            }
-        }
-
-        updateDownloadFile();
-    }
-
-    public void setupVersionDownloadState()
-    {
         // setup the download state views
-        if (mSelectedVersion == null)
+        if (item == null)
         {
             Resources resources = getResources();
 
@@ -646,12 +588,14 @@ public class DownloadAndRestartFragment extends BaseFragment
     private void startPreInstall()
     {
         Resources resources = getResources();
-        File f = new File("/" + resources.getString(R.string.recoveryCachePath) + "/"
-                + VersionParserHelper.getNameFromVersion(mSelectedVersion));
+        DownloadableItem item = mIsVersion ? mSelectedVersion : mSelectedStore;
+
+        File f = new File("/" + resources.getString(R.string.recoveryCachePath) + "/" + VersionParserHelper.getFilenameFromDownloadableItem(item));
         if (!f.exists())
         {
             abortUpdateProcess();
-        } else if (RootTools.isAccessGiven())
+        }
+        else if (item != null && RootTools.isAccessGiven())
         {
             // set the command for the recovery
             // Process p;
@@ -668,12 +612,12 @@ public class DownloadAndRestartFragment extends BaseFragment
                 if (Utils.hasUnifiedPartition(resources))
                 {
                     Shell.runRootCommand(new CommandCapture(0, "echo '--update_package=/" + resources.getString(R.string.recoveryCachePath) + "/"
-                            + VersionParserHelper.getNameFromVersion(mSelectedVersion) + "' >> /cache/recovery/command"));
+                            + VersionParserHelper.getFilenameFromDownloadableItem(item) + "' >> /cache/recovery/command"));
                 }
                 else
                 {
                     Shell.runRootCommand(new CommandCapture(0, "echo '--update_package=/" + resources.getString(R.string.recoverySdCardPath)
-                            + resources.getString(R.string.updaterFolder) + VersionParserHelper.getNameFromVersion(mSelectedVersion)
+                            + resources.getString(R.string.updaterFolder) + VersionParserHelper.getFilenameFromDownloadableItem(item)
                             + "' >> /cache/recovery/command"));
                 }
             } catch (IOException e)
@@ -695,10 +639,9 @@ public class DownloadAndRestartFragment extends BaseFragment
             }
 
             SharedPreferences sharedPreferences = getActivity().getSharedPreferences(FairphoneUpdater.FAIRPHONE_UPDATER_PREFERENCES, Context.MODE_PRIVATE);
-            
+
             Editor editor = sharedPreferences.edit();
             editor.remove(UpdaterService.PREFERENCE_REINSTALL_GAPPS);
-
             editor.commit();
 
             if (Utils.hasUnifiedPartition(resources))
@@ -738,8 +681,17 @@ public class DownloadAndRestartFragment extends BaseFragment
     {
         if (Utils.canCopyToCache(file))
         {
+            DownloadableItem item = mIsVersion ? mSelectedVersion : mSelectedStore;
             CopyFileToCacheTask copyTask = new CopyFileToCacheTask();
-            copyTask.execute(file.getPath(), Environment.getDownloadCacheDirectory() + "/" + VersionParserHelper.getNameFromVersion(mSelectedVersion));
+            if (item != null)
+            {
+                copyTask.execute(file.getPath(), Environment.getDownloadCacheDirectory() + "/" + VersionParserHelper.getFilenameFromDownloadableItem(item));
+            }
+            else
+            {
+                Toast.makeText(mainActivity, getResources().getString(R.string.no_space_available_cache_message), Toast.LENGTH_LONG).show();
+                abortUpdateProcess();
+            }
         }
         else
         {
@@ -854,16 +806,11 @@ public class DownloadAndRestartFragment extends BaseFragment
         }
     }
 
-    private String getVersionDownloadPath(Version version)
+    private String getDownloadPath(DownloadableItem item)
     {
         Resources resources = mainActivity.getResources();
-        return Environment.getExternalStorageDirectory() + resources.getString(R.string.updaterFolder) + VersionParserHelper.getNameFromVersion(version);
-    }
-    
-    private String getStoreDownloadPath(Store store)
-    {
-        Resources resources = mainActivity.getResources();
-        return Environment.getExternalStorageDirectory() + resources.getString(R.string.updaterFolder) + VersionParserHelper.getNameFromStore(store);
+        return Environment.getExternalStorageDirectory() + resources.getString(R.string.updaterFolder)
+                + VersionParserHelper.getFilenameFromDownloadableItem(item);
     }
 
     public void abortUpdateProcess()

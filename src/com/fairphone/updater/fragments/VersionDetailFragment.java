@@ -268,7 +268,7 @@ public class VersionDetailFragment extends BaseFragment
             {
                 // set the download for the latest version on the download
                 // manager
-                String fileName = VersionParserHelper.getNameFromStore(mSelectedStore);
+                String fileName = VersionParserHelper.getFilenameFromDownloadableItem(mSelectedStore);
                 String downloadTitle = mSelectedStore.getName();
                 Request request = createDownloadRequest(mSelectedStore.getDownloadLink() + Utils.getModelAndOS(mainActivity), fileName, downloadTitle);
                 if (request != null && mDownloadManager != null)
@@ -319,7 +319,7 @@ public class VersionDetailFragment extends BaseFragment
             {
                 // set the download for the latest version on the download
                 // manager
-                String fileName = VersionParserHelper.getNameFromVersion(mSelectedVersion);
+                String fileName = VersionParserHelper.getFilenameFromDownloadableItem(mSelectedVersion);
                 String downloadTitle = mSelectedVersion.getName() + " " + mSelectedVersion.getImageTypeDescription(getResources());
                 Request request = createDownloadRequest(mSelectedVersion.getDownloadLink() + Utils.getModelAndOS(mainActivity), fileName, downloadTitle);
                 if (request != null && mDownloadManager != null)

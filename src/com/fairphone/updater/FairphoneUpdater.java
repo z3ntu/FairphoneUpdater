@@ -26,7 +26,6 @@ import com.fairphone.updater.data.UpdaterData;
 import com.fairphone.updater.data.Version;
 import com.fairphone.updater.data.VersionParserHelper;
 import com.fairphone.updater.fragments.DownloadAndRestartFragment;
-import com.fairphone.updater.fragments.DownloadStoreAndRestartFragment;
 import com.fairphone.updater.fragments.InfoPopupDialog;
 import com.fairphone.updater.fragments.MainFragment;
 import com.fairphone.updater.fragments.VersionDetailFragment.DetailLayoutType;
@@ -480,7 +479,7 @@ public class FairphoneUpdater extends FragmentActivity
                 }
                 else if (mSelectedStore != null)
                 {
-                    firstFragment = new DownloadStoreAndRestartFragment();
+                    firstFragment = new DownloadAndRestartFragment(false);
                 }
                 break;
             case NORMAL:
