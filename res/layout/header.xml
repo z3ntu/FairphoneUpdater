@@ -77,7 +77,7 @@
             android:id="@+id/header_app_store_text"
             android:layout_width="match_parent"
             android:layout_height="@dimen/header_small_height"
-            android:drawableLeft="@drawable/button_back_states_green"
+            android:drawableLeft="@drawable/button_back_states_red"
             android:ellipsize="end"
             android:gravity="center_vertical|center_horizontal"
             android:lines="1"
