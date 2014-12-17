@@ -44,8 +44,6 @@ public class FairphoneUpdater extends FragmentActivity
 
     public static final String PREFERENCE_FIRST_TIME_FAIRPHONE = "FirstTimeFairphone";
 
-    public static final String PREFERENCE_FIRST_TIME_APP_STORE = "FirstTimeAppStore";
-
     public static final String PREFERENCE_CURRENT_UPDATER_STATE = "CurrentUpdaterState";
 
     private static final String PREFERENCE_DOWNLOAD_ID = "LatestUpdateDownloadId";
@@ -89,7 +87,6 @@ public class FairphoneUpdater extends FragmentActivity
     private ImageButton headerAndroidInfoButton;
 
     private boolean mIsFirstTimeAndroid;
-    private boolean mIsFirstTimeAppStore;
     private boolean mIsFirstTimeFairphone;
 
     private Store mSelectedStore;
@@ -120,8 +117,6 @@ public class FairphoneUpdater extends FragmentActivity
         mIsFirstTimeAndroid = mSharedPreferences.getBoolean(PREFERENCE_FIRST_TIME_ANDROID, true);
 
         mIsFirstTimeFairphone = mSharedPreferences.getBoolean(PREFERENCE_FIRST_TIME_FAIRPHONE, true);
-
-        mIsFirstTimeAppStore = mSharedPreferences.getBoolean(PREFERENCE_FIRST_TIME_APP_STORE, true);
 
         // check current state
         mCurrentState = getCurrentUpdaterState();
@@ -302,6 +297,7 @@ public class FairphoneUpdater extends FragmentActivity
         }
         else if (fragment != null && fragment instanceof MainFragment)
         {
+            clearSelectedItems();
             clearBackStack();
             finish();
         }
@@ -376,19 +372,8 @@ public class FairphoneUpdater extends FragmentActivity
                 headerAndroidText.setVisibility(View.GONE);
                 headerAppStoreText.setVisibility(View.VISIBLE);
                 headerOtherOSText.setVisibility(View.GONE);
-
+                
                 headerAppStoreText.setText(headerText);
-
-                if (showInfo && mIsFirstTimeAppStore)
-                {
-                    showInfoPopupDialog(DetailLayoutType.APP_STORE);
-                    Editor editor = mSharedPreferences.edit();
-
-                    mIsFirstTimeAppStore = false;
-
-                    editor.putBoolean(PREFERENCE_FIRST_TIME_APP_STORE, mIsFirstTimeAppStore);
-                    editor.commit();
-                }
 
                 headerFairphoneInfoButton.setVisibility(View.GONE);
                 headerAndroidInfoButton.setVisibility(View.GONE);
