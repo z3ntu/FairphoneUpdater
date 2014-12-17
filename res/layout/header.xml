@@ -31,6 +31,19 @@
             android:textColor="@color/green"
             android:textSize="@dimen/header_big_text_size"
             android:visibility="gone" />
+        
+        <TextView
+            android:id="@+id/header_main_app_store_text"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/header_big_height"
+            android:ellipsize="end"
+            android:fontFamily="sans-serif-thin"
+            android:gravity="center_vertical|center_horizontal"
+            android:lines="1"
+            android:text="@string/app_name"
+            android:textColor="@color/pink"
+            android:textSize="@dimen/header_big_text_size"
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/header_fairphone_text"

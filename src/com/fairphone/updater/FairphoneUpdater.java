@@ -21,6 +21,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
+import com.fairphone.updater.data.DownloadableItem;
 import com.fairphone.updater.data.Store;
 import com.fairphone.updater.data.UpdaterData;
 import com.fairphone.updater.data.Version;
@@ -40,11 +41,11 @@ public class FairphoneUpdater extends FragmentActivity
     public static final String FAIRPHONE_UPDATER_NEW_VERSION_RECEIVED = "FairphoneUpdater.NEW.VERSION.RECEIVED";
 
     public static final String PREFERENCE_FIRST_TIME_ANDROID = "FirstTimeAndroid";
-    
+
     public static final String PREFERENCE_FIRST_TIME_FAIRPHONE = "FirstTimeFairphone";
-    
+
     public static final String PREFERENCE_FIRST_TIME_APP_STORE = "FirstTimeAppStore";
-    
+
     public static final String PREFERENCE_CURRENT_UPDATER_STATE = "CurrentUpdaterState";
 
     private static final String PREFERENCE_DOWNLOAD_ID = "LatestUpdateDownloadId";
@@ -58,7 +59,7 @@ public class FairphoneUpdater extends FragmentActivity
     public static final String FAIRPHONE_UPDATER_CONFIG_DOWNLOAD_FAILED = "FairphoneUpdater.Config.File.Download.FAILED";
 
     public static final String FAIRPHONE_UPDATER_CONFIG_DOWNLOAD_LINK = "FairphoneUpdater.ConfigFile.Download.LINK";
-    
+
     public static final String PREFERENCE_SELECTED_STORE_NUMBER = "SelectedStoreNumber";
 
     public static enum UpdaterState
@@ -86,17 +87,18 @@ public class FairphoneUpdater extends FragmentActivity
     private TextView headerOtherOSText;
     private ImageButton headerFairphoneInfoButton;
     private ImageButton headerAndroidInfoButton;
-    
+
     private boolean mIsFirstTimeAndroid;
     private boolean mIsFirstTimeAppStore;
     private boolean mIsFirstTimeFairphone;
-    
-    
+
     private Store mSelectedStore;
-    
+
+    private TextView headerMainAppStoreText;
+
     public static enum HeaderType
     {
-        MAIN_FAIRPHONE, MAIN_ANDROID, FAIRPHONE, ANDROID, OTHER_OS, APP_STORE
+        MAIN_FAIRPHONE, MAIN_ANDROID, MAIN_APP_STORE, FAIRPHONE, ANDROID, OTHER_OS, APP_STORE
     };
 
     @Override
@@ -116,11 +118,11 @@ public class FairphoneUpdater extends FragmentActivity
 
         // update first times
         mIsFirstTimeAndroid = mSharedPreferences.getBoolean(PREFERENCE_FIRST_TIME_ANDROID, true);
-        
+
         mIsFirstTimeFairphone = mSharedPreferences.getBoolean(PREFERENCE_FIRST_TIME_FAIRPHONE, true);
-        
+
         mIsFirstTimeAppStore = mSharedPreferences.getBoolean(PREFERENCE_FIRST_TIME_APP_STORE, true);
-        
+
         // check current state
         mCurrentState = getCurrentUpdaterState();
 
@@ -171,7 +173,7 @@ public class FairphoneUpdater extends FragmentActivity
         int versionNumber = mSharedPreferences.getInt(PREFERENCE_SELECTED_VERSION_NUMBER, 0);
         mSelectedVersion = UpdaterData.getInstance().getVersion(versionImageType, versionNumber);
     }
-    
+
     protected void getSelectedStoreFromSharedPreferences()
     {
         int storeNumber = mSharedPreferences.getInt(PREFERENCE_SELECTED_STORE_NUMBER, 0);
@@ -239,11 +241,11 @@ public class FairphoneUpdater extends FragmentActivity
     {
         headerMainFairphoneText = (TextView) findViewById(R.id.header_main_fairphone_text);
         headerMainAndroidText = (TextView) findViewById(R.id.header_main_android_text);
+        headerMainAppStoreText = (TextView) findViewById(R.id.header_main_app_store_text);
         headerFairphoneText = (TextView) findViewById(R.id.header_fairphone_text);
         headerAndroidText = (TextView) findViewById(R.id.header_android_text);
         headerOtherOSText = (TextView) findViewById(R.id.header_other_os_text);
         headerAppStoreText = (TextView) findViewById(R.id.header_app_store_text);
-        
 
         OnClickListener headerBackPressListener = new OnClickListener()
         {
@@ -258,23 +260,23 @@ public class FairphoneUpdater extends FragmentActivity
         headerAndroidText.setOnClickListener(headerBackPressListener);
         headerAppStoreText.setOnClickListener(headerBackPressListener);
         headerOtherOSText.setOnClickListener(headerBackPressListener);
-        
-        headerFairphoneInfoButton = (ImageButton)findViewById(R.id.header_fairphone_info_button);
-        headerAndroidInfoButton = (ImageButton)findViewById(R.id.header_android_info_button);
-        
+
+        headerFairphoneInfoButton = (ImageButton) findViewById(R.id.header_fairphone_info_button);
+        headerAndroidInfoButton = (ImageButton) findViewById(R.id.header_android_info_button);
+
         headerFairphoneInfoButton.setOnClickListener(new OnClickListener()
         {
-            
+
             @Override
             public void onClick(View v)
             {
                 showInfoPopupDialog(DetailLayoutType.FAIRPHONE);
             }
         });
-        
+
         headerAndroidInfoButton.setOnClickListener(new OnClickListener()
         {
-            
+
             @Override
             public void onClick(View v)
             {
@@ -282,16 +284,14 @@ public class FairphoneUpdater extends FragmentActivity
             }
         });
     }
-    
 
     private void showInfoPopupDialog(DetailLayoutType layoutType)
     {
         FragmentManager fm = getSupportFragmentManager();
-        InfoPopupDialog popupDialog =
-                new InfoPopupDialog(layoutType);
+        InfoPopupDialog popupDialog = new InfoPopupDialog(layoutType);
         popupDialog.show(fm, layoutType.name());
     }
-    
+
     @Override
     public void onBackPressed()
     {
@@ -319,23 +319,25 @@ public class FairphoneUpdater extends FragmentActivity
             case FAIRPHONE:
                 headerMainFairphoneText.setVisibility(View.GONE);
                 headerMainAndroidText.setVisibility(View.GONE);
+                headerMainAppStoreText.setVisibility(View.GONE);
                 headerFairphoneText.setVisibility(View.VISIBLE);
                 headerAndroidText.setVisibility(View.GONE);
                 headerAppStoreText.setVisibility(View.GONE);
                 headerOtherOSText.setVisibility(View.GONE);
 
                 headerFairphoneText.setText(headerText);
-                
-                if(showInfo && mIsFirstTimeFairphone){
+
+                if (showInfo && mIsFirstTimeFairphone)
+                {
                     showInfoPopupDialog(DetailLayoutType.UPDATE_FAIRPHONE);
                     Editor editor = mSharedPreferences.edit();
-                    
+
                     mIsFirstTimeFairphone = false;
-                    
+
                     editor.putBoolean(PREFERENCE_FIRST_TIME_FAIRPHONE, mIsFirstTimeFairphone);
                     editor.commit();
                 }
-                
+
                 headerFairphoneInfoButton.setVisibility(showInfo ? View.VISIBLE : View.GONE);
                 headerAndroidInfoButton.setVisibility(View.GONE);
                 break;
@@ -343,23 +345,25 @@ public class FairphoneUpdater extends FragmentActivity
             case ANDROID:
                 headerMainFairphoneText.setVisibility(View.GONE);
                 headerMainAndroidText.setVisibility(View.GONE);
+                headerMainAppStoreText.setVisibility(View.GONE);
                 headerFairphoneText.setVisibility(View.GONE);
                 headerAndroidText.setVisibility(View.VISIBLE);
                 headerAppStoreText.setVisibility(View.GONE);
                 headerOtherOSText.setVisibility(View.GONE);
 
                 headerAndroidText.setText(headerText);
-                
-                if(showInfo && mIsFirstTimeAndroid){
+
+                if (showInfo && mIsFirstTimeAndroid)
+                {
                     showInfoPopupDialog(DetailLayoutType.UPDATE_ANDROID);
                     Editor editor = mSharedPreferences.edit();
-                    
+
                     mIsFirstTimeAndroid = false;
-                    
+
                     editor.putBoolean(PREFERENCE_FIRST_TIME_ANDROID, mIsFirstTimeAndroid);
                     editor.commit();
                 }
-                
+
                 headerFairphoneInfoButton.setVisibility(View.GONE);
                 headerAndroidInfoButton.setVisibility(showInfo ? View.VISIBLE : View.GONE);
                 break;
@@ -367,38 +371,40 @@ public class FairphoneUpdater extends FragmentActivity
             case APP_STORE:
                 headerMainFairphoneText.setVisibility(View.GONE);
                 headerMainAndroidText.setVisibility(View.GONE);
+                headerMainAppStoreText.setVisibility(View.GONE);
                 headerFairphoneText.setVisibility(View.GONE);
                 headerAndroidText.setVisibility(View.GONE);
                 headerAppStoreText.setVisibility(View.VISIBLE);
                 headerOtherOSText.setVisibility(View.GONE);
 
                 headerAppStoreText.setText(headerText);
-                
-                if(showInfo && mIsFirstTimeAppStore){
+
+                if (showInfo && mIsFirstTimeAppStore)
+                {
                     showInfoPopupDialog(DetailLayoutType.APP_STORE);
                     Editor editor = mSharedPreferences.edit();
-                    
+
                     mIsFirstTimeAppStore = false;
-                    
+
                     editor.putBoolean(PREFERENCE_FIRST_TIME_APP_STORE, mIsFirstTimeAppStore);
                     editor.commit();
                 }
-                
+
                 headerFairphoneInfoButton.setVisibility(View.GONE);
-                headerAndroidInfoButton.setVisibility(showInfo ? View.VISIBLE : View.GONE);
+                headerAndroidInfoButton.setVisibility(View.GONE);
                 break;
 
-                
             case OTHER_OS:
                 headerMainFairphoneText.setVisibility(View.GONE);
                 headerMainAndroidText.setVisibility(View.GONE);
+                headerMainAppStoreText.setVisibility(View.GONE);
                 headerFairphoneText.setVisibility(View.GONE);
                 headerAndroidText.setVisibility(View.GONE);
                 headerAppStoreText.setVisibility(View.GONE);
                 headerOtherOSText.setVisibility(View.VISIBLE);
 
                 headerOtherOSText.setText(headerText);
-                
+
                 headerFairphoneInfoButton.setVisibility(View.GONE);
                 headerAndroidInfoButton.setVisibility(View.GONE);
                 break;
@@ -406,11 +412,25 @@ public class FairphoneUpdater extends FragmentActivity
             case MAIN_ANDROID:
                 headerMainFairphoneText.setVisibility(View.GONE);
                 headerMainAndroidText.setVisibility(View.VISIBLE);
+                headerMainAppStoreText.setVisibility(View.GONE);
                 headerFairphoneText.setVisibility(View.GONE);
                 headerAndroidText.setVisibility(View.GONE);
                 headerAppStoreText.setVisibility(View.GONE);
                 headerOtherOSText.setVisibility(View.GONE);
+
+                headerFairphoneInfoButton.setVisibility(View.GONE);
+                headerAndroidInfoButton.setVisibility(View.GONE);
+                break;
                 
+            case MAIN_APP_STORE:
+                headerMainFairphoneText.setVisibility(View.GONE);
+                headerMainAndroidText.setVisibility(View.GONE);
+                headerMainAppStoreText.setVisibility(View.VISIBLE);
+                headerFairphoneText.setVisibility(View.GONE);
+                headerAndroidText.setVisibility(View.GONE);
+                headerAppStoreText.setVisibility(View.GONE);
+                headerOtherOSText.setVisibility(View.GONE);
+
                 headerFairphoneInfoButton.setVisibility(View.GONE);
                 headerAndroidInfoButton.setVisibility(View.GONE);
                 break;
@@ -423,7 +443,7 @@ public class FairphoneUpdater extends FragmentActivity
                 headerAndroidText.setVisibility(View.GONE);
                 headerAppStoreText.setVisibility(View.GONE);
                 headerOtherOSText.setVisibility(View.GONE);
-                
+
                 headerFairphoneInfoButton.setVisibility(View.GONE);
                 headerAndroidInfoButton.setVisibility(View.GONE);
                 break;
@@ -451,11 +471,19 @@ public class FairphoneUpdater extends FragmentActivity
             // In case this activity was started with special instructions from
             // an
             // Intent, pass the Intent's extras to the fragment as arguments
-            firstFragment.setArguments(getIntent().getExtras());
+            Intent intent = getIntent();
+            if (firstFragment != null && intent != null)
+            {
+                Bundle bundle = intent.getExtras();
+                if (bundle != null)
+                {
+                    firstFragment.setArguments(bundle);
+                }
+            }
 
             // Add the fragment to the 'fragment_container' FrameLayout
             FragmentManager fragManager = getSupportFragmentManager();
-            if (fragManager != null)
+            if (firstFragment != null && fragManager != null)
             {
                 fragManager.beginTransaction().add(R.id.fragment_holder, firstFragment).commit();
             }
@@ -487,7 +515,7 @@ public class FairphoneUpdater extends FragmentActivity
                 firstFragment = new MainFragment();
                 break;
         }
-        
+
         return firstFragment;
     }
 
@@ -495,7 +523,7 @@ public class FairphoneUpdater extends FragmentActivity
     {
 
         Fragment topFragment = getTopFragment();
-        if (topFragment == null || (topFragment != null && !newFragment.getClass().equals(topFragment.getClass())))
+        if (topFragment == null || (topFragment != null && newFragment != null && !newFragment.getClass().equals(topFragment.getClass())))
         {
             FragmentManager fragManager = getSupportFragmentManager();
             if (fragManager != null)
@@ -523,11 +551,11 @@ public class FairphoneUpdater extends FragmentActivity
         }
     }
 
-    public void removeLastFragment(final boolean  forceFinish)
+    public void removeLastFragment(final boolean forceFinish)
     {
         runOnUiThread(new Runnable()
         {
-            
+
             @Override
             public void run()
             {
@@ -546,7 +574,7 @@ public class FairphoneUpdater extends FragmentActivity
                 }
             }
         });
-        
+
     }
 
     public int getFragmentCount()
@@ -656,29 +684,39 @@ public class FairphoneUpdater extends FragmentActivity
         return update;
     }
 
-    public String getVersionName(Version version)
+    public String getItemName(DownloadableItem item)
     {
-        String versionName = "";
-        if (version != null)
+        String itemName = "";
+        if (item != null)
         {
-            versionName = version.getImageTypeDescription(getResources()) + " " + version.getName() + " " + version.getBuildNumber();
+            if (item instanceof Version)
+            {
+                Version version = (Version) item;
+                itemName = version.getImageTypeDescription(getResources()) + " " + version.getName() + " " + version.getBuildNumber();
+            }
+            else if (item instanceof Store)
+            {
+
+                Store store = (Store) item;
+                itemName = store.getName();
+            }
         }
-        return versionName;
+        return itemName;
     }
 
     public String getDeviceVersionName()
     {
-        return getVersionName(mDeviceVersion);
+        return getItemName(mDeviceVersion);
     }
 
     public String getLatestVersionName()
     {
-        return getVersionName(mLatestVersion);
+        return getItemName(mLatestVersion);
     }
 
     public String getSelectedVersionName()
     {
-        return getVersionName(mSelectedVersion);
+        return getItemName(mSelectedVersion);
     }
 
     public Version getDeviceVersion()
@@ -695,7 +733,7 @@ public class FairphoneUpdater extends FragmentActivity
     {
         return mSelectedVersion;
     }
-    
+
     public Store getSelectedStore()
     {
         return mSelectedStore;
@@ -726,16 +764,22 @@ public class FairphoneUpdater extends FragmentActivity
         clearSelectedStore(0);
     }
 
+    public void clearSelectedItems()
+    {
+        clearSelectedVersion(0, "");
+        clearSelectedStore(0);
+    }
+
     private void clearSelectedVersion(int versionNumber, String versionImageType)
     {
         Editor editor = mSharedPreferences.edit();
         editor.putInt(PREFERENCE_SELECTED_VERSION_NUMBER, versionNumber);
         editor.putString(PREFERENCE_SELECTED_VERSION_TYPE, versionImageType);
         editor.commit();
-        
+
         mSelectedVersion = null;
     }
-    
+
     public void setSelectedStore(Store selectedStore)
     {
         int storeNumber = selectedStore != null ? selectedStore.getNumber() : 0;
@@ -751,7 +795,7 @@ public class FairphoneUpdater extends FragmentActivity
         Editor editor = mSharedPreferences.edit();
         editor.putInt(PREFERENCE_SELECTED_STORE_NUMBER, storeNumber);
         editor.commit();
-        
+
         mSelectedStore = null;
     }
 
@@ -787,7 +831,7 @@ public class FairphoneUpdater extends FragmentActivity
         {
             Toast.makeText(this, "Widget start", Toast.LENGTH_LONG).show();
         }
-        
+
         // check current state
         mCurrentState = getCurrentUpdaterState();
 
@@ -865,5 +909,5 @@ public class FairphoneUpdater extends FragmentActivity
     {
         mLatestUpdateDownloadId = latestUpdateDownloadId;
         savePreference(PREFERENCE_DOWNLOAD_ID, mLatestUpdateDownloadId);
-    }  
+    }
 }

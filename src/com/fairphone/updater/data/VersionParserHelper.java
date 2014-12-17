@@ -48,27 +48,6 @@ public class VersionParserHelper
     private static final String CURRENT_VERSION_IMAGE_TYPE = "fairphone.ota.image_type";
     private static final String CURRENT_VERSION_BUILD_DATE = "ro.build.date.utc";
 
-    public static String getFilenameFromDownloadableItem(DownloadableItem item)
-    {
-        StringBuilder filename = new StringBuilder();
-        filename.append("fp_");
-        if (item != null)
-        {
-            if (item instanceof Version)
-            {
-                filename.append("update_");
-
-            }
-            else if (item instanceof Store)
-            {
-                filename.append("store_");
-            }
-            filename.append(item.getNumber());
-        }
-        filename.append(".zip");
-        return filename.toString();
-    }
-
     public static Version getDeviceVersion(Context context)
     {
 

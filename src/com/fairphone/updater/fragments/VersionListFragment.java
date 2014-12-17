@@ -120,7 +120,7 @@ public class VersionListFragment extends BaseFragment
 
                     if (selectedStore != null)
                     {
-                        VersionDetailFragment versionDetail = new VersionDetailFragment();
+                        VersionDetailFragment versionDetail = new VersionDetailFragment(false);
 
                         versionDetail.setupFragment(selectedStore, DetailLayoutType.APP_STORE);
 
@@ -170,7 +170,7 @@ public class VersionListFragment extends BaseFragment
 
                 mVersionListContainer.addView(versionLayout);
 
-                versionLayout.setText(mainActivity.getVersionName(version));
+                versionLayout.setText(mainActivity.getItemName(version));
 
                 versionLayout.setOnClickListener(new OnClickListener()
                 {
@@ -181,7 +181,7 @@ public class VersionListFragment extends BaseFragment
 
                         if (selectedVersion != null)
                         {
-                            VersionDetailFragment versionDetail = new VersionDetailFragment();
+                            VersionDetailFragment versionDetail = new VersionDetailFragment(true);
 
                             versionDetail.setupFragment(selectedVersion, DetailLayoutType.FAIRPHONE);
 
@@ -205,7 +205,7 @@ public class VersionListFragment extends BaseFragment
     private void setupFairphoneLatestVersion()
     {
         final Version latestFairphoneVersion = UpdaterData.getInstance().getLatestVersion(Version.IMAGE_TYPE_FAIRPHONE);
-        mLatestVersionDetailsButton.setText(mainActivity.getVersionName(latestFairphoneVersion));
+        mLatestVersionDetailsButton.setText(mainActivity.getItemName(latestFairphoneVersion));
 
         if (mainActivity.getDeviceVersion().compareTo(latestFairphoneVersion) == 0)
         {
@@ -224,7 +224,7 @@ public class VersionListFragment extends BaseFragment
             {
                 if (latestFairphoneVersion != null)
                 {
-                    VersionDetailFragment versionDetail = new VersionDetailFragment();
+                    VersionDetailFragment versionDetail = new VersionDetailFragment(true);
 
                     versionDetail.setupFragment(latestFairphoneVersion, DetailLayoutType.FAIRPHONE);
 
@@ -252,7 +252,7 @@ public class VersionListFragment extends BaseFragment
 
                 mVersionListContainer.addView(versionLayout);
 
-                versionLayout.setText(mainActivity.getVersionName(version));
+                versionLayout.setText(mainActivity.getItemName(version));
 
                 versionLayout.setOnClickListener(new OnClickListener()
                 {
@@ -264,7 +264,7 @@ public class VersionListFragment extends BaseFragment
 
                         if (selectedVersion != null)
                         {
-                            VersionDetailFragment versionDetail = new VersionDetailFragment();
+                            VersionDetailFragment versionDetail = new VersionDetailFragment(true);
 
                             versionDetail.setupFragment(selectedVersion, DetailLayoutType.ANDROID);
 
@@ -288,7 +288,7 @@ public class VersionListFragment extends BaseFragment
     private void setupAndroidLatestVersion()
     {
         final Version latestAOSPVersion = UpdaterData.getInstance().getLatestVersion(Version.IMAGE_TYPE_AOSP);
-        mLatestVersionDetailsButton.setText(mainActivity.getVersionName(latestAOSPVersion));
+        mLatestVersionDetailsButton.setText(mainActivity.getItemName(latestAOSPVersion));
 
         if (mainActivity.getDeviceVersion().compareTo(latestAOSPVersion) == 0)
         {
@@ -307,7 +307,7 @@ public class VersionListFragment extends BaseFragment
             {
                 if (latestAOSPVersion != null)
                 {
-                    VersionDetailFragment versionDetail = new VersionDetailFragment();
+                    VersionDetailFragment versionDetail = new VersionDetailFragment(true);
 
                     versionDetail.setupFragment(latestAOSPVersion, DetailLayoutType.ANDROID);
 

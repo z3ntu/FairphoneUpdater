@@ -24,11 +24,10 @@ import android.widget.Toast;
 import com.fairphone.updater.FairphoneUpdater.HeaderType;
 import com.fairphone.updater.FairphoneUpdater.UpdaterState;
 import com.fairphone.updater.R;
+import com.fairphone.updater.data.DownloadableItem;
 import com.fairphone.updater.data.Store;
 import com.fairphone.updater.data.Version;
-import com.fairphone.updater.data.VersionParserHelper;
 import com.fairphone.updater.fragments.ConfirmationPopupDialog.ConfirmationPopupDialogListener;
-import com.fairphone.updater.fragments.VersionDetailFragment.DetailLayoutType;
 import com.fairphone.updater.tools.Utils;
 
 public class VersionDetailFragment extends BaseFragment
@@ -53,9 +52,15 @@ public class VersionDetailFragment extends BaseFragment
     private DetailLayoutType mDetailLayoutType;
     private boolean mIsOSChange;
     private boolean mIsOlderVersion;
-
-    // store download
     private Store mSelectedStore;
+    private boolean mIsVersion;
+
+    public VersionDetailFragment(boolean isVersion)
+    {
+        super();
+
+        mIsVersion = isVersion;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -109,7 +114,7 @@ public class VersionDetailFragment extends BaseFragment
             @Override
             public void onClick(View v)
             {
-                startItemDownload();
+                startDownload();
             }
         });
     }
@@ -133,26 +138,21 @@ public class VersionDetailFragment extends BaseFragment
 
     private void updateReleaseNotesText()
     {
-        if (mSelectedVersion != null)
+        DownloadableItem item = mIsVersion ? mSelectedVersion : mSelectedStore;
+        if (item != null)
         {
-            mVersion_release_notes_text.setText(mSelectedVersion.getReleaseNotes(Locale.getDefault().getLanguage()));
-        }
-        else if (mSelectedStore != null)
-        {
-            mVersion_release_notes_text.setText(mSelectedStore.getReleaseNotes(Locale.getDefault().getLanguage()));
+            mVersion_release_notes_text.setText(item.getReleaseNotes(Locale.getDefault().getLanguage()));
         }
     }
 
     private void updateVersionName()
     {
+        DownloadableItem item = mIsVersion ? mSelectedVersion : mSelectedStore;
+
         mVersion_details_title_text.setText(mVersionDetailsTitle);
-        if (mSelectedVersion != null)
+        if (item != null)
         {
-            mVersion_details_name_text.setText(mainActivity.getVersionName(mSelectedVersion));
-        }
-        else if (mSelectedStore != null)
-        {
-            mVersion_details_name_text.setText(mSelectedStore.getName());
+            mVersion_details_name_text.setText(mainActivity.getItemName(item));
         }
     }
 
@@ -177,8 +177,8 @@ public class VersionDetailFragment extends BaseFragment
 
         Resources resources = mainActivity.getResources();
         Version deviceVersion = mainActivity.getDeviceVersion();
-        
-        if (mSelectedVersion != null)
+
+        if (mIsVersion && mSelectedVersion != null)
         {
             mHeaderType = mainActivity.getHeaderTypeFromImageType(mSelectedVersion != null ? mSelectedVersion.getImageType() : "");
         }
@@ -202,21 +202,21 @@ public class VersionDetailFragment extends BaseFragment
                 break;
 
             case ANDROID:
-                mHeaderText = mainActivity.getVersionName(mSelectedVersion);
+                mHeaderText = mainActivity.getItemName(mSelectedVersion);
                 mVersionDetailsTitle = resources.getString(R.string.new_os);
                 mIsOSChange = deviceVersion.getImageType().equalsIgnoreCase(Version.IMAGE_TYPE_FAIRPHONE);
                 mIsOlderVersion =
                         (deviceVersion.getImageType().equalsIgnoreCase(Version.IMAGE_TYPE_AOSP) && deviceVersion.isNewerVersionThan(mSelectedVersion));
                 break;
             case APP_STORE:
-                mHeaderText = mSelectedStore.getName();
+                mHeaderText = mainActivity.getItemName(mSelectedStore);
                 mVersionDetailsTitle = resources.getString(R.string.install);
                 mIsOSChange = false;
                 mIsOlderVersion = false;
                 break;
             case FAIRPHONE:
             default:
-                mHeaderText = mainActivity.getVersionName(mSelectedVersion);
+                mHeaderText = mainActivity.getItemName(mSelectedVersion);
                 mVersionDetailsTitle = resources.getString(R.string.older_version);
                 mIsOSChange = deviceVersion.getImageType().equalsIgnoreCase(Version.IMAGE_TYPE_AOSP);
                 mIsOlderVersion =
@@ -257,71 +257,20 @@ public class VersionDetailFragment extends BaseFragment
 
         return request;
     }
-    
-    public void startUpdateStoreDownload()
-    {
-
-        // use only on WiFi
-        if (isWiFiEnabled())
-        {
-            if (mSelectedStore != null)
-            {
-                // set the download for the latest version on the download
-                // manager
-                String fileName = VersionParserHelper.getFilenameFromDownloadableItem(mSelectedStore);
-                String downloadTitle = mSelectedStore.getName();
-                Request request = createDownloadRequest(mSelectedStore.getDownloadLink() + Utils.getModelAndOS(mainActivity), fileName, downloadTitle);
-                if (request != null && mDownloadManager != null)
-                {
-                    long mLatestUpdateDownloadId = mDownloadManager.enqueue(request);
-
-                    // save it on the shared preferences
-                    mainActivity.saveLatestUpdateDownloadId(mLatestUpdateDownloadId);
-
-                    // change state to download
-                    mainActivity.changeState(UpdaterState.DOWNLOAD);
-                }
-                else
-                {
-                    Toast.makeText(mainActivity, getResources().getString(R.string.error_downloading) + " " + downloadTitle, Toast.LENGTH_LONG).show();
-                }
-            }
-        }
-        else
-        {
-            Resources resources = this.getResources();
-
-            AlertDialog.Builder disclaimerDialog = new AlertDialog.Builder(mainActivity);
-
-            disclaimerDialog.setTitle(resources.getString(R.string.wifi_disabled));
-
-            // Setting Dialog Message
-            disclaimerDialog.setMessage(resources.getString(R.string.wifi_discaimer_message));
-            disclaimerDialog.setPositiveButton(resources.getString(android.R.string.ok), new DialogInterface.OnClickListener()
-            {
-                public void onClick(DialogInterface dialog, int id)
-                {
-                    // do nothing, since the state is still the same
-                }
-            });
-            disclaimerDialog.create();
-            disclaimerDialog.show();
-        }
-    }
 
     public void startUpdateDownload()
     {
-
+        DownloadableItem item = mIsVersion ? mSelectedVersion : mSelectedStore;
         // use only on WiFi
         if (isWiFiEnabled())
         {
-            if (mSelectedVersion != null)
+            if (item != null)
             {
                 // set the download for the latest version on the download
                 // manager
-                String fileName = VersionParserHelper.getFilenameFromDownloadableItem(mSelectedVersion);
-                String downloadTitle = mSelectedVersion.getName() + " " + mSelectedVersion.getImageTypeDescription(getResources());
-                Request request = createDownloadRequest(mSelectedVersion.getDownloadLink() + Utils.getModelAndOS(mainActivity), fileName, downloadTitle);
+                String fileName = Utils.getFilenameFromDownloadableItem(item);
+                String downloadTitle = Utils.getDownloadTitleFromDownloadableItem(getResources(), item);
+                Request request = createDownloadRequest(item.getDownloadLink() + Utils.getModelAndOS(mainActivity), fileName, downloadTitle);
                 if (request != null && mDownloadManager != null)
                 {
                     long mLatestUpdateDownloadId = mDownloadManager.enqueue(request);
@@ -342,21 +291,21 @@ public class VersionDetailFragment extends BaseFragment
         {
             Resources resources = this.getResources();
 
-            AlertDialog.Builder disclaimerDialog = new AlertDialog.Builder(mainActivity);
+            AlertDialog.Builder wifiOffDialog = new AlertDialog.Builder(mainActivity);
 
-            disclaimerDialog.setTitle(resources.getString(R.string.wifi_disabled));
+            wifiOffDialog.setTitle(resources.getString(R.string.wifi_disabled));
 
             // Setting Dialog Message
-            disclaimerDialog.setMessage(resources.getString(R.string.wifi_discaimer_message));
-            disclaimerDialog.setPositiveButton(resources.getString(android.R.string.ok), new DialogInterface.OnClickListener()
+            wifiOffDialog.setMessage(resources.getString(R.string.wifi_discaimer_message));
+            wifiOffDialog.setPositiveButton(resources.getString(android.R.string.ok), new DialogInterface.OnClickListener()
             {
                 public void onClick(DialogInterface dialog, int id)
                 {
                     // do nothing, since the state is still the same
                 }
             });
-            disclaimerDialog.create();
-            disclaimerDialog.show();
+            wifiOffDialog.create();
+            wifiOffDialog.show();
         }
     }
 
@@ -382,81 +331,40 @@ public class VersionDetailFragment extends BaseFragment
         popupDialog.show(fm, version);
     }
 
-    public void startItemDownload()
+    public void startDownload()
     {
-        if (mDetailLayoutType == DetailLayoutType.APP_STORE)
+        if (mIsVersion && mSelectedVersion != null)
         {
-            startStoreDownload();
-        }
-        else
-        {
-            startVersionDownload();
-        }
-    }
-
-    private void startStoreDownload()
-    {
-        if (mSelectedStore != null)
-        {
-            mainActivity.setSelectedStore(mSelectedStore);
-            startStoreInstall();
-        }
-    }
-
-    public void startVersionDownload()
-    {
-        if (!Utils.areGappsInstalling(mainActivity))
-        {
-            if (mSelectedVersion != null)
+            if (mIsOSChange || mIsOlderVersion)
             {
-                if (mIsOSChange || mIsOlderVersion)
-                {
-                    showPopupDialog(mainActivity.getVersionName(mSelectedVersion), mSelectedVersion.hasEraseAllPartitionWarning(),
-                            new ConfirmationPopupDialogListener()
+                showPopupDialog(mainActivity.getItemName(mSelectedVersion), mSelectedVersion.hasEraseAllPartitionWarning(),
+                        new ConfirmationPopupDialogListener()
+                        {
+
+                            @Override
+                            public void onFinishPopUpDialog(boolean isOk)
                             {
-
-                                @Override
-                                public void onFinishPopUpDialog(boolean isOk)
+                                if (isOk)
                                 {
-                                    if (isOk)
-                                    {
-                                        mainActivity.setSelectedVersion(mSelectedVersion);
-                                        showEraseAllDataWarning(true);
-                                    }
+                                    mainActivity.setSelectedVersion(mSelectedVersion);
+                                    showEraseAllDataWarning(true);
                                 }
-                            });
-                }
-                else
-                {
-                    mainActivity.setSelectedVersion(mSelectedVersion);
-                    showEraseAllDataWarning(false);
-                }
-            }
-        }
-        else
-        {
-            showGappsInstalingWarning();
-        }
-    }
-
-    private void startStoreInstall()
-    {
-
-        final UpdaterState currentState = mainActivity.getCurrentUpdaterState();
-
-        if (mSelectedStore != null)
-        {
-            if (currentState == UpdaterState.NORMAL)
-            {
-                startUpdateStoreDownload();
+                            }
+                        });
             }
             else
             {
-                mainActivity.setSelectedStore(null);
+                mainActivity.setSelectedVersion(mSelectedVersion);
+                showEraseAllDataWarning(false);
             }
         }
+        else if (mSelectedStore != null)
+        {
+            mainActivity.setSelectedStore(mSelectedStore);
+            showStoreDisclaimer();
+        }
     }
-    
+
     private void showEraseAllDataWarning(boolean bypassEraseAllWarning)
     {
 
@@ -497,18 +405,42 @@ public class VersionDetailFragment extends BaseFragment
         }
     }
 
-    private void showGappsInstalingWarning()
+    protected void showStoreDisclaimer()
     {
-        new AlertDialog.Builder(mainActivity).setTitle(android.R.string.dialog_alert_title).setMessage(R.string.updater_google_apps_installing_description)
-                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener()
-                {
+        final UpdaterState currentState = mainActivity.getCurrentUpdaterState();
 
-                    @Override
-                    public void onClick(DialogInterface dialog, int which)
+        if (mSelectedStore != null && mSelectedStore.showDisclaimer())
+        {
+            new AlertDialog.Builder(mainActivity).setTitle(R.string.google_apps_disclaimer_title).setMessage(R.string.google_apps_disclaimer_description)
+                    .setPositiveButton(R.string.google_apps_disclaimer_agree, new DialogInterface.OnClickListener()
                     {
-                        // close dialog
-                    }
-                }).show();
-    }
 
+                        @Override
+                        public void onClick(DialogInterface dialog, int which)
+                        {
+                            if (currentState == UpdaterState.NORMAL)
+                            {
+                                startUpdateDownload();
+                            }
+                        }
+                    }).setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener()
+                    {
+                        public void onClick(DialogInterface dialog, int which)
+                        {
+                            mainActivity.setSelectedStore(null);
+                        }
+                    }).show();
+        }
+        else
+        {
+            if (currentState == UpdaterState.NORMAL)
+            {
+                startUpdateDownload();
+            }
+            else
+            {
+                mainActivity.setSelectedStore(null);
+            }
+        }
+    }
 }

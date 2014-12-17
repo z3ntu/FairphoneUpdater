@@ -150,7 +150,7 @@ public class MainFragment extends BaseFragment
             @Override
             public void onClick(View v)
             {
-                VersionDetailFragment fragment = new VersionDetailFragment();
+                VersionDetailFragment fragment = new VersionDetailFragment(true);
 
                 Version latestVersion = mainActivity.getLatestVersion();
                 if (latestVersion != null)

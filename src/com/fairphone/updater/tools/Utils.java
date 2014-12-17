@@ -29,19 +29,17 @@ import android.app.ActivityManager;
 import android.app.ActivityManager.RunningServiceInfo;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Build;
 import android.os.Environment;
 import android.util.Log;
 
-import com.fairphone.updater.FairphoneUpdater;
 import com.fairphone.updater.R;
-import com.fairphone.updater.FairphoneUpdater.UpdaterState;
 import com.fairphone.updater.UpdaterService;
+import com.fairphone.updater.data.DownloadableItem;
+import com.fairphone.updater.data.Store;
 import com.fairphone.updater.data.Version;
 import com.fairphone.updater.data.VersionParserHelper;
-import com.fairphone.updater.gappsinstaller.GappsInstallerHelper;
 
 public class Utils
 {
@@ -78,23 +76,6 @@ public class Utils
         long blockSize = stat.getBlockSize();
         long availableBlocks = stat.getAvailableBlocks() * blockSize;
         return availableBlocks;
-    }
-
-    public static boolean areGappsInstalling(Context context)
-    {
-        SharedPreferences gappsSharedPrefs = context.getSharedPreferences(GappsInstallerHelper.PREFS_GOOGLE_APPS_INSTALLER_DATA, Context.MODE_PRIVATE);
-
-        int currentState = gappsSharedPrefs.getInt(GappsInstallerHelper.GOOGLE_APPS_INSTALLER_STATE, GappsInstallerHelper.GAPPS_STATES_INITIAL);
-        return currentState != GappsInstallerHelper.GAPPS_STATES_INITIAL && currentState != GappsInstallerHelper.GAPPS_INSTALLED_STATE;
-    }
-
-    public static boolean isUpdaterInstalling(Context context)
-    {
-        SharedPreferences updaterSharedPrefs = context.getSharedPreferences(FairphoneUpdater.FAIRPHONE_UPDATER_PREFERENCES, Context.MODE_PRIVATE);
-
-        String currentState = updaterSharedPrefs.getString(FairphoneUpdater.PREFERENCE_CURRENT_UPDATER_STATE, UpdaterState.NORMAL.name());
-        UpdaterState state = UpdaterState.valueOf(currentState);
-        return state != UpdaterState.NORMAL;
     }
 
     public static void startUpdaterService(Context context, boolean forceDownload)
@@ -315,5 +296,42 @@ public class Utils
         double fileSize = file.length();
         double cacheSize = Utils.getPartitionSizeInBytes(Environment.getDownloadCacheDirectory());
         return cacheSize >= fileSize;
+    }
+    public static String getFilenameFromDownloadableItem(DownloadableItem item)
+    {
+        StringBuilder filename = new StringBuilder();
+        filename.append("fp_");
+        if (item != null)
+        {
+            if (item instanceof Version)
+            {
+                filename.append("update_");
+            }
+            else if (item instanceof Store)
+            {
+                filename.append("store_");
+            }
+            filename.append(item.getNumber());
+        }
+        filename.append(".zip");
+        return filename.toString();
+    }
+    
+    public static String getDownloadTitleFromDownloadableItem(Resources resources, DownloadableItem item){
+        String title = "";
+        if (item != null)
+        {
+            if (item instanceof Version)
+            {
+                Version version = (Version) item;
+                title = version.getName() + " " + version.getImageTypeDescription(resources);
+            }
+            else if (item instanceof Store)
+            {
+                Store store = (Store) item;
+                title = store.getName();
+            }
+        }
+        return title;
     }
 }

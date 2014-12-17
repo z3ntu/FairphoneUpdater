@@ -30,7 +30,6 @@ public class GappsInstallerHelper
 
     public static final String PREFS_GOOGLE_APPS_INSTALLER_DATA = "FAIRPHONE_GOOGLE_APPS_INSTALLER_DATA";
     public static final String GOOGLE_APPS_INSTALLER_STATE = "com.fairphone.updater.gapps.WIDGET_STATE";
-    public static final String GAPPS_REINSTALATION = "com.fairphone.updater.gapps.GAPPS_REINSTALATION_REQUEST";
 
     public static final int GAPPS_STATES_INITIAL = 0;
     public static final int GAPPS_INSTALLED_STATE = 1;
