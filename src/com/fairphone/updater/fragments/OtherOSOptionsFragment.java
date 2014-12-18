@@ -64,7 +64,7 @@ public class OtherOSOptionsFragment extends BaseFragment
         }
         else
         {
-            androidOSButton.setVisibility(View.GONE);
+            mAppStoreButton.setVisibility(View.GONE);
         }
     }
 
