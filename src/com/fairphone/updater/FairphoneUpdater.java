@@ -895,4 +895,14 @@ public class FairphoneUpdater extends FragmentActivity
         mLatestUpdateDownloadId = latestUpdateDownloadId;
         savePreference(PREFERENCE_DOWNLOAD_ID, mLatestUpdateDownloadId);
     }
+    
+    public long getConfigFileDownloadIdFromSharedPreference()
+    {
+        return getLongPreference(UpdaterService.PREFERENCE_LAST_CONFIG_DOWNLOAD_ID);
+    }
+    
+    public void saveConfigFileDownloadId(long latestUpdateDownloadId)
+    {
+        savePreference(UpdaterService.PREFERENCE_LAST_CONFIG_DOWNLOAD_ID, latestUpdateDownloadId);
+    }
 }

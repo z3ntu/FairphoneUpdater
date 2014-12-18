@@ -40,6 +40,7 @@ import com.fairphone.updater.UpdaterService;
 import com.fairphone.updater.data.DownloadableItem;
 import com.fairphone.updater.data.Store;
 import com.fairphone.updater.data.Version;
+import com.fairphone.updater.data.VersionParserHelper;
 import com.fairphone.updater.tools.Utils;
 import com.stericson.RootTools.RootTools;
 import com.stericson.RootTools.exceptions.RootDeniedException;
@@ -625,6 +626,7 @@ public class DownloadAndRestartFragment extends BaseFragment
             {
                 mainActivity.updateStatePreference(UpdaterState.NORMAL);
                 mainActivity.clearSelectedItems();
+                clearConfigFile();
                 Shell.runRootCommand(new CommandCapture(0, "reboot recovery"));
             } catch (IOException e)
             {
@@ -644,6 +646,17 @@ public class DownloadAndRestartFragment extends BaseFragment
         {
             abortUpdateProcess();
         }
+    }
+
+    private void clearConfigFile()
+    {
+        long cfgFile = mainActivity.getConfigFileDownloadIdFromSharedPreference();
+        if (cfgFile != 0 && mDownloadManager != null)
+        {
+            mDownloadManager.remove(cfgFile);
+        }
+        mainActivity.saveConfigFileDownloadId(0);
+        VersionParserHelper.removeConfigFiles(mainActivity);
     }
 
     private void copyUpdateToCache(File file)

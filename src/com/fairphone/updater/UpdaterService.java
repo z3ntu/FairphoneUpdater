@@ -70,7 +70,7 @@ public class UpdaterService extends Service
     
     private static final String TAG = UpdaterService.class.getSimpleName();
 
-    private static final String PREFERENCE_LAST_CONFIG_DOWNLOAD_ID = "LastConfigDownloadId";
+    public static final String PREFERENCE_LAST_CONFIG_DOWNLOAD_ID = "LastConfigDownloadId";
     public static final String PREFERENCE_REINSTALL_GAPPS = "ReinstallGappsOmnStartUp";
     private DownloadManager mDownloadManager = null;
     private DownloadBroadCastReceiver mDownloadBroadCastReceiver = null;
@@ -229,10 +229,7 @@ public class UpdaterService extends Service
             if (request != null && mDownloadManager != null)
             {
                 mLatestFileDownloadId = mDownloadManager.enqueue(request);
-
-                Editor editor = mSharedPreferences.edit();
-                editor.putLong(PREFERENCE_LAST_CONFIG_DOWNLOAD_ID, mLatestFileDownloadId);
-                editor.commit();
+                saveLatestDownloadId(mLatestFileDownloadId);
             }
             else
             {
@@ -242,6 +239,14 @@ public class UpdaterService extends Service
                 sendBroadcast(i);
             }
         }
+    }
+
+    private void saveLatestDownloadId(long id)
+    {
+        mLatestFileDownloadId = id;
+        Editor editor = mSharedPreferences.edit();
+        editor.putLong(PREFERENCE_LAST_CONFIG_DOWNLOAD_ID, id);
+        editor.commit();
     }
 
     private String getConfigDownloadLink(Context context)
@@ -385,7 +390,7 @@ public class UpdaterService extends Service
                     if (mLatestFileDownloadId != 0 && mDownloadManager != null)
                     {
                         mDownloadManager.remove(mLatestFileDownloadId);
-                        mLatestFileDownloadId = 0;
+                        saveLatestDownloadId(0);
                     }
                 }
                 else
@@ -480,9 +485,9 @@ public class UpdaterService extends Service
         if (mLatestFileDownloadId != 0 && mDownloadManager != null)
         {
             mDownloadManager.remove(mLatestFileDownloadId);
-            mLatestFileDownloadId = 0;
+            saveLatestDownloadId(0);
         }
-        VersionParserHelper.removeFiles(context);
+        VersionParserHelper.removeConfigFiles(context);
     }
 
     private boolean retryDownload(Context context)

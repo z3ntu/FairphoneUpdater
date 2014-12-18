@@ -125,7 +125,7 @@ public class VersionParserHelper
             {
                 Log.e(TAG, "Invalid data in File", e);
                 // remove the files
-                removeFiles(context);
+                removeConfigFiles(context);
             }
         }
 
@@ -391,7 +391,7 @@ public class VersionParserHelper
         return defaultValue;
     }
 
-    public static void removeFiles(Context context)
+    public static void removeConfigFiles(Context context)
     {
         Resources resources = context.getResources();
         String filePath =
