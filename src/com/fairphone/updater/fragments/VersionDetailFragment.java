@@ -1,5 +1,7 @@
 package com.fairphone.updater.fragments;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Locale;
 
 import android.app.AlertDialog;
@@ -13,6 +15,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.FragmentManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -23,6 +26,7 @@ import android.widget.Toast;
 
 import com.fairphone.updater.FairphoneUpdater.HeaderType;
 import com.fairphone.updater.FairphoneUpdater.UpdaterState;
+import com.fairphone.updater.FairphoneUpdater;
 import com.fairphone.updater.R;
 import com.fairphone.updater.data.DownloadableItem;
 import com.fairphone.updater.data.Store;
@@ -270,7 +274,22 @@ public class VersionDetailFragment extends BaseFragment
                 // manager
                 String fileName = Utils.getFilenameFromDownloadableItem(item);
                 String downloadTitle = Utils.getDownloadTitleFromDownloadableItem(getResources(), item);
-                Request request = createDownloadRequest(item.getDownloadLink() + Utils.getModelAndOS(mainActivity), fileName, downloadTitle);
+                String download_link =  item.getDownloadLink();
+                if (!(download_link.startsWith("http://") || download_link.startsWith("https://")))
+                {
+                    // If the download URL is a relative path, make it an absolute
+                    download_link = getResources().getString(FairphoneUpdater.DEV_MODE_ENABLED ? R.string.downloadDevUrl : R.string.downloadUrl) + "/" + download_link;
+                    // Sanitize URL - e.g. turn http://a.b//c/./d/../e to http://a.b/c/e
+                    download_link = download_link.replaceAll("([^:])//", "/");
+                    download_link = download_link.replaceAll("/([^/]+)/\\.\\./", "/");
+                    download_link = download_link.replaceAll("/\\./", "/");
+                    try {
+                        download_link = new URL(download_link).toExternalForm();
+                    } catch (MalformedURLException e) {
+                        Log.w(TAG, "Potentially malformed download link.");
+                    }
+                }
+                Request request = createDownloadRequest(download_link + Utils.getModelAndOS(mainActivity), fileName, downloadTitle);
                 if (request != null && mDownloadManager != null)
                 {
                     long mLatestUpdateDownloadId = mDownloadManager.enqueue(request);
