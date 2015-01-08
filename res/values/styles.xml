@@ -195,6 +195,14 @@
         <item name="android:textSize">16sp</item>
     </style>
 
+    <style name="TextRegular18" parent="@style/TextRegular">
+        <item name="android:textSize">18sp</item>
+    </style>
+    
+    <style name="TextRegular20" parent="@style/TextRegular">
+        <item name="android:textSize">20sp</item>
+    </style>
+    
     <style name="TextRegular14White" parent="@style/TextRegular14">
         <item name="android:textColor">@color/white</item>
     </style>
@@ -243,11 +251,23 @@
         <item name="android:textColor">@color/white</item>
     </style>
 
+    <style name="TextRegular18White" parent="@style/TextRegular18">
+        <item name="android:textColor">@color/white</item>
+    </style>
+    
+    <style name="TextRegular20White" parent="@style/TextRegular20">
+        <item name="android:textColor">@color/white</item>
+    </style>
+    
     <!-- TEXT LIGHT -->
     <style name="TextLight">
         <item name="android:fontFamily">sans-serif-light</item>
     </style>
 
+    <style name="TextLight20" parent="@style/TextLight">
+        <item name="android:textSize">20sp</item>
+    </style>
+    
     <style name="TextLight24" parent="@style/TextLight">
         <item name="android:textSize">24sp</item>
     </style>
@@ -264,10 +284,15 @@
         <item name="android:textColor">@color/white</item>
     </style>
 
+    
     <style name="TextLight24GreyDark" parent="@style/TextLight24">
         <item name="android:textColor">@color/grey_dark</item>
     </style>
 
+    <style name="TextLight20White" parent="@style/TextLight20">
+        <item name="android:textColor">@color/white</item>
+    </style>
+    
     <!-- TEXT BOLD -->
     <style name="TextBold">
         <item name="android:fontFamily">sans-serif</item>
@@ -298,10 +323,18 @@
         <item name="android:textSize">16sp</item>
     </style>
 
+    <style name="TextBold20" parent="@style/TextBold">
+        <item name="android:textSize">20sp</item>
+    </style>
+    
     <style name="TextBold16White" parent="@style/TextBold16">
         <item name="android:textColor">@color/white</item>
     </style>
 
+    <style name="TextBold20White" parent="@style/TextBold20">
+        <item name="android:textColor">@color/white</item>
+    </style>
+    
     <style name="TextBold16BlueDark" parent="@style/TextBold16">
         <item name="android:textColor">@color/blue_dark</item>
     </style>

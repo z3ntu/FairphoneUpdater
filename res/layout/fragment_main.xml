@@ -4,17 +4,69 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-    <LinearLayout
-        android:id="@+id/current_version_group"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:gravity="center_horizontal"
-        android:orientation="vertical" >
+        android:layout_weight="1" >
 
-        <include layout="@layout/fragment_main_version_up_to_date" />
-                
-    </LinearLayout>
+        <LinearLayout
+            android:id="@+id/current_version_group"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_horizontal"
+            android:orientation="vertical" >
+
+            <include layout="@layout/fragment_main_version_up_to_date" />
+        </LinearLayout>
+
+        <RelativeLayout
+            android:id="@+id/gapps_reminder_group"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginLeft="7dp"
+            android:layout_marginRight="7dp"
+            android:orientation="horizontal" >
+
+            <Button
+                android:id="@+id/install_gapps_button"
+                android:layout_width="match_parent"
+                android:layout_height="105dp"
+                android:layout_alignParentBottom="true"
+                android:background="@drawable/button_apps_installer"
+                android:scaleType="fitCenter" />
+
+            <TextView
+                style="@style/TextRegular20White"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:gravity="right"
+                android:paddingBottom="45dp"
+                android:paddingRight="140dp"
+                android:text="Install Google Apps" />
+
+            <TextView
+                style="@style/TextRegular14White"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:gravity="right"
+                android:paddingBottom="28dp"
+                android:paddingRight="140dp"
+                android:text="or hide reminder" />
+
+            <Button
+                android:id="@+id/install_gapps_dismiss_button"
+                android:layout_width="27dp"
+                android:layout_height="105dp"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:background="@drawable/button_dismiss_apps_installer" />
+        </RelativeLayout>
+    </RelativeLayout>
 
     <LinearLayout
         android:id="@+id/other_os_options_group"

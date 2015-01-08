@@ -29,6 +29,7 @@ import com.fairphone.updater.data.VersionParserHelper;
 import com.fairphone.updater.fragments.DownloadAndRestartFragment;
 import com.fairphone.updater.fragments.InfoPopupDialog;
 import com.fairphone.updater.fragments.MainFragment;
+import com.fairphone.updater.fragments.VersionDetailFragment;
 import com.fairphone.updater.fragments.VersionDetailFragment.DetailLayoutType;
 import com.fairphone.updater.gappsinstaller.GappsInstallerHelper;
 import com.fairphone.updater.tools.Utils;
@@ -43,6 +44,8 @@ public class FairphoneUpdater extends FragmentActivity
     public static final String PREFERENCE_FIRST_TIME_ANDROID = "FirstTimeAndroid";
 
     public static final String PREFERENCE_FIRST_TIME_FAIRPHONE = "FirstTimeFairphone";
+
+    public static final String PREFERENCE_FIRST_TIME_APP_STORE = "FirstTimeAppStore";
 
     public static final String PREFERENCE_CURRENT_UPDATER_STATE = "CurrentUpdaterState";
 
@@ -88,11 +91,11 @@ public class FairphoneUpdater extends FragmentActivity
 
     private boolean mIsFirstTimeAndroid;
     private boolean mIsFirstTimeFairphone;
+    private boolean mIsFirstTimeAppStore;
 
     private Store mSelectedStore;
 
     private TextView headerMainAppStoreText;
-
     public static enum HeaderType
     {
         MAIN_FAIRPHONE, MAIN_ANDROID, MAIN_APP_STORE, FAIRPHONE, ANDROID, OTHER_OS, APP_STORE
@@ -117,6 +120,8 @@ public class FairphoneUpdater extends FragmentActivity
         mIsFirstTimeAndroid = mSharedPreferences.getBoolean(PREFERENCE_FIRST_TIME_ANDROID, true);
 
         mIsFirstTimeFairphone = mSharedPreferences.getBoolean(PREFERENCE_FIRST_TIME_FAIRPHONE, true);
+
+        mIsFirstTimeAppStore = mSharedPreferences.getBoolean(PREFERENCE_FIRST_TIME_APP_STORE, true);
 
         // check current state
         mCurrentState = getCurrentUpdaterState();
@@ -372,8 +377,18 @@ public class FairphoneUpdater extends FragmentActivity
                 headerAndroidText.setVisibility(View.GONE);
                 headerAppStoreText.setVisibility(View.VISIBLE);
                 headerOtherOSText.setVisibility(View.GONE);
-                
                 headerAppStoreText.setText(headerText);
+
+                if (showInfo && mIsFirstTimeAppStore)
+                {
+                    showInfoPopupDialog(DetailLayoutType.APP_STORE);
+                    Editor editor = mSharedPreferences.edit();
+
+                    mIsFirstTimeAppStore = false;
+
+                    editor.putBoolean(PREFERENCE_FIRST_TIME_APP_STORE, mIsFirstTimeAppStore);
+                    editor.commit();
+                }
 
                 headerFairphoneInfoButton.setVisibility(View.GONE);
                 headerAndroidInfoButton.setVisibility(View.GONE);
@@ -806,22 +821,45 @@ public class FairphoneUpdater extends FragmentActivity
         mLatestVersion = getLatestVersionFromConfig();
     }
 
+    boolean mLaunchGapps = false;
+
+    @Override
+    protected void onNewIntent(Intent intent)
+    {
+        // super.onNewIntent(intent);
+        mLaunchGapps = false;
+
+        if (intent.getAction().equals(GappsInstallerHelper.EXTRA_START_GAPPS_INSTALL))
+        {
+            mLaunchGapps = true;
+        }
+        else
+        {
+            intent = getParentActivityIntent();
+            if (intent != null && intent.getAction().equals(GappsInstallerHelper.EXTRA_START_GAPPS_INSTALL))
+            {
+                mLaunchGapps = true;
+            }
+        }
+
+        if (mLaunchGapps)
+        {
+            getSelectedStoreFromSharedPreferences();
+            // startGappsInstall();
+        }
+    }
+
     @Override
     protected void onResume()
     {
         super.onResume();
-
-        Intent i = getIntent();
-        if (i != null && i.getBooleanExtra(GappsInstallerHelper.EXTRA_START_GAPPS_INSTALL, false))
-        {
-            Toast.makeText(this, "Widget start", Toast.LENGTH_LONG).show();
-        }
-
-        // check current state
+        // Intent i = getIntent();
+        //
+        // // check current state
         mCurrentState = getCurrentUpdaterState();
 
         startService();
-
+        //
         boolean isConfigLoaded = UpdaterService.readUpdaterData(this);
         mDeviceVersion = VersionParserHelper.getDeviceVersion(this);
 
@@ -836,8 +874,37 @@ public class FairphoneUpdater extends FragmentActivity
 
         getSelectedVersionFromSharedPreferences();
         getSelectedStoreFromSharedPreferences();
+        //
+        //
+        // if (i != null &&
+        // i.getBooleanExtra(GappsInstallerHelper.EXTRA_START_GAPPS_INSTALL,
+        // false))
+        // {
+        // startGappsInstall();
+        // }
+        // else
+        // {
+        if (mLaunchGapps)
+        {
+            startGappsInstall();
+        }
+        else
+        {
+            changeFragment(getFragmentFromState());
+        }
+    }
 
-        changeFragment(getFragmentFromState());
+    public void startGappsInstall()
+    {
+        Store selectedStore = UpdaterData.getInstance().getStore(1);
+
+        VersionDetailFragment fragment = new VersionDetailFragment(false);
+
+        if (selectedStore != null)
+        {
+            fragment.setupFragment(selectedStore, DetailLayoutType.APP_STORE);
+            changeFragment(fragment);
+        }
     }
 
     private void startService()

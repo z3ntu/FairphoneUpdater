@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +12,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,12 +20,16 @@ import com.fairphone.updater.FairphoneUpdater;
 import com.fairphone.updater.FairphoneUpdater.HeaderType;
 import com.fairphone.updater.FairphoneUpdater.UpdaterState;
 import com.fairphone.updater.R;
+import com.fairphone.updater.data.Store;
 import com.fairphone.updater.data.UpdaterData;
 import com.fairphone.updater.data.Version;
 import com.fairphone.updater.fragments.VersionDetailFragment.DetailLayoutType;
+import com.fairphone.updater.gappsinstaller.GappsInstallerHelper;
 
 public class MainFragment extends BaseFragment
 {
+
+    private static String SHARED_PREFERENCES_ENABLE_GAPPS = "SHARED_PREFERENCES_ENABLE_GAPPS";
 
     private LinearLayout mVersionUpToDateGroup;
     private TextView mVersionUpToDateCurrentVersionNameText;
@@ -36,6 +42,10 @@ public class MainFragment extends BaseFragment
     private Version mDeviceVersion;
     private BroadcastReceiver newVersionbroadcastReceiver;
     private LinearLayout mCurrentVersionGroup;
+
+    private RelativeLayout mGappsIcon;
+    private Button mGappsButton;
+    private Button mGappsDismissButton;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -77,6 +87,26 @@ public class MainFragment extends BaseFragment
         // Other OS Options group
         mOtherOSOptionsGroup = (LinearLayout) view.findViewById(R.id.other_os_options_group);
         mOtherOSOptionsButton = (Button) view.findViewById(R.id.other_os_options_button);
+
+        // gapps
+        mGappsButton = (Button) view.findViewById(R.id.install_gapps_button);
+        mGappsDismissButton = (Button) view.findViewById(R.id.install_gapps_dismiss_button);
+        mGappsIcon = (RelativeLayout) view.findViewById(R.id.gapps_reminder_group);
+
+        enableGappsGroup(getGappsInstalationButtonState());
+    }
+
+    private boolean getGappsInstalationButtonState()
+    {
+        return mSharedPreferences.getBoolean(SHARED_PREFERENCES_ENABLE_GAPPS, true) && !GappsInstallerHelper.areGappsInstalled();
+    }
+    
+    private void setGappsInstalationButtonState(boolean enableGapps)
+    {
+        Editor edit = mSharedPreferences.edit();
+        edit.putBoolean(SHARED_PREFERENCES_ENABLE_GAPPS, enableGapps);
+        
+        edit.commit();
     }
 
     private void setupCurrentVersionGroup(LayoutInflater inflater, View view)
@@ -97,6 +127,45 @@ public class MainFragment extends BaseFragment
             updateGroupView.setLayoutParams(mCurrentVersionGroup.getLayoutParams());
             mCurrentVersionGroup.addView(updateGroupView);
         }
+    }
+
+    private void enableGappsGroup(boolean showAndEnable)
+    {
+        if (showAndEnable)
+        {
+            mGappsIcon.setVisibility(View.VISIBLE);
+
+            mGappsButton.setOnClickListener(new OnClickListener()
+            {
+
+                @Override
+                public void onClick(View v)
+                {
+                    startGappsInstall();
+                }
+            });
+            
+            mGappsDismissButton.setOnClickListener(new OnClickListener()
+            {
+
+                @Override
+                public void onClick(View v)
+                {
+                    mGappsIcon.setVisibility(View.GONE);
+                    setGappsInstalationButtonState(false);
+                }
+            });
+        }
+        else
+        {
+            mGappsIcon.setVisibility(View.GONE);
+            setGappsInstalationButtonState(false);
+        }
+    }
+
+    private void startGappsInstall()
+    {
+        mainActivity.startGappsInstall();
     }
 
     private void updateOtherOSOptionsGroup()
@@ -179,25 +248,32 @@ public class MainFragment extends BaseFragment
     private void updateCurrentVersionGroup()
     {
         String currentVersionName = mainActivity.getDeviceVersionName();
-        mVersionUpToDateCurrentVersionNameText.setText(currentVersionName);
-        mVersionUpToDateCurrentVersionNameText.setOnClickListener(new OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                mainActivity.onEnableDevMode();
-            }
-        });
 
-        mUpdateAvailableCurrentVersionNameText.setText(currentVersionName);
-        mUpdateAvailableCurrentVersionNameText.setOnClickListener(new OnClickListener()
+        if (mVersionUpToDateCurrentVersionNameText != null)
         {
-            @Override
-            public void onClick(View v)
+            mVersionUpToDateCurrentVersionNameText.setText(currentVersionName);
+            mVersionUpToDateCurrentVersionNameText.setOnClickListener(new OnClickListener()
             {
-                mainActivity.onEnableDevMode();
-            }
-        });
+                @Override
+                public void onClick(View v)
+                {
+                    mainActivity.onEnableDevMode();
+                }
+            });
+        }
+
+        if (mUpdateAvailableCurrentVersionNameText != null)
+        {
+            mUpdateAvailableCurrentVersionNameText.setText(currentVersionName);
+            mUpdateAvailableCurrentVersionNameText.setOnClickListener(new OnClickListener()
+            {
+                @Override
+                public void onClick(View v)
+                {
+                    mainActivity.onEnableDevMode();
+                }
+            });
+        }
     }
 
     @Override

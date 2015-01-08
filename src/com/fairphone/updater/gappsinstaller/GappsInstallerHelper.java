@@ -34,7 +34,7 @@ public class GappsInstallerHelper
     public static final int GAPPS_STATES_INITIAL = 0;
     public static final int GAPPS_INSTALLED_STATE = 1;
 
-    public static String EXTRA_START_GAPPS_INSTALL = "com.fairphone.updater.gapps.EXTRA_START_GAPPS_INSTALL";;
+    public static String EXTRA_START_GAPPS_INSTALL = "com.fairphone.updater.gapps.EXTRA_START_GAPPS_INSTALL";
 
     private Context mContext;
     private SharedPreferences mSharedPrefs;
