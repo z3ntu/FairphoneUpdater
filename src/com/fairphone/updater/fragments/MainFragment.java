@@ -98,14 +98,19 @@ public class MainFragment extends BaseFragment
 
     private boolean getGappsInstalationButtonState()
     {
-        return mSharedPreferences.getBoolean(SHARED_PREFERENCES_ENABLE_GAPPS, true) && !GappsInstallerHelper.areGappsInstalled();
+        return mSharedPreferences.getBoolean(SHARED_PREFERENCES_ENABLE_GAPPS, true) && !GappsInstallerHelper.areGappsInstalled() && getSelectedStoreFromSharedPreferences() != null;
     }
     
+    protected Store getSelectedStoreFromSharedPreferences()
+    {
+        return UpdaterData.getInstance().getStore(mSharedPreferences.getInt(FairphoneUpdater.PREFERENCE_SELECTED_STORE_NUMBER, 0));
+    }
+
     private void setGappsInstalationButtonState(boolean enableGapps)
     {
         Editor edit = mSharedPreferences.edit();
         edit.putBoolean(SHARED_PREFERENCES_ENABLE_GAPPS, enableGapps);
-        
+
         edit.commit();
     }
 
@@ -144,7 +149,7 @@ public class MainFragment extends BaseFragment
                     startGappsInstall();
                 }
             });
-            
+
             mGappsDismissButton.setOnClickListener(new OnClickListener()
             {
 
@@ -203,8 +208,14 @@ public class MainFragment extends BaseFragment
         }
         else
         {
-            mUpdateAvailableGroup.setVisibility(View.GONE);
-            mVersionUpToDateGroup.setVisibility(View.VISIBLE);
+            if (mUpdateAvailableGroup != null)
+            {
+                mUpdateAvailableGroup.setVisibility(View.GONE);
+            }
+            
+            if( mVersionUpToDateGroup != null){
+                mVersionUpToDateGroup.setVisibility(View.VISIBLE);
+            }
         }
 
         updateOtherOSOptionsGroup();
