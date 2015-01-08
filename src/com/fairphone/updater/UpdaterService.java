@@ -174,6 +174,7 @@ public class UpdaterService extends Service
         long now = System.currentTimeMillis();
         long last_download = mSharedPreferences.getLong("LAST_CONFIG_DOWNLOAD_IN_MS", 0L);
         if( forceDownload || now > (last_download + DOWNLOAD_GRACE_PERIOD_IN_MS) ) {
+            Log.d(TAG, "Downloading updater configuration file.");
             // remove the old file if its still there for some reason
             removeLatestFileDownload(getApplicationContext());
     
@@ -219,25 +220,22 @@ public class UpdaterService extends Service
 
     public void startDownloadLatest()
     {
-        if (hasConnection())
-        {
-            Resources resources = getApplicationContext().getResources();
-            String downloadLink = getConfigDownloadLink(getApplicationContext());
-            // set the download for the latest version on the download manager
-            Request request = createDownloadRequest(downloadLink, resources.getString(R.string.configFilename) + resources.getString(R.string.config_zip));
+        Resources resources = getApplicationContext().getResources();
+        String downloadLink = getConfigDownloadLink(getApplicationContext());
+        // set the download for the latest version on the download manager
+        Request request = createDownloadRequest(downloadLink, resources.getString(R.string.configFilename) + resources.getString(R.string.config_zip));
 
-            if (request != null && mDownloadManager != null)
-            {
-                mLatestFileDownloadId = mDownloadManager.enqueue(request);
-                saveLatestDownloadId(mLatestFileDownloadId);
-            }
-            else
-            {
-                Log.e(TAG, "Invalid request for link " + downloadLink);
-                Intent i = new Intent(FairphoneUpdater.FAIRPHONE_UPDATER_CONFIG_DOWNLOAD_FAILED);
-                i.putExtra(FairphoneUpdater.FAIRPHONE_UPDATER_CONFIG_DOWNLOAD_LINK, downloadLink);
-                sendBroadcast(i);
-            }
+        if (request != null && mDownloadManager != null)
+        {
+            mLatestFileDownloadId = mDownloadManager.enqueue(request);
+            saveLatestDownloadId(mLatestFileDownloadId);
+        }
+        else
+        {
+            Log.e(TAG, "Invalid request for link " + downloadLink);
+            Intent i = new Intent(FairphoneUpdater.FAIRPHONE_UPDATER_CONFIG_DOWNLOAD_FAILED);
+            i.putExtra(FairphoneUpdater.FAIRPHONE_UPDATER_CONFIG_DOWNLOAD_LINK, downloadLink);
+            sendBroadcast(i);
         }
     }
 
@@ -299,21 +297,6 @@ public class UpdaterService extends Service
                 Log.e(TAG, "Failed to add extra info on update request: "+e.getLocalizedMessage());
             }
         }
-    }
-
-    private boolean hasConnection()
-    {
-        return isWiFiEnabled();
-    }
-
-    private boolean isWiFiEnabled()
-    {
-
-        ConnectivityManager manager = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-
-        boolean isWifi = manager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).isConnectedOrConnecting();
-
-        return isWifi;
     }
 
     private static void setNotification(Context currentContext)
@@ -386,6 +369,7 @@ public class UpdaterService extends Service
             {
                 if (intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, false))
                 {
+                    Log.i(TAG, "Lost network connectivity.");
                     mInternetConnectionAvailable = false;
                     if (mLatestFileDownloadId != 0 && mDownloadManager != null)
                     {
@@ -395,6 +379,7 @@ public class UpdaterService extends Service
                 }
                 else
                 {
+                    Log.i(TAG, "Network connectivity potentially available.");
                     if (!mInternetConnectionAvailable)
                     {
                         downloadConfigFile(false);
@@ -492,6 +477,7 @@ public class UpdaterService extends Service
 
     private boolean retryDownload(Context context)
     {
+        Log.d(TAG, "Retry "+mDownloadRetries+" of "+MAX_DOWNLOAD_RETRIES);
         // invalid file
         boolean removeReceiver = true;
         removeLatestFileDownload(context);
@@ -533,6 +519,7 @@ public class UpdaterService extends Service
                 {
                     case DownloadManager.STATUS_SUCCESSFUL:
                     {
+                        Log.d(TAG, "Download successful.");
                         String filePath = mDownloadManager.getUriForDownloadedFile(mLatestFileDownloadId).getPath();
 
                         String targetPath = Environment.getExternalStorageDirectory() + resources.getString(R.string.updaterFolder);
@@ -550,6 +537,7 @@ public class UpdaterService extends Service
                     }
                     case DownloadManager.STATUS_FAILED:
                     {
+                        Log.d(TAG, "Download failed.");
                         removeReceiver = retryDownload(context);
                         break;
                     }
@@ -563,6 +551,7 @@ public class UpdaterService extends Service
 
             if (removeReceiver)
             {
+                Log.d(TAG, "Configuration download failed. Clearing grace period.");
                 mSharedPreferences.edit().remove("LAST_CONFIG_DOWNLOAD_IN_MS").commit();
                 removeBroadcastReceiver();
             }
