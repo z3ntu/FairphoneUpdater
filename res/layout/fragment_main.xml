@@ -45,7 +45,7 @@
                 android:gravity="right"
                 android:paddingBottom="45dp"
                 android:paddingRight="140dp"
-                android:text="Install Google Apps" />
+                android:text="@string/gapps_store_install" />
 
             <TextView
                 style="@style/TextRegular14White"
@@ -56,7 +56,7 @@
                 android:gravity="right"
                 android:paddingBottom="28dp"
                 android:paddingRight="140dp"
-                android:text="or hide reminder" />
+                android:text="@string/gapps_store_hide_reminder" />
 
             <Button
                 android:id="@+id/install_gapps_dismiss_button"

@@ -85,5 +85,7 @@
     <string name="about">about</string>
     <string name="appStoreReinstall">Learn how to reinstall the AppStore</string>
     <string name="app_store">App Stores</string>
+    <string name="gapps_store_install">Install Google Apps</string>
+    <string name="gapps_store_hide_reminder">or hide reminder</string>
 
 </resources>
