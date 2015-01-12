@@ -6,6 +6,7 @@
     <string name="android">Android</string>
     <string name="updater_service">Updater Service</string>
     <string name="fairphone_os">Android for Fairphone</string>
+    <string name="fairphone_update_message_title">S\'estan comprovant les actualitzacions</string>
     <string name="google_apps_connection_description">L\'arxiu que està intentant descarregar és massa gran per connexions mòbils (~100mb). Si us plau, connecti amb un punt Wi-Fi i provi de nou.</string>
     <string name="google_apps_connection_title">Wi-Fi desconnectat</string>
     <string name="google_apps_denied_permissions_description">Fairphone Updater no ha pogut obtenir els permisos per instal·lar Google Apps. Si ha escollit DENEGAR, reinicii l\'instal·lador i escolli AUTORITZAR.</string>

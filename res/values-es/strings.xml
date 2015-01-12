@@ -19,7 +19,7 @@
     <string name="error_downloading">Error de descarga</string>
     <string name="fairphone_os">Android for Fairphone</string>
     <string name="fairphone_update_message">Nueva actualización de sistema Fairphone disponible</string>
-    <string name="fairphone_update_message_title">Nueva actualización de sistema Fairphone</string>
+    <string name="fairphone_update_message_title">Comprobando actualizaciones</string>
     <string name="go_ahead_and_install_it">Instalar</string>
     <string name="google_apps_connection_description">El archivo que está intentando descargar es demasiado grande para conexiones móviles (~100mb). Por favor, conéctese a un punto Wi-Fi e inténtelo de nuevo.</string>
     <string name="google_apps_connection_title">Wi-Fi desconectado</string>

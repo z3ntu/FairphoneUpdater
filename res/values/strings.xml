@@ -19,7 +19,7 @@
     <string name="error_downloading">Error downloading</string>
     <string name="fairphone_os">Android for Fairphone</string>
     <string name="fairphone_update_message">New Fairphone update available</string>
-    <string name="fairphone_update_message_title">New Fairphone update</string>
+    <string name="fairphone_update_message_title">Checking for updates</string>
     <string name="go_ahead_and_install_it">Install it</string>
     <string name="google_apps_connection_description">The file you\'re trying to download is too large for mobile connections (~100MB). Please enable Wi-Fi connection and try again.</string>
     <string name="google_apps_connection_title">Wi-Fi disabled</string>

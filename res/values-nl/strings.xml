@@ -20,7 +20,7 @@
     <string name="error_downloading">Fout tijdens het downloaden</string>
     <string name="fairphone_os">Android voor Fairphone</string>
     <string name="fairphone_update_message">Nieuwe Fairphone update beschikbaar</string>
-    <string name="fairphone_update_message_title">Nieuwe Fairphone update</string>
+    <string name="fairphone_update_message_title">Controleren op updates</string>
     <string name="go_ahead_and_install_it">Installeer</string>
     <string name="google_apps_connection_description">Het bestand dat je probeert te downloaden is te groot voor mobiele verbindingen (~100MB). Breng de Wi-Fi verbinding tot stand en probeer het opnieuw.</string>
     <string name="google_apps_connection_title">Wi-Fi niet beschikbaar</string>
