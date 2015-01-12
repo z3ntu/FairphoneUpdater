@@ -66,7 +66,7 @@ import com.stericson.RootTools.execution.Shell;
 public class UpdaterService extends Service
 {
 
-    private static final int CONFIG_FILE_DOWNLOAD_TIMEOUT = 23500;
+    private static final int CONFIG_FILE_DOWNLOAD_TIMEOUT_MILLIS = 23500;
     public static final String ACTION_FAIRPHONE_UPDATER_CONFIG_FILE_DOWNLOAD = "FAIRPHONE_UPDATER_CONFIG_FILE_DOWNLOAD";
     public static final String EXTRA_FORCE_CONFIG_FILE_DOWNLOAD = "FORCE_DOWNLOAD";
     
@@ -175,7 +175,6 @@ public class UpdaterService extends Service
     {
         long now = System.currentTimeMillis();
         long last_download = mSharedPreferences.getLong("LAST_CONFIG_DOWNLOAD_IN_MS", 0L);
-        forceDownload = true;
         if( forceDownload || now > (last_download + DOWNLOAD_GRACE_PERIOD_IN_MS) ) {
             Log.d(TAG, "Downloading updater configuration file.");
             // remove the old file if its still there for some reason
@@ -252,7 +251,7 @@ public class UpdaterService extends Service
                         cursor.close();
                     }
                 }
-            }, SystemClock.uptimeMillis() + CONFIG_FILE_DOWNLOAD_TIMEOUT);
+            }, SystemClock.uptimeMillis() + CONFIG_FILE_DOWNLOAD_TIMEOUT_MILLIS);
         }
         else
         {
