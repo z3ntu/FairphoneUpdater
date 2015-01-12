@@ -44,7 +44,9 @@ import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.SystemClock;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
@@ -54,7 +56,6 @@ import java.util.concurrent.TimeoutException;
 import com.fairphone.updater.data.Version;
 import com.fairphone.updater.data.VersionParserHelper;
 import com.fairphone.updater.gappsinstaller.GappsInstallerHelper;
-import com.fairphone.updater.tools.Cleaner;
 import com.fairphone.updater.tools.RSAUtils;
 import com.fairphone.updater.tools.Utils;
 import com.fairphone.updater.widgets.gapps.GoogleAppsInstallerWidget;
@@ -65,6 +66,7 @@ import com.stericson.RootTools.execution.Shell;
 public class UpdaterService extends Service
 {
 
+    private static final int CONFIG_FILE_DOWNLOAD_TIMEOUT = 23500;
     public static final String ACTION_FAIRPHONE_UPDATER_CONFIG_FILE_DOWNLOAD = "FAIRPHONE_UPDATER_CONFIG_FILE_DOWNLOAD";
     public static final String EXTRA_FORCE_CONFIG_FILE_DOWNLOAD = "FORCE_DOWNLOAD";
     
@@ -173,6 +175,7 @@ public class UpdaterService extends Service
     {
         long now = System.currentTimeMillis();
         long last_download = mSharedPreferences.getLong("LAST_CONFIG_DOWNLOAD_IN_MS", 0L);
+        forceDownload = true;
         if( forceDownload || now > (last_download + DOWNLOAD_GRACE_PERIOD_IN_MS) ) {
             Log.d(TAG, "Downloading updater configuration file.");
             // remove the old file if its still there for some reason
@@ -229,6 +232,27 @@ public class UpdaterService extends Service
         {
             mLatestFileDownloadId = mDownloadManager.enqueue(request);
             saveLatestDownloadId(mLatestFileDownloadId);
+            
+            final long currentId = mLatestFileDownloadId;
+            // Cancel download if it is stuck since DownloadManager doesn't seem able to do it.
+            new Handler().postAtTime(new Runnable() {
+                @Override
+                public void run() {
+                    Cursor cursor = mDownloadManager != null ? mDownloadManager.query(new DownloadManager.Query().setFilterById(currentId)) : null;
+                    if (cursor != null && cursor.moveToFirst())
+                    {
+                        int status = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS));
+                        if (status != DownloadManager.STATUS_FAILED && status != DownloadManager.STATUS_SUCCESSFUL) {
+                            Log.w(TAG, "Configuration file download timed out");
+                            mDownloadManager.remove(currentId);
+                        }
+                    }
+                    if (cursor != null)
+                    {
+                        cursor.close();
+                    }
+                }
+            }, SystemClock.uptimeMillis() + CONFIG_FILE_DOWNLOAD_TIMEOUT);
         }
         else
         {
