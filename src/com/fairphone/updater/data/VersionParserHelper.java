@@ -31,6 +31,7 @@ import org.xmlpull.v1.XmlPullParserFactory;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.os.Build;
 import android.os.Environment;
 import android.util.Log;
 
@@ -52,19 +53,25 @@ public class VersionParserHelper
     {
 
         Version version = new Version();
-
+        String[] suportedDevices = context.getResources().getString(R.string.knownFPDevices).split(";");
+        String modelWithoutSpaces = Build.MODEL.replaceAll("\\s", "");
+        boolean knownFPDevice = false;
+        for(String device : suportedDevices){
+            knownFPDevice = knownFPDevice || device.equals(modelWithoutSpaces);
+        }
+        
         try
         {
-            version.setNumber(Integer.valueOf(getSystemData(context, CURRENT_VERSION_NUMBER)));
+            version.setNumber(Integer.valueOf(getSystemData(context, CURRENT_VERSION_NUMBER, knownFPDevice)));
         } catch (NumberFormatException e)
         {
             version.setNumber(context.getResources().getInteger(R.integer.defaultVersionNumber));
         }
-        version.setName(getSystemData(context, CURRENT_VERSION_NAME));
-        version.setBuildNumber(getSystemData(context, CURRENT_VERSION_BUILD_NUMBER));
-        version.setAndroidVersion(getSystemData(context, CURRENT_ANDROID_VERSION));
-        version.setImageType(getSystemData(context, CURRENT_VERSION_IMAGE_TYPE));
-        version.setReleaseDate(getSystemData(context, CURRENT_VERSION_BUILD_DATE));
+        version.setName(getSystemData(context, CURRENT_VERSION_NAME, knownFPDevice));
+        version.setBuildNumber(getSystemData(context, CURRENT_VERSION_BUILD_NUMBER, knownFPDevice));
+        version.setAndroidVersion(getSystemData(context, CURRENT_ANDROID_VERSION, knownFPDevice));
+        version.setImageType(getSystemData(context, CURRENT_VERSION_IMAGE_TYPE, knownFPDevice));
+        version.setReleaseDate(getSystemData(context, CURRENT_VERSION_BUILD_DATE, knownFPDevice));
 
         Version versionData = UpdaterData.getInstance().getVersion(version.getImageType(), version.getNumber());
         version.setThumbnailLink(versionData != null ? versionData.getThumbnailLink() : "");
@@ -73,32 +80,32 @@ public class VersionParserHelper
         return version;
     }
 
-    public static String getSystemData(Context context, String property)
+    public static String getSystemData(Context context, String property, boolean useDefaults)
     {
 
         if (property.equals(CURRENT_VERSION_NUMBER))
         {
-            return getprop(CURRENT_VERSION_NUMBER, String.valueOf(context.getResources().getInteger(R.integer.defaultVersionNumber)));
+            return getprop(CURRENT_VERSION_NUMBER, useDefaults ? String.valueOf(context.getResources().getInteger(R.integer.defaultVersionNumber)) : "");
         }
         else if (property.equals(CURRENT_VERSION_NAME))
         {
-            return getprop(CURRENT_VERSION_NAME, context.getResources().getString(R.string.defaultVersionName));
+            return getprop(CURRENT_VERSION_NAME, useDefaults ? context.getResources().getString(R.string.defaultVersionName) : "");
         }
         else if (property.equals(CURRENT_ANDROID_VERSION))
         {
-            return getprop(CURRENT_ANDROID_VERSION, context.getResources().getString(R.string.defaultAndroidVersionNumber));
+            return getprop(CURRENT_ANDROID_VERSION, useDefaults ? context.getResources().getString(R.string.defaultAndroidVersionNumber) : "");
         }
         else if (property.equals(CURRENT_VERSION_BUILD_NUMBER))
         {
-            return getprop(CURRENT_VERSION_BUILD_NUMBER, context.getResources().getString(R.string.defaultBuildNumber));
+            return getprop(CURRENT_VERSION_BUILD_NUMBER, useDefaults ? context.getResources().getString(R.string.defaultBuildNumber) : "");
         }
         else if (property.equals(CURRENT_VERSION_IMAGE_TYPE))
         {
-            return getprop(CURRENT_VERSION_IMAGE_TYPE, context.getResources().getString(R.string.defaultImageType));
+            return getprop(CURRENT_VERSION_IMAGE_TYPE, useDefaults ? context.getResources().getString(R.string.defaultImageType) : "");
         }
         else if (property.equals(CURRENT_VERSION_BUILD_DATE))
         {
-            return getprop(CURRENT_VERSION_BUILD_DATE, context.getResources().getString(R.string.defaultBuildDate));
+            return getprop(CURRENT_VERSION_BUILD_DATE, useDefaults ? context.getResources().getString(R.string.defaultBuildDate) : "");
         }
 
         return null;
@@ -241,7 +248,7 @@ public class VersionParserHelper
         fis.close();
 
         removeZipContents(context);
-        return update.getLatestVersion(getSystemData(context, CURRENT_VERSION_IMAGE_TYPE));
+        return update.getLatestVersion(getSystemData(context, CURRENT_VERSION_IMAGE_TYPE, true));
     }
 
     public static Version readVersion(Version version, XmlPullParser xpp, String tagName) throws XmlPullParserException, IOException

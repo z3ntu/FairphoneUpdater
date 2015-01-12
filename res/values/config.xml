@@ -17,7 +17,7 @@
     <string name="defaultImageType">fairphone</string>
     
     <!-- Device Model without spaces separated by semicolon. Ex: FP1;FP1U;FP2 -->
-    <string name="supportedDevices">FP1;FP1U</string>
+    <string name="knownFPDevices">FP1;FP1U</string>
     
     <string name="oneGBDataPartition">/originalPartition</string>
 	<string name="unifiedDataPartition">/unifiedPartition</string>

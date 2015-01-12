@@ -112,8 +112,6 @@ public class FairphoneUpdater extends FragmentActivity
         DEV_MODE_ENABLED = false;
         mIsDevModeCounter = 10;
 
-        isDeviceSupported();
-
         mSharedPreferences = getSharedPreferences(FAIRPHONE_UPDATER_PREFERENCES, MODE_PRIVATE);
 
         // update first times
@@ -123,15 +121,17 @@ public class FairphoneUpdater extends FragmentActivity
 
         mIsFirstTimeAppStore = mSharedPreferences.getBoolean(PREFERENCE_FIRST_TIME_APP_STORE, true);
 
+        // get system data
+        mDeviceVersion = VersionParserHelper.getDeviceVersion(this);
+
+        isDeviceSupported();
+        
         // check current state
         mCurrentState = getCurrentUpdaterState();
-
+        
         startService();
 
         boolean isConfigLoaded = UpdaterService.readUpdaterData(this);
-
-        // get system data
-        mDeviceVersion = VersionParserHelper.getDeviceVersion(this);
 
         if (mDeviceVersion != null)
         {
@@ -152,19 +152,10 @@ public class FairphoneUpdater extends FragmentActivity
 
     private void isDeviceSupported()
     {
-
-        Resources resources = getResources();
-        String[] suportedDevices = resources.getString(R.string.supportedDevices).split(";");
-        String modelWithoutSpaces = Build.MODEL.replaceAll("\\s", "");
-        for (String device : suportedDevices)
-        {
-            if (modelWithoutSpaces.equalsIgnoreCase(device))
-            {
-                return;
-            }
+        if(mDeviceVersion == null || mDeviceVersion.getName().isEmpty()){
+            Toast.makeText(this, R.string.device_not_supported_message, Toast.LENGTH_LONG).show();
+            finish();
         }
-        Toast.makeText(this, R.string.device_not_supported_message, Toast.LENGTH_LONG).show();
-        finish();
     }
 
     protected void getSelectedVersionFromSharedPreferences()
