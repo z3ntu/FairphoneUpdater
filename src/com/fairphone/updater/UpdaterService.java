@@ -66,6 +66,7 @@ import com.stericson.RootTools.execution.Shell;
 public class UpdaterService extends Service
 {
 
+    private static final String LAST_CONFIG_DOWNLOAD_IN_MS = "LAST_CONFIG_DOWNLOAD_IN_MS";
     private static final int CONFIG_FILE_DOWNLOAD_TIMEOUT_MILLIS = 23500;
     public static final String ACTION_FAIRPHONE_UPDATER_CONFIG_FILE_DOWNLOAD = "FAIRPHONE_UPDATER_CONFIG_FILE_DOWNLOAD";
     public static final String EXTRA_FORCE_CONFIG_FILE_DOWNLOAD = "FORCE_DOWNLOAD";
@@ -174,7 +175,7 @@ public class UpdaterService extends Service
     private void downloadConfigFile(boolean forceDownload)
     {
         long now = System.currentTimeMillis();
-        long last_download = mSharedPreferences.getLong("LAST_CONFIG_DOWNLOAD_IN_MS", 0L);
+        long last_download = mSharedPreferences.getLong(LAST_CONFIG_DOWNLOAD_IN_MS, 0L);
         if( forceDownload || now > (last_download + DOWNLOAD_GRACE_PERIOD_IN_MS) ) {
             Log.d(TAG, "Downloading updater configuration file.");
             // remove the old file if its still there for some reason
@@ -183,7 +184,7 @@ public class UpdaterService extends Service
             // start the download of the latest file
             startDownloadLatest();
 
-            mSharedPreferences.edit().putLong("LAST_CONFIG_DOWNLOAD_IN_MS", now).commit();
+            mSharedPreferences.edit().putLong(LAST_CONFIG_DOWNLOAD_IN_MS, now).commit();
         }
     }
 
@@ -237,19 +238,14 @@ public class UpdaterService extends Service
             new Handler().postAtTime(new Runnable() {
                 @Override
                 public void run() {
-                    Cursor cursor = mDownloadManager != null ? mDownloadManager.query(new DownloadManager.Query().setFilterById(currentId)) : null;
-                    if (cursor != null && cursor.moveToFirst())
-                    {
-                        int status = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS));
-                        if (status != DownloadManager.STATUS_FAILED && status != DownloadManager.STATUS_SUCCESSFUL) {
+                    onDownloadStatus(currentId, null, null, new Runnable() {
+                        @Override
+                        public void run() {
                             Log.w(TAG, "Configuration file download timed out");
                             mDownloadManager.remove(currentId);
+                            mSharedPreferences.edit().remove(LAST_CONFIG_DOWNLOAD_IN_MS).commit();
                         }
-                    }
-                    if (cursor != null)
-                    {
-                        cursor.close();
-                    }
+                    });
                 }
             }, SystemClock.uptimeMillis() + CONFIG_FILE_DOWNLOAD_TIMEOUT_MILLIS);
         }
@@ -396,8 +392,14 @@ public class UpdaterService extends Service
                     mInternetConnectionAvailable = false;
                     if (mLatestFileDownloadId != 0 && mDownloadManager != null)
                     {
-                        mDownloadManager.remove(mLatestFileDownloadId);
-                        saveLatestDownloadId(0);
+                        onDownloadStatus(mLatestFileDownloadId, null, null, new Runnable() {
+                            @Override
+                            public void run() {
+                                Log.d(TAG, "Removing pending download.");
+                                mDownloadManager.remove(mLatestFileDownloadId);
+                                saveLatestDownloadId(0);
+                            }
+                        });
                     }
                 }
                 else
@@ -517,6 +519,47 @@ public class UpdaterService extends Service
         return removeReceiver;
     }
 
+    private void onDownloadStatus(long id, Runnable ifSuccess, Runnable ifFailure, Runnable ifRunning) {
+        Cursor cursor = mDownloadManager != null ? mDownloadManager.query(new DownloadManager.Query().setFilterById(id)) : null;
+        if (cursor != null && cursor.moveToFirst())
+        {
+            int status = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS));
+            switch(status){
+                case DownloadManager.STATUS_FAILED:
+                    if (ifFailure != null) {
+                        ifFailure.run();
+                    }
+                    break;
+                case DownloadManager.STATUS_PAUSED:
+                    if (ifRunning != null) {
+                        ifRunning.run();
+                    }
+                    break;
+                case DownloadManager.STATUS_PENDING:
+                    if (ifRunning != null) {
+                        ifRunning.run();
+                    }
+                    break;
+                case DownloadManager.STATUS_RUNNING:
+                    if (ifRunning != null) {
+                        ifRunning.run();
+                    }
+                    break;
+                case DownloadManager.STATUS_SUCCESSFUL:
+                    if (ifSuccess != null) {
+                        ifSuccess.run();
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+        if (cursor != null)
+        {
+            cursor.close();
+        }
+    }
+
     private class DownloadBroadCastReceiver extends BroadcastReceiver
     {
 
@@ -575,7 +618,7 @@ public class UpdaterService extends Service
             if (removeReceiver)
             {
                 Log.d(TAG, "Configuration download failed. Clearing grace period.");
-                mSharedPreferences.edit().remove("LAST_CONFIG_DOWNLOAD_IN_MS").commit();
+                mSharedPreferences.edit().remove(LAST_CONFIG_DOWNLOAD_IN_MS).commit();
                 removeBroadcastReceiver();
             }
         }
