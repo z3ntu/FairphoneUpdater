@@ -499,6 +499,9 @@ public class FairphoneUpdater extends FragmentActivity
                 else if (mSelectedStore != null)
                 {
                     firstFragment = new DownloadAndRestartFragment(false);
+                } else {
+                    firstFragment = new MainFragment();
+                    updateStatePreference(UpdaterState.NORMAL);
                 }
                 break;
             case NORMAL:
@@ -512,9 +515,8 @@ public class FairphoneUpdater extends FragmentActivity
 
     public void changeFragment(Fragment newFragment)
     {
-
         Fragment topFragment = getTopFragment();
-        if (topFragment == null || (topFragment != null && newFragment != null && !newFragment.getClass().equals(topFragment.getClass())))
+        if ( newFragment != null && ( topFragment == null || !newFragment.getClass().equals(topFragment.getClass())) )
         {
             FragmentManager fragManager = getSupportFragmentManager();
             if (fragManager != null)
@@ -544,15 +546,11 @@ public class FairphoneUpdater extends FragmentActivity
 
     public void removeLastFragment(final boolean forceFinish)
     {
-        runOnUiThread(new Runnable()
-        {
-
-            @Override
-            public void run()
-            {
+ 
                 FragmentManager fragManager = getSupportFragmentManager();
                 if (fragManager != null)
                 {
+                    fragManager.executePendingTransactions();
                     boolean popSuccess = fragManager.popBackStackImmediate();
                     if (forceFinish && !popSuccess)
                     {
@@ -563,8 +561,6 @@ public class FairphoneUpdater extends FragmentActivity
                 {
                     Log.e(TAG, "removeLastFragment - Couldn't get FragmentManager");
                 }
-            }
-        });
 
     }
 
@@ -626,16 +622,11 @@ public class FairphoneUpdater extends FragmentActivity
 
     public Fragment getTopFragment()
     {
-
         Fragment topFragment = null;
         FragmentManager fragManager = getSupportFragmentManager();
         if (fragManager != null)
         {
-            List<Fragment> allFragments = fragManager.getFragments();
-            if (allFragments != null)
-            {
-                topFragment = allFragments.get(allFragments.size() - 1);
-            }
+            return fragManager.findFragmentByTag(null);
         }
         else
         {
