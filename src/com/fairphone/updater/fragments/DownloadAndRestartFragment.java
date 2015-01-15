@@ -50,6 +50,8 @@ import com.stericson.RootTools.execution.Shell;
 public class DownloadAndRestartFragment extends BaseFragment
 {
 
+    private static final int PROGRESS_BAR_UPDATE_FREQUENCY_IN_MILLIS = 1000;
+
     protected static final String TAG = DownloadAndRestartFragment.class.getSimpleName();
 
     private TextView mDownloadVersionName;
@@ -240,16 +242,18 @@ public class DownloadAndRestartFragment extends BaseFragment
             {
                 boolean downloading = true;
 
-                long latestUpdateDownloadId = 0;
+                long latestUpdateDownloadId = mainActivity.getLatestDownloadId();
 
-                int count = 3;
+                int count = 12;
 
-                while (((latestUpdateDownloadId = mainActivity.getLatestDownloadId()) <= 0) && count > 0)
+                // Wait a sensible amount of time to get a correct reference to the download
+                while ((latestUpdateDownloadId <= 0) && count > 0)
                 {
                     try
                     {
-                        Thread.sleep(2000);
+                        Thread.sleep(500);
                         count--;
+                        latestUpdateDownloadId = mainActivity.getLatestDownloadId();
                     } catch (InterruptedException e)
                     {
                         e.printStackTrace();
@@ -302,7 +306,7 @@ public class DownloadAndRestartFragment extends BaseFragment
                         cursor.close();
                         try
                         {
-                            Thread.sleep(1000);
+                            Thread.sleep(PROGRESS_BAR_UPDATE_FREQUENCY_IN_MILLIS);
                         } catch (InterruptedException e)
                         {
                             e.printStackTrace();
