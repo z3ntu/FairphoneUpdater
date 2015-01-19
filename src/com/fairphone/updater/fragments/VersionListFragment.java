@@ -130,13 +130,13 @@ public class VersionListFragment extends BaseFragment
             });
         }
 
-        if (mStoreList.size() <= 1)
+        if (mStoreList.size() >= 1)
         {
-            mOlderVersionsGroup.setVisibility(View.GONE);
+            mOlderVersionsGroup.setVisibility(View.VISIBLE);
         }
         else
         {
-            mOlderVersionsGroup.setVisibility(View.VISIBLE);
+            mOlderVersionsGroup.setVisibility(View.GONE);
         }
     }
 

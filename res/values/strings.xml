@@ -83,7 +83,7 @@
     <string name="fairphone_os_info">This Android for Fairphone operating system has an extra layer of Fairphone flavor with features like the Peace of Mind widget, Edge Swipe, and the Last Used / Most Used Apps widget.\n\nWe recommend installing Android for Fairphone on your device to have the best Fairphone experience.</string>
     <string name="android_os_info">This Stock Android operating system is the pure Android experience without any additional Fairphone modifications.</string>
     <string name="about">about</string>
-    <string name="appStoreReinstall">Learn how to reinstall the AppStore</string>
+    <string name="appStoreReinstall">Reinstall the AppStore</string>
     <string name="app_store">App Stores</string>
     <string name="gapps_store_install">Install Google Apps</string>
     <string name="gapps_store_hide_reminder">or hide reminder</string>

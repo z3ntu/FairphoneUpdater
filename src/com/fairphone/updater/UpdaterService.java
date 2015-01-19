@@ -156,10 +156,12 @@ public class UpdaterService extends Service
         
         mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         
-        Intent notificationIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(context.getResources().getString(R.string.supportAppStoreUrl)));
+        //Intent notificationIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(context.getResources().getString(R.string.supportAppStoreUrl)));
 
-        PendingIntent contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, 0);
+        Intent notificationIntent = new Intent(context, FairphoneUpdater.class);
+        notificationIntent.setAction(GappsInstallerHelper.EXTRA_START_GAPPS_INSTALL);
         
+        PendingIntent contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, 0);
         
         mBuilder =
                 new NotificationCompat.Builder(context).setSmallIcon(R.drawable.updater_tray_icon)

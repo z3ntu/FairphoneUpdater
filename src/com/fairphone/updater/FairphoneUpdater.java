@@ -878,13 +878,13 @@ public class FairphoneUpdater extends FragmentActivity
 
     public void startGappsInstall()
     {
-        Store selectedStore = UpdaterData.getInstance().getStore(1);
+        getSelectedStoreFromSharedPreferences();
 
         VersionDetailFragment fragment = new VersionDetailFragment(false);
 
-        if (selectedStore != null)
+        if (mSelectedStore != null)
         {
-            fragment.setupFragment(selectedStore, DetailLayoutType.APP_STORE);
+            fragment.setupFragment(mSelectedStore, DetailLayoutType.APP_STORE);
             changeFragment(fragment);
         }
     }
