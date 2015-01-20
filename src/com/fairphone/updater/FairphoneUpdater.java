@@ -152,7 +152,8 @@ public class FairphoneUpdater extends FragmentActivity
 
     private void isDeviceSupported()
     {
-        if(mDeviceVersion == null || mDeviceVersion.getName().isEmpty()){
+        if(!Utils.isDeviceSupported(this))
+        {
             Toast.makeText(this, R.string.device_not_supported_message, Toast.LENGTH_LONG).show();
             finish();
         }

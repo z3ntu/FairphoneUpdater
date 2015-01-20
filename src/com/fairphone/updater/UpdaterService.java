@@ -96,6 +96,11 @@ public class UpdaterService extends Service
     {
         // remove the logs
         clearDataLogs();
+        
+        if(!Utils.isDeviceSupported(getApplicationContext())){
+            stopSelf();
+            return START_NOT_STICKY;
+        }
 
         mSharedPreferences = getApplicationContext().getSharedPreferences(FairphoneUpdater.FAIRPHONE_UPDATER_PREFERENCES, MODE_PRIVATE);
 

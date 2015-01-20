@@ -32,6 +32,7 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Build;
 import android.os.Environment;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.fairphone.updater.R;
@@ -333,5 +334,11 @@ public class Utils
             }
         }
         return title;
+    }
+
+    public static boolean isDeviceSupported(Context context)
+    {
+        Version deviceVersion = VersionParserHelper.getDeviceVersion(context);
+        return deviceVersion != null && !TextUtils.isEmpty(deviceVersion.getName());
     }
 }
