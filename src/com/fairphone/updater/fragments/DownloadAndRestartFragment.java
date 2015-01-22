@@ -631,6 +631,7 @@ public class DownloadAndRestartFragment extends BaseFragment
                 mainActivity.updateStatePreference(UpdaterState.NORMAL);
                 mainActivity.clearSelectedItems();
                 clearConfigFile();
+                mSharedPreferences.edit().remove(UpdaterService.LAST_CONFIG_DOWNLOAD_IN_MS).commit();
                 Shell.runRootCommand(new CommandCapture(0, "reboot recovery"));
             } catch (IOException e)
             {

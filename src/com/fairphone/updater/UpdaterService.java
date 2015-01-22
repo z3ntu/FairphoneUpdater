@@ -66,7 +66,7 @@ import com.stericson.RootTools.execution.Shell;
 public class UpdaterService extends Service
 {
 
-    private static final String LAST_CONFIG_DOWNLOAD_IN_MS = "LAST_CONFIG_DOWNLOAD_IN_MS";
+    public static final String LAST_CONFIG_DOWNLOAD_IN_MS = "LAST_CONFIG_DOWNLOAD_IN_MS";
     private static final int CONFIG_FILE_DOWNLOAD_TIMEOUT_MILLIS = 23500;
     public static final String ACTION_FAIRPHONE_UPDATER_CONFIG_FILE_DOWNLOAD = "FAIRPHONE_UPDATER_CONFIG_FILE_DOWNLOAD";
     public static final String EXTRA_FORCE_CONFIG_FILE_DOWNLOAD = "FORCE_DOWNLOAD";
