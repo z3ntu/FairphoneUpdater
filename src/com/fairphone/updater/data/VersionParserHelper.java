@@ -16,19 +16,6 @@
 
 package com.fairphone.updater.data;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.Locale;
-import java.util.NoSuchElementException;
-import java.util.Scanner;
-
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
-import org.xmlpull.v1.XmlPullParserFactory;
-
 import android.content.Context;
 import android.content.res.Resources;
 import android.os.Build;
@@ -36,6 +23,17 @@ import android.os.Environment;
 import android.util.Log;
 
 import com.fairphone.updater.R;
+import com.fairphone.updater.tools.Utils;
+
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
+import org.xmlpull.v1.XmlPullParserFactory;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Locale;
 
 public class VersionParserHelper
 {
@@ -87,31 +85,31 @@ public class VersionParserHelper
 
         if (property.equals(CURRENT_VERSION_NUMBER))
         {
-            return getprop(CURRENT_VERSION_NUMBER, useDefaults ? String.valueOf(context.getResources().getInteger(R.integer.defaultVersionNumber)) : "");
+            return Utils.getprop(CURRENT_VERSION_NUMBER, useDefaults ? String.valueOf(context.getResources().getInteger(R.integer.defaultVersionNumber)) : "");
         }
         else if (property.equals(CURRENT_VERSION_NAME))
         {
-            return getprop(CURRENT_VERSION_NAME, useDefaults ? context.getResources().getString(R.string.defaultVersionName) : "");
+            return Utils.getprop(CURRENT_VERSION_NAME, useDefaults ? context.getResources().getString(R.string.defaultVersionName) : "");
         }
         else if (property.equals(CURRENT_ANDROID_VERSION))
         {
-            return getprop(CURRENT_ANDROID_VERSION, useDefaults ? context.getResources().getString(R.string.defaultAndroidVersionNumber) : "");
+            return Utils.getprop(CURRENT_ANDROID_VERSION, useDefaults ? context.getResources().getString(R.string.defaultAndroidVersionNumber) : "");
         }
         else if (property.equals(CURRENT_VERSION_BUILD_NUMBER))
         {
-            return getprop(CURRENT_VERSION_BUILD_NUMBER, useDefaults ? context.getResources().getString(R.string.defaultBuildNumber) : "");
+            return Utils.getprop(CURRENT_VERSION_BUILD_NUMBER, useDefaults ? context.getResources().getString(R.string.defaultBuildNumber) : "");
         }
         else if (property.equals(CURRENT_VERSION_IMAGE_TYPE))
         {
-            return getprop(CURRENT_VERSION_IMAGE_TYPE, useDefaults ? context.getResources().getString(R.string.defaultImageType) : "");
+            return Utils.getprop(CURRENT_VERSION_IMAGE_TYPE, useDefaults ? context.getResources().getString(R.string.defaultImageType) : "");
         }
         else if (property.equals(CURRENT_VERSION_BUILD_DATE))
         {
-            return getprop(CURRENT_VERSION_BUILD_DATE, useDefaults ? context.getResources().getString(R.string.defaultBuildDate) : "");
+            return Utils.getprop(CURRENT_VERSION_BUILD_DATE, useDefaults ? context.getResources().getString(R.string.defaultBuildDate) : "");
         }
         else if (property.equals(CURRENT_BETA_STATUS))
         {
-            return getprop(CURRENT_BETA_STATUS, useDefaults ? context.getResources().getString(R.string.defaultBetaStatus) : "0");
+            return Utils.getprop(CURRENT_BETA_STATUS, useDefaults ? context.getResources().getString(R.string.defaultBetaStatus) : "0");
         }
 
         return null;
@@ -364,45 +362,7 @@ public class VersionParserHelper
         return retval;
     }
 
-    private static String getprop(String name, String defaultValue)
-    {
-        ProcessBuilder pb = new ProcessBuilder("/system/bin/getprop", name);
-        pb.redirectErrorStream(true);
-
-        Process p = null;
-        InputStream is = null;
-        try
-        {
-            p = pb.start();
-            is = p.getInputStream();
-            Scanner scan = new Scanner(is);
-            scan.useDelimiter("\n");
-            String prop = scan.next();
-            if (prop.length() == 0)
-            {
-                return defaultValue;
-            }
-            return prop;
-        } catch (NoSuchElementException e)
-        {
-            return defaultValue;
-        } catch (Exception e)
-        {
-            e.printStackTrace();
-        } finally
-        {
-            if (is != null)
-            {
-                try
-                {
-                    is.close();
-                } catch (Exception e)
-                {
-                }
-            }
-        }
-        return defaultValue;
-    }
+    
 
     public static void removeConfigFiles(Context context)
     {

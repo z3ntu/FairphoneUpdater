@@ -24,6 +24,9 @@ import java.io.InputStream;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.NoSuchElementException;
+import java.util.Scanner;
+import java.util.concurrent.TimeoutException;
 
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningServiceInfo;
@@ -41,6 +44,10 @@ import com.fairphone.updater.data.DownloadableItem;
 import com.fairphone.updater.data.Store;
 import com.fairphone.updater.data.Version;
 import com.fairphone.updater.data.VersionParserHelper;
+import com.stericson.RootTools.RootTools;
+import com.stericson.RootTools.exceptions.RootDeniedException;
+import com.stericson.RootTools.execution.CommandCapture;
+import com.stericson.RootTools.execution.Shell;
 
 public class Utils
 {
@@ -340,5 +347,61 @@ public class Utils
     {
         Version deviceVersion = VersionParserHelper.getDeviceVersion(context);
         return deviceVersion != null && !TextUtils.isEmpty(deviceVersion.getName());
+    }
+    
+    public static String getprop(String name, String defaultValue)
+    {
+        ProcessBuilder pb = new ProcessBuilder("/system/bin/getprop", name);
+        pb.redirectErrorStream(true);
+
+        Process p = null;
+        InputStream is = null;
+        try
+        {
+            p = pb.start();
+            is = p.getInputStream();
+            Scanner scan = new Scanner(is);
+            scan.useDelimiter("\n");
+            String prop = scan.next();
+            if (prop.length() == 0)
+            {
+                return defaultValue;
+            }
+            return prop;
+        } catch (NoSuchElementException e)
+        {
+            return defaultValue;
+        } catch (Exception e)
+        {
+            e.printStackTrace();
+        } finally
+        {
+            if (is != null)
+            {
+                try
+                {
+                    is.close();
+                } catch (Exception e)
+                {
+                }
+            }
+        }
+        return defaultValue;
+    }
+    
+    public static void setprop(Context context, String key, String value)
+    {
+        if(RootTools.isAccessGiven()) {
+            CommandCapture command = new CommandCapture(0, "setprop "+key+" "+value);
+            try {
+                Shell.runRootCommand(command);
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (TimeoutException e) {
+                e.printStackTrace();
+            } catch (RootDeniedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

@@ -87,5 +87,9 @@
     <string name="app_store">App Stores</string>
     <string name="gapps_store_install">Install Google Apps</string>
     <string name="gapps_store_hide_reminder">or hide reminder</string>
+    <string name="title_activity_beta_enabler">Fairphone Beta Program</string>
+    <string name="enable_beta">Enable Beta</string>
+    <string name="beta_is_enabled">Beta is enabled</string>
+    <string name="beta_activation_failed">Failed to activate beta</string>
 
 </resources>

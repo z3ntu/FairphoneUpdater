@@ -1,0 +1,17 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.fairphone.updater.BetaEnabler" >
+
+	<Button
+	    android:id="@+id/beta_activator"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_centerHorizontal="true"
+	    android:layout_centerVertical="true"
+	    style="@style/ButtonSmallBlueDark"
+	    android:text="@string/beta_is_enabled" 
+	    android:enabled="false"/>
+
+</RelativeLayout>
