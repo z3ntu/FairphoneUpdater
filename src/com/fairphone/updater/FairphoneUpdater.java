@@ -119,7 +119,7 @@ public class FairphoneUpdater extends FragmentActivity
 
         mIsFirstTimeFairphone = mSharedPreferences.getBoolean(PREFERENCE_FIRST_TIME_FAIRPHONE, true);
 
-        mIsFirstTimeAppStore = mSharedPreferences.getBoolean(PREFERENCE_FIRST_TIME_APP_STORE, true);
+        mIsFirstTimeAppStore = false;//mSharedPreferences.getBoolean(PREFERENCE_FIRST_TIME_APP_STORE, true);
 
         // get system data
         mDeviceVersion = VersionParserHelper.getDeviceVersion(this);
