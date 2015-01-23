@@ -45,6 +45,7 @@ public class VersionParserHelper
     private static final String CURRENT_VERSION_NUMBER = "fairphone.ota.version.number";
     private static final String CURRENT_VERSION_NAME = "fairphone.ota.version.name";
     private static final String CURRENT_VERSION_BUILD_NUMBER = "fairphone.ota.build_number";
+    private static final String CURRENT_BETA_STATUS = "fairphone.ota.beta";
     private static final String CURRENT_ANDROID_VERSION = "fairphone.ota.android_version";
     private static final String CURRENT_VERSION_IMAGE_TYPE = "fairphone.ota.image_type";
     private static final String CURRENT_VERSION_BUILD_DATE = "ro.build.date.utc";
@@ -72,6 +73,7 @@ public class VersionParserHelper
         version.setAndroidVersion(getSystemData(context, CURRENT_ANDROID_VERSION, knownFPDevice));
         version.setImageType(getSystemData(context, CURRENT_VERSION_IMAGE_TYPE, knownFPDevice));
         version.setReleaseDate(getSystemData(context, CURRENT_VERSION_BUILD_DATE, knownFPDevice));
+        version.setBetaStatus(getSystemData(context, CURRENT_BETA_STATUS, knownFPDevice));
 
         Version versionData = UpdaterData.getInstance().getVersion(version.getImageType(), version.getNumber());
         version.setThumbnailLink(versionData != null ? versionData.getThumbnailLink() : "");
@@ -106,6 +108,10 @@ public class VersionParserHelper
         else if (property.equals(CURRENT_VERSION_BUILD_DATE))
         {
             return getprop(CURRENT_VERSION_BUILD_DATE, useDefaults ? context.getResources().getString(R.string.defaultBuildDate) : "");
+        }
+        else if (property.equals(CURRENT_BETA_STATUS))
+        {
+            return getprop(CURRENT_BETA_STATUS, useDefaults ? context.getResources().getString(R.string.defaultBetaStatus) : "0");
         }
 
         return null;

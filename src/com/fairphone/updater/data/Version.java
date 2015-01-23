@@ -16,11 +16,6 @@
 
 package com.fairphone.updater.data;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -29,6 +24,8 @@ import android.text.TextUtils;
 
 import com.fairphone.updater.FairphoneUpdater;
 import com.fairphone.updater.R;
+
+import java.util.ArrayList;
 
 public class Version extends DownloadableItem implements Comparable<Version>
 {
@@ -54,6 +51,8 @@ public class Version extends DownloadableItem implements Comparable<Version>
 
     protected String mAndroidVersion;
 
+    protected String mBetaStatus;
+
     protected boolean mErasePartitionsWarning;
 
     public Version()
@@ -70,6 +69,7 @@ public class Version extends DownloadableItem implements Comparable<Version>
         mThumbnailImageLink = "";
         mImageType = IMAGE_TYPE_FAIRPHONE;
         mErasePartitionsWarning = false;
+        mBetaStatus = "";
     }
 
     public static Version getVersionFromSharedPreferences(Context context)
@@ -163,6 +163,16 @@ public class Version extends DownloadableItem implements Comparable<Version>
     public String getImageType()
     {
         return mImageType;
+    }
+
+    public void setBetaStatus(String betaStatus)
+    {
+        mBetaStatus = betaStatus;
+    }
+
+    public String getBetaStatus()
+    {
+        return mBetaStatus;
     }
 
     public String getImageTypeDescription(Resources resources)

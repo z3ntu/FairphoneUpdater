@@ -3,7 +3,6 @@
 
     <string name="downloadUrl">http://www.fairphone.com/ota/</string>
     <string name="supportAppStoreUrl">https://fairphone.zendesk.com/hc/en-us/articles/201295267-How-to-re-install-the-App-Store</string>
-    <string name="downloadDevUrl">http://www.fairphone.com/ota/dev/</string>
     <string name="configFilename">updater</string>
     <string name="config_zip">.zip</string>
 	<string name="config_xml">.xml</string>
@@ -15,6 +14,7 @@
     <string name="defaultBuildDate">0</string>
     <string name="defaultAndroidVersionNumber">4.2.2</string>
     <string name="defaultImageType">fairphone</string>
+    <string name="defaultBetaStatus">1</string>
     
     <!-- Device Model without spaces separated by semicolon. Ex: FP1;FP1U;FP2 -->
     <string name="knownFPDevices">FP1;FP1U</string>

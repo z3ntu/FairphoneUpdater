@@ -279,14 +279,7 @@ public class UpdaterService extends Service
         Resources resources = context.getResources();
 
         StringBuilder sb = new StringBuilder();
-        if (FairphoneUpdater.DEV_MODE_ENABLED)
-        {
-            sb.append(resources.getString(R.string.downloadDevUrl));
-        }
-        else
-        {
-            sb.append(resources.getString(R.string.downloadUrl));
-        }
+        sb.append(resources.getString(R.string.downloadUrl));
         sb.append(Build.MODEL.replaceAll("\\s", ""));
         sb.append(Utils.getPartitionDownloadPath(resources));
         sb.append("/");
@@ -319,6 +312,8 @@ public class UpdaterService extends Service
                 sb.append("&b_n=" + URLEncoder.encode(currentVersion.getBuildNumber(), defaultCharset));
                 sb.append("&ota_v_n=" + URLEncoder.encode(String.valueOf(currentVersion.getNumber()), defaultCharset));
                 sb.append("&d=" + URLEncoder.encode(currentVersion.getReleaseDate(), defaultCharset));
+                sb.append("&beta=" + URLEncoder.encode(currentVersion.getBetaStatus(), defaultCharset));
+                sb.append("&dev=" + (FairphoneUpdater.DEV_MODE_ENABLED ? "1" : "0"));
             } catch (UnsupportedEncodingException e) {
                 Log.e(TAG, "Failed to add extra info on update request: "+e.getLocalizedMessage());
             }
