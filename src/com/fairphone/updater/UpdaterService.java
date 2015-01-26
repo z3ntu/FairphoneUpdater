@@ -157,6 +157,9 @@ public class UpdaterService extends Service
 
     public void showReinstallAlert()
     {
+
+        if ( FairphoneUpdater.BETA_MODE_ENABLED )
+            return;
         Context context = getApplicationContext();
         
         mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
@@ -323,6 +326,9 @@ public class UpdaterService extends Service
     private static void setNotification(Context currentContext)
     {
 
+        if ( FairphoneUpdater.BETA_MODE_ENABLED )
+            return;
+        
         Context context = currentContext.getApplicationContext();
 
         NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);

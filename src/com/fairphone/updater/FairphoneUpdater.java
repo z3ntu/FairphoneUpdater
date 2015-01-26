@@ -78,6 +78,7 @@ public class FairphoneUpdater extends FragmentActivity
     private long mLatestUpdateDownloadId;
 
     public static boolean DEV_MODE_ENABLED;
+    public static boolean BETA_MODE_ENABLED;
     private int mIsDevModeCounter;
 
     private TextView headerMainFairphoneText;
@@ -126,6 +127,8 @@ public class FairphoneUpdater extends FragmentActivity
 
         isDeviceSupported();
         
+        setupBetaStatus();
+        
         // check current state
         mCurrentState = getCurrentUpdaterState();
         
@@ -148,6 +151,11 @@ public class FairphoneUpdater extends FragmentActivity
         initHeaderViews();
 
         setupFragments(savedInstanceState);
+    }
+    
+    public void setupBetaStatus()
+    {
+        BETA_MODE_ENABLED = mDeviceVersion.getBetaStatus().equals("1");
     }
 
     private void isDeviceSupported()
@@ -660,7 +668,11 @@ public class FairphoneUpdater extends FragmentActivity
     public boolean isUpdateAvailable()
     {
         boolean update = false;
-        if (mLatestVersion != null)
+        if (BETA_MODE_ENABLED)
+        {
+            update = true;
+        }
+        else if (mLatestVersion != null)
         {
             update = mLatestVersion.isNewerVersionThan(mDeviceVersion);
         }
