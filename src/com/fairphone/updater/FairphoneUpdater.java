@@ -26,6 +26,7 @@ import com.fairphone.updater.data.Store;
 import com.fairphone.updater.data.UpdaterData;
 import com.fairphone.updater.data.Version;
 import com.fairphone.updater.data.VersionParserHelper;
+import com.fairphone.updater.fragments.BaseFragment;
 import com.fairphone.updater.fragments.DownloadAndRestartFragment;
 import com.fairphone.updater.fragments.InfoPopupDialog;
 import com.fairphone.updater.fragments.MainFragment;
@@ -828,7 +829,7 @@ public class FairphoneUpdater extends FragmentActivity
         if (mLaunchGapps)
         {
             getSelectedStoreFromSharedPreferences();
-            // startGappsInstall();
+            startGappsInstall();
         }
     }
 
@@ -871,10 +872,10 @@ public class FairphoneUpdater extends FragmentActivity
         {
             startGappsInstall();
         }
-        else
-        {
-            changeFragment(getFragmentFromState());
-        }
+//        else
+//        {
+//            changeFragment(getFragmentFromState());
+//        }
     }
 
     public void startGappsInstall()
