@@ -279,7 +279,8 @@ public class UpdaterService extends Service
         Resources resources = context.getResources();
 
         StringBuilder sb = new StringBuilder();
-        sb.append(resources.getString(R.string.downloadUrl));
+        String download_url = mSharedPreferences.getString(FairphoneUpdater.PREFERENCE_OTA_DOWNLOAD_URL, getResources().getString(R.string.downloadUrl));
+        sb.append(download_url);
         sb.append(Build.MODEL.replaceAll("\\s", ""));
         sb.append(Utils.getPartitionDownloadPath(resources));
         sb.append("/");

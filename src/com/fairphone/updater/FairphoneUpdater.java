@@ -1,12 +1,8 @@
 package com.fairphone.updater;
 
-import java.util.List;
-
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
-import android.content.res.Resources;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -34,6 +30,8 @@ import com.fairphone.updater.fragments.VersionDetailFragment;
 import com.fairphone.updater.fragments.VersionDetailFragment.DetailLayoutType;
 import com.fairphone.updater.gappsinstaller.GappsInstallerHelper;
 import com.fairphone.updater.tools.Utils;
+
+import java.util.List;
 
 public class FairphoneUpdater extends FragmentActivity
 {
@@ -63,6 +61,9 @@ public class FairphoneUpdater extends FragmentActivity
     public static final String FAIRPHONE_UPDATER_CONFIG_DOWNLOAD_LINK = "FairphoneUpdater.ConfigFile.Download.LINK";
 
     public static final String PREFERENCE_SELECTED_STORE_NUMBER = "SelectedStoreNumber";
+    
+    public static final String PREFERENCE_OTA_DOWNLOAD_URL = "OtaDownloadUrl";
+
 
     public static enum UpdaterState
     {
@@ -80,6 +81,8 @@ public class FairphoneUpdater extends FragmentActivity
 
     public static boolean DEV_MODE_ENABLED;
     private int mIsDevModeCounter;
+    
+    public String OTA_DOWNLOAD_URL;
 
     private TextView headerMainFairphoneText;
     private TextView headerMainAndroidText;
@@ -121,6 +124,8 @@ public class FairphoneUpdater extends FragmentActivity
         mIsFirstTimeFairphone = mSharedPreferences.getBoolean(PREFERENCE_FIRST_TIME_FAIRPHONE, true);
 
         mIsFirstTimeAppStore = false;//mSharedPreferences.getBoolean(PREFERENCE_FIRST_TIME_APP_STORE, true);
+        
+        OTA_DOWNLOAD_URL = mSharedPreferences.getString(PREFERENCE_OTA_DOWNLOAD_URL, getResources().getString(R.string.downloadUrl));
 
         // get system data
         mDeviceVersion = VersionParserHelper.getDeviceVersion(this);

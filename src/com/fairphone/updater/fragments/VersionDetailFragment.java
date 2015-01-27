@@ -278,7 +278,7 @@ public class VersionDetailFragment extends BaseFragment
                 if (!(download_link.startsWith("http://") || download_link.startsWith("https://")))
                 {
                     // If the download URL is a relative path, make it an absolute
-                    download_link = getResources().getString(R.string.downloadUrl) + "/" + download_link;
+                    download_link = mainActivity.OTA_DOWNLOAD_URL + "/" + download_link;
                     // Sanitize URL - e.g. turn http://a.b//c/./d/../e to http://a.b/c/e
                     download_link = download_link.replaceAll("([^:])//", "/");
                     download_link = download_link.replaceAll("/([^/]+)/\\.\\./", "/");
