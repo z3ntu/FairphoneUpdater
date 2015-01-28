@@ -135,8 +135,9 @@ public class FairphoneUpdater extends FragmentActivity
         mCurrentState = getCurrentUpdaterState();
 
         boolean isConfigLoaded = UpdaterService.readUpdaterData(this);
-        if (!isConfigLoaded)
+        if (!isConfigLoaded) {
             mSharedPreferences.edit().remove(UpdaterService.LAST_CONFIG_DOWNLOAD_IN_MS).commit();
+        }
 
         startService();
 
