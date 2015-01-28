@@ -610,6 +610,10 @@ public class UpdaterService extends Service
                         removeReceiver = retryDownload(context);
                         break;
                     }
+                    default:
+                    {
+                        Log.d(TAG, "Status broadcast on mLatestFileDownloadId ("+mLatestFileDownloadId+"): "+ status);
+                    }
                 }
             }
 

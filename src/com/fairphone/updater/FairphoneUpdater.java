@@ -22,7 +22,6 @@ import com.fairphone.updater.data.Store;
 import com.fairphone.updater.data.UpdaterData;
 import com.fairphone.updater.data.Version;
 import com.fairphone.updater.data.VersionParserHelper;
-import com.fairphone.updater.fragments.BaseFragment;
 import com.fairphone.updater.fragments.DownloadAndRestartFragment;
 import com.fairphone.updater.fragments.InfoPopupDialog;
 import com.fairphone.updater.fragments.MainFragment;
@@ -134,10 +133,12 @@ public class FairphoneUpdater extends FragmentActivity
         
         // check current state
         mCurrentState = getCurrentUpdaterState();
-        
-        startService();
 
         boolean isConfigLoaded = UpdaterService.readUpdaterData(this);
+        if (!isConfigLoaded)
+            mSharedPreferences.edit().remove(UpdaterService.LAST_CONFIG_DOWNLOAD_IN_MS).commit();
+
+        startService();
 
         if (mDeviceVersion != null)
         {
