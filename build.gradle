@@ -3,9 +3,12 @@
 buildscript {
     repositories {
         jcenter()
+        maven { url 'http://repo1.maven.org/maven2' }
+        maven { url 'http://download.crashlytics.com/maven' }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:1.0.0'
+        classpath 'com.crashlytics.tools.gradle:crashlytics-gradle:1.+'
     }
 }
 
@@ -18,6 +21,12 @@ allprojects {
 // Module level gradle declarations
 
 apply plugin: 'com.android.application'
+
+apply plugin: 'crashlytics'
+
+repositories {
+    maven { url 'http://download.crashlytics.com/maven' }
+}
 
 android {
     compileSdkVersion 21
@@ -65,6 +74,6 @@ android {
 
 dependencies {
     compile 'com.android.support:support-v4:21.0.+'
-    compile files('libs/crashlytics.jar')
+    compile 'com.crashlytics.android:crashlytics:1.+'
     compile files('libs/RootTools-3.3.jar')
 }
