@@ -166,7 +166,7 @@ public class DownloadAndRestartFragment extends BaseFragment
 
             default:
                 Log.w(TAG, "Wrong State: " + state + "\nOnly DOWNLOAD and PREINSTALL are supported");
-                mainActivity.removeLastFragment(true);
+                mainActivity.onBackPressed();
                 return;
 
         }
@@ -178,6 +178,7 @@ public class DownloadAndRestartFragment extends BaseFragment
             public void onClick(View v)
             {
                 abortUpdateProcess();
+                mainActivity.onBackPressed();
             }
         });
     }
@@ -803,22 +804,7 @@ public class DownloadAndRestartFragment extends BaseFragment
     {
         removeLastUpdateDownload();
 
-        mainActivity.runOnUiThread(new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                mainActivity.removeLastFragment(false);
-                if (mainActivity.getFragmentCount() == 1 && mainActivity.getBackStackSize() == 0)
-                {
-                    mainActivity.changeState(UpdaterState.NORMAL);
-                    mainActivity.clearSelectedItems();
-                }
-                else
-                {
-                    mainActivity.updateStatePreference(UpdaterState.NORMAL);
-                }
-            }
-        });
+        mainActivity.clearSelectedItems();
+        mainActivity.updateStatePreference(UpdaterState.NORMAL);
     }
 }

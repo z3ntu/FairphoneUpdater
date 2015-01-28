@@ -72,7 +72,9 @@
         </activity>
         <activity
             android:name=".BetaEnabler"
-            android:label="@string/title_activity_beta_enabler" >
+            android:label="@string/title_activity_beta_enabler"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTop" >
             <intent-filter>
 				<action android:name="android.intent.action.VIEW"></action>
 				<category android:name="android.intent.category.DEFAULT"></category>

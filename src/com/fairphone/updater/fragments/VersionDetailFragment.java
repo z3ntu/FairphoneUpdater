@@ -278,7 +278,7 @@ public class VersionDetailFragment extends BaseFragment
                 if (!(download_link.startsWith("http://") || download_link.startsWith("https://")))
                 {
                     // If the download URL is a relative path, make it an absolute
-                    download_link = mainActivity.OTA_DOWNLOAD_URL + "/" + download_link;
+                    download_link = mainActivity.mOtaDownloadUrl + "/" + download_link;
                     // Sanitize URL - e.g. turn http://a.b//c/./d/../e to http://a.b/c/e
                     download_link = download_link.replaceAll("([^:])//", "/");
                     download_link = download_link.replaceAll("/([^/]+)/\\.\\./", "/");
@@ -292,6 +292,13 @@ public class VersionDetailFragment extends BaseFragment
                 Request request = createDownloadRequest(download_link + Utils.getModelAndOS(mainActivity), fileName, downloadTitle);
                 if (request != null && mDownloadManager != null)
                 {
+                    //Guarantee that only we have only one download
+                    long oldDownloadId = mainActivity.getLatestUpdateDownloadIdFromSharedPreference();
+                    if(oldDownloadId != 0){
+                        mDownloadManager.remove(oldDownloadId);
+                        mainActivity.saveLatestUpdateDownloadId(0);
+                    }
+                    
                     long mLatestUpdateDownloadId = mDownloadManager.enqueue(request);
 
                     // save it on the shared preferences

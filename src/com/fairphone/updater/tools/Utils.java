@@ -404,4 +404,15 @@ public class Utils
             }
         }
     }
+    
+    public static void printStack(String moreLogs)
+    {
+        StringBuilder sb = new StringBuilder(moreLogs);
+        sb.append("\nStack --> ");
+        for (StackTraceElement ste : Thread.currentThread().getStackTrace()) 
+        {
+            sb.append(ste.getFileName()).append(" : ").append(ste.getMethodName()).append(":").append(ste.getLineNumber()).append(" -- ");
+        }
+        Log.wtf(TAG, sb.toString());
+    }
 }

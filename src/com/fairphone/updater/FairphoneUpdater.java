@@ -17,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
+import com.crashlytics.android.internal.f;
 import com.fairphone.updater.data.DownloadableItem;
 import com.fairphone.updater.data.Store;
 import com.fairphone.updater.data.UpdaterData;
@@ -62,6 +63,8 @@ public class FairphoneUpdater extends FragmentActivity
     public static final String PREFERENCE_SELECTED_STORE_NUMBER = "SelectedStoreNumber";
     
     public static final String PREFERENCE_OTA_DOWNLOAD_URL = "OtaDownloadUrl";
+    
+    private static final String TAG_FIRST_FRAGMENT = "FIRST_FRAGMENT";
 
 
     public static enum UpdaterState
@@ -81,7 +84,7 @@ public class FairphoneUpdater extends FragmentActivity
     public static boolean DEV_MODE_ENABLED;
     private int mIsDevModeCounter;
     
-    public String OTA_DOWNLOAD_URL;
+    public String mOtaDownloadUrl;
 
     private TextView headerMainFairphoneText;
     private TextView headerMainAndroidText;
@@ -108,6 +111,8 @@ public class FairphoneUpdater extends FragmentActivity
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+        onNewIntent(getIntent());
+        
         setContentView(R.layout.activity_updater);
 
         Crashlytics.start(this);
@@ -124,7 +129,7 @@ public class FairphoneUpdater extends FragmentActivity
 
         mIsFirstTimeAppStore = false;//mSharedPreferences.getBoolean(PREFERENCE_FIRST_TIME_APP_STORE, true);
         
-        OTA_DOWNLOAD_URL = mSharedPreferences.getString(PREFERENCE_OTA_DOWNLOAD_URL, getResources().getString(R.string.downloadUrl));
+        mOtaDownloadUrl = mSharedPreferences.getString(PREFERENCE_OTA_DOWNLOAD_URL, getResources().getString(R.string.downloadUrl));
 
         // get system data
         mDeviceVersion = VersionParserHelper.getDeviceVersion(this);
@@ -300,16 +305,13 @@ public class FairphoneUpdater extends FragmentActivity
         {
             ((DownloadAndRestartFragment) fragment).abortUpdateProcess();
         }
-        else if (fragment != null && fragment instanceof MainFragment)
+        else if (fragment != null && TAG_FIRST_FRAGMENT.equals(fragment.getTag()))
         {
             clearSelectedItems();
-            clearBackStack();
             finish();
         }
-        else
-        {
-            super.onBackPressed();
-        }
+        
+        super.onBackPressed();
     }
 
     public void updateHeader(HeaderType type, String headerText, boolean showInfo)
@@ -466,7 +468,7 @@ public class FairphoneUpdater extends FragmentActivity
             }
 
             // Create a new Fragment to be placed in the activity layout
-            Fragment firstFragment = getFragmentFromState();
+            Fragment firstFragment = new MainFragment();
 
             // In case this activity was started with special instructions from
             // an
@@ -485,7 +487,10 @@ public class FairphoneUpdater extends FragmentActivity
             FragmentManager fragManager = getSupportFragmentManager();
             if (firstFragment != null && fragManager != null)
             {
-                fragManager.beginTransaction().add(R.id.fragment_holder, firstFragment).commit();
+                FragmentTransaction transation = fragManager.beginTransaction();
+                transation.add(R.id.fragment_holder, firstFragment, TAG_FIRST_FRAGMENT);
+                transation.addToBackStack(TAG_FIRST_FRAGMENT);
+                transation.commit();
             }
             else
             {
@@ -508,12 +513,22 @@ public class FairphoneUpdater extends FragmentActivity
                 else if (mSelectedStore != null)
                 {
                     firstFragment = new DownloadAndRestartFragment(false);
-                } else {
+                } else 
+                {
                     firstFragment = new MainFragment();
                     updateStatePreference(UpdaterState.NORMAL);
                 }
                 break;
             case NORMAL:
+                if(mLaunchGapps)
+                {
+                    firstFragment = startGappsInstall();  
+                }
+                else
+                {
+                    firstFragment = new MainFragment();
+                }
+                break;
             default:
                 firstFragment = new MainFragment();
                 break;
@@ -527,6 +542,14 @@ public class FairphoneUpdater extends FragmentActivity
         Fragment topFragment = getTopFragment();
         if ( newFragment != null && ( topFragment == null || !newFragment.getClass().equals(topFragment.getClass())) )
         {
+            if(topFragment != null && newFragment instanceof MainFragment)
+            {
+                if(TAG_FIRST_FRAGMENT.equals(topFragment.getTag()))
+                {
+                    return;
+                }
+            }
+            
             FragmentManager fragManager = getSupportFragmentManager();
             if (fragManager != null)
             {
@@ -536,9 +559,6 @@ public class FairphoneUpdater extends FragmentActivity
                 // and add the transaction to the back stack so the user can
                 // navigate
                 // back
-                // transaction.setCustomAnimations(R.animator.fade_in_fragment,
-                // R.animator.fade_out_fragment, R.animator.fade_in_fragment,
-                // R.animator.fade_out_fragment);
                 transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
                 transaction.replace(R.id.fragment_holder, newFragment);
                 transaction.addToBackStack(null);
@@ -553,89 +573,13 @@ public class FairphoneUpdater extends FragmentActivity
         }
     }
 
-    public void removeLastFragment(final boolean forceFinish)
-    {
- 
-                FragmentManager fragManager = getSupportFragmentManager();
-                if (fragManager != null)
-                {
-                    fragManager.executePendingTransactions();
-                    boolean popSuccess = fragManager.popBackStackImmediate();
-                    if (forceFinish && !popSuccess)
-                    {
-                        finish();
-                    }
-                }
-                else
-                {
-                    Log.e(TAG, "removeLastFragment - Couldn't get FragmentManager");
-                }
-
-    }
-
-    public int getFragmentCount()
-    {
-        int listSize = 0;
-        FragmentManager fragManager = getSupportFragmentManager();
-        if (fragManager != null)
-        {
-            List<Fragment> allFragments = fragManager.getFragments();
-            if (allFragments != null)
-            {
-                listSize = allFragments.size();
-            }
-        }
-        else
-        {
-            Log.e(TAG, "getFragmentCount - Couldn't get FragmentManager");
-        }
-
-        Log.d(TAG, "Fragment list size: " + listSize);
-        return listSize;
-    }
-
-    public int getBackStackSize()
-    {
-        int backStackSize = 0;
-        FragmentManager fragManager = getSupportFragmentManager();
-        if (fragManager != null)
-        {
-            backStackSize = fragManager.getBackStackEntryCount();
-        }
-        else
-        {
-            Log.e(TAG, "getBackStackSize - Couldn't get FragmentManager");
-        }
-
-        Log.d(TAG, "Back stack size: " + backStackSize);
-        return backStackSize;
-    }
-
-    public void clearBackStack()
-    {
-        FragmentManager fragManager = getSupportFragmentManager();
-        if (fragManager != null)
-        {
-            int backStackSize = fragManager.getBackStackEntryCount();
-
-            for (int i = 0; i < backStackSize; i++)
-            {
-                removeLastFragment(false);
-            }
-        }
-        else
-        {
-            Log.e(TAG, "clearBackStack - Couldn't get FragmentManager");
-        }
-    }
-
     public Fragment getTopFragment()
     {
         Fragment topFragment = null;
         FragmentManager fragManager = getSupportFragmentManager();
         if (fragManager != null)
         {
-            return fragManager.findFragmentByTag(null);
+            topFragment = fragManager.findFragmentById(R.id.fragment_holder);
         }
         else
         {
@@ -817,7 +761,9 @@ public class FairphoneUpdater extends FragmentActivity
     @Override
     protected void onNewIntent(Intent intent)
     {
-        // super.onNewIntent(intent);
+        super.onNewIntent(intent);
+        setIntent(intent);
+        
         mLaunchGapps = false;
 
         if (intent.getAction().equals(GappsInstallerHelper.EXTRA_START_GAPPS_INSTALL))
@@ -832,25 +778,18 @@ public class FairphoneUpdater extends FragmentActivity
                 mLaunchGapps = true;
             }
         }
-
-        if (mLaunchGapps)
-        {
-            getSelectedStoreFromSharedPreferences();
-            startGappsInstall();
-        }
     }
 
     @Override
     protected void onResume()
     {
         super.onResume();
-        // Intent i = getIntent();
-        //
-        // // check current state
+
+        // check current state
         mCurrentState = getCurrentUpdaterState();
 
         startService();
-        //
+
         boolean isConfigLoaded = UpdaterService.readUpdaterData(this);
         mDeviceVersion = VersionParserHelper.getDeviceVersion(this);
 
@@ -865,27 +804,11 @@ public class FairphoneUpdater extends FragmentActivity
 
         getSelectedVersionFromSharedPreferences();
         getSelectedStoreFromSharedPreferences();
-        //
-        //
-        // if (i != null &&
-        // i.getBooleanExtra(GappsInstallerHelper.EXTRA_START_GAPPS_INSTALL,
-        // false))
-        // {
-        // startGappsInstall();
-        // }
-        // else
-        // {
-        if (mLaunchGapps)
-        {
-            startGappsInstall();
-        }
-//        else
-//        {
-//            changeFragment(getFragmentFromState());
-//        }
+        
+        changeFragment(getFragmentFromState());
     }
 
-    public void startGappsInstall()
+    public Fragment startGappsInstall()
     {
         getSelectedStoreFromSharedPreferences();
 
@@ -894,8 +817,13 @@ public class FairphoneUpdater extends FragmentActivity
         if (mSelectedStore != null)
         {
             fragment.setupFragment(mSelectedStore, DetailLayoutType.APP_STORE);
-            changeFragment(fragment);
         }
+        else
+        {
+            fragment = null;
+        }
+        
+        return fragment;
     }
 
     private void startService()

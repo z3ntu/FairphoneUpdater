@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -29,7 +30,7 @@ import com.fairphone.updater.gappsinstaller.GappsInstallerHelper;
 public class MainFragment extends BaseFragment
 {
 
-    private static String SHARED_PREFERENCES_ENABLE_GAPPS = "SHARED_PREFERENCES_ENABLE_GAPPS";
+    private static String SHARED_PREFERENCES_ENABLE_GAPPS = "SHARED_PREFERENCES_ENABLE_GAPPS_POPUP";
 
     private LinearLayout mVersionUpToDateGroup;
     private TextView mVersionUpToDateCurrentVersionNameText;
@@ -92,13 +93,14 @@ public class MainFragment extends BaseFragment
         mGappsButton = (Button) view.findViewById(R.id.install_gapps_button);
         mGappsDismissButton = (Button) view.findViewById(R.id.install_gapps_dismiss_button);
         mGappsIcon = (RelativeLayout) view.findViewById(R.id.gapps_reminder_group);
-
-        enableGappsGroup(getGappsInstalationButtonState());
     }
 
     private boolean getGappsInstalationButtonState()
     {
-        return mSharedPreferences.getBoolean(SHARED_PREFERENCES_ENABLE_GAPPS, true) && !GappsInstallerHelper.areGappsInstalled() && getSelectedStoreFromSharedPreferences() != null;
+        boolean showGappsGroup = mSharedPreferences.getBoolean(SHARED_PREFERENCES_ENABLE_GAPPS, true);
+        boolean gappsNotInstalled = !GappsInstallerHelper.areGappsInstalled();
+        boolean hasStoreInfo = getSelectedStoreFromSharedPreferences() != null;
+        return  showGappsGroup && gappsNotInstalled && hasStoreInfo;
     }
     
     protected Store getSelectedStoreFromSharedPreferences()
@@ -164,13 +166,13 @@ public class MainFragment extends BaseFragment
         else
         {
             mGappsIcon.setVisibility(View.GONE);
-            setGappsInstalationButtonState(false);
         }
     }
 
     private void startGappsInstall()
     {
-        mainActivity.startGappsInstall();
+        Fragment gappsFragment = mainActivity.startGappsInstall();
+        mainActivity.changeFragment(gappsFragment);
     }
 
     private void updateOtherOSOptionsGroup()
@@ -299,6 +301,7 @@ public class MainFragment extends BaseFragment
         updateCurrentVersionGroup();
         toogleUpdateAvailableGroup();
         updateOtherOSOptionsGroup();
+        enableGappsGroup(getGappsInstalationButtonState());
     }
 
     @Override
@@ -325,6 +328,7 @@ public class MainFragment extends BaseFragment
                     if (mainActivity.getCurrentUpdaterState() == UpdaterState.NORMAL)
                     {
                         toogleUpdateAvailableGroup();
+                        enableGappsGroup(getGappsInstalationButtonState());
                     }
                 }
                 else if (FairphoneUpdater.FAIRPHONE_UPDATER_CONFIG_DOWNLOAD_FAILED.equals(action))

@@ -237,6 +237,13 @@ public class UpdaterService extends Service
 
         if (request != null && mDownloadManager != null)
         {
+            //Guarantee that only we have only one download
+            long oldDownloadId = mSharedPreferences.getLong(PREFERENCE_LAST_CONFIG_DOWNLOAD_ID, 0);
+            if(oldDownloadId != 0){
+                mDownloadManager.remove(oldDownloadId);
+                saveLatestDownloadId(0);
+            }
+            
             mLatestFileDownloadId = mDownloadManager.enqueue(request);
             saveLatestDownloadId(mLatestFileDownloadId);
             
