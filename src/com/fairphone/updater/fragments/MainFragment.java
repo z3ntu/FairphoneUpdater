@@ -30,7 +30,7 @@ import com.fairphone.updater.gappsinstaller.GappsInstallerHelper;
 public class MainFragment extends BaseFragment
 {
 
-    private static String SHARED_PREFERENCES_ENABLE_GAPPS = "SHARED_PREFERENCES_ENABLE_GAPPS_POPUP";
+    public static String SHARED_PREFERENCES_ENABLE_GAPPS = "SHARED_PREFERENCES_ENABLE_GAPPS_POPUP";
 
     private LinearLayout mVersionUpToDateGroup;
     private TextView mVersionUpToDateCurrentVersionNameText;

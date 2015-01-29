@@ -766,18 +766,23 @@ public class FairphoneUpdater extends FragmentActivity
         
         mLaunchGapps = false;
 
-        if (intent.getAction().equals(GappsInstallerHelper.EXTRA_START_GAPPS_INSTALL))
+        if (checkStartGappsInstall(intent))
         {
             mLaunchGapps = true;
         }
         else
         {
             intent = getParentActivityIntent();
-            if (intent != null && intent.getAction().equals(GappsInstallerHelper.EXTRA_START_GAPPS_INSTALL))
+            if (checkStartGappsInstall(intent))
             {
                 mLaunchGapps = true;
             }
         }
+    }
+
+    private boolean checkStartGappsInstall(Intent intent)
+    {
+        return intent != null && GappsInstallerHelper.EXTRA_START_GAPPS_INSTALL.equals(intent.getAction());
     }
 
     @Override

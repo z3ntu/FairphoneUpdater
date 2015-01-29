@@ -633,6 +633,7 @@ public class DownloadAndRestartFragment extends BaseFragment
                 mainActivity.clearSelectedItems();
                 clearConfigFile();
                 mSharedPreferences.edit().remove(UpdaterService.LAST_CONFIG_DOWNLOAD_IN_MS).commit();
+                mSharedPreferences.edit().remove(MainFragment.SHARED_PREFERENCES_ENABLE_GAPPS).commit();
                 Shell.runRootCommand(new CommandCapture(0, "reboot recovery"));
             } catch (IOException e)
             {
