@@ -620,13 +620,16 @@ public class FairphoneUpdater extends FragmentActivity
     public boolean isUpdateAvailable()
     {
         boolean update = false;
-        if (BETA_MODE_ENABLED)
+        if (mLatestVersion != null)
         {
-            update = true;
-        }
-        else if (mLatestVersion != null)
-        {
-            update = mLatestVersion.isNewerVersionThan(mDeviceVersion);
+	        if (BETA_MODE_ENABLED)
+	        {
+		        update = true;
+	        }
+	        else
+	        {
+		        update = mLatestVersion.isNewerVersionThan(mDeviceVersion);
+	        }
         }
         return update;
     }
