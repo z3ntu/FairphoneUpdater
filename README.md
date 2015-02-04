@@ -23,7 +23,7 @@ Ex: http://www.server.com/updater.zip?model=FP1U&os=4.2.2&b_n=1.8&ota_v_n=6&d=14
 <?xml version="1.0" encoding="utf-8"?>
 <updater>
   <releases> ---------> This element will have all the versions available.
-    <aosp latest="2"> ---------> This element will have all the stock android versions available. The "latest" attribute will have the version number of the latest version.
+    <aosp latest="2"> ---------> This element will have all the stock android versions available. The "latest" attribute will have the version number of the latest version. The version corresponding to the latest id must appear in the versions list below.
       <version number="1"> ---------> This element will have all the information about a version. The "number" attribute will have the version number.
         <name>Version Name</name> ---------> This element will have the version name.
         <build_number>Version Build Number</build_number> ---------> This element will have the version build number.
@@ -41,7 +41,7 @@ Ex: http://www.server.com/updater.zip?model=FP1U&os=4.2.2&b_n=1.8&ota_v_n=6&d=14
         (...)
       </version>
     </aosp>
-    <fairphone latest="2"> ---------> This element will have all the fairphone versions available. The "latest" attribute will have the version number of the latest version.
+    <fairphone latest="2"> ---------> This element will have all the fairphone versions available. The "latest" attribute will have the version number of the latest version. The version corresponding to the latest id must appear in the versions list below.
       <version number="1"> ---------> This element will have all the information about a version. The "number" attribute will have the version number.
     		(...) ---------> Will have the same information described above in the AOSP versions.
     	</version>
