@@ -31,8 +31,7 @@ public class VersionListFragment extends BaseFragment
 
     private ListLayoutType mListLayoutType;
     private List<Version> mVersionList;
-    private List<Store> mStoreList;
-    private LinearLayout mVersionListContainer;
+	private LinearLayout mVersionListContainer;
     private Button mLatestVersionDetailsButton;
     private TextView mLatestVersionInstalledIndicator;
     private LinearLayout mOlderVersionsGroup;
@@ -41,15 +40,14 @@ public class VersionListFragment extends BaseFragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         // Inflate the layout for this fragment
-        View view = setupLayout(inflater, container);
 
-        return view;
+	    return setupLayout(inflater, container);
     }
 
     private View setupLayout(LayoutInflater inflater, ViewGroup container)
     {
 
-        View view = null;
+        View view;
         Resources resources = mainActivity.getResources();
         switch (mListLayoutType)
         {
@@ -60,7 +58,6 @@ public class VersionListFragment extends BaseFragment
                 mOlderVersionsGroup = (LinearLayout) view.findViewById(R.id.older_versions_group);
                 mVersionListContainer = (LinearLayout) view.findViewById(R.id.version_list_container);
 
-                setupAppStoresLatestVersion();
                 setupAppStoreVersions(container);
                 break;
             case ANDROID:
@@ -99,7 +96,7 @@ public class VersionListFragment extends BaseFragment
         Button storeLayout;
         LayoutInflater inflater = getActivity().getLayoutInflater();
 
-        mStoreList = UpdaterData.getInstance().getAppStoreList();
+	    List<Store> mStoreList = UpdaterData.getInstance().getAppStoreList();
 
         for (Store store : mStoreList)
         {
@@ -122,7 +119,7 @@ public class VersionListFragment extends BaseFragment
                     {
                         VersionDetailFragment versionDetail = new VersionDetailFragment(false);
 
-                        versionDetail.setupFragment(selectedStore, DetailLayoutType.APP_STORE);
+                        versionDetail.setupAppStoreFragment(selectedStore);
 
                         mainActivity.changeFragment(versionDetail);
                     }
@@ -138,18 +135,6 @@ public class VersionListFragment extends BaseFragment
         {
             mOlderVersionsGroup.setVisibility(View.GONE);
         }
-    }
-
-    private void setupAppStoresLatestVersion()
-    {
-        // TODO Auto-generated method stub
-        
-    }
-
-    @Override
-    public void onDetach()
-    {
-        super.onDetach();
     }
 
     private void setupFairphoneVersions(ViewGroup root)

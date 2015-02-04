@@ -70,7 +70,7 @@ public class OtherOSOptionsFragment extends BaseFragment
 
     private void setupAndroidVersionsButton()
     {
-        if (!UpdaterData.getInstance().isAOSPVersionListEmpty())
+        if (UpdaterData.getInstance().isAOSPVersionListNotEmpty())
         {
             androidOSButton.setVisibility(View.VISIBLE);
             androidOSButton.setOnClickListener(new OnClickListener()
@@ -93,7 +93,7 @@ public class OtherOSOptionsFragment extends BaseFragment
 
     private void setupOlderFairphoneVersionsButton()
     {
-        if (!UpdaterData.getInstance().isFairphoneVersionListEmpty())
+        if (UpdaterData.getInstance().isFairphoneVersionListNotEmpty())
         {
             olderFairphoneOSButton.setVisibility(View.VISIBLE);
             olderFairphoneOSButton.setOnClickListener(new OnClickListener()

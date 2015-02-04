@@ -1,5 +1,6 @@
 package com.fairphone.updater.fragments;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.view.KeyEvent;
@@ -19,6 +20,7 @@ import android.widget.TextView.OnEditorActionListener;
 import com.fairphone.updater.R;
 import com.fairphone.updater.fragments.VersionDetailFragment.DetailLayoutType;
 
+@SuppressLint("ValidFragment")
 public class ConfirmationPopupDialog extends DialogFragment implements OnEditorActionListener
 {
     public interface ConfirmationPopupDialogListener
@@ -26,15 +28,13 @@ public class ConfirmationPopupDialog extends DialogFragment implements OnEditorA
         void onFinishPopUpDialog(boolean result);
     }
 
-    private String mVersion;
-    private ConfirmationPopupDialogListener mCallback;
-    private DetailLayoutType mLayoutType;
+    private final String mVersion;
+    private final ConfirmationPopupDialogListener mCallback;
+    private final DetailLayoutType mLayoutType;
     private Button mOkButton;
-    private Button mCancelButton;
-    private CheckBox mConfirmationCheckbox;
-    private boolean mIsOSChange;
-    private boolean mIsOlderVersion;
-    private boolean mHasEraseAllDataWarning;
+	private final boolean mIsOSChange;
+    private final boolean mIsOlderVersion;
+    private final boolean mHasEraseAllDataWarning;
 
     public ConfirmationPopupDialog(String version, boolean isOSChange, boolean isOlderVersion, boolean hasEraseAllDataWarning, DetailLayoutType layoutType,
             ConfirmationPopupDialogListener callback)
@@ -54,8 +54,8 @@ public class ConfirmationPopupDialog extends DialogFragment implements OnEditorA
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-        View view = null;
-        TextView versionNameText = null;
+        View view;
+        TextView versionNameText;
 
         switch (mLayoutType)
         {
@@ -108,28 +108,24 @@ public class ConfirmationPopupDialog extends DialogFragment implements OnEditorA
             }
         });
 
-        mCancelButton = (Button) view.findViewById(R.id.confirmation_no_button);
+	    Button mCancelButton = (Button) view.findViewById(R.id.confirmation_no_button);
 
-        mCancelButton.setOnClickListener(new OnClickListener()
-        {
+        mCancelButton.setOnClickListener(new OnClickListener() {
 
-            @Override
-            public void onClick(View v)
-            {
-                ConfirmationPopupDialog.this.dismiss();
-                mCallback.onFinishPopUpDialog(false);
-            }
+	        @Override
+	        public void onClick(View v) {
+		        ConfirmationPopupDialog.this.dismiss();
+		        mCallback.onFinishPopUpDialog(false);
+	        }
         });
 
-        mConfirmationCheckbox = (CheckBox) view.findViewById(R.id.confirmation_checkbox);
-        mConfirmationCheckbox.setOnCheckedChangeListener(new OnCheckedChangeListener()
-        {
+	    CheckBox mConfirmationCheckbox = (CheckBox) view.findViewById(R.id.confirmation_checkbox);
+        mConfirmationCheckbox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
-            {
-                mOkButton.setEnabled(isChecked);
-            }
+	        @Override
+	        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+		        mOkButton.setEnabled(isChecked);
+	        }
         });
 
         return view;

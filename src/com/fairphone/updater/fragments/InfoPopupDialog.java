@@ -1,5 +1,6 @@
 package com.fairphone.updater.fragments;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.view.KeyEvent;
@@ -16,12 +17,12 @@ import android.widget.TextView.OnEditorActionListener;
 import com.fairphone.updater.R;
 import com.fairphone.updater.fragments.VersionDetailFragment.DetailLayoutType;
 
+@SuppressLint("ValidFragment")
 public class InfoPopupDialog extends DialogFragment implements OnEditorActionListener
 {
-    private DetailLayoutType mLayoutType;
-    private Button mOkButton;
+    private final DetailLayoutType mLayoutType;
 
-    public InfoPopupDialog(DetailLayoutType layoutType)
+	public InfoPopupDialog(DetailLayoutType layoutType)
     {
         // Empty constructor required for DialogFragment
         super();
@@ -33,7 +34,7 @@ public class InfoPopupDialog extends DialogFragment implements OnEditorActionLis
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-        View view = null;
+        View view;
 
         switch (mLayoutType)
         {
@@ -48,15 +49,13 @@ public class InfoPopupDialog extends DialogFragment implements OnEditorActionLis
                 break;
         }
 
-        mOkButton = (Button) view.findViewById(R.id.confirmation_yes_button);
+	    Button mOkButton = (Button) view.findViewById(R.id.confirmation_yes_button);
 
-        mOkButton.setOnClickListener(new OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                InfoPopupDialog.this.dismiss();
-            }
+        mOkButton.setOnClickListener(new OnClickListener() {
+	        @Override
+	        public void onClick(View v) {
+		        InfoPopupDialog.this.dismiss();
+	        }
         });
 
         return view;

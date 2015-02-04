@@ -22,7 +22,7 @@ public class Store extends DownloadableItem  implements Comparable<Store>
     }
 
     @Override
-    public int compareTo(Store another)
+    public int compareTo(@SuppressWarnings("NullableProblems") Store another)
     {
         int retVal;
         if (another != null)

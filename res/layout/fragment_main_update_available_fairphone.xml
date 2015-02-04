@@ -1,14 +1,13 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/update_available_group"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/blue"
-    android:gravity="center_horizontal"
-    android:orientation="vertical"
-    android:paddingLeft="@dimen/main_padding"
-    android:paddingRight="@dimen/main_padding"
-    android:visibility="visible" >
+              android:id="@+id/update_available_group"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@color/blue"
+              android:gravity="center_horizontal"
+              android:orientation="vertical"
+              android:paddingLeft="@dimen/main_padding"
+              android:paddingRight="@dimen/main_padding"
+              android:visibility="visible">
 
     <TextView
         style="@style/TextRegular16BlueDark"

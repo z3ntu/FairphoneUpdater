@@ -16,18 +16,6 @@
 
 package com.fairphone.updater.tools;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.math.BigInteger;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.NoSuchElementException;
-import java.util.Scanner;
-import java.util.concurrent.TimeoutException;
-
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningServiceInfo;
 import android.content.Context;
@@ -49,15 +37,27 @@ import com.stericson.RootTools.exceptions.RootDeniedException;
 import com.stericson.RootTools.execution.CommandCapture;
 import com.stericson.RootTools.execution.Shell;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.NoSuchElementException;
+import java.util.Scanner;
+import java.util.concurrent.TimeoutException;
+
 public class Utils
 {
 
     private static final String TAG = Utils.class.getSimpleName();
 
-    public static double getPartitionSizeInGBytes(File path)
+    private static double getPartitionSizeInGBytes(File path)
     {
         double availableBlocks = getPartitionSizeInBytes(path);
-        double sizeInGB = (((double) availableBlocks / 1024d) / 1024d) / 1024d;
+        double sizeInGB = ((availableBlocks / 1024d) / 1024d) / 1024d;
         Log.d(TAG, path.getPath() + " size(GB): " + sizeInGB);
         return sizeInGB;
     }
@@ -65,25 +65,44 @@ public class Utils
     public static double getPartitionSizeInMBytes(File path)
     {
         double availableBlocks = getPartitionSizeInBytes(path);
-        double sizeInMB = (((double) availableBlocks / 1024d)) / 1024d;
+        double sizeInMB = ((availableBlocks / 1024d)) / 1024d;
         Log.d(TAG, path.getPath() + " size(MB): " + sizeInMB);
         return sizeInMB;
     }
 
-    public static long getPartitionSizeInBytes(File path)
+    private static long getPartitionSizeInBytes(File path)
     {
         android.os.StatFs stat = new android.os.StatFs(path.getPath());
-        long blockSize = stat.getBlockSize();
-        long availableBlocks = stat.getBlockCount() * blockSize;
-        return availableBlocks;
+	    long blockSize, blockCount;
+	    if (Build.VERSION.SDK_INT >= 18) {
+		    blockSize = stat.getBlockSizeLong();
+		    blockCount = stat.getBlockCountLong();
+	    } else {
+		    // deprectation warnings disabled due to the need to support SDK 17 (FP1)
+		    //noinspection deprecation
+		    blockSize = stat.getBlockSize();
+		    //noinspection deprecation
+		    blockCount = stat.getBlockCount();
+	    }
+	    return blockCount * blockSize;
     }
 
     public static long getAvailablePartitionSizeInBytes(File path)
     {
         android.os.StatFs stat = new android.os.StatFs(path.getPath());
-        long blockSize = stat.getBlockSize();
-        long availableBlocks = stat.getAvailableBlocks() * blockSize;
-        return availableBlocks;
+
+	    long blockSize, blockCount;
+	    if (Build.VERSION.SDK_INT >= 18) {
+		    blockSize = stat.getBlockSizeLong();
+		    blockCount = stat.getAvailableBlocksLong();
+	    } else {
+		    // deprectation warnings disabled due to the need to support SDK 17 (FP1)
+		    //noinspection deprecation
+		    blockSize = stat.getBlockSize();
+		    //noinspection deprecation
+		    blockCount = stat.getAvailableBlocks();
+	    }
+	    return blockCount * blockSize;
     }
 
     public static void startUpdaterService(Context context, boolean forceDownload)
@@ -110,7 +129,7 @@ public class Utils
         }
     }
 
-    public static boolean isServiceRunning(Context context)
+    private static boolean isServiceRunning(Context context)
     {
         boolean isRunning = false;
         ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
@@ -145,7 +164,7 @@ public class Utils
         }
     }
     
-    public static void downloadConfigFile(Context context) {
+    private static void downloadConfigFile(Context context) {
         downloadConfigFile(context, false);
     }
 
@@ -163,12 +182,12 @@ public class Utils
     public static boolean checkMD5(String md5, File updateFile)
     {
 
-        if (!updateFile.exists())
+        if (updateFile == null || !updateFile.exists())
         {
             return false;
         }
 
-        if (md5 == null || md5.equals("") || updateFile == null)
+        if (md5 == null || md5.equals("") )
         {
             Log.e(TAG, "MD5 String NULL or UpdateFile NULL");
             return false;
@@ -184,7 +203,7 @@ public class Utils
         return calculatedDigest.equalsIgnoreCase(md5);
     }
 
-    public static String calculateMD5(File updateFile)
+    private static String calculateMD5(File updateFile)
     {
         MessageDigest digest;
         try
@@ -243,13 +262,13 @@ public class Utils
 
         // attach the model and the os
         sb.append("?");
-        sb.append("model=" + Build.MODEL.replaceAll("\\s", ""));
+        sb.append("model=").append(Build.MODEL.replaceAll("\\s", ""));
         Version currentVersion = VersionParserHelper.getDeviceVersion(context);
 
         if (currentVersion != null)
         {
             sb.append("&");
-            sb.append("os=" + currentVersion.getAndroidVersion());
+            sb.append("os=").append(currentVersion.getAndroidVersion());
         }
 
         return sb.toString();
@@ -262,16 +281,18 @@ public class Utils
         if (files != null)
         {
             Log.d(TAG, "Size: " + files.length);
-            for (int i = 0; i < files.length; i++)
-            {
-                String filename = files[i].getName();
+	        for (File file : files) {
+		        String filename = file.getName();
 
-                if (filename.endsWith(".zip"))
-                {
-                    files[i].delete();
-                    Log.d(TAG, "Deleted file " + filename);
-                }
-            }
+		        if (filename.endsWith(".zip")) {
+			        final boolean delete = file.delete();
+			        if (delete) {
+				        Log.d(TAG, "Deleted file " + filename);
+			        } else {
+				        Log.d(TAG, "Failed to delete file " + filename);
+			        }
+		        }
+	        }
         }
     }
 
@@ -279,7 +300,7 @@ public class Utils
     {
         File path = Environment.getDataDirectory();
         double sizeInGB = Utils.getPartitionSizeInGBytes(path);
-        double roundedSize = (double) Math.ceil(sizeInGB * 100d) / 100d;
+        double roundedSize = Math.ceil(sizeInGB * 100d) / 100d;
         Log.d(TAG, "/data size: " + roundedSize + "Gb");
 
         double fp1DataPartitionSize = (double) resources.getInteger(R.integer.FP1DataPartitionSizeMb) / 100d;
@@ -343,10 +364,10 @@ public class Utils
         return title;
     }
 
-    public static boolean isDeviceSupported(Context context)
+    public static boolean isDeviceUnsupported(Context context)
     {
         Version deviceVersion = VersionParserHelper.getDeviceVersion(context);
-        return deviceVersion != null && !TextUtils.isEmpty(deviceVersion.getName());
+        return deviceVersion == null || TextUtils.isEmpty(deviceVersion.getName());
     }
     
     public static String getprop(String name, String defaultValue)
@@ -354,7 +375,7 @@ public class Utils
         ProcessBuilder pb = new ProcessBuilder("/system/bin/getprop", name);
         pb.redirectErrorStream(true);
 
-        Process p = null;
+        Process p;
         InputStream is = null;
         try
         {
@@ -383,24 +404,21 @@ public class Utils
                     is.close();
                 } catch (Exception e)
                 {
+	                Log.d(TAG, "Unexpected issue: "+e.getLocalizedMessage() );
                 }
             }
         }
         return defaultValue;
     }
     
-    public static void setprop(Context context, String key, String value)
+    public static void setprop(String key, String value)
     {
         if(RootTools.isAccessGiven()) {
             CommandCapture command = new CommandCapture(0, "setprop "+key+" "+value);
             try {
                 Shell.runRootCommand(command);
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (TimeoutException e) {
-                e.printStackTrace();
-            } catch (RootDeniedException e) {
-                e.printStackTrace();
+            } catch (IOException | TimeoutException | RootDeniedException e) {
+	            Log.d(TAG, "Failed to setprop: " + e.getLocalizedMessage());
             }
         }
     }

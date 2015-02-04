@@ -9,8 +9,8 @@ import com.fairphone.updater.FairphoneUpdater;
 
 public class BaseFragment extends Fragment
 {
-    protected FairphoneUpdater mainActivity;
-    protected SharedPreferences mSharedPreferences;
+    FairphoneUpdater mainActivity;
+    SharedPreferences mSharedPreferences;
 
     @Override
     public void onAttach(Activity activity)

@@ -29,35 +29,35 @@ import java.util.ArrayList;
 
 public class Version extends DownloadableItem implements Comparable<Version>
 {
-    public static final String FAIRPHONE_VERSION_NUMBER = "FairphoneUpdateVersionNumber";
+    private static final String FAIRPHONE_VERSION_NUMBER = "FairphoneUpdateVersionNumber";
 
-    public static final String FAIRPHONE_VERSION_NAME = "FairphoneUpdateVersionName";
+    private static final String FAIRPHONE_VERSION_NAME = "FairphoneUpdateVersionName";
 
-    public static final String FAIRPHONE_VERSION_BUILD_NUMBER = "FairphoneUpdateVersionBuildNumber";
+    private static final String FAIRPHONE_VERSION_BUILD_NUMBER = "FairphoneUpdateVersionBuildNumber";
 
-    public static final String FAIRPHONE_ANDROID_VERSION = "FairphoneUpdateAndroidVersion";
+    private static final String FAIRPHONE_ANDROID_VERSION = "FairphoneUpdateAndroidVersion";
 
-    public static final String FAIRPHONE_VERSION_OTA_DOWNLOAD_LINK = "FairphoneUpdateVersionOTADownloadLink";
+    private static final String FAIRPHONE_VERSION_OTA_DOWNLOAD_LINK = "FairphoneUpdateVersionOTADownloadLink";
 
-    public static final String FAIRPHONE_VERSION_THUMBNAIL_DOWNLOAD_LINK = "FairphoneUpdateVersionThumbnailDownloadLink";
+    private static final String FAIRPHONE_VERSION_THUMBNAIL_DOWNLOAD_LINK = "FairphoneUpdateVersionThumbnailDownloadLink";
 
-    public static final String FAIRPHONE_VERSION_OTA_MD5 = "FairphoneUpdateVersionOTAMD5";
+    private static final String FAIRPHONE_VERSION_OTA_MD5 = "FairphoneUpdateVersionOTAMD5";
 
     public static final String IMAGE_TYPE_AOSP = "AOSP";
 
     public static final String IMAGE_TYPE_FAIRPHONE = "FAIRPHONE";
 
-    protected String mImageType;
+    private String mImageType;
 
-    protected String mAndroidVersion;
+    private String mAndroidVersion;
 
-    protected String mBetaStatus;
+    private String mBetaStatus;
 
-    protected boolean mErasePartitionsWarning;
+    private boolean mErasePartitionsWarning;
 
     public Version()
     {
-        mDependencies = new ArrayList<Integer>();
+        mDependencies = new ArrayList<>();
 
         mNumber = 0;
         mName = "";
@@ -106,7 +106,7 @@ public class Version extends DownloadableItem implements Comparable<Version>
         return version;
     }
 
-    public void saveToSharedPreferences(Context context)
+    void saveToSharedPreferences(Context context)
     {
         SharedPreferences sharedPrefs = context.getSharedPreferences(FairphoneUpdater.FAIRPHONE_UPDATER_PREFERENCES, Context.MODE_PRIVATE);
 
@@ -180,7 +180,7 @@ public class Version extends DownloadableItem implements Comparable<Version>
         return Version.getImageTypeDescription(mImageType, resources);
     }
 
-    public static String getImageTypeDescription(String imageType, Resources resources)
+    private static String getImageTypeDescription(String imageType, Resources resources)
     {
         String description = resources.getString(R.string.fairphone);
         if (!TextUtils.isEmpty(imageType))
@@ -202,17 +202,13 @@ public class Version extends DownloadableItem implements Comparable<Version>
         String retVal = "";
         if (!TextUtils.isEmpty(mAndroidVersion))
         {
-            StringBuilder sb = new StringBuilder();
-            sb.append(resources.getString(R.string.android));
-            sb.append(" ");
-            sb.append(mAndroidVersion);
-            retVal = sb.toString();
+	        retVal = resources.getString(R.string.android) + " " + mAndroidVersion;
         }
         return retVal;
     }
-    
+
     @Override
-    public int compareTo(Version another)
+    public int compareTo(@SuppressWarnings("NullableProblems") Version another)
     {
         int retVal;
         if (another != null)

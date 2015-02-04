@@ -80,39 +80,37 @@ public class VersionParserHelper
         return version;
     }
 
-    public static String getSystemData(Context context, String property, boolean useDefaults)
+    private static String getSystemData(Context context, String property, boolean useDefaults)
     {
+		String result;
+	    switch (property) {
+		    case CURRENT_VERSION_NUMBER:
+			    result = Utils.getprop(CURRENT_VERSION_NUMBER, useDefaults ? String.valueOf(context.getResources().getInteger(R.integer.defaultVersionNumber)) : "");
+			    break;
+		    case CURRENT_VERSION_NAME:
+			    result = Utils.getprop(CURRENT_VERSION_NAME, useDefaults ? context.getResources().getString(R.string.defaultVersionName) : "");
+			    break;
+		    case CURRENT_ANDROID_VERSION:
+			    result = Utils.getprop(CURRENT_ANDROID_VERSION, useDefaults ? context.getResources().getString(R.string.defaultAndroidVersionNumber) : "");
+			    break;
+		    case CURRENT_VERSION_BUILD_NUMBER:
+			    result = Utils.getprop(CURRENT_VERSION_BUILD_NUMBER, useDefaults ? context.getResources().getString(R.string.defaultBuildNumber) : "");
+			    break;
+		    case CURRENT_VERSION_IMAGE_TYPE:
+			    result = Utils.getprop(CURRENT_VERSION_IMAGE_TYPE, useDefaults ? context.getResources().getString(R.string.defaultImageType) : "");
+			    break;
+		    case CURRENT_VERSION_BUILD_DATE:
+			    result = Utils.getprop(CURRENT_VERSION_BUILD_DATE, useDefaults ? context.getResources().getString(R.string.defaultBuildDate) : "");
+			    break;
+		    case CURRENT_BETA_STATUS:
+			    result = Utils.getprop(CURRENT_BETA_STATUS, useDefaults ? context.getResources().getString(R.string.defaultBetaStatus) : "0");
+			    break;
+		    default:
+			    result = "";
+			    break;
+	    }
 
-        if (property.equals(CURRENT_VERSION_NUMBER))
-        {
-            return Utils.getprop(CURRENT_VERSION_NUMBER, useDefaults ? String.valueOf(context.getResources().getInteger(R.integer.defaultVersionNumber)) : "");
-        }
-        else if (property.equals(CURRENT_VERSION_NAME))
-        {
-            return Utils.getprop(CURRENT_VERSION_NAME, useDefaults ? context.getResources().getString(R.string.defaultVersionName) : "");
-        }
-        else if (property.equals(CURRENT_ANDROID_VERSION))
-        {
-            return Utils.getprop(CURRENT_ANDROID_VERSION, useDefaults ? context.getResources().getString(R.string.defaultAndroidVersionNumber) : "");
-        }
-        else if (property.equals(CURRENT_VERSION_BUILD_NUMBER))
-        {
-            return Utils.getprop(CURRENT_VERSION_BUILD_NUMBER, useDefaults ? context.getResources().getString(R.string.defaultBuildNumber) : "");
-        }
-        else if (property.equals(CURRENT_VERSION_IMAGE_TYPE))
-        {
-            return Utils.getprop(CURRENT_VERSION_IMAGE_TYPE, useDefaults ? context.getResources().getString(R.string.defaultImageType) : "");
-        }
-        else if (property.equals(CURRENT_VERSION_BUILD_DATE))
-        {
-            return Utils.getprop(CURRENT_VERSION_BUILD_DATE, useDefaults ? context.getResources().getString(R.string.defaultBuildDate) : "");
-        }
-        else if (property.equals(CURRENT_BETA_STATUS))
-        {
-            return Utils.getprop(CURRENT_BETA_STATUS, useDefaults ? context.getResources().getString(R.string.defaultBetaStatus) : "0");
-        }
-
-        return null;
+        return result;
     }
 
     public static Version getLatestVersion(Context context)
@@ -153,7 +151,7 @@ public class VersionParserHelper
 
     public enum XML_TAGS
     {
-        RELEASES, AOSP, FAIRPHONE, VERSION, NAME, BUILD_NUMBER, ANDROID_VERSION, RELEASE_NOTES, RELEASE_DATE, MD5SUM, THUMBNAIL_LINK, UPDATE_LINK, ERASE_DATA_WARNING, DEPENDENCIES, STORES, STORE, SHOW_DISCLAIMER;
+        RELEASES, AOSP, FAIRPHONE, VERSION, NAME, BUILD_NUMBER, ANDROID_VERSION, RELEASE_NOTES, RELEASE_DATE, MD5SUM, THUMBNAIL_LINK, UPDATE_LINK, ERASE_DATA_WARNING, DEPENDENCIES, STORES, STORE, SHOW_DISCLAIMER
     }
 
     // @formatter:on
@@ -182,7 +180,7 @@ public class VersionParserHelper
 
         while (eventType != XmlPullParser.END_DOCUMENT)
         {
-            String tagName = null;
+            String tagName;
             switch (eventType)
             {
                 case XmlPullParser.START_DOCUMENT:
@@ -255,7 +253,7 @@ public class VersionParserHelper
         return update.getLatestVersion(getSystemData(context, CURRENT_VERSION_IMAGE_TYPE, true));
     }
 
-    public static Version readVersion(Version version, XmlPullParser xpp, String tagName) throws XmlPullParserException, IOException
+    private static Version readVersion(Version version, XmlPullParser xpp, String tagName) throws XmlPullParserException, IOException
     {
 
         if (version == null)
@@ -281,7 +279,7 @@ public class VersionParserHelper
         return version;
     }
 
-    public static Store readStore(Store store, XmlPullParser xpp, String tagName) throws XmlPullParserException, IOException
+    private static Store readStore(Store store, XmlPullParser xpp, String tagName) throws XmlPullParserException, IOException
     {
 
         if (store == null)
@@ -374,7 +372,7 @@ public class VersionParserHelper
         removeZipContents(context);
     }
 
-    public static void removeZipContents(Context context)
+    private static void removeZipContents(Context context)
     {
         Resources resources = context.getResources();
         String filePath =
@@ -389,7 +387,10 @@ public class VersionParserHelper
         File file = new File(filePath);
         if (file.exists())
         {
-            file.delete();
+	        final boolean delete = file.delete();
+	        if (!delete) {
+		        Log.d(TAG, "Couldn't delete file: " + file.getAbsolutePath());
+	        }
         }
     }
 

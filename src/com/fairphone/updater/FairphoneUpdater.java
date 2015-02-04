@@ -17,7 +17,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
-import com.crashlytics.android.internal.f;
 import com.fairphone.updater.data.DownloadableItem;
 import com.fairphone.updater.data.Store;
 import com.fairphone.updater.data.UpdaterData;
@@ -31,8 +30,6 @@ import com.fairphone.updater.fragments.VersionDetailFragment.DetailLayoutType;
 import com.fairphone.updater.gappsinstaller.GappsInstallerHelper;
 import com.fairphone.updater.tools.Utils;
 
-import java.util.List;
-
 public class FairphoneUpdater extends FragmentActivity
 {
 
@@ -40,21 +37,21 @@ public class FairphoneUpdater extends FragmentActivity
 
     public static final String FAIRPHONE_UPDATER_NEW_VERSION_RECEIVED = "FairphoneUpdater.NEW.VERSION.RECEIVED";
 
-    public static final String PREFERENCE_FIRST_TIME_ANDROID = "FirstTimeAndroid";
+    private static final String PREFERENCE_FIRST_TIME_ANDROID = "FirstTimeAndroid";
 
-    public static final String PREFERENCE_FIRST_TIME_FAIRPHONE = "FirstTimeFairphone";
+    private static final String PREFERENCE_FIRST_TIME_FAIRPHONE = "FirstTimeFairphone";
 
-    public static final String PREFERENCE_FIRST_TIME_APP_STORE = "FirstTimeAppStore";
+    private static final String PREFERENCE_FIRST_TIME_APP_STORE = "FirstTimeAppStore";
 
-    public static final String PREFERENCE_CURRENT_UPDATER_STATE = "CurrentUpdaterState";
+    private static final String PREFERENCE_CURRENT_UPDATER_STATE = "CurrentUpdaterState";
 
     private static final String PREFERENCE_DOWNLOAD_ID = "LatestUpdateDownloadId";
 
     public static final String FAIRPHONE_UPDATER_PREFERENCES = "FairphoneUpdaterPreferences";
 
-    public static final String PREFERENCE_SELECTED_VERSION_NUMBER = "SelectedVersionNumber";
+    private static final String PREFERENCE_SELECTED_VERSION_NUMBER = "SelectedVersionNumber";
 
-    public static final String PREFERENCE_SELECTED_VERSION_TYPE = "SelectedVersionImageType";
+    private static final String PREFERENCE_SELECTED_VERSION_TYPE = "SelectedVersionImageType";
 
     public static final String FAIRPHONE_UPDATER_CONFIG_DOWNLOAD_FAILED = "FairphoneUpdater.Config.File.Download.FAILED";
 
@@ -70,7 +67,7 @@ public class FairphoneUpdater extends FragmentActivity
     public static enum UpdaterState
     {
         NORMAL, DOWNLOAD, PREINSTALL
-    };
+    }
 
     private Version mDeviceVersion;
     private Version mLatestVersion;
@@ -106,7 +103,7 @@ public class FairphoneUpdater extends FragmentActivity
     public static enum HeaderType
     {
         MAIN_FAIRPHONE, MAIN_ANDROID, MAIN_APP_STORE, FAIRPHONE, ANDROID, OTHER_OS, APP_STORE
-    };
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -131,6 +128,7 @@ public class FairphoneUpdater extends FragmentActivity
         mIsFirstTimeAppStore = false;//mSharedPreferences.getBoolean(PREFERENCE_FIRST_TIME_APP_STORE, true);
         
         mOtaDownloadUrl = mSharedPreferences.getString(PREFERENCE_OTA_DOWNLOAD_URL, getResources().getString(R.string.downloadUrl));
+	    Log.wtf("SHIT FPU ", "PREFERENCE_OTA_DOWNLOAD_URL "+mOtaDownloadUrl);
 
         // get system data
         mDeviceVersion = VersionParserHelper.getDeviceVersion(this);
@@ -166,28 +164,28 @@ public class FairphoneUpdater extends FragmentActivity
         setupFragments(savedInstanceState);
     }
     
-    public void setupBetaStatus()
+    void setupBetaStatus()
     {
         BETA_MODE_ENABLED = mDeviceVersion.getBetaStatus().equals("1");
     }
 
     private void isDeviceSupported()
     {
-        if(!Utils.isDeviceSupported(this))
+        if(Utils.isDeviceUnsupported(this))
         {
             Toast.makeText(this, R.string.device_not_supported_message, Toast.LENGTH_LONG).show();
             finish();
         }
     }
 
-    protected void getSelectedVersionFromSharedPreferences()
+    void getSelectedVersionFromSharedPreferences()
     {
         String versionImageType = mSharedPreferences.getString(PREFERENCE_SELECTED_VERSION_TYPE, "");
         int versionNumber = mSharedPreferences.getInt(PREFERENCE_SELECTED_VERSION_NUMBER, 0);
         mSelectedVersion = UpdaterData.getInstance().getVersion(versionImageType, versionNumber);
     }
 
-    protected void getSelectedStoreFromSharedPreferences()
+    void getSelectedStoreFromSharedPreferences()
     {
         int storeNumber = mSharedPreferences.getInt(PREFERENCE_SELECTED_STORE_NUMBER, 0);
         mSelectedStore = UpdaterData.getInstance().getStore(storeNumber);
@@ -196,7 +194,7 @@ public class FairphoneUpdater extends FragmentActivity
     public UpdaterState getCurrentUpdaterState()
     {
 
-        String currentState = getStringPreference(PREFERENCE_CURRENT_UPDATER_STATE);
+        String currentState = mSharedPreferences.getString(PREFERENCE_CURRENT_UPDATER_STATE, null);
 
         if (TextUtils.isEmpty(currentState))
         {
@@ -208,12 +206,7 @@ public class FairphoneUpdater extends FragmentActivity
         return UpdaterState.valueOf(currentState);
     }
 
-    public String getStringPreference(String key)
-    {
-        return mSharedPreferences.getString(key, null);
-    }
-
-    public long getLongPreference(String key)
+    long getLongPreference(String key)
     {
         return mSharedPreferences.getLong(key, 0);
     }
@@ -241,7 +234,7 @@ public class FairphoneUpdater extends FragmentActivity
         editor.commit();
     }
 
-    public void savePreference(String key, long value)
+    void savePreference(String key, long value)
     {
         Editor editor = mSharedPreferences.edit();
 
@@ -345,7 +338,7 @@ public class FairphoneUpdater extends FragmentActivity
 
                     mIsFirstTimeFairphone = false;
 
-                    editor.putBoolean(PREFERENCE_FIRST_TIME_FAIRPHONE, mIsFirstTimeFairphone);
+                    editor.putBoolean(PREFERENCE_FIRST_TIME_FAIRPHONE, false);
                     editor.commit();
                 }
 
@@ -371,7 +364,7 @@ public class FairphoneUpdater extends FragmentActivity
 
                     mIsFirstTimeAndroid = false;
 
-                    editor.putBoolean(PREFERENCE_FIRST_TIME_ANDROID, mIsFirstTimeAndroid);
+                    editor.putBoolean(PREFERENCE_FIRST_TIME_ANDROID, false);
                     editor.commit();
                 }
 
@@ -396,7 +389,7 @@ public class FairphoneUpdater extends FragmentActivity
 
                     mIsFirstTimeAppStore = false;
 
-                    editor.putBoolean(PREFERENCE_FIRST_TIME_APP_STORE, mIsFirstTimeAppStore);
+                    editor.putBoolean(PREFERENCE_FIRST_TIME_APP_STORE, false);
                     editor.commit();
                 }
 
@@ -482,7 +475,7 @@ public class FairphoneUpdater extends FragmentActivity
             // an
             // Intent, pass the Intent's extras to the fragment as arguments
             Intent intent = getIntent();
-            if (firstFragment != null && intent != null)
+            if (intent != null)
             {
                 Bundle bundle = intent.getExtras();
                 if (bundle != null)
@@ -493,7 +486,7 @@ public class FairphoneUpdater extends FragmentActivity
 
             // Add the fragment to the 'fragment_container' FrameLayout
             FragmentManager fragManager = getSupportFragmentManager();
-            if (firstFragment != null && fragManager != null)
+            if (fragManager != null)
             {
                 FragmentTransaction transation = fragManager.beginTransaction();
                 transation.add(R.id.fragment_holder, firstFragment, TAG_FIRST_FRAGMENT);
@@ -509,7 +502,7 @@ public class FairphoneUpdater extends FragmentActivity
 
     public Fragment getFragmentFromState()
     {
-        Fragment firstFragment = null;
+        Fragment firstFragment;
         switch (mCurrentState)
         {
             case PREINSTALL:
@@ -581,7 +574,7 @@ public class FairphoneUpdater extends FragmentActivity
         }
     }
 
-    public Fragment getTopFragment()
+    Fragment getTopFragment()
     {
         Fragment topFragment = null;
         FragmentManager fragManager = getSupportFragmentManager();
@@ -622,14 +615,7 @@ public class FairphoneUpdater extends FragmentActivity
         boolean update = false;
         if (mLatestVersion != null)
         {
-	        if (BETA_MODE_ENABLED)
-	        {
-		        update = true;
-	        }
-	        else
-	        {
-		        update = mLatestVersion.isNewerVersionThan(mDeviceVersion);
-	        }
+	        update = BETA_MODE_ENABLED || mLatestVersion.isNewerVersionThan(mDeviceVersion);
         }
         return update;
     }
@@ -771,7 +757,7 @@ public class FairphoneUpdater extends FragmentActivity
         mLatestVersion = getLatestVersionFromConfig();
     }
 
-    boolean mLaunchGapps = false;
+    private boolean mLaunchGapps = false;
 
     @Override
     protected void onNewIntent(Intent intent)
@@ -836,7 +822,7 @@ public class FairphoneUpdater extends FragmentActivity
 
         if (mSelectedStore != null)
         {
-            fragment.setupFragment(mSelectedStore, DetailLayoutType.APP_STORE);
+            fragment.setupAppStoreFragment(mSelectedStore);
         }
         else
         {
@@ -858,12 +844,6 @@ public class FairphoneUpdater extends FragmentActivity
         }
     }
 
-    public void changeState(UpdaterState newState)
-    {
-        updateStatePreference(newState);
-        changeFragment(getFragmentFromState());
-    }
-
     public void updateStatePreference(UpdaterState newState)
     {
         mCurrentState = newState;
@@ -873,13 +853,6 @@ public class FairphoneUpdater extends FragmentActivity
         editor.putString(PREFERENCE_CURRENT_UPDATER_STATE, mCurrentState.name());
 
         editor.commit();
-    }
-
-    @Override
-    protected void onStop()
-    {
-        super.onStop();
-
     }
 
     public long getLatestDownloadId()
@@ -907,8 +880,8 @@ public class FairphoneUpdater extends FragmentActivity
         return getLongPreference(UpdaterService.PREFERENCE_LAST_CONFIG_DOWNLOAD_ID);
     }
     
-    public void saveConfigFileDownloadId(long latestUpdateDownloadId)
+    public void clearConfigFileDownloadId()
     {
-        savePreference(UpdaterService.PREFERENCE_LAST_CONFIG_DOWNLOAD_ID, latestUpdateDownloadId);
+        savePreference(UpdaterService.PREFERENCE_LAST_CONFIG_DOWNLOAD_ID, 0L);
     }
 }

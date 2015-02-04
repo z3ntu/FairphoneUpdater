@@ -15,14 +15,14 @@
  */
 package com.fairphone.updater.gappsinstaller;
 
-import java.io.File;
-
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.fairphone.updater.widgets.gapps.GoogleAppsInstallerWidget;
+
+import java.io.File;
 
 public class GappsInstallerHelper
 {
@@ -34,10 +34,10 @@ public class GappsInstallerHelper
     public static final int GAPPS_STATES_INITIAL = 0;
     public static final int GAPPS_INSTALLED_STATE = 1;
 
-    public static String EXTRA_START_GAPPS_INSTALL = "com.fairphone.updater.gapps.EXTRA_START_GAPPS_INSTALL";
+    public static final String EXTRA_START_GAPPS_INSTALL = "com.fairphone.updater.gapps.EXTRA_START_GAPPS_INSTALL";
 
-    private Context mContext;
-    private SharedPreferences mSharedPrefs;
+    private final Context mContext;
+    private final SharedPreferences mSharedPrefs;
 
     public GappsInstallerHelper(Context context)
     {
@@ -55,17 +55,16 @@ public class GappsInstallerHelper
         return f.exists();
     }
 
-    private boolean checkGappsAreInstalled()
+    private void checkGappsAreInstalled()
     {
         if (areGappsInstalled())
         {
             updateWidgetState(GAPPS_INSTALLED_STATE);
-            return true;
+	        return;
         }
 
         updateWidgetState(GAPPS_STATES_INITIAL);
 
-        return false;
     }
 
     private void updateGoogleAppsIntallerWidgets()
@@ -86,7 +85,7 @@ public class GappsInstallerHelper
         prefEdit.commit();
     }
 
-    public void updateWidgetState(int state)
+    void updateWidgetState(int state)
     {
         updateInstallerState(state);
 

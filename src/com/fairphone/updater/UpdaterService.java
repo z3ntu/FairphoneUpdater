@@ -82,22 +82,18 @@ public class UpdaterService extends Service
     private int mDownloadRetries;
     private long mLatestFileDownloadId;
     private boolean mInternetConnectionAvailable;
-    private NotificationCompat.Builder mBuilder;
 
-    private SharedPreferences mSharedPreferences;
+	private SharedPreferences mSharedPreferences;
 
-    final static long DOWNLOAD_GRACE_PERIOD_IN_MS = 4 /* hour */ * 60 /* minute */ * 60 /* second */ * 1000 /* millisecond */;
+    private final static long DOWNLOAD_GRACE_PERIOD_IN_MS = 4 /* hour */ * 60 /* minute */ * 60 /* second */ * 1000 /* millisecond */;
 
-    private BroadcastReceiver mBCastConfigFileDownload;
-    private NotificationManager mNotificationManager;
-
-    @Override
+	@Override
     public int onStartCommand(Intent intent, int flags, int startId)
     {
         // remove the logs
         clearDataLogs();
         
-        if(!Utils.isDeviceSupported(getApplicationContext())){
+        if(Utils.isDeviceUnsupported(getApplicationContext())){
             stopSelf();
             return START_NOT_STICKY;
         }
@@ -118,19 +114,16 @@ public class UpdaterService extends Service
         // setup the gapps installer
         new GappsInstallerHelper(getApplicationContext());
 
-        mBCastConfigFileDownload = new BroadcastReceiver()
-        {
+	    BroadcastReceiver mBCastConfigFileDownload = new BroadcastReceiver() {
 
-            @Override
-            public void onReceive(Context context, Intent intent)
-            {
-                if (hasInternetConnection())
-                {
-                    boolean forceDownload = intent.getBooleanExtra(EXTRA_FORCE_CONFIG_FILE_DOWNLOAD, false);
-                    downloadConfigFile(forceDownload);
-                }
-            }
-        };
+		    @Override
+		    public void onReceive(Context context, Intent intent) {
+			    if (hasInternetConnection()) {
+				    boolean forceDownload = intent.getBooleanExtra(EXTRA_FORCE_CONFIG_FILE_DOWNLOAD, false);
+				    downloadConfigFile(forceDownload);
+			    }
+		    }
+	    };
 
         getApplicationContext().registerReceiver(mBCastConfigFileDownload, new IntentFilter(ACTION_FAIRPHONE_UPDATER_CONFIG_FILE_DOWNLOAD));
 
@@ -151,18 +144,18 @@ public class UpdaterService extends Service
             Editor editor = mSharedPreferences.edit();
             editor.putBoolean(PREFERENCE_REINSTALL_GAPPS, false);
 
-            editor.commit();
+            editor.apply();
         }
     }
 
-    public void showReinstallAlert()
+    void showReinstallAlert()
     {
 
         if ( FairphoneUpdater.BETA_MODE_ENABLED )
             return;
         Context context = getApplicationContext();
-        
-        mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+
+	    NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         
         //Intent notificationIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(context.getResources().getString(R.string.supportAppStoreUrl)));
 
@@ -170,14 +163,13 @@ public class UpdaterService extends Service
         notificationIntent.setAction(GappsInstallerHelper.EXTRA_START_GAPPS_INSTALL);
         
         PendingIntent contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, 0);
-        
-        mBuilder =
-                new NotificationCompat.Builder(context).setSmallIcon(R.drawable.updater_tray_icon)
-                        .setContentTitle(getResources().getString(R.string.app_name))
-                        .setContentText(context.getResources().getString(R.string.appStoreReinstall))
-                        .setAutoCancel(true)
-                        .setDefaults(Notification.DEFAULT_SOUND)
-                        .setContentIntent(contentIntent);
+
+	    NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context).setSmallIcon(R.drawable.updater_tray_icon)
+			    .setContentTitle(getResources().getString(R.string.app_name))
+			    .setContentText(context.getResources().getString(R.string.appStoreReinstall))
+			    .setAutoCancel(true)
+			    .setDefaults(Notification.DEFAULT_SOUND)
+			    .setContentIntent(contentIntent);
         
         mNotificationManager.notify(0, mBuilder.build());
     }
@@ -208,19 +200,14 @@ public class UpdaterService extends Service
         }
     }
 
-    protected void clearDataLogs()
+    void clearDataLogs()
     {
         try
         {
             Log.d(TAG, "Clearing dump log data...");
             Shell.runCommand(new CommandCapture(0, "rm /data/log_other_mode/*_log"));
-        } catch (IOException e)
+        } catch (IOException | TimeoutException e)
         {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (TimeoutException e)
-        {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
@@ -231,7 +218,7 @@ public class UpdaterService extends Service
         return null;
     }
 
-    public void startDownloadLatest()
+    void startDownloadLatest()
     {
         Resources resources = getApplicationContext().getResources();
         String downloadLink = getConfigDownloadLink(getApplicationContext());
@@ -290,7 +277,8 @@ public class UpdaterService extends Service
 
         StringBuilder sb = new StringBuilder();
         String download_url = mSharedPreferences.getString(FairphoneUpdater.PREFERENCE_OTA_DOWNLOAD_URL, getResources().getString(R.string.downloadUrl));
-        sb.append(download_url);
+
+	    sb.append(download_url);
         sb.append(Build.MODEL.replaceAll("\\s", ""));
         sb.append(Utils.getPartitionDownloadPath(resources));
         sb.append("/");
@@ -312,19 +300,19 @@ public class UpdaterService extends Service
     {
         // attach the model and the os
         sb.append("?");
-        sb.append("model=" + Build.MODEL.replaceAll("\\s", ""));
+        sb.append("model=").append(Build.MODEL.replaceAll("\\s", ""));
         Version currentVersion = VersionParserHelper.getDeviceVersion(context.getApplicationContext());
 
         if (currentVersion != null)
         {
             try {
                 final String defaultCharset = Charset.defaultCharset().displayName();
-                sb.append("&os=" + URLEncoder.encode(currentVersion.getAndroidVersion(), defaultCharset));
-                sb.append("&b_n=" + URLEncoder.encode(currentVersion.getBuildNumber(), defaultCharset));
-                sb.append("&ota_v_n=" + URLEncoder.encode(String.valueOf(currentVersion.getNumber()), defaultCharset));
-                sb.append("&d=" + URLEncoder.encode(currentVersion.getReleaseDate(), defaultCharset));
-                sb.append("&beta=" + URLEncoder.encode(currentVersion.getBetaStatus(), defaultCharset));
-                sb.append("&dev=" + (FairphoneUpdater.DEV_MODE_ENABLED ? "1" : "0"));
+                sb.append("&os=").append(URLEncoder.encode(currentVersion.getAndroidVersion(), defaultCharset));
+                sb.append("&b_n=").append(URLEncoder.encode(currentVersion.getBuildNumber(), defaultCharset));
+                sb.append("&ota_v_n=").append(URLEncoder.encode(String.valueOf(currentVersion.getNumber()), defaultCharset));
+                sb.append("&d=").append(URLEncoder.encode(currentVersion.getReleaseDate(), defaultCharset));
+                sb.append("&beta=").append(URLEncoder.encode(currentVersion.getBetaStatus(), defaultCharset));
+                sb.append("&dev=").append(FairphoneUpdater.DEV_MODE_ENABLED ? "1" : "0");
             } catch (UnsupportedEncodingException e) {
                 Log.e(TAG, "Failed to add extra info on update request: "+e.getLocalizedMessage());
             }
@@ -372,9 +360,13 @@ public class UpdaterService extends Service
         try
         {
             request = new Request(Uri.parse(url));
-            Environment.getExternalStoragePublicDirectory(Environment.getExternalStorageDirectory() + resources.getString(R.string.updaterFolder)).mkdirs();
+	        final File externalStoragePublicDirectory = Environment.getExternalStoragePublicDirectory(Environment.getExternalStorageDirectory() + resources.getString(R.string.updaterFolder));
+	        final boolean mkdirs = externalStoragePublicDirectory.mkdirs();
+	        if(!mkdirs && !externalStoragePublicDirectory.exists()) {
+		        throw new Exception("Couldn't create updater dir structures.");
+	        }
 
-            request.setDestinationInExternalPublicDir(resources.getString(R.string.updaterFolder), fileName);
+	        request.setDestinationInExternalPublicDir(resources.getString(R.string.updaterFolder), fileName);
             request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI);
             request.setAllowedOverRoaming(false);
             request.setTitle(resources.getString(R.string.fairphone_update_message_title));
@@ -499,7 +491,11 @@ public class UpdaterService extends Service
             else
             {
                 //Toast.makeText(context, resources.getString(R.string.invalid_signature_download_message), Toast.LENGTH_LONG).show();
-                file.delete();
+                final boolean delete = file.delete();
+	            if(!delete) {
+		            Log.d(TAG, "Unable to delete "+file.getAbsolutePath());
+	            }
+
             }
         }
 

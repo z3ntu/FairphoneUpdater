@@ -1,42 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="downloadUrl">http://www.fairphone.com/ota/</string>
+    <string name="downloadUrl" translatable="false">http://www.fairphone.com/ota/</string>
     <string name="supportAppStoreUrl">https://fairphone.zendesk.com/hc/en-us/articles/201295267-How-to-re-install-the-App-Store</string>
-    <string name="configFilename">updater</string>
-    <string name="config_zip">.zip</string>
-	<string name="config_xml">.xml</string>
-	<string name="config_sig">.sig</string>
+    <string name="configFilename" translatable="false">updater</string>
+    <string name="config_zip" translatable="false">.zip</string>
+	<string name="config_xml" translatable="false">.xml</string>
+	<string name="config_sig" translatable="false">.sig</string>
 	
     <integer name="defaultVersionNumber">1</integer>
-    <string name="defaultVersionName">Almond</string>
-    <string name="defaultBuildNumber">1.0</string>
-    <string name="defaultBuildDate">0</string>
-    <string name="defaultAndroidVersionNumber">4.2.2</string>
-    <string name="defaultImageType">fairphone</string>
-    <string name="defaultBetaStatus">1</string>
+    <string name="defaultVersionName" translatable="false">Almond</string>
+    <string name="defaultBuildNumber" translatable="false">1.0</string>
+    <string name="defaultBuildDate" translatable="false">0</string>
+    <string name="defaultAndroidVersionNumber" translatable="false">4.2.2</string>
+    <string name="defaultImageType" translatable="false">fairphone</string>
+    <string name="defaultBetaStatus" translatable="false">1</string>
     
     <!-- Device Model without spaces separated by semicolon. Ex: FP1;FP1U;FP2 -->
-    <string name="knownFPDevices">FP1;FP1U</string>
+    <string name="knownFPDevices" translatable="false">FP1;FP1U</string>
     
-    <string name="oneGBDataPartition">/originalPartition</string>
-	<string name="unifiedDataPartition">/unifiedPartition</string>
-	<string name="FP1Model">FP1</string>
-	<string name="recoveryCachePath">cache</string>
-	<string name="recoverySdCardPath">sdcard</string>
-	<string name="updaterFolder">/updater/</string>
+    <string name="oneGBDataPartition" translatable="false">/originalPartition</string>
+	<string name="unifiedDataPartition" translatable="false">/unifiedPartition</string>
+	<string name="FP1Model" translatable="false">FP1</string>
+	<string name="recoveryCachePath" translatable="false">cache</string>
+	<string name="recoverySdCardPath" translatable="false">sdcard</string>
+	<string name="updaterFolder" translatable="false">/updater/</string>
 	<integer name="FP1CachePartitionSizeMb">130</integer>
 	<integer name="minimalCachePartitionSizeMb">300</integer>
 	<integer name="FP1DataPartitionSizeMb">1100</integer>
 	
 	<!-- Packager -->
-	<string name="removePlayStoreCommand">rm /data/app/com.android.vending-*.apk</string>
-	<string name="removeGooglePlusCommand">rm /data/app/com.google.android.apps.plus-*.apk</string>
-	<string name="removeSoundSearchCommand">rm /data/app/com.google.android.ears-*.apk</string>
-	<string name="removeGmailCommand">rm /data/app/com.google.android.gm-*.apk</string>
-	<string name="removePlayServicesCommand">rm /data/app/com.google.android.gms-*.apk</string>
-	<string name="removeQuicksearchCommand">rm /data/app/com.google.android.googlequicksearchbox-*.apk</string>
-	<string name="removeTalkbackCommand">rm /data/app/com.google.android.marvin.talkback-*.apk</string>
-	<string name="removeText2SpeechCommand">rm /data/app/com.google.android.tts-*.apk</string>
+	<string name="removePlayStoreCommand" translatable="false">rm /data/app/com.android.vending-*.apk</string>
+	<string name="removeGooglePlusCommand" translatable="false">rm /data/app/com.google.android.apps.plus-*.apk</string>
+	<string name="removeSoundSearchCommand" translatable="false">rm /data/app/com.google.android.ears-*.apk</string>
+	<string name="removeGmailCommand" translatable="false">rm /data/app/com.google.android.gm-*.apk</string>
+	<string name="removePlayServicesCommand" translatable="false">rm /data/app/com.google.android.gms-*.apk</string>
+	<string name="removeQuicksearchCommand" translatable="false">rm /data/app/com.google.android.googlequicksearchbox-*.apk</string>
+	<string name="removeTalkbackCommand" translatable="false">rm /data/app/com.google.android.marvin.talkback-*.apk</string>
+	<string name="removeText2SpeechCommand" translatable="false">rm /data/app/com.google.android.tts-*.apk</string>
 	
 </resources>

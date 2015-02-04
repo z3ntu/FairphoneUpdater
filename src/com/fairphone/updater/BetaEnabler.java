@@ -2,7 +2,6 @@
 package com.fairphone.updater;
 
 import android.app.Activity;
-import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -17,12 +16,6 @@ public class BetaEnabler extends Activity {
     private static final String BETA_ENABLED = "1";
     
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        
-    }
-    
-    @Override
     protected void onResume() {
         super.onResume();
         setContentView(R.layout.activity_beta_enabler);
@@ -35,7 +28,7 @@ public class BetaEnabler extends Activity {
             b.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Utils.setprop(getApplicationContext(), FAIRPHONE_BETA_PROPERTY, BETA_ENABLED);
+                    Utils.setprop(FAIRPHONE_BETA_PROPERTY, BETA_ENABLED);
                     if (isBetaEnabled()) {
                         Button b = (Button) findViewById(R.id.beta_activator);
                         b.setEnabled(false);

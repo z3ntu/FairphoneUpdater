@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.DownloadManager;
 import android.app.ProgressDialog;
@@ -12,7 +13,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.res.Resources;
 import android.content.res.Resources.NotFoundException;
@@ -32,7 +32,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.fairphone.updater.FairphoneUpdater;
 import com.fairphone.updater.FairphoneUpdater.HeaderType;
 import com.fairphone.updater.FairphoneUpdater.UpdaterState;
 import com.fairphone.updater.R;
@@ -47,12 +46,13 @@ import com.stericson.RootTools.exceptions.RootDeniedException;
 import com.stericson.RootTools.execution.CommandCapture;
 import com.stericson.RootTools.execution.Shell;
 
+@SuppressLint("ValidFragment")
 public class DownloadAndRestartFragment extends BaseFragment
 {
 
     private static final int PROGRESS_BAR_UPDATE_FREQUENCY_IN_MILLIS = 1000;
 
-    protected static final String TAG = DownloadAndRestartFragment.class.getSimpleName();
+    private static final String TAG = DownloadAndRestartFragment.class.getSimpleName();
 
     private TextView mDownloadVersionName;
     private LinearLayout mVersionDownloadingGroup;
@@ -63,7 +63,7 @@ public class DownloadAndRestartFragment extends BaseFragment
     private Version mSelectedVersion;
     private Store mSelectedStore;
 
-    private boolean mIsVersion;
+    private final boolean mIsVersion;
 
     private DownloadManager mDownloadManager;
 
@@ -84,7 +84,7 @@ public class DownloadAndRestartFragment extends BaseFragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         // Inflate the layout for this fragment
-        View view = null;
+        View view;
         if (mIsVersion)
         {
             mSelectedVersion = mainActivity.getSelectedVersion();
@@ -122,9 +122,8 @@ public class DownloadAndRestartFragment extends BaseFragment
 
     private View inflateStoreView(LayoutInflater inflater, ViewGroup container)
     {
-        View view = inflater.inflate(R.layout.fragment_download_app_store, container, false);
 
-        return view;
+	    return inflater.inflate(R.layout.fragment_download_app_store, container, false);
     }
 
     private void toggleDownloadProgressAndRestart()
@@ -512,7 +511,6 @@ public class DownloadAndRestartFragment extends BaseFragment
                 if (Utils.checkMD5(item.getMd5Sum(), file))
                 {
                     copyUpdateToCache(file);
-                    return;
                 }
                 else
                 {
@@ -527,7 +525,7 @@ public class DownloadAndRestartFragment extends BaseFragment
     // DOWNLOAD UPDATE
     // ************************************************************************************
 
-    public void setupDownloadState()
+    void setupDownloadState()
     {
         DownloadableItem item = mIsVersion ? mSelectedVersion : mSelectedStore;
 
@@ -539,9 +537,12 @@ public class DownloadAndRestartFragment extends BaseFragment
             // we don't have the lastest.xml so get back to initial state
             File updateDir = new File(Environment.getExternalStorageDirectory() + resources.getString(R.string.updaterFolder));
 
-            updateDir.delete();
+	        final boolean delete = updateDir.delete();
+	        if(!delete) {
+		        Log.d(TAG, "Unable to delete "+updateDir.getAbsolutePath());
+	        }
 
-            abortUpdateProcess();
+	        abortUpdateProcess();
 
             return;
         }
@@ -594,27 +595,12 @@ public class DownloadAndRestartFragment extends BaseFragment
                     Shell.runRootCommand(new CommandCapture(0, "echo '--update_package=/" + resources.getString(R.string.recoverySdCardPath)
                             + resources.getString(R.string.updaterFolder) + Utils.getFilenameFromDownloadableItem(item) + "' >> /cache/recovery/command"));
                 }
-            } catch (IOException e)
+            } catch (IOException | NotFoundException | TimeoutException | RootDeniedException e)
             {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            } catch (NotFoundException e)
-            {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            } catch (TimeoutException e)
-            {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            } catch (RootDeniedException e)
-            {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
 
-            SharedPreferences sharedPreferences = getActivity().getSharedPreferences(FairphoneUpdater.FAIRPHONE_UPDATER_PREFERENCES, Context.MODE_PRIVATE);
-
-            Editor editor = sharedPreferences.edit();
+            Editor editor = mSharedPreferences.edit();
             editor.remove(UpdaterService.PREFERENCE_REINSTALL_GAPPS);
             editor.commit();
 
@@ -632,20 +618,13 @@ public class DownloadAndRestartFragment extends BaseFragment
                 mainActivity.updateStatePreference(UpdaterState.NORMAL);
                 mainActivity.clearSelectedItems();
                 clearConfigFile();
-                mSharedPreferences.edit().remove(UpdaterService.LAST_CONFIG_DOWNLOAD_IN_MS).commit();
-                mSharedPreferences.edit().remove(MainFragment.SHARED_PREFERENCES_ENABLE_GAPPS).commit();
+	            editor = mSharedPreferences.edit();
+	            editor.remove(UpdaterService.LAST_CONFIG_DOWNLOAD_IN_MS);
+                editor.remove(MainFragment.SHARED_PREFERENCES_ENABLE_GAPPS);
+		        editor.commit();
                 Shell.runRootCommand(new CommandCapture(0, "reboot recovery"));
-            } catch (IOException e)
+            } catch (IOException | TimeoutException | RootDeniedException e)
             {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            } catch (TimeoutException e)
-            {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            } catch (RootDeniedException e)
-            {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }
@@ -662,7 +641,7 @@ public class DownloadAndRestartFragment extends BaseFragment
         {
             mDownloadManager.remove(cfgFile);
         }
-        mainActivity.saveConfigFileDownloadId(0);
+        mainActivity.clearConfigFileDownloadId();
         VersionParserHelper.removeConfigFiles(mainActivity);
     }
 
@@ -706,19 +685,13 @@ public class DownloadAndRestartFragment extends BaseFragment
                     R.string.removeGmailCommand), getResources().getString(R.string.removePlayServicesCommand), getResources().getString(
                     R.string.removeQuicksearchCommand), getResources().getString(R.string.removeTalkbackCommand), getResources().getString(
                     R.string.removeText2SpeechCommand)));
-        } catch (IOException e)
-        {
-            e.printStackTrace();
-        } catch (TimeoutException e)
-        {
-            e.printStackTrace();
-        } catch (RootDeniedException e)
+        } catch (IOException | TimeoutException | RootDeniedException e)
         {
             e.printStackTrace();
         }
     }
 
-    public boolean removeLastUpdateDownload()
+    void removeLastUpdateDownload()
     {
         long latestUpdateDownloadId = mainActivity.getLatestUpdateDownloadIdFromSharedPreference();
         if (latestUpdateDownloadId != 0 && mDownloadManager != null)
@@ -728,7 +701,6 @@ public class DownloadAndRestartFragment extends BaseFragment
 
             mainActivity.resetLastUpdateDownloadId();
         }
-        return latestUpdateDownloadId != 0; // report if something was canceled
     }
 
     private class CopyFileToCacheTask extends AsyncTask<String, Integer, Integer>

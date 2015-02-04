@@ -1,9 +1,6 @@
 package com.fairphone.updater.fragments;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Locale;
-
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.DownloadManager;
 import android.app.DownloadManager.Request;
@@ -26,7 +23,6 @@ import android.widget.Toast;
 
 import com.fairphone.updater.FairphoneUpdater.HeaderType;
 import com.fairphone.updater.FairphoneUpdater.UpdaterState;
-import com.fairphone.updater.FairphoneUpdater;
 import com.fairphone.updater.R;
 import com.fairphone.updater.data.DownloadableItem;
 import com.fairphone.updater.data.Store;
@@ -34,6 +30,12 @@ import com.fairphone.updater.data.Version;
 import com.fairphone.updater.fragments.ConfirmationPopupDialog.ConfirmationPopupDialogListener;
 import com.fairphone.updater.tools.Utils;
 
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Locale;
+
+@SuppressLint("ValidFragment")
 public class VersionDetailFragment extends BaseFragment
 {
 
@@ -57,7 +59,7 @@ public class VersionDetailFragment extends BaseFragment
     private boolean mIsOSChange;
     private boolean mIsOlderVersion;
     private Store mSelectedStore;
-    private boolean mIsVersion;
+    private final boolean mIsVersion;
 
     public VersionDetailFragment(boolean isVersion)
     {
@@ -79,7 +81,7 @@ public class VersionDetailFragment extends BaseFragment
 
     private View setLayoutType(LayoutInflater inflater, ViewGroup container)
     {
-        View view = null;
+        View view;
         switch (mDetailLayoutType)
         {
             case UPDATE_ANDROID:
@@ -168,11 +170,11 @@ public class VersionDetailFragment extends BaseFragment
         mSelectedStore = null;
     }
 
-    public void setupFragment(Store selectedStore, DetailLayoutType detailType)
+    public void setupAppStoreFragment(Store selectedStore)
     {
         mSelectedStore = selectedStore;
 
-        mDetailLayoutType = detailType;
+        mDetailLayoutType = DetailLayoutType.APP_STORE;
         mSelectedVersion = null;
     }
 
@@ -184,7 +186,7 @@ public class VersionDetailFragment extends BaseFragment
 
         if (mIsVersion && mSelectedVersion != null)
         {
-            mHeaderType = mainActivity.getHeaderTypeFromImageType(mSelectedVersion != null ? mSelectedVersion.getImageType() : "");
+            mHeaderType = mainActivity.getHeaderTypeFromImageType(mSelectedVersion.getImageType());
         }
         else if (mSelectedStore != null)
         {
@@ -234,9 +236,7 @@ public class VersionDetailFragment extends BaseFragment
 
         ConnectivityManager manager = (ConnectivityManager) mainActivity.getSystemService(Context.CONNECTIVITY_SERVICE);
 
-        boolean isWifi = manager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).isConnectedOrConnecting();
-
-        return isWifi;
+	    return manager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).isConnectedOrConnecting();
     }
 
     private Request createDownloadRequest(String url, String fileName, String downloadTitle)
@@ -247,9 +247,13 @@ public class VersionDetailFragment extends BaseFragment
         try
         {
             request = new Request(Uri.parse(url));
-            Environment.getExternalStoragePublicDirectory(Environment.getExternalStorageDirectory() + resources.getString(R.string.updaterFolder)).mkdirs();
+	        final File externalStoragePublicDirectory = Environment.getExternalStoragePublicDirectory(Environment.getExternalStorageDirectory() + resources.getString(R.string.updaterFolder));
+	        final boolean mkdirs = externalStoragePublicDirectory.mkdirs();
+	        if(!mkdirs && !externalStoragePublicDirectory.exists()) {
+		        throw new Exception("Couldn't create updater dir structures.");
+	        }
 
-            request.setDestinationInExternalPublicDir(resources.getString(R.string.updaterFolder), fileName);
+	        request.setDestinationInExternalPublicDir(resources.getString(R.string.updaterFolder), fileName);
             request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI);
             request.setAllowedOverRoaming(false);
 
@@ -262,7 +266,7 @@ public class VersionDetailFragment extends BaseFragment
         return request;
     }
 
-    public void startUpdateDownload()
+    void startUpdateDownload()
     {
         DownloadableItem item = mIsVersion ? mSelectedVersion : mSelectedStore;
         // use only on WiFi
@@ -305,7 +309,8 @@ public class VersionDetailFragment extends BaseFragment
                     mainActivity.saveLatestUpdateDownloadId(mLatestUpdateDownloadId);
 
                     // change state to download
-                    mainActivity.changeState(UpdaterState.DOWNLOAD);
+	                mainActivity.updateStatePreference(UpdaterState.DOWNLOAD);
+	                mainActivity.changeFragment(mainActivity.getFragmentFromState());
                 }
                 else
                 {
@@ -357,7 +362,7 @@ public class VersionDetailFragment extends BaseFragment
         popupDialog.show(fm, version);
     }
 
-    public void startDownload()
+    void startDownload()
     {
         if (mIsVersion && mSelectedVersion != null)
         {
@@ -431,7 +436,7 @@ public class VersionDetailFragment extends BaseFragment
         }
     }
 
-    protected void showStoreDisclaimer()
+    void showStoreDisclaimer()
     {
         final UpdaterState currentState = mainActivity.getCurrentUpdaterState();
 

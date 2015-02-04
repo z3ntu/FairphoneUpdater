@@ -27,7 +27,7 @@ import android.content.Intent;
 public class BootBroadcastReceiver extends BroadcastReceiver
 {
 
-    final static long NOTIFICATION_INTERVAL_MILLIS = 1000 * 60 * 60 * 8;
+    private final static long NOTIFICATION_INTERVAL_MILLIS = 1000 * 60 * 60 * 8;
 
     @Override
     public void onReceive(Context context, Intent intent)

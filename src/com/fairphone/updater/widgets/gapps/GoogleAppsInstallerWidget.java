@@ -35,20 +35,6 @@ public class GoogleAppsInstallerWidget extends AppWidgetProvider
     private static final String TAG = GoogleAppsInstallerWidget.class.getSimpleName();
 
     @Override
-    public void onEnabled(Context context)
-    {
-        super.onEnabled(context);
-    }
-
-    @Override
-    public void onDisabled(Context context)
-    {
-        // Called once the last instance of your widget is removed from the
-        // homescreen
-        super.onDisabled(context);
-    }
-
-    @Override
     public void onDeleted(Context context, int[] appWidgetIds)
     {
         // Widget instance is removed from the homescreen

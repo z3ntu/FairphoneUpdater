@@ -31,25 +31,25 @@ public abstract class DownloadableItem
 
     private static final String DEPENDENCY_SEPARATOR = ",";
 
-    protected int mNumber;
+    int mNumber;
 
-    protected String mName;
+    String mName;
 
-    protected String mOTADownloadLink;
+    String mOTADownloadLink;
 
-    protected String mOTAMd5Sum;
+    String mOTAMd5Sum;
 
-    protected String mBuildNumber;
+    String mBuildNumber;
     
-    protected Map<String, String> mReleaseNotesMap;
+    private final Map<String, String> mReleaseNotesMap;
 
-    protected String mReleaseDate;
+    String mReleaseDate;
 
-    protected String mThumbnailImageLink;
+    String mThumbnailImageLink;
 
-    protected ArrayList<Integer> mDependencies;
+    ArrayList<Integer> mDependencies;
 
-    public DownloadableItem()
+    DownloadableItem()
     {
         setNumber(0);
         setName("");
@@ -59,7 +59,7 @@ public abstract class DownloadableItem
         setReleaseDate("");
         setThumbnailLink("");
 
-        mReleaseNotesMap = new HashMap<String, String>();
+        mReleaseNotesMap = new HashMap<>();
     }
 
     public int getNumber()
@@ -207,7 +207,7 @@ public abstract class DownloadableItem
         return TextUtils.isEmpty(releaseNotes) ? "" : releaseNotes;
     }
 
-    public void resetReleaseNotes()
+    void resetReleaseNotes()
     {
         mReleaseNotesMap.clear();
     }

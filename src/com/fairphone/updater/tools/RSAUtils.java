@@ -49,7 +49,7 @@ public class RSAUtils
 
     private static final String TAG = RSAUtils.class.getSimpleName();
 
-    public static final String SIGNATURE_ALGORITHM = "SHA1withRSA";
+    private static final String SIGNATURE_ALGORITHM = "SHA1withRSA";
 
     public static PublicKey readPublicKeyFormCertificate(Context context, int certificateResourceId) throws IOException, CertificateException
     {
@@ -74,21 +74,21 @@ public class RSAUtils
         return pubKey;
     }
 
-    public static PublicKey readPublicKeyFromPemFormat(Context context, int publicKeyId) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException
+    private static PublicKey readPublicKeyFromPemFormat(Context context) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException
     {
 
-        InputStream in = context.getResources().openRawResource(publicKeyId);
+        InputStream in = context.getResources().openRawResource(R.raw.public_key);
         BufferedReader pemReader = new BufferedReader(new InputStreamReader(in));
 
-        StringBuffer content = new StringBuffer();
-        String line = null;
+        StringBuilder content = new StringBuilder();
+        String line;
         while ((line = pemReader.readLine()) != null)
         {
-            if (line.indexOf("-----BEGIN PUBLIC KEY-----") != -1)
+            if (line.contains("-----BEGIN PUBLIC KEY-----"))
             {
                 while ((line = pemReader.readLine()) != null)
                 {
-                    if (line.indexOf("-----END PUBLIC KEY") != -1)
+                    if (line.contains("-----END PUBLIC KEY"))
                     {
                         break;
                     }
@@ -107,7 +107,7 @@ public class RSAUtils
         return keyFactory.generatePublic(new X509EncodedKeySpec(Base64.decode(content.toString(), Base64.DEFAULT)));
     }
 
-    public static byte[] readSignature(String input) throws IOException
+    private static byte[] readSignature(String input) throws IOException
     {
         FileInputStream signStream = new FileInputStream(input);
         byte[] signBytes = new byte[signStream.available()];
@@ -116,9 +116,9 @@ public class RSAUtils
         return signBytes;
     }
 
-    public static boolean verifySignature(String input, String algorithm, byte[] sign, PublicKey pubKey) throws Exception
+    private static boolean verifySignature(String input, byte[] sign, PublicKey pubKey) throws Exception
     {
-        Signature sg = Signature.getInstance(algorithm);
+        Signature sg = Signature.getInstance(RSAUtils.SIGNATURE_ALGORITHM);
         sg.initVerify(pubKey);
         Log.i(TAG, "Signature Object Info: ");
         Log.i(TAG, "Algorithm = " + sg.getAlgorithm());
@@ -149,21 +149,12 @@ public class RSAUtils
             String fileXmlExt = resources.getString(R.string.config_xml);
             String fileSigExt = resources.getString(R.string.config_sig);
 
-            PublicKey pubKey = RSAUtils.readPublicKeyFromPemFormat(context, R.raw.public_key);
+            PublicKey pubKey = RSAUtils.readPublicKeyFromPemFormat(context);
             byte[] sign = RSAUtils.readSignature(targetPath + filename + fileSigExt);
-            valid = RSAUtils.verifySignature(targetPath + filename + fileXmlExt, RSAUtils.SIGNATURE_ALGORITHM, sign, pubKey);
-        } catch (CertificateException e)
-        {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IOException e)
-        {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            valid = RSAUtils.verifySignature(targetPath + filename + fileXmlExt, sign, pubKey);
         } catch (Exception e)
         {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            Log.d(TAG, "File signature verification failed: "+ e.getLocalizedMessage());
         }
         return valid;
     }
@@ -175,7 +166,7 @@ public class RSAUtils
         {
             FileInputStream fin = new FileInputStream(filePath);
             ZipInputStream zin = new ZipInputStream(fin);
-            ZipEntry ze = null;
+            ZipEntry ze;
 
             while ((ze = zin.getNextEntry()) != null)
             {
@@ -190,7 +181,7 @@ public class RSAUtils
                     FileOutputStream fout = new FileOutputStream(targetPath + ze.getName());
                     byte buffer[] = new byte[2048];
 
-                    int count = 0;
+                    int count;
 
                     while ((count = zin.read(buffer)) != -1)
                     {

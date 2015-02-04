@@ -30,7 +30,7 @@ import com.fairphone.updater.gappsinstaller.GappsInstallerHelper;
 public class MainFragment extends BaseFragment
 {
 
-    public static String SHARED_PREFERENCES_ENABLE_GAPPS = "SHARED_PREFERENCES_ENABLE_GAPPS_POPUP";
+    public static final String SHARED_PREFERENCES_ENABLE_GAPPS = "SHARED_PREFERENCES_ENABLE_GAPPS_POPUP";
 
     private LinearLayout mVersionUpToDateGroup;
     private TextView mVersionUpToDateCurrentVersionNameText;
@@ -42,9 +42,8 @@ public class MainFragment extends BaseFragment
     private Button mOtherOSOptionsButton;
     private Version mDeviceVersion;
     private BroadcastReceiver newVersionbroadcastReceiver;
-    private LinearLayout mCurrentVersionGroup;
 
-    private RelativeLayout mGappsIcon;
+	private RelativeLayout mGappsIcon;
     private Button mGappsButton;
     private Button mGappsDismissButton;
 
@@ -103,36 +102,35 @@ public class MainFragment extends BaseFragment
         return  showGappsGroup && gappsNotInstalled && hasStoreInfo;
     }
     
-    protected Store getSelectedStoreFromSharedPreferences()
+    Store getSelectedStoreFromSharedPreferences()
     {
         return UpdaterData.getInstance().getStore(mSharedPreferences.getInt(FairphoneUpdater.PREFERENCE_SELECTED_STORE_NUMBER, 0));
     }
 
-    private void setGappsInstalationButtonState(boolean enableGapps)
+    private void disableGappsInstalationButton()
     {
         Editor edit = mSharedPreferences.edit();
-        edit.putBoolean(SHARED_PREFERENCES_ENABLE_GAPPS, enableGapps);
+        edit.putBoolean(SHARED_PREFERENCES_ENABLE_GAPPS, false);
 
         edit.commit();
     }
 
     private void setupCurrentVersionGroup(LayoutInflater inflater, View view)
     {
-        mCurrentVersionGroup = (LinearLayout) view.findViewById(R.id.current_version_group);
+	    LinearLayout mCurrentVersionGroup = (LinearLayout) view.findViewById(R.id.current_version_group);
 
         View updateGroupView = null;
         if (Version.IMAGE_TYPE_FAIRPHONE.equalsIgnoreCase(mainActivity.getDeviceVersion().getImageType()))
         {
-            updateGroupView = inflater.inflate(R.layout.fragment_main_update_available_fairphone, null);
+            updateGroupView = inflater.inflate(R.layout.fragment_main_update_available_fairphone, mCurrentVersionGroup);
         }
         else if (Version.IMAGE_TYPE_AOSP.equalsIgnoreCase(mainActivity.getDeviceVersion().getImageType()))
         {
-            updateGroupView = inflater.inflate(R.layout.fragment_main_update_available_android, null);
+            updateGroupView = inflater.inflate(R.layout.fragment_main_update_available_android, mCurrentVersionGroup);
         }
         if (updateGroupView != null)
         {
             updateGroupView.setLayoutParams(mCurrentVersionGroup.getLayoutParams());
-            mCurrentVersionGroup.addView(updateGroupView);
         }
     }
 
@@ -159,7 +157,7 @@ public class MainFragment extends BaseFragment
                 public void onClick(View v)
                 {
                     mGappsIcon.setVisibility(View.GONE);
-                    setGappsInstalationButtonState(false);
+                    disableGappsInstalationButton();
                 }
             });
         }
@@ -177,7 +175,7 @@ public class MainFragment extends BaseFragment
 
     private void updateOtherOSOptionsGroup()
     {
-        if (!UpdaterData.getInstance().isFairphoneVersionListEmpty() || !UpdaterData.getInstance().isAOSPVersionListEmpty())
+        if (UpdaterData.getInstance().isFairphoneVersionListNotEmpty() || UpdaterData.getInstance().isAOSPVersionListNotEmpty())
         {
             mOtherOSOptionsGroup.setVisibility(View.VISIBLE);
             mOtherOSOptionsButton.setOnClickListener(new OnClickListener()
@@ -197,7 +195,7 @@ public class MainFragment extends BaseFragment
         }
     }
 
-    public void toogleUpdateAvailableGroup()
+    void toogleUpdateAvailableGroup()
     {
         updateCurrentVersionGroup();
 
@@ -312,7 +310,7 @@ public class MainFragment extends BaseFragment
         unregisterBroadCastReceiver();
     }
 
-    protected void setupBroadcastReceiver()
+    void setupBroadcastReceiver()
     {
         newVersionbroadcastReceiver = new BroadcastReceiver()
         {

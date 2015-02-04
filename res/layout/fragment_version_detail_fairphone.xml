@@ -1,13 +1,12 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/blue"
-    android:gravity="center_horizontal"
-    android:orientation="vertical"
-    android:paddingBottom="@dimen/main_padding"
-    android:paddingLeft="@dimen/main_padding"
-    android:paddingRight="@dimen/main_padding" >
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@color/blue"
+              android:gravity="center_horizontal"
+              android:orientation="vertical"
+              android:paddingBottom="@dimen/main_padding"
+              android:paddingLeft="@dimen/main_padding"
+              android:paddingRight="@dimen/main_padding">
 
     <TextView
         android:id="@+id/version_details_title_text"
