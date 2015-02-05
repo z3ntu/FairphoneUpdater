@@ -26,6 +26,7 @@ import android.os.Environment;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.fairphone.updater.BetaEnabler;
 import com.fairphone.updater.R;
 import com.fairphone.updater.UpdaterService;
 import com.fairphone.updater.data.DownloadableItem;
@@ -51,13 +52,24 @@ import java.util.concurrent.TimeoutException;
 
 public class Utils
 {
-
     private static final String TAG = Utils.class.getSimpleName();
+    private static final int DELAY_100_MILLIS = 100;
+    public static final int DELAY_HALF_SECOND = 500;
+    public static final long SECONDS_IN_MINUTE = 60l;
+    public static final long MINUTES_IN_HOUR = 60l;
+
+    private static final double BUFFER_1024_BYTES = 1024d;
+    public static final int BUFFER_SIZE_4_KBYTES = 4096;
+    public static final int BUFFER_SIZE_2_KBYTES = 2048;
+    private static final int BUFFER_SIZE_8_KBYTES = 8192;
+    public static final int BUFFER_SIZE_10_MBYTES = 10240;
+    private static final int RADIX_BASE_16 = 16;
+    private static final double PERCENT_100 = 100d;
 
     private static double getPartitionSizeInGBytes(File path)
     {
         double availableBlocks = getPartitionSizeInBytes(path);
-        double sizeInGB = ((availableBlocks / 1024d) / 1024d) / 1024d;
+        double sizeInGB = ((availableBlocks / BUFFER_1024_BYTES) / BUFFER_1024_BYTES) / BUFFER_1024_BYTES;
         Log.d(TAG, path.getPath() + " size(GB): " + sizeInGB);
         return sizeInGB;
     }
@@ -65,7 +77,7 @@ public class Utils
     public static double getPartitionSizeInMBytes(File path)
     {
         double availableBlocks = getPartitionSizeInBytes(path);
-        double sizeInMB = ((availableBlocks / 1024d)) / 1024d;
+        double sizeInMB = ((availableBlocks / BUFFER_1024_BYTES)) / BUFFER_1024_BYTES;
         Log.d(TAG, path.getPath() + " size(MB): " + sizeInMB);
         return sizeInMB;
     }
@@ -74,7 +86,7 @@ public class Utils
     {
         android.os.StatFs stat = new android.os.StatFs(path.getPath());
 	    long blockSize, blockCount;
-	    if (Build.VERSION.SDK_INT >= 18) {
+	    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
 		    blockSize = stat.getBlockSizeLong();
 		    blockCount = stat.getBlockCountLong();
 	    } else {
@@ -92,7 +104,7 @@ public class Utils
         android.os.StatFs stat = new android.os.StatFs(path.getPath());
 
 	    long blockSize, blockCount;
-	    if (Build.VERSION.SDK_INT >= 18) {
+	    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
 		    blockSize = stat.getBlockSizeLong();
 		    blockCount = stat.getAvailableBlocksLong();
 	    } else {
@@ -107,20 +119,19 @@ public class Utils
 
     public static void startUpdaterService(Context context, boolean forceDownload)
     {
-        boolean isRunning = isServiceRunning(context);
+        boolean isNotRunning = !isServiceRunning(context);
 
-        if (!isRunning)
+        if (isNotRunning)
         {
             Log.e(TAG, "Starting Updater Service...");
             Intent i = new Intent(context, UpdaterService.class);
             context.startService(i);
             try
             {
-                Thread.sleep(100);
+                Thread.sleep(DELAY_100_MILLIS);
             } catch (InterruptedException e)
             {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                Log.w(TAG, "Start Updater service delay error: " + e.getLocalizedMessage());
             }
         }
         else if (forceDownload)
@@ -155,11 +166,10 @@ public class Utils
             context.stopService(i);
             try
             {
-                Thread.sleep(200);
+                Thread.sleep(DELAY_100_MILLIS * 2);
             } catch (InterruptedException e)
             {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                Log.w(TAG, "Stop Updater service delay error: " + e.getLocalizedMessage());
             }
         }
     }
@@ -225,7 +235,7 @@ public class Utils
             return null;
         }
 
-        byte[] buffer = new byte[8192];
+        byte[] buffer = new byte[BUFFER_SIZE_8_KBYTES];
         int read;
         try
         {
@@ -235,7 +245,7 @@ public class Utils
             }
             byte[] md5sum = digest.digest();
             BigInteger bigInt = new BigInteger(1, md5sum);
-            String output = bigInt.toString(16);
+            String output = bigInt.toString(RADIX_BASE_16);
             // Fill to 32 chars
             output = String.format("%32s", output).replace(' ', '0');
             return output;
@@ -300,10 +310,10 @@ public class Utils
     {
         File path = Environment.getDataDirectory();
         double sizeInGB = Utils.getPartitionSizeInGBytes(path);
-        double roundedSize = Math.ceil(sizeInGB * 100d) / 100d;
+        double roundedSize = Math.ceil(sizeInGB * PERCENT_100) / PERCENT_100;
         Log.d(TAG, "/data size: " + roundedSize + "Gb");
 
-        double fp1DataPartitionSize = (double) resources.getInteger(R.integer.FP1DataPartitionSizeMb) / 100d;
+        double fp1DataPartitionSize = (double) resources.getInteger(R.integer.FP1DataPartitionSizeMb) / PERCENT_100;
         // Add a little buffer to the 1gb default just in case
         return roundedSize > fp1DataPartitionSize;
     }
@@ -411,10 +421,10 @@ public class Utils
         return defaultValue;
     }
     
-    public static void setprop(String key, String value)
+    public static void setBetaPropToEnable()
     {
         if(RootTools.isAccessGiven()) {
-            CommandCapture command = new CommandCapture(0, "setprop "+key+" "+value);
+            CommandCapture command = new CommandCapture(0, "setprop "+ BetaEnabler.FAIRPHONE_BETA_PROPERTY+" "+BetaEnabler.BETA_ENABLED);
             try {
                 Shell.runRootCommand(command);
             } catch (IOException | TimeoutException | RootDeniedException e) {

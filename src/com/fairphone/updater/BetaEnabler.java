@@ -11,9 +11,9 @@ import com.fairphone.updater.tools.Utils;
 
 public class BetaEnabler extends Activity {
 
-    private static final String FAIRPHONE_BETA_PROPERTY = "fairphone.ota.beta";
+    public static final String FAIRPHONE_BETA_PROPERTY = "fairphone.ota.beta";
     private static final String BETA_DISABLED = "0";
-    private static final String BETA_ENABLED = "1";
+    public static final String BETA_ENABLED = "1";
     
     @Override
     protected void onResume() {
@@ -28,7 +28,7 @@ public class BetaEnabler extends Activity {
             b.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Utils.setprop(FAIRPHONE_BETA_PROPERTY, BETA_ENABLED);
+                    Utils.setBetaPropToEnable();
                     if (isBetaEnabled()) {
                         Button b = (Button) findViewById(R.id.beta_activator);
                         b.setEnabled(false);

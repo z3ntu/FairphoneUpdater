@@ -54,7 +54,7 @@ public class RSAUtils
     public static PublicKey readPublicKeyFormCertificate(Context context, int certificateResourceId) throws IOException, CertificateException
     {
         InputStream in = context.getResources().openRawResource(certificateResourceId);
-        byte[] buff = new byte[4000];
+        byte[] buff = new byte[Utils.BUFFER_SIZE_4_KBYTES];
         int bytesRead;
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         while ((bytesRead = in.read(buff)) != -1)
@@ -179,7 +179,7 @@ public class RSAUtils
                 else
                 {
                     FileOutputStream fout = new FileOutputStream(targetPath + ze.getName());
-                    byte buffer[] = new byte[2048];
+                    byte buffer[] = new byte[Utils.BUFFER_SIZE_2_KBYTES];
 
                     int count;
 

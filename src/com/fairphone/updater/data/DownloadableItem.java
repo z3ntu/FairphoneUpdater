@@ -88,9 +88,9 @@ public abstract class DownloadableItem
         return mName;
     }
 
-    public void setName(String mName)
+    public void setName(String name)
     {
-        this.mName = mName;
+        this.mName = name;
     }
 
     public String getDownloadLink()

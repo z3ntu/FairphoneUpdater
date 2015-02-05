@@ -248,8 +248,8 @@ public class VersionDetailFragment extends BaseFragment
         {
             request = new Request(Uri.parse(url));
 	        final File externalStoragePublicDirectory = Environment.getExternalStoragePublicDirectory(Environment.getExternalStorageDirectory() + resources.getString(R.string.updaterFolder));
-	        final boolean mkdirs = externalStoragePublicDirectory.mkdirs();
-	        if(!mkdirs && !externalStoragePublicDirectory.exists()) {
+	        final boolean notMkDirs = !externalStoragePublicDirectory.mkdirs();
+	        if(notMkDirs && !externalStoragePublicDirectory.exists()) {
 		        throw new Exception("Couldn't create updater dir structures.");
 	        }
 

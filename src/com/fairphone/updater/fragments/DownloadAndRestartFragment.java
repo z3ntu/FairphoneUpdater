@@ -53,6 +53,7 @@ public class DownloadAndRestartFragment extends BaseFragment
     private static final int PROGRESS_BAR_UPDATE_FREQUENCY_IN_MILLIS = 1000;
 
     private static final String TAG = DownloadAndRestartFragment.class.getSimpleName();
+    private static final int GET_LATEST_DOWNLOAD_ID_RETRIES = 12;
 
     private TextView mDownloadVersionName;
     private LinearLayout mVersionDownloadingGroup;
@@ -244,14 +245,14 @@ public class DownloadAndRestartFragment extends BaseFragment
 
                 long latestUpdateDownloadId = mainActivity.getLatestDownloadId();
 
-                int count = 12;
+                int count = GET_LATEST_DOWNLOAD_ID_RETRIES;
 
                 // Wait a sensible amount of time to get a correct reference to the download
                 while ((latestUpdateDownloadId <= 0) && count > 0)
                 {
                     try
                     {
-                        Thread.sleep(500);
+                        Thread.sleep(Utils.DELAY_HALF_SECOND);
                         count--;
                         latestUpdateDownloadId = mainActivity.getLatestDownloadId();
                     } catch (InterruptedException e)
@@ -275,7 +276,7 @@ public class DownloadAndRestartFragment extends BaseFragment
                             int bytes_downloaded = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR));
                             int bytes_total = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_TOTAL_SIZE_BYTES));
 
-                            if ((bytes_total + 10000) > Utils.getAvailablePartitionSizeInBytes(Environment.getExternalStorageDirectory()))
+                            if ((bytes_total + Utils.BUFFER_SIZE_10_MBYTES) > Utils.getAvailablePartitionSizeInBytes(Environment.getExternalStorageDirectory()))
                             {
                                 downloading = false;
                                 Toast.makeText(mainActivity, getResources().getString(R.string.no_space_available_sd_card_message), Toast.LENGTH_LONG).show();
@@ -537,8 +538,8 @@ public class DownloadAndRestartFragment extends BaseFragment
             // we don't have the lastest.xml so get back to initial state
             File updateDir = new File(Environment.getExternalStorageDirectory() + resources.getString(R.string.updaterFolder));
 
-	        final boolean delete = updateDir.delete();
-	        if(!delete) {
+	        final boolean notDeleted = !updateDir.delete();
+	        if(notDeleted) {
 		        Log.d(TAG, "Unable to delete "+updateDir.getAbsolutePath());
 	        }
 

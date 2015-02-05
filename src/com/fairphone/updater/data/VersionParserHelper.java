@@ -387,8 +387,8 @@ public class VersionParserHelper
         File file = new File(filePath);
         if (file.exists())
         {
-	        final boolean delete = file.delete();
-	        if (!delete) {
+	        final boolean notDeleted = !file.delete();
+	        if (notDeleted) {
 		        Log.d(TAG, "Couldn't delete file: " + file.getAbsolutePath());
 	        }
         }

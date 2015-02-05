@@ -85,7 +85,7 @@ public class UpdaterService extends Service
 
 	private SharedPreferences mSharedPreferences;
 
-    private final static long DOWNLOAD_GRACE_PERIOD_IN_MS = 4 /* hour */ * 60 /* minute */ * 60 /* second */ * 1000 /* millisecond */;
+    private final static long DOWNLOAD_GRACE_PERIOD_IN_MS = 4 /* hour */ * Utils.MINUTES_IN_HOUR /* minute */ * Utils.SECONDS_IN_MINUTE /* second */ * 1000 /* millisecond */;
 
 	@Override
     public int onStartCommand(Intent intent, int flags, int startId)
@@ -242,7 +242,7 @@ public class UpdaterService extends Service
             new Handler().postAtTime(new Runnable() {
                 @Override
                 public void run() {
-                    onDownloadStatus(currentId, null, null, new Runnable() {
+                    onDownloadStatus(currentId, new Runnable() {
                         @Override
                         public void run() {
                             Log.w(TAG, "Configuration file download timed out");
@@ -361,8 +361,8 @@ public class UpdaterService extends Service
         {
             request = new Request(Uri.parse(url));
 	        final File externalStoragePublicDirectory = Environment.getExternalStoragePublicDirectory(Environment.getExternalStorageDirectory() + resources.getString(R.string.updaterFolder));
-	        final boolean mkdirs = externalStoragePublicDirectory.mkdirs();
-	        if(!mkdirs && !externalStoragePublicDirectory.exists()) {
+	        final boolean notMkDirs = !externalStoragePublicDirectory.mkdirs();
+	        if(notMkDirs && !externalStoragePublicDirectory.exists()) {
 		        throw new Exception("Couldn't create updater dir structures.");
 	        }
 
@@ -400,7 +400,7 @@ public class UpdaterService extends Service
                     mInternetConnectionAvailable = false;
                     if (mLatestFileDownloadId != 0 && mDownloadManager != null)
                     {
-                        onDownloadStatus(mLatestFileDownloadId, null, null, new Runnable() {
+                        onDownloadStatus(mLatestFileDownloadId, new Runnable() {
                             @Override
                             public void run() {
                                 Log.d(TAG, "Removing pending download.");
@@ -491,8 +491,8 @@ public class UpdaterService extends Service
             else
             {
                 //Toast.makeText(context, resources.getString(R.string.invalid_signature_download_message), Toast.LENGTH_LONG).show();
-                final boolean delete = file.delete();
-	            if(!delete) {
+                final boolean notDeleted = !file.delete();
+	            if(notDeleted) {
 		            Log.d(TAG, "Unable to delete "+file.getAbsolutePath());
 	            }
 
@@ -531,17 +531,12 @@ public class UpdaterService extends Service
         return removeReceiver;
     }
 
-    private void onDownloadStatus(long id, Runnable ifSuccess, Runnable ifFailure, Runnable ifRunning) {
+    private void onDownloadStatus(long id, Runnable ifRunning) {
         Cursor cursor = mDownloadManager != null ? mDownloadManager.query(new DownloadManager.Query().setFilterById(id)) : null;
         if (cursor != null && cursor.moveToFirst())
         {
             int status = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS));
             switch(status){
-                case DownloadManager.STATUS_FAILED:
-                    if (ifFailure != null) {
-                        ifFailure.run();
-                    }
-                    break;
                 case DownloadManager.STATUS_PAUSED:
                     if (ifRunning != null) {
                         ifRunning.run();
@@ -557,11 +552,8 @@ public class UpdaterService extends Service
                         ifRunning.run();
                     }
                     break;
+                case DownloadManager.STATUS_FAILED:
                 case DownloadManager.STATUS_SUCCESSFUL:
-                    if (ifSuccess != null) {
-                        ifSuccess.run();
-                    }
-                    break;
                 default:
                     break;
             }

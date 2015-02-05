@@ -24,10 +24,13 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
+import com.fairphone.updater.tools.Utils;
+
 public class BootBroadcastReceiver extends BroadcastReceiver
 {
+    private static final int SERVICE_START_DELAY = 30;
+    private final static long NOTIFICATION_INTERVAL_MILLIS = 1000 * Utils.SECONDS_IN_MINUTE * Utils.MINUTES_IN_HOUR * 8;
 
-    private final static long NOTIFICATION_INTERVAL_MILLIS = 1000 * 60 * 60 * 8;
 
     @Override
     public void onReceive(Context context, Intent intent)
@@ -43,7 +46,7 @@ public class BootBroadcastReceiver extends BroadcastReceiver
         context.startService(i);
         Calendar cal = Calendar.getInstance();
         // Start 30 seconds after boot completed
-        cal.add(Calendar.SECOND, 30);
+        cal.add(Calendar.SECOND, SERVICE_START_DELAY);
 
         // InexactRepeating allows Android to optimize the energy
         // consumption

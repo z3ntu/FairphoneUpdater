@@ -22,6 +22,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.RemoteViews;
 
@@ -106,7 +107,7 @@ public class GoogleAppsInstallerWidget extends AppWidgetProvider
         for (int i = 0; i < appWidgetIds.length; i++)
         { // See the dimensions
           // and
-            System.out.println("Updating widget #" + i);
+            Log.i(TAG, "Updating widget #" + i);
             updateUI(context, appWidgetManager, appWidgetIds[i]);
         }
 
