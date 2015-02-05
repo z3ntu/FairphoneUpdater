@@ -17,19 +17,15 @@
     <color name="blue">#2AA9E0</color>
     <color name="blue_dark">#123C59</color>
     <color name="blue_light">#AADCF2</color>
-    <color name="blue_transparent">#662AA9E0</color>
     <color name="green">#6BC1A3</color>
     <color name="green_dark">#17717A</color>
     <color name="green_light">#a0d7c4</color>
-    <color name="green_transparent">#666BC1A3</color>
     <color name="pink">#c1454a</color>
     <color name="pink_dark">#823a3d</color>
     <color name="pink_light">#f286b6</color>
-    <color name="pink_transparent">#66c1454a</color>
     <color name="red">#c3474c</color>
 
     <!-- GOOGLE COLORS (DEPENDENCIES) -->
     <color name="google_blue">#33b5e5</color>
-    <color name="google_progressbar_grey">#4a4d51</color>
 
 </resources>

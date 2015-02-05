@@ -2,7 +2,6 @@
 <resources>
 
     <string name="downloadUrl" translatable="false">http://www.fairphone.com/ota/</string>
-    <string name="supportAppStoreUrl">https://fairphone.zendesk.com/hc/en-us/articles/201295267-How-to-re-install-the-App-Store</string>
     <string name="configFilename" translatable="false">updater</string>
     <string name="config_zip" translatable="false">.zip</string>
 	<string name="config_xml" translatable="false">.xml</string>
@@ -25,8 +24,6 @@
 	<string name="recoveryCachePath" translatable="false">cache</string>
 	<string name="recoverySdCardPath" translatable="false">sdcard</string>
 	<string name="updaterFolder" translatable="false">/updater/</string>
-	<integer name="FP1CachePartitionSizeMb">130</integer>
-	<integer name="minimalCachePartitionSizeMb">300</integer>
 	<integer name="FP1DataPartitionSizeMb">1100</integer>
 	
 	<!-- Packager -->

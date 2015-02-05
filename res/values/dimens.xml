@@ -3,13 +3,12 @@
     <!-- HEADER -->
     <dimen name="header_big_height">94.6dp</dimen>
     <dimen name="header_small_height">56dp</dimen>
-    <dimen name="header_small_info_height">25dp</dimen>
-    <dimen name="header_horizontal_padding_left">15dp</dimen>
     <dimen name="header_horizontal_padding_right">33dp</dimen>
-    <dimen name="header_horizontal_info_margin_right">20dp</dimen>
-    <dimen name="header_horizontal_info_margin_left">20dp</dimen>
     <dimen name="header_big_text_size">34sp</dimen>
     <dimen name="header_small_text_size">20sp</dimen>
+
+    <!-- WIDGET -->
+    <dimen name="wigdet_text_margin_left">20dp</dimen>
 
     <!-- MAIN -->
     <dimen name="main_padding">32dp</dimen>
