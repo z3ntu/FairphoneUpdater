@@ -566,7 +566,7 @@ public class DownloadAndRestartFragment extends BaseFragment
 
     private void startPreInstall()
     {
-        Resources resources = getResources();
+        final Resources resources = getResources();
         DownloadableItem item = mIsVersion ? mSelectedVersion : mSelectedStore;
 
         File f = new File("/" + resources.getString(R.string.recoveryCachePath) + "/" + Utils.getFilenameFromDownloadableItem(item));
@@ -601,33 +601,39 @@ public class DownloadAndRestartFragment extends BaseFragment
                 e.printStackTrace();
             }
 
-            Editor editor = mSharedPreferences.edit();
-            editor.remove(UpdaterService.PREFERENCE_REINSTALL_GAPPS);
-            editor.commit();
+            new Thread(new Runnable() {
+                @SuppressLint("CommitPrefEdits")
+                @Override
+                public void run() {
+                    Editor editor = mSharedPreferences.edit();
+                    editor.remove(UpdaterService.PREFERENCE_REINSTALL_GAPPS);
+                    editor.commit();
 
-            if (Utils.hasUnifiedPartition(resources))
-            {
-                removeLastUpdateDownload();
-            }
+                    if (Utils.hasUnifiedPartition(resources))
+                    {
+                        removeLastUpdateDownload();
+                    }
 
-            // remove the update files from data
-            removeUpdateFilesFromData();
+                    // remove the update files from data
+                    removeUpdateFilesFromData();
 
-            // reboot the device into recovery
-            try
-            {
-                mainActivity.updateStatePreference(UpdaterState.NORMAL);
-                mainActivity.clearSelectedItems();
-                clearConfigFile();
-	            editor = mSharedPreferences.edit();
-	            editor.remove(UpdaterService.LAST_CONFIG_DOWNLOAD_IN_MS);
-                editor.remove(MainFragment.SHARED_PREFERENCES_ENABLE_GAPPS);
-		        editor.commit();
-                Shell.runRootCommand(new CommandCapture(0, "reboot recovery"));
-            } catch (IOException | TimeoutException | RootDeniedException e)
-            {
-                e.printStackTrace();
-            }
+                    // reboot the device into recovery
+                    try
+                    {
+                        mainActivity.updateStatePreference(UpdaterState.NORMAL);
+                        mainActivity.clearSelectedItems();
+                        clearConfigFile();
+                        editor = mSharedPreferences.edit();
+                        editor.remove(UpdaterService.LAST_CONFIG_DOWNLOAD_IN_MS);
+                        editor.remove(MainFragment.SHARED_PREFERENCES_ENABLE_GAPPS);
+                        editor.commit();
+                        Shell.runRootCommand(new CommandCapture(0, "reboot recovery"));
+                    } catch (IOException | TimeoutException | RootDeniedException e)
+                    {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
         }
         else
         {

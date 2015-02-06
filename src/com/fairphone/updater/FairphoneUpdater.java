@@ -128,7 +128,6 @@ public class FairphoneUpdater extends FragmentActivity
         mIsFirstTimeAppStore = false;//mSharedPreferences.getBoolean(PREFERENCE_FIRST_TIME_APP_STORE, true);
         
         mOtaDownloadUrl = mSharedPreferences.getString(PREFERENCE_OTA_DOWNLOAD_URL, getResources().getString(R.string.downloadUrl));
-	    Log.wtf("SHIT FPU ", "PREFERENCE_OTA_DOWNLOAD_URL "+mOtaDownloadUrl);
 
         // get system data
         mDeviceVersion = VersionParserHelper.getDeviceVersion(this);
@@ -142,7 +141,7 @@ public class FairphoneUpdater extends FragmentActivity
 
         boolean isConfigLoaded = UpdaterService.readUpdaterData(this);
         if (!isConfigLoaded) {
-            mSharedPreferences.edit().remove(UpdaterService.LAST_CONFIG_DOWNLOAD_IN_MS).commit();
+            mSharedPreferences.edit().remove(UpdaterService.LAST_CONFIG_DOWNLOAD_IN_MS).apply();
         }
 
         startService();
@@ -316,7 +315,7 @@ public class FairphoneUpdater extends FragmentActivity
                     mIsFirstTimeFairphone = false;
 
                     editor.putBoolean(PREFERENCE_FIRST_TIME_FAIRPHONE, false);
-                    editor.commit();
+                    editor.apply();
                 }
 
                 headerFairphoneInfoButton.setVisibility(showInfo ? View.VISIBLE : View.GONE);
@@ -342,7 +341,7 @@ public class FairphoneUpdater extends FragmentActivity
                     mIsFirstTimeAndroid = false;
 
                     editor.putBoolean(PREFERENCE_FIRST_TIME_ANDROID, false);
-                    editor.commit();
+                    editor.apply();
                 }
 
                 headerFairphoneInfoButton.setVisibility(View.GONE);
@@ -367,7 +366,7 @@ public class FairphoneUpdater extends FragmentActivity
                     mIsFirstTimeAppStore = false;
 
                     editor.putBoolean(PREFERENCE_FIRST_TIME_APP_STORE, false);
-                    editor.commit();
+                    editor.apply();
                 }
 
                 headerFairphoneInfoButton.setVisibility(View.GONE);

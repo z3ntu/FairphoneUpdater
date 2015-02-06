@@ -183,7 +183,7 @@ public class UpdaterService extends Service
             // start the download of the latest file
             startDownloadLatest();
 
-            mSharedPreferences.edit().putLong(LAST_CONFIG_DOWNLOAD_IN_MS, now).commit();
+            mSharedPreferences.edit().putLong(LAST_CONFIG_DOWNLOAD_IN_MS, now).apply();
         }
     }
 
@@ -246,7 +246,7 @@ public class UpdaterService extends Service
                         public void run() {
                             Log.w(TAG, "Configuration file download timed out");
                             mDownloadManager.remove(currentId);
-                            mSharedPreferences.edit().remove(LAST_CONFIG_DOWNLOAD_IN_MS).commit();
+                            mSharedPreferences.edit().remove(LAST_CONFIG_DOWNLOAD_IN_MS).apply();
                         }
                     });
                 }
@@ -625,7 +625,7 @@ public class UpdaterService extends Service
             if (removeReceiver)
             {
                 Log.d(TAG, "Configuration download failed. Clearing grace period.");
-                mSharedPreferences.edit().remove(LAST_CONFIG_DOWNLOAD_IN_MS).commit();
+                mSharedPreferences.edit().remove(LAST_CONFIG_DOWNLOAD_IN_MS).apply();
                 removeBroadcastReceiver();
             }
         }

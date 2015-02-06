@@ -80,7 +80,7 @@ public class GappsInstallerHelper
         // alter State
         SharedPreferences.Editor prefEdit = mSharedPrefs.edit();
         prefEdit.putInt(GOOGLE_APPS_INSTALLER_STATE, state);
-        prefEdit.commit();
+        prefEdit.apply();
     }
 
     void updateWidgetState(int state)

@@ -112,7 +112,7 @@ public class MainFragment extends BaseFragment
         Editor edit = mSharedPreferences.edit();
         edit.putBoolean(SHARED_PREFERENCES_ENABLE_GAPPS, false);
 
-        edit.commit();
+        edit.apply();
     }
 
     private void setupCurrentVersionGroup(LayoutInflater inflater, View view)
