@@ -290,7 +290,7 @@ public class Utils
     public static void clearCache()
     {
         File f = Environment.getDownloadCacheDirectory();
-        File files[] = f.listFiles();
+        File[] files = f.listFiles();
         if (files != null)
         {
             Log.d(TAG, "Size: " + files.length);
@@ -339,36 +339,45 @@ public class Utils
         double cacheSize = Utils.getPartitionSizeInBytes(Environment.getDownloadCacheDirectory());
         return cacheSize >= fileSize;
     }
-    public static String getFilenameFromDownloadableItem(DownloadableItem item)
+
+    public static String getFilenameFromDownloadableItem(DownloadableItem item, boolean isVersion)
     {
+        StringBuilder filename = null;
+
+        if(isVersion)
+        {
+            filename = getFilenameForItem(item, "update_");
+        }
+        else
+        {
+            filename = getFilenameForItem(item, "store_");
+        }
+
+        return filename.toString();
+    }
+
+    private static StringBuilder getFilenameForItem(DownloadableItem item, String type) {
         StringBuilder filename = new StringBuilder();
         filename.append("fp_");
         if (item != null)
         {
-            if (item instanceof Version)
-            {
-                filename.append("update_");
-            }
-            else if (item instanceof Store)
-            {
-                filename.append("store_");
-            }
+            filename.append(type);
             filename.append(item.getNumber());
         }
         filename.append(".zip");
-        return filename.toString();
+        return filename;
     }
     
-    public static String getDownloadTitleFromDownloadableItem(Resources resources, DownloadableItem item){
+    public static String getDownloadTitleFromDownloadableItem(Resources resources, DownloadableItem item, boolean isVersion){
         String title = "";
         if (item != null)
         {
-            if (item instanceof Version)
+            if (isVersion)
             {
                 Version version = (Version) item;
                 title = version.getName() + " " + version.getImageTypeDescription(resources);
             }
-            else if (item instanceof Store)
+            else
             {
                 Store store = (Store) item;
                 title = store.getName();
@@ -397,7 +406,7 @@ public class Utils
             Scanner scan = new Scanner(is);
             scan.useDelimiter("\n");
             String prop = scan.next();
-            if (prop.length() == 0)
+            if (prop.isEmpty())
             {
                 return defaultValue;
             }

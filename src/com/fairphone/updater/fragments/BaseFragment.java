@@ -24,7 +24,7 @@ public class BaseFragment extends Fragment
 
         } catch (ClassCastException e)
         {
-            throw new ClassCastException(activity.toString() + " must implement " + FairphoneUpdater.class.getName());
+            throw new ClassCastException(activity + " must implement " + FairphoneUpdater.class.getName() + ": " + e.getLocalizedMessage());
         }
     }
 }

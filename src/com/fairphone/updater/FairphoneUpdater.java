@@ -278,7 +278,7 @@ public class FairphoneUpdater extends FragmentActivity
     public void onBackPressed()
     {
         Fragment fragment = getTopFragment();
-        if (fragment != null && fragment instanceof DownloadAndRestartFragment && !getCurrentUpdaterState().equals(UpdaterState.NORMAL))
+        if (fragment != null && fragment instanceof DownloadAndRestartFragment && getCurrentUpdaterState() != UpdaterState.NORMAL)
         {
             ((DownloadAndRestartFragment) fragment).abortUpdateProcess();
         }
@@ -596,34 +596,51 @@ public class FairphoneUpdater extends FragmentActivity
         return update;
     }
 
-    public String getItemName(DownloadableItem item)
+    public String getItemName(DownloadableItem item, boolean isVersion)
     {
         String itemName = "";
         if (item != null)
         {
-            if (item instanceof Version)
+            if(isVersion)
             {
-                Version version = (Version) item;
-                itemName = version.getImageTypeDescription(getResources()) + " " + version.getName() + " " + version.getBuildNumber();
+                itemName = getVersionName((Version) item);
             }
-            else if (item instanceof Store)
+            else
             {
+                itemName = getStoreName((Store) item);
+            }
+        }
+        return itemName;
+    }
 
-                Store store = (Store) item;
-                itemName = store.getName();
-            }
+    public String getVersionName(Version version)
+    {
+        String itemName = "";
+        if (version != null)
+        {
+            itemName = version.getImageTypeDescription(getResources()) + " " + version.getName() + " " + version.getBuildNumber();
+        }
+        return itemName;
+    }
+
+    public String getStoreName(Store store)
+    {
+        String itemName = "";
+        if (store != null)
+        {
+            itemName = store.getName();
         }
         return itemName;
     }
 
     public String getDeviceVersionName()
     {
-        return getItemName(mDeviceVersion);
+        return getVersionName(mDeviceVersion);
     }
 
     public String getLatestVersionName()
     {
-        return getItemName(mLatestVersion);
+        return getVersionName(mLatestVersion);
     }
 
     public Version getDeviceVersion()
@@ -744,8 +761,8 @@ public class FairphoneUpdater extends FragmentActivity
         }
         else
         {
-            intent = getParentActivityIntent();
-            if (checkStartGappsInstall(intent))
+            Intent parentIntent = getParentActivityIntent();
+            if (checkStartGappsInstall(parentIntent))
             {
                 mLaunchGapps = true;
             }

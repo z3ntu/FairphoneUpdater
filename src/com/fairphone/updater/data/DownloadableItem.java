@@ -16,7 +16,6 @@
 
 package com.fairphone.updater.data;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,29 +24,25 @@ import android.util.Log;
 
 public abstract class DownloadableItem
 {
-    private static final String TAG = Version.class.getSimpleName();
+    private static final String TAG = DownloadableItem.class.getSimpleName();
 
     public static final String DEFAULT_NOTES_LANG = "en";
 
-    private static final String DEPENDENCY_SEPARATOR = ",";
+    private int mNumber;
 
-    int mNumber;
+    private String mName;
 
-    String mName;
+    private String mOTADownloadLink;
 
-    String mOTADownloadLink;
+    private String mOTAMd5Sum;
 
-    String mOTAMd5Sum;
-
-    String mBuildNumber;
+    private String mBuildNumber;
     
     private final Map<String, String> mReleaseNotesMap;
 
-    String mReleaseDate;
+    private String mReleaseDate;
 
-    String mThumbnailImageLink;
-
-    ArrayList<Integer> mDependencies;
+    private String mThumbnailImageLink;
 
     DownloadableItem()
     {
@@ -159,35 +154,6 @@ public abstract class DownloadableItem
     {
         return mThumbnailImageLink;
     }
-
-    public void setVersionDependencies(String dependencyList)
-    {
-        if (TextUtils.isEmpty(dependencyList))
-        {
-            mDependencies.clear();
-        }
-        else
-        {
-            String[] dependencies = dependencyList.split(DEPENDENCY_SEPARATOR);
-            for (String dependency : dependencies)
-            {
-                try
-                {
-                    mDependencies.add(Integer.valueOf(dependency));
-                } catch (NumberFormatException e)
-                {
-                    Log.e(TAG, "Invalid dependency");
-                }
-            }
-        }
-    }
-
-// --Commented out by Inspection START (06/02/2015 12:36):
-//    public ArrayList<Integer> getVersionDependencies()
-//    {
-//        return mDependencies;
-//    }
-// --Commented out by Inspection STOP (06/02/2015 12:36)
 
     public void setReleaseNotes(String language, String releaseNotes)
     {

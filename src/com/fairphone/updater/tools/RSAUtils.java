@@ -183,7 +183,7 @@ public class RSAUtils
                         _dirChecker(ze.getName(), targetPath);
                     } else {
                         FileOutputStream fout = new FileOutputStream(targetPath + ze.getName());
-                        byte buffer[] = new byte[Utils.BUFFER_SIZE_2_KBYTES];
+                        byte[] buffer = new byte[Utils.BUFFER_SIZE_2_KBYTES];
 
                         int count;
 

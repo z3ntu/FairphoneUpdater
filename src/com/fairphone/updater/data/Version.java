@@ -18,13 +18,18 @@ package com.fairphone.updater.data;
 
 import android.content.res.Resources;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.fairphone.updater.R;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Version extends DownloadableItem implements Comparable<Version>
 {
+    private static final String TAG = Version.class.getSimpleName();
+
+    private static final String DEPENDENCY_SEPARATOR = ",";
 
     public static final String IMAGE_TYPE_AOSP = "AOSP";
 
@@ -38,18 +43,13 @@ public class Version extends DownloadableItem implements Comparable<Version>
 
     private boolean mErasePartitionsWarning;
 
+    private List<Integer> mDependencies;
+
     public Version()
     {
+        super();
         mDependencies = new ArrayList<>();
-
-        mNumber = 0;
-        mName = "";
         mAndroidVersion = "";
-        mOTADownloadLink = "";
-        mOTAMd5Sum = "";
-        mBuildNumber = "";
-        mReleaseDate = "";
-        mThumbnailImageLink = "";
         mImageType = IMAGE_TYPE_FAIRPHONE;
         setEraseAllPartitionWarning(false);
         mBetaStatus = "";
@@ -155,4 +155,32 @@ public class Version extends DownloadableItem implements Comparable<Version>
         return retVal;
     }
 
+    public void setVersionDependencies(String dependencyList)
+    {
+        if (TextUtils.isEmpty(dependencyList))
+        {
+            mDependencies.clear();
+        }
+        else
+        {
+            String[] dependencies = dependencyList.split(DEPENDENCY_SEPARATOR);
+            for (String dependency : dependencies)
+            {
+                try
+                {
+                    mDependencies.add(Integer.valueOf(dependency));
+                } catch (NumberFormatException e)
+                {
+                    Log.e(TAG, "Invalid dependency");
+                }
+            }
+        }
+    }
+
+// --Commented out by Inspection START (06/02/2015 12:36):
+//    public ArrayList<Integer> getVersionDependencies()
+//    {
+//        return mDependencies;
+//    }
+// --Commented out by Inspection STOP (06/02/2015 12:36)
 }

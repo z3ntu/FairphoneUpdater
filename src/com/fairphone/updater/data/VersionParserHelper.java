@@ -243,6 +243,8 @@ public class VersionParserHelper
                             break;
                     }
                     break;
+                default:
+                    break;
             }
 
             eventType = xpp.next();
@@ -255,7 +257,6 @@ public class VersionParserHelper
 
     private static Version readVersion(Version version, XmlPullParser xpp, String tagName) throws XmlPullParserException, IOException
     {
-
         if (version == null)
         {
             version = new Version();
@@ -270,6 +271,10 @@ public class VersionParserHelper
         else if (tagName.equalsIgnoreCase(XML_TAGS.ANDROID_VERSION.name()))
         {
             version.setAndroidVersion(xpp.nextText());
+        }
+        else if (tagName.equalsIgnoreCase(XML_TAGS.DEPENDENCIES.name()))
+        {
+            version.setVersionDependencies(xpp.nextText());
         }
         else if (tagName.equalsIgnoreCase(XML_TAGS.ERASE_DATA_WARNING.name()))
         {
@@ -310,10 +315,6 @@ public class VersionParserHelper
         else if (tagName.equalsIgnoreCase(XML_TAGS.BUILD_NUMBER.name()))
         {
             item.setBuildNumber(xpp.nextText());
-        }
-        else if (tagName.equalsIgnoreCase(XML_TAGS.DEPENDENCIES.name()))
-        {
-            item.setVersionDependencies(xpp.nextText());
         }
         else if (tagName.equalsIgnoreCase(XML_TAGS.RELEASE_NOTES.name()))
         {

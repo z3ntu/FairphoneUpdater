@@ -102,9 +102,9 @@ public class UpdaterData
         return version;
     }
 
-    ArrayList<Version> mapToOrderedVersionList(Collection<Version> a)
+    List<Version> mapToOrderedVersionList(Collection<Version> a)
     {
-        ArrayList<Version> retval = new ArrayList<>();
+        List<Version> retval = new ArrayList<>();
         for (Version version : a)
         {
             retval.add(version);
@@ -113,9 +113,9 @@ public class UpdaterData
         return retval;
     }
     
-    ArrayList<Store> mapToOrderedStoreList(Collection<Store> a)
+    List<Store> mapToOrderedStoreList(Collection<Store> a)
     {
-        ArrayList<Store> retval = new ArrayList<>();
+        List<Store> retval = new ArrayList<>();
         for (Store store : a)
         {
             retval.add(store);

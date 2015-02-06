@@ -34,18 +34,6 @@ public class GappsInstallerHelper
 
     public static final String EXTRA_START_GAPPS_INSTALL = "com.fairphone.updater.gapps.EXTRA_START_GAPPS_INSTALL";
 
-    private final Context mContext;
-    private final SharedPreferences mSharedPrefs;
-
-    public GappsInstallerHelper(Context context)
-    {
-        mContext = context;
-
-        mSharedPrefs = mContext.getSharedPreferences(PREFS_GOOGLE_APPS_INSTALLER_DATA, Context.MODE_PRIVATE);
-
-        checkGappsAreInstalled();
-    }
-
     public static boolean areGappsInstalled()
     {
         File f = new File("/system/app/OneTimeInitializer.apk");
@@ -53,40 +41,41 @@ public class GappsInstallerHelper
         return f.exists();
     }
 
-    private void checkGappsAreInstalled()
+    public static void checkGappsAreInstalled(Context context)
     {
         if (areGappsInstalled())
         {
-            updateWidgetState(GAPPS_INSTALLED_STATE);
+            updateWidgetState(context, GAPPS_INSTALLED_STATE);
 	        return;
         }
 
-        updateWidgetState(GAPPS_STATES_INITIAL);
+        updateWidgetState(context, GAPPS_STATES_INITIAL);
 
     }
 
-    private void updateGoogleAppsIntallerWidgets()
+    private static void updateGoogleAppsIntallerWidgets(Context context)
     {
-        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(mContext);
-        int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(mContext, GoogleAppsInstallerWidget.class));
+        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+        int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(context, GoogleAppsInstallerWidget.class));
         if (appWidgetIds.length > 0)
         {
-            new GoogleAppsInstallerWidget().onUpdate(mContext, appWidgetManager, appWidgetIds);
+            new GoogleAppsInstallerWidget().onUpdate(context, appWidgetManager, appWidgetIds);
         }
     }
 
-    private void updateInstallerState(int state)
+    private static void updateInstallerState(Context context, int state)
     {
+        SharedPreferences sharedPrefs = context.getSharedPreferences(PREFS_GOOGLE_APPS_INSTALLER_DATA, Context.MODE_PRIVATE);
         // alter State
-        SharedPreferences.Editor prefEdit = mSharedPrefs.edit();
+        SharedPreferences.Editor prefEdit = sharedPrefs.edit();
         prefEdit.putInt(GOOGLE_APPS_INSTALLER_STATE, state);
         prefEdit.apply();
     }
 
-    void updateWidgetState(int state)
+    private static void updateWidgetState(Context context, int state)
     {
-        updateInstallerState(state);
+        updateInstallerState(context, state);
 
-        updateGoogleAppsIntallerWidgets();
+        updateGoogleAppsIntallerWidgets(context);
     }
 }

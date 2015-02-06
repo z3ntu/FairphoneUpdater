@@ -109,7 +109,7 @@ public class UpdaterService extends Service
         }
 
         // setup the gapps installer
-        new GappsInstallerHelper(getApplicationContext());
+        GappsInstallerHelper.checkGappsAreInstalled(getApplicationContext());
 
 	    BroadcastReceiver mBCastConfigFileDownload = new BroadcastReceiver() {
 
@@ -149,7 +149,9 @@ public class UpdaterService extends Service
     {
 
         if ( FairphoneUpdater.BETA_MODE_ENABLED )
+        {
             return;
+        }
         Context context = getApplicationContext();
 
 	    NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
@@ -322,7 +324,9 @@ public class UpdaterService extends Service
     {
 
         if ( FairphoneUpdater.BETA_MODE_ENABLED )
+        {
             return;
+        }
         
         Context context = currentContext.getApplicationContext();
 

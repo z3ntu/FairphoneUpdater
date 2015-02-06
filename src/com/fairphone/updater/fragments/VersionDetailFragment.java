@@ -158,7 +158,7 @@ public class VersionDetailFragment extends BaseFragment
         mVersion_details_title_text.setText(mVersionDetailsTitle);
         if (item != null)
         {
-            mVersion_details_name_text.setText(mainActivity.getItemName(item));
+            mVersion_details_name_text.setText(mainActivity.getItemName(item, mIsVersion));
         }
     }
 
@@ -208,21 +208,21 @@ public class VersionDetailFragment extends BaseFragment
                 break;
 
             case ANDROID:
-                mHeaderText = mainActivity.getItemName(mSelectedVersion);
+                mHeaderText = mainActivity.getVersionName(mSelectedVersion);
                 mVersionDetailsTitle = resources.getString(R.string.new_os);
                 mIsOSChange = deviceVersion.getImageType().equalsIgnoreCase(Version.IMAGE_TYPE_FAIRPHONE);
                 mIsOlderVersion =
                         (deviceVersion.getImageType().equalsIgnoreCase(Version.IMAGE_TYPE_AOSP) && deviceVersion.isNewerVersionThan(mSelectedVersion));
                 break;
             case APP_STORE:
-                mHeaderText = mainActivity.getItemName(mSelectedStore);
+                mHeaderText = mainActivity.getStoreName(mSelectedStore);
                 mVersionDetailsTitle = resources.getString(R.string.install);
                 mIsOSChange = false;
                 mIsOlderVersion = false;
                 break;
             case FAIRPHONE:
             default:
-                mHeaderText = mainActivity.getItemName(mSelectedVersion);
+                mHeaderText = mainActivity.getVersionName(mSelectedVersion);
                 mVersionDetailsTitle = resources.getString(R.string.older_version);
                 mIsOSChange = deviceVersion.getImageType().equalsIgnoreCase(Version.IMAGE_TYPE_AOSP);
                 mIsOlderVersion =
@@ -276,8 +276,8 @@ public class VersionDetailFragment extends BaseFragment
             {
                 // set the download for the latest version on the download
                 // manager
-                String fileName = Utils.getFilenameFromDownloadableItem(item);
-                String downloadTitle = Utils.getDownloadTitleFromDownloadableItem(getResources(), item);
+                String fileName = Utils.getFilenameFromDownloadableItem(item, mIsVersion);
+                String downloadTitle = Utils.getDownloadTitleFromDownloadableItem(getResources(), item, mIsVersion);
                 String download_link =  item.getDownloadLink();
                 if (!(download_link.startsWith("http://") || download_link.startsWith("https://")))
                 {
@@ -368,7 +368,7 @@ public class VersionDetailFragment extends BaseFragment
         {
             if (mIsOSChange || mIsOlderVersion)
             {
-                showPopupDialog(mainActivity.getItemName(mSelectedVersion), mSelectedVersion.hasEraseAllPartitionWarning(),
+                showPopupDialog(mainActivity.getVersionName(mSelectedVersion), mSelectedVersion.hasEraseAllPartitionWarning(),
                         new ConfirmationPopupDialogListener()
                         {
 
