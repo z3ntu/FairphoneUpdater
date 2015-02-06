@@ -103,10 +103,15 @@ public class RSAUtils
 
     private static byte[] readSignature(String input) throws IOException
     {
-        FileInputStream signStream = new FileInputStream(input);
-        byte[] signBytes = new byte[signStream.available()];
-        signStream.read(signBytes);
+        File sigFile = new File(input);
+        int fileSize = (int) sigFile.length();
+        FileInputStream signStream = new FileInputStream(sigFile);
+        byte[] signBytes = new byte[fileSize];
+        int readBytes = signStream.read(signBytes);
         signStream.close();
+        if(readBytes != fileSize){
+            throw new IOException("Read failure");
+        }
         return signBytes;
     }
 
@@ -118,10 +123,15 @@ public class RSAUtils
         Log.i(TAG, "Algorithm = " + sg.getAlgorithm());
         Log.i(TAG, "Provider = " + sg.getProvider());
 
-        FileInputStream in = new FileInputStream(input);
-        byte[] buff = new byte[in.available()];
-        in.read(buff);
+        File receivedFile = new File(input);
+        int fileSize = (int) receivedFile.length();
+        FileInputStream in = new FileInputStream(receivedFile);
+        byte[] buff = new byte[fileSize];
+        int readBytes = in.read(buff);
         in.close();
+        if(readBytes != fileSize){
+            throw new Exception("Read failure");
+        }
 
         sg.update(buff);
 
@@ -155,52 +165,55 @@ public class RSAUtils
 
     private static void unzip(String filePath, String targetPath)
     {
-        new File(targetPath).mkdirs();
-        try
-        {
-            FileInputStream fin = new FileInputStream(filePath);
-            ZipInputStream zin = new ZipInputStream(fin);
-            ZipEntry ze;
+        File path = new File(targetPath);
+        boolean notMkDirs = !path.mkdirs();
+        if(notMkDirs && !path.exists()){
+            Log.e(TAG, "Couldn't create path: " + targetPath);
+        }
+        else {
+            try {
+                FileInputStream fin = new FileInputStream(filePath);
+                ZipInputStream zin = new ZipInputStream(fin);
+                ZipEntry ze;
 
-            while ((ze = zin.getNextEntry()) != null)
-            {
-                Log.d(TAG, "Unzipping " + ze.getName());
+                while ((ze = zin.getNextEntry()) != null) {
+                    Log.d(TAG, "Unzipping " + ze.getName());
 
-                if (ze.isDirectory())
-                {
-                    _dirChecker(ze.getName(), targetPath);
-                }
-                else
-                {
-                    FileOutputStream fout = new FileOutputStream(targetPath + ze.getName());
-                    byte buffer[] = new byte[Utils.BUFFER_SIZE_2_KBYTES];
+                    if (ze.isDirectory()) {
+                        _dirChecker(ze.getName(), targetPath);
+                    } else {
+                        FileOutputStream fout = new FileOutputStream(targetPath + ze.getName());
+                        byte buffer[] = new byte[Utils.BUFFER_SIZE_2_KBYTES];
 
-                    int count;
+                        int count;
 
-                    while ((count = zin.read(buffer)) != -1)
-                    {
-                        fout.write(buffer, 0, count);
+                        while ((count = zin.read(buffer)) != -1) {
+                            fout.write(buffer, 0, count);
+                        }
+
+                        zin.closeEntry();
+                        fout.close();
                     }
-
-                    zin.closeEntry();
-                    fout.close();
                 }
+                zin.close();
+                fin.close();
+            } catch (Exception e) {
+                Log.e(TAG, "unzip", e);
             }
-            zin.close();
-            fin.close();
-        } catch (Exception e)
-        {
-            Log.e(TAG, "unzip", e);
         }
     }
 
     private static void _dirChecker(String dir, String location)
     {
-        File f = new File(location + dir);
+        String targetPath = location + dir;
+        File f = new File(targetPath);
 
         if (!f.isDirectory())
         {
-            f.mkdirs();
+            boolean notMkDirs = !f.mkdirs();
+            if(notMkDirs && !f.exists()){
+                Log.e(TAG, "Couldn't create path: " + targetPath);
+            }
         }
     }
 
