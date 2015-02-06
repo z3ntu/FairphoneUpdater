@@ -28,7 +28,8 @@
         android:allowBackup="true"
         android:icon="@drawable/updater_app_icon"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme"
+        android:supportsRtl="true">
         <service
             android:name=".UpdaterService"
             android:icon="@drawable/updater_app_icon_small"

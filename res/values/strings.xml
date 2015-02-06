@@ -69,5 +69,6 @@
     <string name="enable_beta">Enable Beta</string>
     <string name="beta_is_enabled">Beta is enabled</string>
     <string name="beta_activation_failed">Failed to activate beta</string>
+    <string name="genericContentDescription" translatable="false">genericContentDescription</string>
 
 </resources>

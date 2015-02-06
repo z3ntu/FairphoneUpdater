@@ -14,14 +14,15 @@
             android:id="@+id/installButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/widget_gapps_widget_install" />
+            android:background="@drawable/widget_gapps_widget_install"
+            android:contentDescription="@string/genericContentDescription"/>
 
         <TextView
             android:id="@+id/installText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_marginLeft="@dimen/wigdet_text_margin_left"
+            android:layout_marginStart="@dimen/wigdet_text_margin_left"
             android:text="@string/google_apps_initial_title"
             android:textColor="@color/google_blue"
             android:textSize="18sp" />
@@ -37,13 +38,14 @@
             android:id="@+id/reinstallButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/widget_gapps_widget_uninstall" />
+            android:background="@drawable/widget_gapps_widget_uninstall"
+            android:contentDescription="@string/genericContentDescription"/>
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_marginLeft="@dimen/wigdet_text_margin_left"
+            android:layout_marginStart="@dimen/wigdet_text_margin_left"
             android:orientation="vertical" >
 
             <TextView

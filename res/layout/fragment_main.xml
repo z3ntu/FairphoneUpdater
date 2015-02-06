@@ -40,10 +40,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
-                android:layout_alignParentRight="true"
-                android:gravity="right"
+                android:layout_alignParentEnd="true"
+                android:gravity="end"
                 android:paddingBottom="45dp"
-                android:paddingRight="140dp"
+                android:paddingEnd="140dp"
+                android:paddingStart="0dp"
                 android:text="@string/gapps_store_install" />
 
             <TextView
@@ -51,10 +52,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
-                android:layout_alignParentRight="true"
-                android:gravity="right"
+                android:layout_alignParentEnd="true"
+                android:gravity="end"
                 android:paddingBottom="28dp"
-                android:paddingRight="140dp"
+                android:paddingEnd="140dp"
+                android:paddingStart="0dp"
                 android:text="@string/gapps_store_hide_reminder" />
 
             <Button
@@ -62,7 +64,7 @@
                 android:layout_width="27dp"
                 android:layout_height="105dp"
                 android:layout_alignParentBottom="true"
-                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
                 android:background="@drawable/button_dismiss_apps_installer" />
         </RelativeLayout>
     </RelativeLayout>
