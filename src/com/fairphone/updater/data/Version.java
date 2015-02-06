@@ -16,32 +16,15 @@
 
 package com.fairphone.updater.data;
 
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.content.res.Resources;
 import android.text.TextUtils;
 
-import com.fairphone.updater.FairphoneUpdater;
 import com.fairphone.updater.R;
 
 import java.util.ArrayList;
 
 public class Version extends DownloadableItem implements Comparable<Version>
 {
-    private static final String FAIRPHONE_VERSION_NUMBER = "FairphoneUpdateVersionNumber";
-
-    private static final String FAIRPHONE_VERSION_NAME = "FairphoneUpdateVersionName";
-
-    private static final String FAIRPHONE_VERSION_BUILD_NUMBER = "FairphoneUpdateVersionBuildNumber";
-
-    private static final String FAIRPHONE_ANDROID_VERSION = "FairphoneUpdateAndroidVersion";
-
-    private static final String FAIRPHONE_VERSION_OTA_DOWNLOAD_LINK = "FairphoneUpdateVersionOTADownloadLink";
-
-    private static final String FAIRPHONE_VERSION_THUMBNAIL_DOWNLOAD_LINK = "FairphoneUpdateVersionThumbnailDownloadLink";
-
-    private static final String FAIRPHONE_VERSION_OTA_MD5 = "FairphoneUpdateVersionOTAMD5";
 
     public static final String IMAGE_TYPE_AOSP = "AOSP";
 
@@ -68,57 +51,8 @@ public class Version extends DownloadableItem implements Comparable<Version>
         mReleaseDate = "";
         mThumbnailImageLink = "";
         mImageType = IMAGE_TYPE_FAIRPHONE;
-        mErasePartitionsWarning = false;
+        setEraseAllPartitionWarning(false);
         mBetaStatus = "";
-    }
-
-    public static Version getVersionFromSharedPreferences(Context context)
-    {
-        Version version = new Version();
-        SharedPreferences sharedPrefs = context.getSharedPreferences(FairphoneUpdater.FAIRPHONE_UPDATER_PREFERENCES, Context.MODE_PRIVATE);
-        Resources resources = context.getResources();
-
-        int defaultVersionNumber = resources.getInteger(R.integer.defaultVersionNumber);
-        version.setNumber(sharedPrefs.getInt(FAIRPHONE_VERSION_NUMBER, defaultVersionNumber));
-
-        String defaultVersionName = resources.getString(R.string.defaultVersionName);
-        version.setName(sharedPrefs.getString(FAIRPHONE_VERSION_NAME, defaultVersionName));
-
-        String defaultVersionBuildNumber = resources.getString(R.string.defaultBuildNumber);
-        version.setBuildNumber(sharedPrefs.getString(FAIRPHONE_VERSION_BUILD_NUMBER, defaultVersionBuildNumber));
-
-        String defaultVersionAndroid = resources.getString(R.string.defaultAndroidVersionNumber);
-        version.setAndroidVersion(sharedPrefs.getString(FAIRPHONE_ANDROID_VERSION, defaultVersionAndroid));
-
-        version.setDownloadLink(sharedPrefs.getString(FAIRPHONE_VERSION_OTA_DOWNLOAD_LINK, ""));
-
-        version.setThumbnailLink(sharedPrefs.getString(FAIRPHONE_VERSION_THUMBNAIL_DOWNLOAD_LINK, ""));
-
-        version.setMd5Sum(sharedPrefs.getString(FAIRPHONE_VERSION_OTA_MD5, ""));
-
-        if (TextUtils.isEmpty(version.getMd5Sum()) || TextUtils.isEmpty(version.getMd5Sum()))
-        {
-            return null;
-        }
-
-        version.setEraseAllPartitionWarning(false);
-
-        return version;
-    }
-
-    void saveToSharedPreferences(Context context)
-    {
-        SharedPreferences sharedPrefs = context.getSharedPreferences(FairphoneUpdater.FAIRPHONE_UPDATER_PREFERENCES, Context.MODE_PRIVATE);
-
-        Editor editor = sharedPrefs.edit();
-        editor.putInt(FAIRPHONE_VERSION_NUMBER, getNumber());
-        editor.putString(FAIRPHONE_VERSION_NAME, getName());
-        editor.putString(FAIRPHONE_ANDROID_VERSION, getAndroidVersion());
-        editor.putString(FAIRPHONE_VERSION_BUILD_NUMBER, getBuildNumber());
-        editor.putString(FAIRPHONE_VERSION_OTA_DOWNLOAD_LINK, getDownloadLink());
-        editor.putString(FAIRPHONE_VERSION_THUMBNAIL_DOWNLOAD_LINK, getThumbnailLink());
-        editor.putString(FAIRPHONE_VERSION_OTA_MD5, getMd5Sum());
-        editor.commit();
     }
 
     public void setEraseAllPartitionWarning(boolean erasePartitionsWarning)
@@ -129,20 +63,6 @@ public class Version extends DownloadableItem implements Comparable<Version>
     public boolean hasEraseAllPartitionWarning()
     {
         return mErasePartitionsWarning;
-    }
-
-    public void deleteFromSharedPreferences(Context context)
-    {
-        setNumber(1);
-        setName(null);
-        setBuildNumber(null);
-        setAndroidVersion(null);
-        resetReleaseNotes();
-        setReleaseDate(null);
-        setMd5Sum(null);
-        setThumbnailLink(null);
-        setDownloadLink(null);
-        saveToSharedPreferences(context);
     }
 
     public String getAndroidVersion()
@@ -197,15 +117,17 @@ public class Version extends DownloadableItem implements Comparable<Version>
         return description;
     }
 
-    public String getAndroidVersion(Resources resources)
-    {
-        String retVal = "";
-        if (!TextUtils.isEmpty(mAndroidVersion))
-        {
-	        retVal = resources.getString(R.string.android) + " " + mAndroidVersion;
-        }
-        return retVal;
-    }
+// --Commented out by Inspection START (06/02/2015 12:25):
+//    public String getAndroidVersion(Resources resources)
+//    {
+//        String retVal = "";
+//        if (!TextUtils.isEmpty(mAndroidVersion))
+//        {
+//	        retVal = resources.getString(R.string.android) + " " + mAndroidVersion;
+//        }
+//        return retVal;
+//    }
+// --Commented out by Inspection STOP (06/02/2015 12:25)
 
     @Override
     public int compareTo(@SuppressWarnings("NullableProblems") Version another)

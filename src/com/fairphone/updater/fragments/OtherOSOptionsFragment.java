@@ -15,7 +15,6 @@ import com.fairphone.updater.fragments.VersionListFragment.ListLayoutType;
 public class OtherOSOptionsFragment extends BaseFragment
 {
 
-    private static final String TAG = OtherOSOptionsFragment.class.getSimpleName();
     private Button olderFairphoneOSButton;
     private Button androidOSButton;
     private Button mAppStoreButton;

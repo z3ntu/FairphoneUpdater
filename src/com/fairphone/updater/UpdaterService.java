@@ -29,9 +29,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.app.TaskStackBuilder;
-import android.appwidget.AppWidgetManager;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -58,7 +56,6 @@ import com.fairphone.updater.data.VersionParserHelper;
 import com.fairphone.updater.gappsinstaller.GappsInstallerHelper;
 import com.fairphone.updater.tools.RSAUtils;
 import com.fairphone.updater.tools.Utils;
-import com.fairphone.updater.widgets.gapps.GoogleAppsInstallerWidget;
 import com.stericson.RootTools.execution.CommandCapture;
 import com.stericson.RootTools.execution.Shell;
 
@@ -190,15 +187,17 @@ public class UpdaterService extends Service
         }
     }
 
-    public void updateGoogleAppsIntallerWidgets()
-    {
-        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
-        int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(this, GoogleAppsInstallerWidget.class));
-        if (appWidgetIds.length > 0)
-        {
-            new GoogleAppsInstallerWidget().onUpdate(this, appWidgetManager, appWidgetIds);
-        }
-    }
+// --Commented out by Inspection START (06/02/2015 12:27):
+//    public void updateGoogleAppsIntallerWidgets()
+//    {
+//        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
+//        int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(this, GoogleAppsInstallerWidget.class));
+//        if (appWidgetIds.length > 0)
+//        {
+//            new GoogleAppsInstallerWidget().onUpdate(this, appWidgetManager, appWidgetIds);
+//        }
+//    }
+// --Commented out by Inspection STOP (06/02/2015 12:27)
 
     void clearDataLogs()
     {

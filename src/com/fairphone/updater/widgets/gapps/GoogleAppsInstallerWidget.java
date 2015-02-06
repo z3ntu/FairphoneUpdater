@@ -36,13 +36,6 @@ public class GoogleAppsInstallerWidget extends AppWidgetProvider
     private static final String TAG = GoogleAppsInstallerWidget.class.getSimpleName();
 
     @Override
-    public void onDeleted(Context context, int[] appWidgetIds)
-    {
-        // Widget instance is removed from the homescreen
-        // Log.d(TAG, "onDeleted - " + appWidgetIds);
-    }
-
-    @Override
     public void onAppWidgetOptionsChanged(Context context, AppWidgetManager appWidgetManager, int appWidgetId, Bundle newOptions)
     {
         updateUI(context, appWidgetManager, appWidgetId);

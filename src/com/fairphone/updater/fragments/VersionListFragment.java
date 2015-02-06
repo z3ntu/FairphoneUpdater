@@ -22,8 +22,6 @@ import com.fairphone.updater.fragments.VersionDetailFragment.DetailLayoutType;
 public class VersionListFragment extends BaseFragment
 {
 
-    private static final String TAG = VersionListFragment.class.getSimpleName();
-
     public static enum ListLayoutType
     {
         FAIRPHONE, ANDROID, APP_STORE

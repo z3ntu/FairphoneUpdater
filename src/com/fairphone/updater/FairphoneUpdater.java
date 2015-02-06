@@ -211,29 +211,6 @@ public class FairphoneUpdater extends FragmentActivity
         return mSharedPreferences.getLong(key, 0);
     }
 
-    public boolean getBooleanPreference(String key)
-    {
-        return mSharedPreferences.getBoolean(key, false);
-    }
-
-    public void savePreference(String key, String value)
-    {
-        Editor editor = mSharedPreferences.edit();
-
-        editor.putString(key, value);
-
-        editor.commit();
-    }
-
-    public void savePreference(String key, boolean value)
-    {
-        Editor editor = mSharedPreferences.edit();
-
-        editor.putBoolean(key, value);
-
-        editor.commit();
-    }
-
     void savePreference(String key, long value)
     {
         Editor editor = mSharedPreferences.edit();
@@ -648,11 +625,6 @@ public class FairphoneUpdater extends FragmentActivity
     public String getLatestVersionName()
     {
         return getItemName(mLatestVersion);
-    }
-
-    public String getSelectedVersionName()
-    {
-        return getItemName(mSelectedVersion);
     }
 
     public Version getDeviceVersion()

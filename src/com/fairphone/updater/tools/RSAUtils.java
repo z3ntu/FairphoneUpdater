@@ -17,8 +17,6 @@
 package com.fairphone.updater.tools;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -29,9 +27,6 @@ import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.security.Signature;
-import java.security.cert.Certificate;
-import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.zip.ZipEntry;
@@ -51,28 +46,27 @@ public class RSAUtils
 
     private static final String SIGNATURE_ALGORITHM = "SHA1withRSA";
 
-    public static PublicKey readPublicKeyFormCertificate(Context context, int certificateResourceId) throws IOException, CertificateException
-    {
-        InputStream in = context.getResources().openRawResource(certificateResourceId);
-        byte[] buff = new byte[Utils.BUFFER_SIZE_4_KBYTES];
-        int bytesRead;
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        while ((bytesRead = in.read(buff)) != -1)
-        {
-            out.write(buff, 0, bytesRead);
-            Log.i(TAG, "bytes read: " + bytesRead);
-        }
-
-        byte[] publicKeyBytes = out.toByteArray();
-
-        CertificateFactory cf = CertificateFactory.getInstance("X509");
-        Certificate cert = cf.generateCertificate(new ByteArrayInputStream(publicKeyBytes));
-
-        PublicKey pubKey = cert.getPublicKey();
-        Log.i(TAG, "Public Key Info: ");
-        Log.i(TAG, "Algorithm = " + pubKey.getAlgorithm());
-        return pubKey;
-    }
+// --Commented out by Inspection START (06/02/2015 12:27):
+//    public static PublicKey readPublicKeyFormCertificate(Context context, int certificateResourceId) throws IOException, CertificateException
+//    {
+//        InputStream in = context.getResources().openRawResource(certificateResourceId);
+//        byte[] buff = new byte[Utils.BUFFER_SIZE_4_KBYTES];
+//        int bytesRead;
+//        ByteArrayOutputStream out = new ByteArrayOutputStream();
+//        while ((bytesRead = in.read(buff)) != -1)
+//        {
+//            out.write(buff, 0, bytesRead);
+//        }
+//
+//        byte[] publicKeyBytes = out.toByteArray();
+//
+//        CertificateFactory cf = CertificateFactory.getInstance("X509");
+//        Certificate cert = cf.generateCertificate(new ByteArrayInputStream(publicKeyBytes));
+//
+//        PublicKey pubKey = cert.getPublicKey();
+//        return pubKey;
+//    }
+// --Commented out by Inspection STOP (06/02/2015 12:27)
 
     private static PublicKey readPublicKeyFromPemFormat(Context context) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException
     {

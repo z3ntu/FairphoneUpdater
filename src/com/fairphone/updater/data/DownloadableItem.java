@@ -182,11 +182,13 @@ public abstract class DownloadableItem
         }
     }
 
-    public ArrayList<Integer> getVersionDependencies()
-    {
-        return mDependencies;
-    }
-    
+// --Commented out by Inspection START (06/02/2015 12:36):
+//    public ArrayList<Integer> getVersionDependencies()
+//    {
+//        return mDependencies;
+//    }
+// --Commented out by Inspection STOP (06/02/2015 12:36)
+
     public void setReleaseNotes(String language, String releaseNotes)
     {
         mReleaseNotesMap.put(language.toLowerCase(), releaseNotes);
@@ -207,8 +209,10 @@ public abstract class DownloadableItem
         return TextUtils.isEmpty(releaseNotes) ? "" : releaseNotes;
     }
 
-    void resetReleaseNotes()
-    {
-        mReleaseNotesMap.clear();
-    }
+// --Commented out by Inspection START (06/02/2015 12:36):
+//    void resetReleaseNotes()
+//    {
+//        mReleaseNotesMap.clear();
+//    }
+// --Commented out by Inspection STOP (06/02/2015 12:36)
 }

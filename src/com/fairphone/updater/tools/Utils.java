@@ -59,7 +59,7 @@ public class Utils
     public static final long MINUTES_IN_HOUR = 60l;
 
     private static final double BUFFER_1024_BYTES = 1024d;
-    public static final int BUFFER_SIZE_4_KBYTES = 4096;
+    // --Commented out by Inspection (06/02/2015 12:27):public static final int BUFFER_SIZE_4_KBYTES = 4096;
     public static final int BUFFER_SIZE_2_KBYTES = 2048;
     private static final int BUFFER_SIZE_8_KBYTES = 8192;
     public static final int BUFFER_SIZE_10_MBYTES = 10240;
@@ -74,13 +74,14 @@ public class Utils
         return sizeInGB;
     }
 
-    public static double getPartitionSizeInMBytes(File path)
-    {
-        double availableBlocks = getPartitionSizeInBytes(path);
-        double sizeInMB = ((availableBlocks / BUFFER_1024_BYTES)) / BUFFER_1024_BYTES;
-        Log.d(TAG, path.getPath() + " size(MB): " + sizeInMB);
-        return sizeInMB;
-    }
+// --Commented out by Inspection START (06/02/2015 12:26):
+//    public static double getPartitionSizeInMBytes(File path)
+//    {
+//        double availableBlocks = getPartitionSizeInBytes(path);
+//        double sizeInMB = ((availableBlocks / BUFFER_1024_BYTES)) / BUFFER_1024_BYTES;
+//        return sizeInMB;
+//    }
+// --Commented out by Inspection STOP (06/02/2015 12:26)
 
     private static long getPartitionSizeInBytes(File path)
     {
@@ -155,25 +156,27 @@ public class Utils
         return isRunning;
     }
 
-    public static void stopUpdaterService(Context context)
-    {
-        boolean isRunning = isServiceRunning(context);
+// --Commented out by Inspection START (06/02/2015 12:26):
+//    public static void stopUpdaterService(Context context)
+//    {
+//        boolean isRunning = isServiceRunning(context);
+//
+//        if (isRunning)
+//        {
+//            Log.i(TAG, "Stoping Updater Service...");
+//            Intent i = new Intent(context, UpdaterService.class);
+//            context.stopService(i);
+//            try
+//            {
+//                Thread.sleep(DELAY_100_MILLIS * 2);
+//            } catch (InterruptedException e)
+//            {
+//                Log.w(TAG, "Stop Updater service delay error: " + e.getLocalizedMessage());
+//            }
+//        }
+//    }
+// --Commented out by Inspection STOP (06/02/2015 12:26)
 
-        if (isRunning)
-        {
-            Log.e(TAG, "Stoping Updater Service...");
-            Intent i = new Intent(context, UpdaterService.class);
-            context.stopService(i);
-            try
-            {
-                Thread.sleep(DELAY_100_MILLIS * 2);
-            } catch (InterruptedException e)
-            {
-                Log.w(TAG, "Stop Updater service delay error: " + e.getLocalizedMessage());
-            }
-        }
-    }
-    
     private static void downloadConfigFile(Context context) {
         downloadConfigFile(context, false);
     }
@@ -433,14 +436,16 @@ public class Utils
         }
     }
     
-    public static void printStack(String moreLogs)
-    {
-        StringBuilder sb = new StringBuilder(moreLogs);
-        sb.append("\nStack --> ");
-        for (StackTraceElement ste : Thread.currentThread().getStackTrace()) 
-        {
-            sb.append(ste.getFileName()).append(" : ").append(ste.getMethodName()).append(":").append(ste.getLineNumber()).append(" -- ");
-        }
-        Log.wtf(TAG, sb.toString());
-    }
+// --Commented out by Inspection START (06/02/2015 12:25):
+//    public static void printStack(String moreLogs)
+//    {
+//        StringBuilder sb = new StringBuilder(moreLogs);
+//        sb.append("\nStack --> ");
+//        for (StackTraceElement ste : Thread.currentThread().getStackTrace())
+//        {
+//            sb.append(ste.getFileName()).append(" : ").append(ste.getMethodName()).append(":").append(ste.getLineNumber()).append(" -- ");
+//        }
+//        Log.wtf(TAG, sb.toString());
+//    }
+// --Commented out by Inspection STOP (06/02/2015 12:25)
 }

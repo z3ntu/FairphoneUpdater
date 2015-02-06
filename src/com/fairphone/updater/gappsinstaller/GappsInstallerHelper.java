@@ -26,8 +26,6 @@ import java.io.File;
 
 public class GappsInstallerHelper
 {
-    protected static final String TAG = GappsInstallerHelper.class.getSimpleName();
-
     public static final String PREFS_GOOGLE_APPS_INSTALLER_DATA = "FAIRPHONE_GOOGLE_APPS_INSTALLER_DATA";
     public static final String GOOGLE_APPS_INSTALLER_STATE = "com.fairphone.updater.gapps.WIDGET_STATE";
 
