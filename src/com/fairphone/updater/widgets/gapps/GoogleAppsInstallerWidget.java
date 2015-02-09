@@ -45,7 +45,7 @@ public class GoogleAppsInstallerWidget extends AppWidgetProvider
         super.onAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions);
     }
 
-    private void setupButtonClickIntents(Context context, RemoteViews widget)
+    private static void setupButtonClickIntents(Context context, RemoteViews widget)
     {
         Intent updater = new Intent(context, FairphoneUpdater.class);
         updater.setAction(GappsInstallerHelper.EXTRA_START_GAPPS_INSTALL);
@@ -58,7 +58,7 @@ public class GoogleAppsInstallerWidget extends AppWidgetProvider
 
     }
 
-    private void updateUI(Context context, AppWidgetManager appWidgetManager, int appWidgetId)
+    private static void updateUI(Context context, AppWidgetManager appWidgetManager, int appWidgetId)
     {
         // get the widgets
         RemoteViews widget = new RemoteViews(context.getPackageName(), R.layout.widget_google_apps_installer);

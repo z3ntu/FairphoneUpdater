@@ -121,7 +121,7 @@ public class DownloadAndRestartFragment extends BaseFragment
         return view;
     }
 
-    private View inflateStoreView(LayoutInflater inflater, ViewGroup container)
+    private static View inflateStoreView(LayoutInflater inflater, ViewGroup container)
     {
 
 	    return inflater.inflate(R.layout.fragment_download_app_store, container, false);
@@ -163,7 +163,7 @@ public class DownloadAndRestartFragment extends BaseFragment
                 });
 
                 break;
-
+            case NORMAL:
             default:
                 Log.w(TAG, "Wrong State: " + state + "\nOnly DOWNLOAD and PREINSTALL are supported");
                 mainActivity.onBackPressed();

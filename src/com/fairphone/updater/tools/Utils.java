@@ -55,8 +55,8 @@ public class Utils
     private static final String TAG = Utils.class.getSimpleName();
     private static final int DELAY_100_MILLIS = 100;
     public static final int DELAY_HALF_SECOND = 500;
-    public static final long SECONDS_IN_MINUTE = 60l;
-    public static final long MINUTES_IN_HOUR = 60l;
+    public static final long SECONDS_IN_MINUTE = 60L;
+    public static final long MINUTES_IN_HOUR = 60L;
 
     private static final double BUFFER_1024_BYTES = 1024d;
     // --Commented out by Inspection (06/02/2015 12:27):public static final int BUFFER_SIZE_4_KBYTES = 4096;
@@ -65,6 +65,8 @@ public class Utils
     public static final int BUFFER_SIZE_10_MBYTES = 10240;
     private static final int RADIX_BASE_16 = 16;
     private static final double PERCENT_100 = 100d;
+    private static final char CHAR_SPACE = ' ';
+    private static final char CHAR_ZERO = '0';
 
     private static double getPartitionSizeInGBytes(File path)
     {
@@ -200,7 +202,7 @@ public class Utils
             return false;
         }
 
-        if (md5 == null || md5.equals("") )
+        if (md5 == null || md5.isEmpty())
         {
             Log.e(TAG, "MD5 String NULL or UpdateFile NULL");
             return false;
@@ -250,11 +252,11 @@ public class Utils
             BigInteger bigInt = new BigInteger(1, md5sum);
             String output = bigInt.toString(RADIX_BASE_16);
             // Fill to 32 chars
-            output = String.format("%32s", output).replace(' ', '0');
+            output = String.format("%32s", output).replace(CHAR_SPACE, CHAR_ZERO);
             return output;
         } catch (IOException e)
         {
-            Log.e(TAG, "Error digesting MD5", e);
+            Log.e(TAG, "Error digesting MD5: " + e.getLocalizedMessage());
             return null;
 //            throw new RuntimeException("Unable to process file for MD5", e);
         } finally
@@ -342,7 +344,7 @@ public class Utils
 
     public static String getFilenameFromDownloadableItem(DownloadableItem item, boolean isVersion)
     {
-        StringBuilder filename = null;
+        StringBuilder filename;
 
         if(isVersion)
         {
@@ -413,6 +415,7 @@ public class Utils
             return prop;
         } catch (NoSuchElementException e)
         {
+            Log.w(TAG, "Error reading prop. Defaulting to " + defaultValue + ": " + e.getLocalizedMessage());
             return defaultValue;
         } catch (Exception e)
         {

@@ -242,7 +242,7 @@ public class MainFragment extends BaseFragment
         });
     }
 
-    private VersionDetailFragment.DetailLayoutType getDetailLayoutFromDeviceVersion(Version latestVersion)
+    private static VersionDetailFragment.DetailLayoutType getDetailLayoutFromDeviceVersion(Version latestVersion)
     {
         VersionDetailFragment.DetailLayoutType type = DetailLayoutType.UPDATE_FAIRPHONE;
         if (Version.IMAGE_TYPE_FAIRPHONE.equalsIgnoreCase(latestVersion.getImageType()))

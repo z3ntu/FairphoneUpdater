@@ -64,7 +64,9 @@ public class VersionParserHelper
             version.setNumber(Integer.valueOf(getSystemData(context, CURRENT_VERSION_NUMBER, knownFPDevice)));
         } catch (NumberFormatException e)
         {
-            version.setNumber(context.getResources().getInteger(R.integer.defaultVersionNumber));
+            int defaultVersionNumber = context.getResources().getInteger(R.integer.defaultVersionNumber);
+            Log.w(TAG, "Error parsing current version number. Defaulting to " + defaultVersionNumber + ": " + e.getLocalizedMessage());
+            version.setNumber(defaultVersionNumber);
         }
         version.setName(getSystemData(context, CURRENT_VERSION_NAME, knownFPDevice));
         version.setBuildNumber(getSystemData(context, CURRENT_VERSION_BUILD_NUMBER, knownFPDevice));
@@ -209,6 +211,7 @@ public class VersionParserHelper
                         case STORES:
                             store = readStore(store, xpp, tagName);
                             break;
+                        case NONE:
                         default:
                             break;
                     }
@@ -239,6 +242,7 @@ public class VersionParserHelper
                                 store = null;
                             }
                             break;
+                        case NONE:
                         default:
                             break;
                     }
@@ -278,7 +282,7 @@ public class VersionParserHelper
         }
         else if (tagName.equalsIgnoreCase(XML_TAGS.ERASE_DATA_WARNING.name()))
         {
-            version.setEraseAllPartitionWarning(true);
+            version.setEraseAllPartitionWarning();
         }
 
         return version;
@@ -300,7 +304,7 @@ public class VersionParserHelper
         }
         else if (tagName.equalsIgnoreCase(XML_TAGS.SHOW_DISCLAIMER.name()))
         {
-            store.setShowDisclaimer(true);
+            store.setShowDisclaimer();
         }
 
         return store;

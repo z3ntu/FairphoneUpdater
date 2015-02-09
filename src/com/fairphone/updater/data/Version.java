@@ -43,7 +43,8 @@ public class Version extends DownloadableItem implements Comparable<Version>
 
     private boolean mErasePartitionsWarning;
 
-    private List<Integer> mDependencies;
+    @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
+    private final List<Integer> mDependencies;
 
     public Version()
     {
@@ -51,13 +52,13 @@ public class Version extends DownloadableItem implements Comparable<Version>
         mDependencies = new ArrayList<>();
         mAndroidVersion = "";
         mImageType = IMAGE_TYPE_FAIRPHONE;
-        setEraseAllPartitionWarning(false);
+        mErasePartitionsWarning = false;
         mBetaStatus = "";
     }
 
-    public void setEraseAllPartitionWarning(boolean erasePartitionsWarning)
+    public void setEraseAllPartitionWarning()
     {
-        mErasePartitionsWarning = erasePartitionsWarning;
+        mErasePartitionsWarning = true;
     }
 
     public boolean hasEraseAllPartitionWarning()
@@ -135,11 +136,11 @@ public class Version extends DownloadableItem implements Comparable<Version>
         int retVal;
         if (another != null)
         {
-            if (this.getNumber() < another.getNumber() && this.getImageType().equalsIgnoreCase(another.getImageType()))
+            if (this.getNumber() < another.getNumber() && this.mImageType.equalsIgnoreCase(another.mImageType))
             {
                 retVal = 1;
             }
-            else if (this.getNumber() == another.getNumber() && this.getImageType().equalsIgnoreCase(another.getImageType()))
+            else if (this.getNumber() == another.getNumber() && this.mImageType.equalsIgnoreCase(another.mImageType))
             {
                 retVal = 0;
             }
@@ -171,7 +172,7 @@ public class Version extends DownloadableItem implements Comparable<Version>
                     mDependencies.add(Integer.valueOf(dependency));
                 } catch (NumberFormatException e)
                 {
-                    Log.e(TAG, "Invalid dependency");
+                    Log.e(TAG, "Invalid dependency: " + e.getLocalizedMessage());
                 }
             }
         }

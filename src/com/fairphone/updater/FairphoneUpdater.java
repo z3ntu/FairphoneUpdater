@@ -623,7 +623,7 @@ public class FairphoneUpdater extends FragmentActivity
         return itemName;
     }
 
-    public String getStoreName(Store store)
+    public static String getStoreName(Store store)
     {
         String itemName = "";
         if (store != null)
@@ -663,7 +663,7 @@ public class FairphoneUpdater extends FragmentActivity
         return mSelectedStore;
     }
 
-    public HeaderType getHeaderTypeFromImageType(String imageType)
+    public static HeaderType getHeaderTypeFromImageType(String imageType)
     {
         HeaderType type = HeaderType.MAIN_FAIRPHONE;
         if (Version.IMAGE_TYPE_AOSP.equalsIgnoreCase(imageType))
@@ -769,7 +769,7 @@ public class FairphoneUpdater extends FragmentActivity
         }
     }
 
-    private boolean checkStartGappsInstall(Intent intent)
+    private static boolean checkStartGappsInstall(Intent intent)
     {
         return intent != null && GappsInstallerHelper.EXTRA_START_GAPPS_INSTALL.equals(intent.getAction());
     }

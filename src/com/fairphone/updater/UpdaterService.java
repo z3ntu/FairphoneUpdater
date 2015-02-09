@@ -201,7 +201,7 @@ public class UpdaterService extends Service
 //    }
 // --Commented out by Inspection STOP (06/02/2015 12:27)
 
-    void clearDataLogs()
+    private static void clearDataLogs()
     {
         try
         {
@@ -297,7 +297,7 @@ public class UpdaterService extends Service
         return downloadLink;
     }
 
-    private void addModelAndOS(Context context, StringBuilder sb)
+    private static void addModelAndOS(Context context, StringBuilder sb)
     {
         // attach the model and the os
         sb.append("?");

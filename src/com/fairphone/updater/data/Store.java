@@ -8,7 +8,7 @@ public class Store extends DownloadableItem  implements Comparable<Store>
     public Store()
     {
         super();
-        setShowDisclaimer(false);
+        mShowDisclaimer = false;
     }
     
     public boolean showDisclaimer()
@@ -16,9 +16,9 @@ public class Store extends DownloadableItem  implements Comparable<Store>
         return mShowDisclaimer;
     }
 
-    public void setShowDisclaimer(boolean showDisclaimer)
+    public void setShowDisclaimer()
     {
-        this.mShowDisclaimer = showDisclaimer;
+        this.mShowDisclaimer = true;
     }
 
     @Override

@@ -21,6 +21,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.fairphone.updater.FairphoneUpdater;
 import com.fairphone.updater.FairphoneUpdater.HeaderType;
 import com.fairphone.updater.FairphoneUpdater.UpdaterState;
 import com.fairphone.updater.R;
@@ -186,7 +187,7 @@ public class VersionDetailFragment extends BaseFragment
 
         if (mIsVersion && mSelectedVersion != null)
         {
-            mHeaderType = mainActivity.getHeaderTypeFromImageType(mSelectedVersion.getImageType());
+            mHeaderType = FairphoneUpdater.getHeaderTypeFromImageType(mSelectedVersion.getImageType());
         }
         else if (mSelectedStore != null)
         {
@@ -215,7 +216,7 @@ public class VersionDetailFragment extends BaseFragment
                         (deviceVersion.getImageType().equalsIgnoreCase(Version.IMAGE_TYPE_AOSP) && deviceVersion.isNewerVersionThan(mSelectedVersion));
                 break;
             case APP_STORE:
-                mHeaderText = mainActivity.getStoreName(mSelectedStore);
+                mHeaderText = FairphoneUpdater.getStoreName(mSelectedStore);
                 mVersionDetailsTitle = resources.getString(R.string.install);
                 mIsOSChange = false;
                 mIsOlderVersion = false;
@@ -260,6 +261,7 @@ public class VersionDetailFragment extends BaseFragment
             request.setTitle(downloadTitle);
         } catch (Exception e)
         {
+            Log.w(TAG, "Error setting the download request: " + e.getLocalizedMessage());
             request = null;
         }
 
@@ -290,7 +292,7 @@ public class VersionDetailFragment extends BaseFragment
                     try {
                         download_link = new URL(download_link).toExternalForm();
                     } catch (MalformedURLException e) {
-                        Log.w(TAG, "Potentially malformed download link.");
+                        Log.w(TAG, "Potentially malformed download link " + download_link + ": " + e.getLocalizedMessage());
                     }
                 }
                 Request request = createDownloadRequest(download_link + Utils.getModelAndOS(mainActivity), fileName, downloadTitle);
