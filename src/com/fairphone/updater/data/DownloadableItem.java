@@ -57,6 +57,19 @@ public abstract class DownloadableItem
         mReleaseNotesMap = new HashMap<>();
     }
 
+    DownloadableItem(DownloadableItem other)
+    {
+        mNumber = other.mNumber;
+        mName = other.mName;
+        mOTADownloadLink = other.mOTADownloadLink;
+        mOTAMd5Sum = other.mOTAMd5Sum;
+        mBuildNumber = other.mBuildNumber;
+        mReleaseDate = other.mReleaseDate;
+        mThumbnailImageLink = other.mThumbnailImageLink;
+
+        mReleaseNotesMap = other.mReleaseNotesMap;
+    }
+
     public int getNumber()
     {
         return mNumber;
@@ -175,6 +188,13 @@ public abstract class DownloadableItem
         }
         return TextUtils.isEmpty(releaseNotes) ? "" : releaseNotes;
     }
+
+// --Commented out by Inspection START (09/02/2015 19:48):
+//    Map<String, String> getReleaseNotes()
+//    {
+//        return mReleaseNotesMap;
+//    }
+// --Commented out by Inspection STOP (09/02/2015 19:48)
 
 // --Commented out by Inspection START (06/02/2015 12:36):
 //    void resetReleaseNotes()

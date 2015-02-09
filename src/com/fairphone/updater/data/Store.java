@@ -10,6 +10,12 @@ public class Store extends DownloadableItem  implements Comparable<Store>
         super();
         mShowDisclaimer = false;
     }
+
+    public Store(Store other)
+    {
+        super(other);
+        mShowDisclaimer = other.showDisclaimer();
+    }
     
     public boolean showDisclaimer()
     {

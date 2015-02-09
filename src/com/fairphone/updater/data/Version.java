@@ -43,7 +43,6 @@ public class Version extends DownloadableItem implements Comparable<Version>
 
     private boolean mErasePartitionsWarning;
 
-    @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
     private final List<Integer> mDependencies;
 
     public Version()
@@ -54,6 +53,16 @@ public class Version extends DownloadableItem implements Comparable<Version>
         mImageType = IMAGE_TYPE_FAIRPHONE;
         mErasePartitionsWarning = false;
         mBetaStatus = "";
+    }
+
+    public Version(Version other)
+    {
+        super(other);
+        mDependencies = other.mDependencies;
+        mAndroidVersion = other.mAndroidVersion;
+        mImageType = other.mImageType;
+        mErasePartitionsWarning = other.hasEraseAllPartitionWarning();
+        mBetaStatus = other.mBetaStatus;
     }
 
     public void setEraseAllPartitionWarning()
@@ -178,10 +187,10 @@ public class Version extends DownloadableItem implements Comparable<Version>
         }
     }
 
-// --Commented out by Inspection START (06/02/2015 12:36):
-//    public ArrayList<Integer> getVersionDependencies()
+// --Commented out by Inspection START (09/02/2015 19:47):
+//    List<Integer> getVersionDependencies()
 //    {
 //        return mDependencies;
 //    }
-// --Commented out by Inspection STOP (06/02/2015 12:36)
+// --Commented out by Inspection STOP (09/02/2015 19:47)
 }

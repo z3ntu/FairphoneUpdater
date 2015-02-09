@@ -21,6 +21,7 @@ import android.content.res.Resources;
 import android.os.Build;
 import android.os.Environment;
 import android.util.Log;
+import android.util.Pair;
 
 import com.fairphone.updater.R;
 import com.fairphone.updater.tools.Utils;
@@ -163,6 +164,7 @@ public class VersionParserHelper
 
         Version version = null;
         Store store = null;
+        Pair<Version, Store> result;
 
         UpdaterData update = UpdaterData.getInstance();
         update.resetUpdaterData();
@@ -190,62 +192,16 @@ public class VersionParserHelper
                 case XmlPullParser.START_TAG:
                     tagName = xpp.getName();
                     currentTag = getCurrentXmlElement(tagName, currentTag);
-                    switch (currentTag)
-                    {
-                        case AOSP:
-                            if (tagName.equalsIgnoreCase(XML_TAGS.AOSP.name()))
-                            {
-                                update.setLatestAOSPVersionNumber(xpp.getAttributeValue(0));
-                            }
-                            version = readVersion(version, xpp, tagName);
-                            version.setImageType(Version.IMAGE_TYPE_AOSP);
-                            break;
-                        case FAIRPHONE:
-                            if (tagName.equalsIgnoreCase(XML_TAGS.FAIRPHONE.name()))
-                            {
-                                update.setLatestFairphoneVersionNumber(xpp.getAttributeValue(0));
-                            }
-                            version = readVersion(version, xpp, tagName);
-                            version.setImageType(Version.IMAGE_TYPE_FAIRPHONE);
-                            break;
-                        case STORES:
-                            store = readStore(store, xpp, tagName);
-                            break;
-                        case NONE:
-                        default:
-                            break;
-                    }
+                    result = readStartTag(xpp, currentTag, tagName, update, version, store);
+                    version = result.first;
+                    store = result.second;
                     break;
                 case XmlPullParser.END_TAG:
                     tagName = xpp.getName();
                     currentTag = getCurrentXmlElement(tagName, currentTag);
-                    switch (currentTag)
-                    {
-                        case AOSP:
-                            if (tagName.equalsIgnoreCase(XML_TAGS.VERSION.name()))
-                            {
-                                update.addAOSPVersion(version);
-                                version = null;
-                            }
-                            break;
-                        case FAIRPHONE:
-                            if (tagName.equalsIgnoreCase(XML_TAGS.VERSION.name()))
-                            {
-                                update.addFairphoneVersion(version);
-                                version = null;
-                            }
-                            break;
-                        case STORES:
-                            if (tagName.equalsIgnoreCase(XML_TAGS.STORE.name()))
-                            {
-                                update.addAppStore(store);
-                                store = null;
-                            }
-                            break;
-                        case NONE:
-                        default:
-                            break;
-                    }
+                    result = readEndTag(currentTag, tagName, update, version, store);
+                    version = result.first;
+                    store = result.second;
                     break;
                 default:
                     break;
@@ -259,55 +215,171 @@ public class VersionParserHelper
         return update.getLatestVersion(getSystemData(context, CURRENT_VERSION_IMAGE_TYPE, true));
     }
 
-    private static Version readVersion(Version version, XmlPullParser xpp, String tagName) throws XmlPullParserException, IOException
+    private static Pair<Version, Store> readStartTag(XmlPullParser xpp, XML_LEVEL_TAGS currentTag, String tagName, UpdaterData update, Version version, Store store) throws XmlPullParserException, IOException
     {
-        if (version == null)
+        Version updateVersion = null;
+        Store updateStore = null;
+        switch (currentTag)
         {
-            version = new Version();
+            case AOSP:
+                if (tagName.equalsIgnoreCase(XML_TAGS.AOSP.name()))
+                {
+                    update.setLatestAOSPVersionNumber(xpp.getAttributeValue(0));
+                }
+                updateVersion = readVersion(version, xpp, tagName);
+                updateVersion.setImageType(Version.IMAGE_TYPE_AOSP);
+                break;
+            case FAIRPHONE:
+                if (tagName.equalsIgnoreCase(XML_TAGS.FAIRPHONE.name()))
+                {
+                    update.setLatestFairphoneVersionNumber(xpp.getAttributeValue(0));
+                }
+                updateVersion = readVersion(version, xpp, tagName);
+                updateVersion.setImageType(Version.IMAGE_TYPE_FAIRPHONE);
+                break;
+            case STORES:
+                updateStore = readStore(store, xpp, tagName);
+                break;
+            case NONE:
+            default:
+                if(version != null)
+                {
+                    updateVersion = new Version(version);
+                }
+
+                if(store != null)
+                {
+                    updateStore = new Store(store);
+                }
+                break;
         }
 
-        readDownloadableItem(version, xpp, tagName);
+        return new Pair<>(updateVersion, updateStore);
+    }
+
+    private static Pair<Version, Store> readEndTag(XML_LEVEL_TAGS currentTag, String tagName, UpdaterData update, Version version, Store store) {
+        Version updateVersion = null;
+        Store updateStore = null;
+        switch (currentTag)
+        {
+            case AOSP:
+                if (tagName.equalsIgnoreCase(XML_TAGS.VERSION.name()))
+                {
+                    update.addAOSPVersion(version);
+                    updateVersion = null;
+                }
+                else
+                {
+                    if(version != null)
+                    {
+                        updateVersion = new Version(version);
+                    }
+                }
+                break;
+            case FAIRPHONE:
+                if (tagName.equalsIgnoreCase(XML_TAGS.VERSION.name()))
+                {
+                    update.addFairphoneVersion(version);
+                    updateVersion = null;
+                }
+                else
+                {
+                    if(version != null)
+                    {
+                        updateVersion = new Version(version);
+                    }
+                }
+                break;
+            case STORES:
+                if (tagName.equalsIgnoreCase(XML_TAGS.STORE.name()))
+                {
+                    update.addAppStore(store);
+                    updateStore = null;
+                }
+                else
+                {
+                    if(store != null)
+                    {
+                        updateStore = new Store(store);
+                    }
+                }
+                break;
+            case NONE:
+            default:
+                if(version != null)
+                {
+                    updateVersion = new Version(version);
+                }
+
+                if(store != null)
+                {
+                    updateStore = new Store(store);
+                }
+                break;
+        }
+
+        return new Pair<>(updateVersion, updateStore);
+    }
+
+    private static Version readVersion(Version version, XmlPullParser xpp, String tagName) throws XmlPullParserException, IOException
+    {
+        Version updateVersion;
+        if (version == null)
+        {
+            updateVersion = new Version();
+        }
+        else
+        {
+            updateVersion = new Version(version);
+        }
+
+        readDownloadableItem(updateVersion, xpp, tagName);
 
         if (tagName.equalsIgnoreCase(XML_TAGS.VERSION.name()))
         {
-            version.setNumber(xpp.getAttributeValue(0));
+            updateVersion.setNumber(xpp.getAttributeValue(0));
         }
         else if (tagName.equalsIgnoreCase(XML_TAGS.ANDROID_VERSION.name()))
         {
-            version.setAndroidVersion(xpp.nextText());
+            updateVersion.setAndroidVersion(xpp.nextText());
         }
         else if (tagName.equalsIgnoreCase(XML_TAGS.DEPENDENCIES.name()))
         {
-            version.setVersionDependencies(xpp.nextText());
+            updateVersion.setVersionDependencies(xpp.nextText());
         }
         else if (tagName.equalsIgnoreCase(XML_TAGS.ERASE_DATA_WARNING.name()))
         {
-            version.setEraseAllPartitionWarning();
+            updateVersion.setEraseAllPartitionWarning();
         }
 
-        return version;
+        return updateVersion;
     }
 
     private static Store readStore(Store store, XmlPullParser xpp, String tagName) throws XmlPullParserException, IOException
     {
 
+        Store updateStore;
         if (store == null)
         {
-            store = new Store();
+            updateStore = new Store();
+        }
+        else
+        {
+            updateStore = new Store(store);
         }
 
-        readDownloadableItem(store, xpp, tagName);
+        readDownloadableItem(updateStore, xpp, tagName);
 
         if (tagName.equalsIgnoreCase(XML_TAGS.STORE.name()))
         {
-            store.setNumber(xpp.getAttributeValue(0));
+            updateStore.setNumber(xpp.getAttributeValue(0));
         }
         else if (tagName.equalsIgnoreCase(XML_TAGS.SHOW_DISCLAIMER.name()))
         {
-            store.setShowDisclaimer();
+            updateStore.setShowDisclaimer();
         }
 
-        return store;
+        return updateStore;
     }
 
     private static void readDownloadableItem(DownloadableItem item, XmlPullParser xpp, String tagName) throws XmlPullParserException, IOException
