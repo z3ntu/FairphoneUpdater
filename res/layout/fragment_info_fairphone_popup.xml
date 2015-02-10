@@ -34,6 +34,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/alert_button_top_margin"
-        android:text="@android:string/yes" />
+        android:text="@android:string/ok" />
 
 </LinearLayout>

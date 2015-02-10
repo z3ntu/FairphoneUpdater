@@ -65,7 +65,7 @@
             android:layout_height="wrap_content"
             android:paddingBottom="25dp"
             android:paddingTop="5dp"
-            android:text="@android:string/no" />
+            android:text="@android:string/cancel" />
 
         <TextView
             style="@style/TextRegular16White"
@@ -90,7 +90,7 @@
             android:layout_height="wrap_content"
             android:paddingBottom="25dp"
             android:paddingTop="5dp"
-            android:text="@android:string/yes" />
+            android:text="@android:string/ok" />
 
         <TextView
             style="@style/TextRegular16White"
