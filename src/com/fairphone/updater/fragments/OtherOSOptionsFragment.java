@@ -28,7 +28,7 @@ public class OtherOSOptionsFragment extends BaseFragment
         olderFairphoneOSButton = (Button) view.findViewById(R.id.older_fairphone_os_button);
         androidOSButton = (Button) view.findViewById(R.id.android_os_button);
         mAppStoreButton = (Button) view.findViewById(R.id.app_store_install_button);
-        
+
         mainActivity.updateHeader(HeaderType.OTHER_OS, mainActivity.getResources().getString(R.string.other_os_options), false);
 
         return view;
@@ -87,7 +87,7 @@ public class OtherOSOptionsFragment extends BaseFragment
         else
         {
             androidOSButton.setVisibility(View.GONE);
-        } 
+        }
     }
 
     private void setupOlderFairphoneVersionsButton()

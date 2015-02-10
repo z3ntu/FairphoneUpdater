@@ -19,7 +19,7 @@
 
     <include layout="@layout/fragment_download_app_store_downloading" />
 
-    <include layout="@layout/fragment_download_fairphone_install" />
+    <include layout="@layout/fragment_download_app_store_install" />
 
     <Button
         android:id="@+id/cancel_button"
