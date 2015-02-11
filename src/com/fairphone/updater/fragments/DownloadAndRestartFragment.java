@@ -355,7 +355,7 @@ public class DownloadAndRestartFragment extends BaseFragment
         setupInstallationReceivers();
         registerDownloadBroadCastReceiver();
 
-        registerNetworkStatusBoradcastReceiver();
+        registerNetworkStatusBroadcastReceiver();
 
         updateHeader();
 
@@ -368,29 +368,28 @@ public class DownloadAndRestartFragment extends BaseFragment
         toggleDownloadProgressAndRestart();
     }
 
-    private void registerNetworkStatusBoradcastReceiver()
+    private void registerNetworkStatusBroadcastReceiver()
     {
+		unregisterNetworkStatusBroadcastReceiver();
         // Setup monitoring for future connectivity status changes
-        if (mNetworkStateReceiver != null)
+		mNetworkStateReceiver = new BroadcastReceiver()
         {
-            mNetworkStateReceiver = new BroadcastReceiver()
+            @Override
+            public void onReceive(Context context, Intent intent)
             {
-                @Override
-                public void onReceive(Context context, Intent intent)
+                if (intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, false))
                 {
-                    if (intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, false))
-                    {
-                        abortUpdateProcess();
-                    }
+                    abortUpdateProcess();
+	                mainActivity.onBackPressed();
                 }
-            };
-        }
+            }
+        };
 
         IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
         mainActivity.registerReceiver(mNetworkStateReceiver, filter);
     }
 
-    private void unregisterNetworkStatusBoradcastReceiver()
+    private void unregisterNetworkStatusBroadcastReceiver()
     {
         if (mNetworkStateReceiver != null)
         {
@@ -407,7 +406,7 @@ public class DownloadAndRestartFragment extends BaseFragment
 
         unregisterBroadCastReceiver();
 
-        unregisterNetworkStatusBoradcastReceiver();
+        unregisterNetworkStatusBroadcastReceiver();
     }
 
     private void setupInstallationReceivers()
