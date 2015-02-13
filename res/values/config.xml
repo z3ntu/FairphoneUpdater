@@ -21,8 +21,8 @@
     <string name="oneGBDataPartition" translatable="false">/originalPartition</string>
 	<string name="unifiedDataPartition" translatable="false">/unifiedPartition</string>
 	<string name="FP1Model" translatable="false">FP1</string>
-	<string name="recoveryCachePath" translatable="false">cache</string>
-	<string name="recoverySdCardPath" translatable="false">sdcard</string>
+	<string name="recoveryCachePath" translatable="false">/cache/</string>
+	<string name="recoverySdCardPath" translatable="false">/sdcard</string>
 	<string name="updaterFolder" translatable="false">/updater/</string>
 	<integer name="FP1DataPartitionSizeMb">1100</integer>
 	

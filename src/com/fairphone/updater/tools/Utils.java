@@ -23,8 +23,10 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Build;
 import android.os.Environment;
+import android.os.PowerManager;
 import android.text.TextUtils;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.fairphone.updater.BetaEnabler;
 import com.fairphone.updater.R;
@@ -43,6 +45,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -446,6 +449,78 @@ public class Utils
 	            Log.d(TAG, "Failed to setprop: " + e.getLocalizedMessage());
             }
         }
+    }
+
+    public static String getOtaPackagePath(Resources resources, DownloadableItem item, boolean isVersion){
+        String path;
+
+        if (Utils.hasUnifiedPartition(resources))
+        {
+            path = resources.getString(R.string.recoveryCachePath) + Utils.getFilenameFromDownloadableItem(item, isVersion);
+        }
+        else
+        {
+            path = resources.getString(R.string.recoverySdCardPath) + resources.getString(R.string.updaterFolder) + Utils.getFilenameFromDownloadableItem(item, isVersion);
+        }
+
+        return path;
+    }
+
+    public static void writeCacheCommand(Context context, String otaPackagePath) throws IOException, TimeoutException, RootDeniedException, Resources.NotFoundException {
+        if (PrivilegeChecker.isPrivilegedApp()) {
+            File recovery_dir = new File("/cache/recovery/");
+            final boolean mkdirs = recovery_dir.mkdirs();
+            if(!mkdirs && !recovery_dir.exists()) {
+                String errorMessage = context.getResources().getString(R.string.failed_mkdirs_cache_message);
+                Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show();
+                throw new IOException(errorMessage);
+            }
+
+            File command = new File("/cache/recovery/command");
+            File extendedCommand = new File("/cache/recovery/extendedcommand");
+            final boolean delete = extendedCommand.delete();
+            if (!delete) {
+                Log.d(TAG, "Couldn't delete "+extendedCommand.getAbsolutePath());
+            }
+
+            String updateCommand = "--update_package=" + otaPackagePath;
+            PrintWriter writer = new PrintWriter(command, "UTF-8");
+            writer.println("--wipe_cache");
+            writer.println(updateCommand);
+            writer.flush();
+            writer.close();
+        }else {
+            if(RootTools.isAccessGiven()) {
+                Shell.runRootCommand(new CommandCapture(0, "rm -f /cache/recovery/command"));
+                Shell.runRootCommand(new CommandCapture(0, "rm -f /cache/recovery/extendedcommand"));
+                Shell.runRootCommand(new CommandCapture(0, "echo '--wipe_cache' >> /cache/recovery/command"));
+                Shell.runRootCommand(new CommandCapture(0, "echo '--update_package=" + otaPackagePath + "' >> /cache/recovery/command"));
+            }else{
+                throw new RootDeniedException("Root Denied");
+            }
+        }
+    }
+
+    public static boolean rebootToRecovery(Context context) {
+        boolean result;
+        if (PrivilegeChecker.isPrivilegedApp()) {
+            ((PowerManager) context.getSystemService(Context.POWER_SERVICE)).reboot("recovery");
+            result = false;
+        } else {
+            if(RootTools.isAccessGiven()) {
+                try {
+                    Shell.runRootCommand(new CommandCapture(0, "reboot recovery"));
+                    result = true;
+                } catch (IOException | TimeoutException | RootDeniedException e) {
+                    Log.e(TAG, "Error rebooting to recovery: " + e.getLocalizedMessage());
+                    result = false;
+                }
+            }else{
+                result = false;
+            }
+
+        }
+        return result;
     }
     
 // --Commented out by Inspection START (06/02/2015 12:25):

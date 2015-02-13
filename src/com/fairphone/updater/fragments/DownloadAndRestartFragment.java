@@ -21,6 +21,7 @@ import android.net.ConnectivityManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.PowerManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -40,6 +41,7 @@ import com.fairphone.updater.data.DownloadableItem;
 import com.fairphone.updater.data.Store;
 import com.fairphone.updater.data.Version;
 import com.fairphone.updater.data.VersionParserHelper;
+import com.fairphone.updater.tools.PrivilegeChecker;
 import com.fairphone.updater.tools.Utils;
 import com.stericson.RootTools.RootTools;
 import com.stericson.RootTools.exceptions.RootDeniedException;
@@ -572,57 +574,35 @@ public class DownloadAndRestartFragment extends BaseFragment
         final Resources resources = getResources();
         DownloadableItem item = mIsVersion ? mSelectedVersion : mSelectedStore;
 
-        File f = new File("/" + resources.getString(R.string.recoveryCachePath) + "/" + Utils.getFilenameFromDownloadableItem(item, mIsVersion));
+        String otaPackagePath = Utils.getOtaPackagePath(resources, item, mIsVersion);
+        File f = new File(otaPackagePath);
         if (!f.exists())
         {
             abortUpdateProcess();
         }
-        else if (item != null && RootTools.isAccessGiven())
+        else if (item != null)
         {
             // set the command for the recovery
             try
             {
+                Utils.writeCacheCommand(mainActivity, otaPackagePath);
 
-                Shell.runRootCommand(new CommandCapture(0, "rm -f /cache/recovery/command"));
+                new Thread(new Runnable() {
+                    @SuppressLint("CommitPrefEdits")
+                    @Override
+                    public void run() {
+                        Editor editor = mSharedPreferences.edit();
+                        editor.remove(UpdaterService.PREFERENCE_REINSTALL_GAPPS);
+                        editor.commit();
 
-                Shell.runRootCommand(new CommandCapture(0, "rm -f /cache/recovery/extendedcommand"));
+                        if (Utils.hasUnifiedPartition(resources))
+                        {
+                            removeLastUpdateDownload();
+                        }
 
-                Shell.runRootCommand(new CommandCapture(0, "echo '--wipe_cache' >> /cache/recovery/command"));
+                        // remove the update files from data
+                        removeUpdateFilesFromData();
 
-                if (Utils.hasUnifiedPartition(resources))
-                {
-                    Shell.runRootCommand(new CommandCapture(0, "echo '--update_package=/" + resources.getString(R.string.recoveryCachePath) + "/"
-                            + Utils.getFilenameFromDownloadableItem(item, mIsVersion) + "' >> /cache/recovery/command"));
-                }
-                else
-                {
-                    Shell.runRootCommand(new CommandCapture(0, "echo '--update_package=/" + resources.getString(R.string.recoverySdCardPath)
-                            + resources.getString(R.string.updaterFolder) + Utils.getFilenameFromDownloadableItem(item, mIsVersion) + "' >> /cache/recovery/command"));
-                }
-            } catch (IOException | NotFoundException | TimeoutException | RootDeniedException e)
-            {
-                e.printStackTrace();
-            }
-
-            new Thread(new Runnable() {
-                @SuppressLint("CommitPrefEdits")
-                @Override
-                public void run() {
-                    Editor editor = mSharedPreferences.edit();
-                    editor.remove(UpdaterService.PREFERENCE_REINSTALL_GAPPS);
-                    editor.commit();
-
-                    if (Utils.hasUnifiedPartition(resources))
-                    {
-                        removeLastUpdateDownload();
-                    }
-
-                    // remove the update files from data
-                    removeUpdateFilesFromData();
-
-                    // reboot the device into recovery
-                    try
-                    {
                         mainActivity.updateStatePreference(UpdaterState.NORMAL);
                         mainActivity.clearSelectedItems();
                         clearConfigFile();
@@ -630,13 +610,19 @@ public class DownloadAndRestartFragment extends BaseFragment
                         editor.remove(UpdaterService.LAST_CONFIG_DOWNLOAD_IN_MS);
                         editor.remove(MainFragment.SHARED_PREFERENCES_ENABLE_GAPPS);
                         editor.commit();
-                        Shell.runRootCommand(new CommandCapture(0, "reboot recovery"));
-                    } catch (IOException | TimeoutException | RootDeniedException e)
-                    {
-                        e.printStackTrace();
+
+                        // reboot the device into recovery
+                        if(!Utils.rebootToRecovery(mainActivity)) {
+                            Log.w(TAG, "Error rebooting to recovery");
+                            abortUpdateProcess();
+                        }
                     }
-                }
-            }).start();
+                }).start();
+            } catch (IOException | NotFoundException | TimeoutException | RootDeniedException e)
+            {
+                Log.e(TAG, "Error writing commands to cache: " + e.getLocalizedMessage());
+                abortUpdateProcess();
+            }
         }
         else
         {

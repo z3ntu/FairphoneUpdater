@@ -70,5 +70,6 @@
     <string name="beta_is_enabled">Beta is enabled</string>
     <string name="beta_activation_failed">Failed to activate beta</string>
     <string name="genericContentDescription" translatable="false">genericContentDescription</string>
+    <string name="failed_mkdirs_cache_message">Failed to create directories on /cache.</string>
 
 </resources>
