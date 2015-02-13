@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -34,6 +35,8 @@ public class FairphoneUpdater extends FragmentActivity
 {
 
     private static final String TAG = FairphoneUpdater.class.getSimpleName();
+
+	private static final String CRASHLYTICS_OPT_IN = "crashlytics_opt_in"; // IMPORTANT: keep synced with Settings.Global.CRASHLYTICS_OPT_IN
 
     public static final String FAIRPHONE_UPDATER_NEW_VERSION_RECEIVED = "FairphoneUpdater.NEW.VERSION.RECEIVED";
 
@@ -113,7 +116,11 @@ public class FairphoneUpdater extends FragmentActivity
         
         setContentView(R.layout.activity_updater);
 
-        Crashlytics.start(this);
+	    if (Settings.Global.getInt(getContentResolver(), CRASHLYTICS_OPT_IN, 0) == 1)
+        {
+            Log.d(TAG, "Crash reports active.");
+            Crashlytics.start(this);
+        }
 
         DEV_MODE_ENABLED = false;
         mIsDevModeCounter = 10;

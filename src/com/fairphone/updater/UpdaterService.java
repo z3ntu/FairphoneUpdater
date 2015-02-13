@@ -54,6 +54,7 @@ import java.util.concurrent.TimeoutException;
 import com.fairphone.updater.data.Version;
 import com.fairphone.updater.data.VersionParserHelper;
 import com.fairphone.updater.gappsinstaller.GappsInstallerHelper;
+import com.fairphone.updater.tools.PrivilegeChecker;
 import com.fairphone.updater.tools.RSAUtils;
 import com.fairphone.updater.tools.Utils;
 import com.stericson.RootTools.execution.CommandCapture;
@@ -203,15 +204,44 @@ public class UpdaterService extends Service
 
     private static void clearDataLogs()
     {
-        try
-        {
-            Log.d(TAG, "Clearing dump log data...");
-            Shell.runCommand(new CommandCapture(0, "rm /data/log_other_mode/*_log"));
-        } catch (IOException | TimeoutException e)
-        {
-            e.printStackTrace();
+        if (PrivilegeChecker.isPrivilegedApp()) {
+	        clearDataLogsPrivileged();
+        } else {
+	        clearDataLogsUnprivileged();
         }
     }
+
+	private static void clearDataLogsPrivileged()
+	{
+		try
+		{
+			Log.d(TAG, "Clearing dump log data...");
+			Process p = Runtime.getRuntime().exec("rm /data/log_other_mode/*_log");
+            try
+            {
+                p.waitFor();
+            } catch (InterruptedException e)
+            {
+                e.printStackTrace();
+            }
+		} catch (IOException e)
+		{
+			Log.d(TAG, "Clearing dump log data failed: " + e.getLocalizedMessage());
+		}
+	}
+
+	private static void clearDataLogsUnprivileged()
+	{
+		try
+		{
+			Log.d(TAG, "Clearing dump log data...");
+			Shell.runCommand(new CommandCapture(0, "rm /data/log_other_mode/*_log"));
+		} catch (IOException | TimeoutException e)
+		{
+			Log.d(TAG, "Clearing dump log data failed: " + e.getLocalizedMessage());
+		}
+	}
+
 
     @Override
     public IBinder onBind(Intent intent)

@@ -43,10 +43,12 @@ import com.stericson.RootTools.execution.Shell;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.math.BigInteger;
+import java.nio.channels.FileChannel;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.NoSuchElementException;
@@ -292,6 +294,32 @@ public class Utils
         return sb.toString();
     }
 
+	public static void copy(File src, File dst) throws IOException {
+		if (PrivilegeChecker.isPrivilegedApp()) {
+			copyPrivileged(src, dst);
+		} else {
+			copyUnprivileged(src, dst);
+		}
+	}
+
+	public static void copyUnprivileged(File src, File dst) throws IOException {
+		if (RootTools.isAccessGiven()) {
+			RootTools.copyFile(src.getPath(), dst.getPath(), false, false);
+		} else {
+			throw new IOException("No root permissions granted.");
+		}
+	}
+
+	public static void copyPrivileged(File src, File dst) throws IOException {
+		FileInputStream inStream = new FileInputStream(src);
+		FileOutputStream outStream = new FileOutputStream(dst);
+		FileChannel inChannel = inStream.getChannel();
+		FileChannel outChannel = outStream.getChannel();
+		inChannel.transferTo(0, inChannel.size(), outChannel);
+		inStream.close();
+		outStream.close();
+    }
+
     public static void clearCache()
     {
         File f = Environment.getDownloadCacheDirectory();
@@ -418,7 +446,7 @@ public class Utils
             return prop;
         } catch (NoSuchElementException e)
         {
-            Log.w(TAG, "Error reading prop. Defaulting to " + defaultValue + ": " + e.getLocalizedMessage());
+            Log.w(TAG, "Error reading prop "+name+". Defaulting to " + defaultValue + ": " + e.getLocalizedMessage());
             return defaultValue;
         } catch (Exception e)
         {
@@ -438,8 +466,26 @@ public class Utils
         }
         return defaultValue;
     }
-    
-    public static void setBetaPropToEnable()
+
+	public static void setBetaPropToEnable() {
+		if (PrivilegeChecker.isPrivilegedApp()) {
+			setBetaPropToEnablePrivileged();
+		} else {
+			setBetaPropToEnableUnprivileged();
+		}
+	}
+
+	private static void setBetaPropToEnablePrivileged() {
+	    ProcessBuilder pb = new ProcessBuilder("/system/bin/setprop", BetaEnabler.FAIRPHONE_BETA_PROPERTY, BetaEnabler.BETA_ENABLED);
+	    try {
+		    Process p = pb.start();
+		    p.waitFor();
+	    } catch (IOException | InterruptedException e) {
+		    Log.d(TAG, "Failed to setprop: " + e.getLocalizedMessage());
+	    }
+	}
+
+	private static void setBetaPropToEnableUnprivileged()
     {
         if(RootTools.isAccessGiven()) {
             CommandCapture command = new CommandCapture(0, "setprop "+ BetaEnabler.FAIRPHONE_BETA_PROPERTY+" "+BetaEnabler.BETA_ENABLED);

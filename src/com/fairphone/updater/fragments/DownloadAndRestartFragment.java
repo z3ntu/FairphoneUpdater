@@ -672,8 +672,41 @@ public class DownloadAndRestartFragment extends BaseFragment
     // ************************************************************************************
     // Update Removal
     // ************************************************************************************
-    private void removeUpdateFilesFromData()
-    {
+    private void removeUpdateFilesFromData() {
+		if (PrivilegeChecker.isPrivilegedApp()) {
+			removeUpdateFilesFromDataPrivileged();
+		} else {
+			removeUpdateFilesFromDataUnprivileged();
+		}
+    }
+
+	private void removeUpdateFilesFromDataPrivileged() {
+		Resources resource = getResources();
+
+		try {
+			Process p = Runtime.getRuntime().exec(resource.getString(R.string.removePlayStoreCommand));
+            p.waitFor();
+            p = Runtime.getRuntime().exec(resource.getString(R.string.removeGooglePlusCommand));
+            p.waitFor();
+            p = Runtime.getRuntime().exec(resource.getString(R.string.removeSoundSearchCommand));
+            p.waitFor();
+            p = Runtime.getRuntime().exec(resource.getString(R.string.removeGmailCommand));
+            p.waitFor();
+            p = Runtime.getRuntime().exec(resource.getString(R.string.removePlayServicesCommand));
+            p.waitFor();
+            p = Runtime.getRuntime().exec(resource.getString(R.string.removeQuicksearchCommand));
+            p.waitFor();
+            p = Runtime.getRuntime().exec(resource.getString(R.string.removeTalkbackCommand));
+            p.waitFor();
+            p = Runtime.getRuntime().exec(resource.getString(R.string.removeText2SpeechCommand));
+            p.waitFor();
+		} catch (IOException | InterruptedException e) {
+			Log.d(TAG, "Failed to remove files from data:" +e);
+		}
+	}
+
+	private void removeUpdateFilesFromDataUnprivileged()
+	{
         try
         {
             Shell.runRootCommand(new CommandCapture(0, getResources().getString(R.string.removePlayStoreCommand), getResources().getString(
@@ -683,7 +716,7 @@ public class DownloadAndRestartFragment extends BaseFragment
                     R.string.removeText2SpeechCommand)));
         } catch (IOException | TimeoutException | RootDeniedException e)
         {
-            e.printStackTrace();
+	        Log.d(TAG, "Failed to remove files from data:" +e.getLocalizedMessage());
         }
     }
 
@@ -716,17 +749,19 @@ public class DownloadAndRestartFragment extends BaseFragment
             String originalFilePath = params[0];
             String destinyFilePath = params[1];
 
-            if (RootTools.isAccessGiven())
+            Utils.clearCache();
+
+            File otaFilePath = new File(originalFilePath);
+            File otaFileCache = new File(destinyFilePath);
+
+            if (!otaFileCache.exists())
             {
-                Utils.clearCache();
-
-                File otaFilePath = new File(originalFilePath);
-                File otaFileCache = new File(destinyFilePath);
-
-                if (!otaFileCache.exists())
-                {
-                    RootTools.copyFile(otaFilePath.getPath(), otaFileCache.getPath(), false, false);
-                }
+	            try {
+		            Utils.copy(otaFilePath, otaFileCache);
+	            } catch (IOException e) {
+		            Log.e(TAG, "Failed to copy files to cache: "+e.getLocalizedMessage());
+		            abortUpdateProcess();
+	            }
             }
             else
             {
