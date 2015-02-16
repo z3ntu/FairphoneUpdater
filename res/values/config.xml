@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="downloadUrl" translatable="false">http://www.fairphone.com/ota/</string>
+    <string name="downloadUrl" translatable="false">http://ota.fairphone.com/</string>
     <string name="configFilename" translatable="false">updater</string>
     <string name="config_zip" translatable="false">.zip</string>
 	<string name="config_xml" translatable="false">.xml</string>
