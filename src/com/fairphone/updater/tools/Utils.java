@@ -302,7 +302,7 @@ public class Utils
 		}
 	}
 
-	public static void copyUnprivileged(File src, File dst) throws IOException {
+	private static void copyUnprivileged(File src, File dst) throws IOException {
 		if (RootTools.isAccessGiven()) {
 			RootTools.copyFile(src.getPath(), dst.getPath(), false, false);
 		} else {
@@ -310,7 +310,7 @@ public class Utils
 		}
 	}
 
-	public static void copyPrivileged(File src, File dst) throws IOException {
+	private static void copyPrivileged(File src, File dst) throws IOException {
 		FileInputStream inStream = new FileInputStream(src);
 		FileOutputStream outStream = new FileOutputStream(dst);
 		FileChannel inChannel = inStream.getChannel();
@@ -516,7 +516,7 @@ public class Utils
         if (PrivilegeChecker.isPrivilegedApp()) {
             File recovery_dir = new File("/cache/recovery/");
             final boolean mkdirs = recovery_dir.mkdirs();
-            if(!mkdirs && !recovery_dir.exists()) {
+            if(! (mkdirs || recovery_dir.exists()) ) {
                 String errorMessage = context.getResources().getString(R.string.failed_mkdirs_cache_message);
                 Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show();
                 throw new IOException(errorMessage);
@@ -524,8 +524,8 @@ public class Utils
 
             File command = new File("/cache/recovery/command");
             File extendedCommand = new File("/cache/recovery/extendedcommand");
-            final boolean delete = extendedCommand.delete();
-            if (!delete) {
+            final boolean deleteFailed = !extendedCommand.delete();
+            if (deleteFailed) {
                 Log.d(TAG, "Couldn't delete "+extendedCommand.getAbsolutePath());
             }
 
@@ -547,6 +547,7 @@ public class Utils
         }
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public static boolean rebootToRecovery(Context context) {
         boolean result;
         if (PrivilegeChecker.isPrivilegedApp()) {

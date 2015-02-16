@@ -2,7 +2,6 @@ package com.fairphone.updater.tools;
 
 
 import android.util.Log;
-import android.widget.Toast;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,15 +19,14 @@ public final class PrivilegeChecker {
 		} else {
 			boolean success = false;
 			try {
-				f.createNewFile();
-				success = f.delete();
-			} catch (IOException e) {
+				success = f.createNewFile() && f.delete();
+			} catch (IOException ignored) {
 				success = false;
 			} finally {
 				isPrivilegedApp = success;
 			}
 		}
-		Log.d(TAG, "App is "+(isPrivilegedApp ? "" : "not")+" privileged.");
+		Log.d(TAG, "App is " + (isPrivilegedApp ? "" : "not") + " privileged.");
 	}
 
 	public static boolean isPrivilegedApp(){
