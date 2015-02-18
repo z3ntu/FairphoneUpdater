@@ -45,7 +45,7 @@
         android:visibility="gone"/>
 
     <TextView
-        style="@style/TextRegular14GreyLight"
+        style="@style/TextRegular14BlueDark"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/alert_padding"

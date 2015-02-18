@@ -3,7 +3,7 @@
     <!-- HEADER -->
     <dimen name="header_big_height">94.6dp</dimen>
     <dimen name="header_small_height">56dp</dimen>
-    <dimen name="header_horizontal_padding_right">33dp</dimen>
+    <dimen name="header_horizontal_padding_right">46dp</dimen>
     <dimen name="header_big_text_size">34sp</dimen>
     <dimen name="header_small_text_size">20sp</dimen>
 
