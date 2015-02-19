@@ -543,7 +543,7 @@ public class FairphoneUpdater extends FragmentActivity
                 // and add the transaction to the back stack so the user can
                 // navigate
                 // back
-                transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+				transaction.setCustomAnimations(R.anim.enter, R.anim.exit, R.anim.pop_enter, R.anim.pop_exit);
                 transaction.replace(R.id.fragment_holder, newFragment);
                 transaction.addToBackStack(null);
 

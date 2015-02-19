@@ -76,7 +76,8 @@
         android:background="@color/background_other_os_options"
         android:gravity="center_horizontal"
         android:orientation="vertical"
-        android:padding="@dimen/main_padding" >
+        android:paddingTop="@dimen/main_padding"
+        android:paddingBottom="@dimen/main_padding" >
 
         <TextView
             style="@style/TextRegular14GreyLight"
@@ -86,7 +87,7 @@
 
         <Button
             android:id="@+id/other_os_options_button"
-            style="@style/ButtonTextBlue"
+            style="@style/ButtonTextBackgroundBlue"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/other_os_options" />

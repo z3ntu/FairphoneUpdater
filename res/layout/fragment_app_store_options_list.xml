@@ -1,16 +1,16 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/older_versions_group"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_marginTop="@dimen/main_padding"
-    android:layout_weight="1"
-    android:gravity="center_horizontal"
-    android:orientation="vertical" >
+            android:id="@+id/older_versions_group"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/main_padding"
+            android:layout_weight="1"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
 
     <LinearLayout
         android:id="@+id/version_list_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:clickable="true"
-        android:orientation="vertical" />
+        android:orientation="vertical"/>
 </ScrollView>
