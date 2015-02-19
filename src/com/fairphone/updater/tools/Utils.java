@@ -144,7 +144,7 @@ public class Utils
         }
         else if (forceDownload)
         {
-            downloadConfigFile(context);
+            downloadConfigFile(context, true);
         }
     }
 
@@ -183,10 +183,6 @@ public class Utils
 //        }
 //    }
 // --Commented out by Inspection STOP (06/02/2015 12:26)
-
-    private static void downloadConfigFile(Context context) {
-        downloadConfigFile(context, false);
-    }
 
     public static void downloadConfigFile(Context context, boolean forceDownload)
     {

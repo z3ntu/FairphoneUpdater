@@ -83,7 +83,7 @@ public class UpdaterService extends Service
 
 	private SharedPreferences mSharedPreferences;
 
-    private final static long DOWNLOAD_GRACE_PERIOD_IN_MS = 4 /* hour */ * Utils.MINUTES_IN_HOUR /* minute */ * Utils.SECONDS_IN_MINUTE /* second */ * 1000 /* millisecond */;
+    private final static long DOWNLOAD_GRACE_PERIOD_IN_MS = 24 /* hour */ * Utils.MINUTES_IN_HOUR /* minute */ * Utils.SECONDS_IN_MINUTE /* second */ * 1000 /* millisecond */;
 
 	@Override
     public int onStartCommand(Intent intent, int flags, int startId)
