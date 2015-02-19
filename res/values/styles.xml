@@ -200,6 +200,16 @@
         <item name="android:padding">15dp</item>
     </style>
 
+    <style name="ButtonBigBackgroundBlue" parent="@style/ButtonTextBackground">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:background">@drawable/button_big_blue_text_background</item>
+    </style>
+
+    <style name="ButtonBigBackgroundGreen" parent="@style/ButtonTextBackground">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:background">@drawable/button_big_green_text_background</item>
+    </style>
+
     <style name="ButtonTextBackgroundBlue" parent="@style/ButtonTextBackground">
         <item name="android:textColor">@color/blue</item>
         <item name="android:background">@drawable/button_blue_text_background</item>
