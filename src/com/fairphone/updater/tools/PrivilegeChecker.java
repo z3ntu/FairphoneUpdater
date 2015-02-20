@@ -26,7 +26,7 @@ public final class PrivilegeChecker {
 				isPrivilegedApp = success;
 			}
 		}
-		Log.d(TAG, "App is " + (isPrivilegedApp ? "" : "not") + " privileged.");
+		Log.i(TAG, "App is " + (isPrivilegedApp ? "" : "not") + " privileged.");
 	}
 
 	public static boolean isPrivilegedApp(){

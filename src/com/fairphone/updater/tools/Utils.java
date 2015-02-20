@@ -318,23 +318,32 @@ public class Utils
 
     public static void clearCache()
     {
-        File f = Environment.getDownloadCacheDirectory();
-        File[] files = f.listFiles();
-        if (files != null)
-        {
-            Log.d(TAG, "Size: " + files.length);
-	        for (File file : files) {
-		        String filename = file.getName();
+        if(PrivilegeChecker.isPrivilegedApp()) {
+            File f = Environment.getDownloadCacheDirectory();
+            File[] files = f.listFiles();
+            if (files != null) {
+                Log.d(TAG, "Size: " + files.length);
+                for (File file : files) {
+                    String filename = file.getName();
 
-		        if (filename.endsWith(".zip")) {
-			        final boolean delete = file.delete();
-			        if (delete) {
-				        Log.d(TAG, "Deleted file " + filename);
-			        } else {
-				        Log.d(TAG, "Failed to delete file " + filename);
-			        }
-		        }
-	        }
+                    if (filename.endsWith(".zip")) {
+                        final boolean delete = file.delete();
+                        if (delete) {
+                            Log.d(TAG, "Deleted file " + filename);
+                        } else {
+                            Log.d(TAG, "Failed to delete file " + filename);
+                        }
+                    }
+                }
+            }
+        } else {
+            if(RootTools.isAccessGiven()) {
+                try {
+                    Shell.runRootCommand(new CommandCapture(0, "rm -f *.zip"));
+                } catch (IOException | TimeoutException |RootDeniedException e) {
+                    Log.w(TAG, "Failed to clear cache: " + e.getLocalizedMessage());
+                }
+            }
         }
     }
 
@@ -578,4 +587,15 @@ public class Utils
 //        Log.wtf(TAG, sb.toString());
 //    }
 // --Commented out by Inspection STOP (06/02/2015 12:25)
+
+    public static boolean fileExists(String otaPackagePath) {
+        boolean fileExists;
+        if(PrivilegeChecker.isPrivilegedApp()){
+            File f = new File(otaPackagePath);
+            fileExists = f.exists();
+        }else {
+            fileExists = RootTools.exists(otaPackagePath);
+        }
+        return fileExists;
+    }
 }

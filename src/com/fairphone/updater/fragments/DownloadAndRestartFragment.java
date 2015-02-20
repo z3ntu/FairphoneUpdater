@@ -573,8 +573,10 @@ public class DownloadAndRestartFragment extends BaseFragment
         DownloadableItem item = mIsVersion ? mSelectedVersion : mSelectedStore;
 
         String otaPackagePath = Utils.getOtaPackagePath(resources, item, mIsVersion);
-        File f = new File(otaPackagePath);
-        if (!f.exists())
+
+        boolean fileNotExists = !Utils.fileExists(otaPackagePath);
+
+        if (fileNotExists)
         {
             abortUpdateProcess();
         }
@@ -749,13 +751,13 @@ public class DownloadAndRestartFragment extends BaseFragment
 
             Utils.clearCache();
 
-            File otaFilePath = new File(originalFilePath);
-            File otaFileCache = new File(destinyFilePath);
+            File otaOriginalFile = new File(originalFilePath);
+            File otaDestinyFile = new File(destinyFilePath);
 
-            if (!otaFileCache.exists())
+            if (otaOriginalFile.exists())
             {
 	            try {
-		            Utils.copy(otaFilePath, otaFileCache);
+		            Utils.copy(otaOriginalFile, otaDestinyFile);
 	            } catch (IOException e) {
 		            Log.e(TAG, "Failed to copy files to cache: "+e.getLocalizedMessage());
 		            abortUpdateProcess();
