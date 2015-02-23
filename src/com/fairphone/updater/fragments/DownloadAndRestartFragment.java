@@ -21,6 +21,7 @@ import android.net.ConnectivityManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -177,7 +178,7 @@ public class DownloadAndRestartFragment extends BaseFragment
             @Override
             public void onClick(View v)
             {
-                abortUpdateProcess();
+                abortUpdateProcess("");
                 mainActivity.onBackPressed();
             }
         });
@@ -279,8 +280,7 @@ public class DownloadAndRestartFragment extends BaseFragment
                             if ((bytes_total + Utils.BUFFER_SIZE_10_MBYTES) > Utils.getAvailablePartitionSizeInBytes(Environment.getExternalStorageDirectory()))
                             {
                                 downloading = false;
-                                Toast.makeText(mainActivity, getResources().getString(R.string.no_space_available_sd_card_message), Toast.LENGTH_LONG).show();
-                                abortUpdateProcess();
+                                abortUpdateProcess(getResources().getString(R.string.no_space_available_sd_card_message));
                             }
                             else
                             {
@@ -379,7 +379,8 @@ public class DownloadAndRestartFragment extends BaseFragment
             {
                 if (intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, false))
                 {
-                    abortUpdateProcess();
+                    Log.w(TAG, "Aborted due to connection failure.");
+                    abortUpdateProcess("");
 	                mainActivity.onBackPressed();
                 }
             }
@@ -471,16 +472,17 @@ public class DownloadAndRestartFragment extends BaseFragment
                     case DownloadManager.STATUS_FAILED:
                         Resources resources = getResources();
                         DownloadableItem item = mIsVersion ? mSelectedVersion : mSelectedStore;
+                        String error;
                         if (item != null)
                         {
                             String downloadTitle = Utils.getDownloadTitleFromDownloadableItem(getResources(), item, mIsVersion);
-                            Toast.makeText(mainActivity, resources.getString(R.string.error_downloading) + " " + downloadTitle, Toast.LENGTH_LONG).show();
+                            error = resources.getString(R.string.error_downloading) + " " + downloadTitle;
                         }
                         else
                         {
-                            Toast.makeText(mainActivity, resources.getString(R.string.error_downloading), Toast.LENGTH_LONG).show();
+                            error = resources.getString(R.string.error_downloading);
                         }
-                        abortUpdateProcess();
+                        abortUpdateProcess(error);
                         break;
                     default:
                         break;
@@ -488,7 +490,7 @@ public class DownloadAndRestartFragment extends BaseFragment
             }
             else
             {
-                abortUpdateProcess();
+                abortUpdateProcess("");
             }
 
             if (cursor != null)
@@ -543,10 +545,10 @@ public class DownloadAndRestartFragment extends BaseFragment
 
 	        final boolean notDeleted = !updateDir.delete();
 	        if(notDeleted) {
-		        Log.d(TAG, "Unable to delete "+updateDir.getAbsolutePath());
+		        Log.d(TAG, "Unable to delete " + updateDir.getAbsolutePath());
 	        }
 
-	        abortUpdateProcess();
+	        abortUpdateProcess("");
 
             return;
         }
@@ -559,7 +561,7 @@ public class DownloadAndRestartFragment extends BaseFragment
             // invalid download Id
             if (mLatestUpdateDownloadId == 0)
             {
-                abortUpdateProcess();
+                abortUpdateProcess("");
                 return;
             }
         }
@@ -578,7 +580,7 @@ public class DownloadAndRestartFragment extends BaseFragment
 
         if (fileNotExists)
         {
-            abortUpdateProcess();
+            abortUpdateProcess(resources.getString(R.string.file_not_found_message) + ": " + otaPackagePath);
         }
         else if (item != null)
         {
@@ -613,20 +615,23 @@ public class DownloadAndRestartFragment extends BaseFragment
 
                         // reboot the device into recovery
                         if(!Utils.rebootToRecovery(mainActivity)) {
-                            Log.w(TAG, "Error rebooting to recovery");
-                            abortUpdateProcess();
+                            String error = resources.getString(R.string.reboot_failed);
+                            Log.w(TAG, error);
+                            abortUpdateProcess(error);
                         }
                     }
                 }).start();
             } catch (IOException | NotFoundException | TimeoutException | RootDeniedException e)
             {
-                Log.e(TAG, "Error writing commands to cache: " + e.getLocalizedMessage());
-                abortUpdateProcess();
+                String error = resources.getString(R.string.command_write_to_cache_failed);
+                Log.e(TAG, error + ": " + e.getLocalizedMessage());
+                abortUpdateProcess(error);
             }
         }
         else
         {
-            abortUpdateProcess();
+            Log.e(TAG, "Null item");
+            abortUpdateProcess("");
         }
     }
 
@@ -653,18 +658,15 @@ public class DownloadAndRestartFragment extends BaseFragment
             }
             else
             {
-                Toast.makeText(mainActivity, getResources().getString(R.string.no_space_available_cache_message), Toast.LENGTH_LONG).show();
-                abortUpdateProcess();
+                abortUpdateProcess(getResources().getString(R.string.no_space_available_cache_message));
             }
         }
         else
         {
             if (Utils.hasUnifiedPartition(getResources()))
             {
-                Log.d(TAG, "No space on cache. Defaulting to Sdcard");
-                Toast.makeText(mainActivity, getResources().getString(R.string.no_space_available_cache_message), Toast.LENGTH_LONG).show();
-
-                abortUpdateProcess();
+                Log.w(TAG, "No space on cache. Defaulting to Sdcard");
+                abortUpdateProcess(getResources().getString(R.string.no_space_available_cache_message));
             }
         }
     }
@@ -759,13 +761,17 @@ public class DownloadAndRestartFragment extends BaseFragment
 	            try {
 		            Utils.copy(otaOriginalFile, otaDestinyFile);
 	            } catch (IOException e) {
-		            Log.e(TAG, "Failed to copy files to cache: "+e.getLocalizedMessage());
-		            abortUpdateProcess();
+                    String error = mainActivity.getResources().getString(R.string.copy_to_cache_failed_message);
+		            Log.e(TAG, error + ": " + originalFilePath + ". " + e.getLocalizedMessage());
+		            abortUpdateProcess(error);
 	            }
             }
             else
             {
-                abortUpdateProcess();
+                Resources resources = mainActivity.getResources();
+                String error = resources.getString(R.string.copy_to_cache_failed_message) + ". " + resources.getString(R.string.file_not_found_message) + ": " + originalFilePath;
+                Log.e(TAG, error);
+                abortUpdateProcess(error);
             }
 
             return 1;
@@ -804,8 +810,17 @@ public class DownloadAndRestartFragment extends BaseFragment
         return Environment.getExternalStorageDirectory() + resources.getString(R.string.updaterFolder) + Utils.getFilenameFromDownloadableItem(item, mIsVersion);
     }
 
-    public void abortUpdateProcess()
+    public void abortUpdateProcess(final String reason)
     {
+        if(!TextUtils.isEmpty(reason)) {
+            mainActivity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(mainActivity, reason, Toast.LENGTH_LONG).show();
+                }
+            });
+        }
+
         removeLastUpdateDownload();
 
         mainActivity.clearSelectedItems();

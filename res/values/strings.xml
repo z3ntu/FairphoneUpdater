@@ -71,5 +71,9 @@
     <string name="beta_activation_failed">Failed to activate beta</string>
     <string name="genericContentDescription" translatable="false">genericContentDescription</string>
     <string name="failed_mkdirs_cache_message">Failed to create directories on /cache.</string>
+    <string name="copy_to_cache_failed_message">Failed to copy file to cache</string>
+    <string name="file_not_found_message">File not found</string>
+    <string name="reboot_failed">Error rebooting to recovery</string>
+    <string name="command_write_to_cache_failed">Error writing commands to cache</string>
 
 </resources>
