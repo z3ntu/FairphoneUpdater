@@ -602,6 +602,17 @@ public class DownloadAndRestartFragment extends BaseFragment
                             removeLastUpdateDownload();
                         }
 
+                        // remove the gapps stuff
+//                        String model = Utils.getModelAndOS(getActivity());
+//                        if( model.contains("FP1") ) {
+                            try {
+
+                                Utils.clearGappsData();
+                            } catch (RootDeniedException | InterruptedException | IOException e) {
+                                e.printStackTrace();
+                            }
+//                        }
+
                         // remove the update files from data
                         removeUpdateFilesFromData();
 

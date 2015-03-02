@@ -40,6 +40,7 @@ import com.stericson.RootTools.exceptions.RootDeniedException;
 import com.stericson.RootTools.execution.CommandCapture;
 import com.stericson.RootTools.execution.Shell;
 
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -597,5 +598,59 @@ public class Utils
             fileExists = RootTools.exists(otaPackagePath);
         }
         return fileExists;
+    }
+
+    private final static String[] fp1Commands = {
+            // remove data
+            "rm -rf /data/data/com.android.providers.media*",
+            "rm -rf /data/data/com.android.keychain*",
+            "rm -rf /data/data/com.android.location.fused*",
+            "rm -rf /data/data/com.android.providers.applications*",
+            "rm -rf /data/data/com.android.providers.media*",
+            "rm -rf /data/data/com.android.vending*",
+            "rm -rf /data/data/com.google.android.apps.genie.geniewidget*",
+            "rm -rf /data/data/com.google.android.apps.plus*",
+            "rm -rf /data/data/com.google.android.ears*",
+            "rm -rf /data/data/com.google.android.gms*",
+            "rm -rf /data/data/com.google.android.googlequicksearchbox*",
+            "rm -rf /data/data/com.google.android.location*",
+            "rm -rf /data/data/com.google.android.marvin.talkback*",
+            // remove cache
+            "rm -rf /data/dalvik-cache",
+            // remove data/app
+            "rm -rf /data/app/com.android.apps.plus*",
+            "rm -rf /data/app/com.android.vending*",
+            "rm -rf /data/app/com.android.easr*",
+            "rm -rf /data/app/com.android.gms*",
+            "rm -rf /data/app/com.android.tts*"
+    };
+
+    public final static String SHELL_COMMAND_SU = "su";
+    public final static String SHELL_COMMAND_EXIT = "exit";
+
+    public static void clearGappsData() throws RootDeniedException, IOException, InterruptedException {
+
+        if (PrivilegeChecker.isPrivilegedApp()) {
+            Process p = Runtime.getRuntime().exec(SHELL_COMMAND_SU);
+            DataOutputStream os = new DataOutputStream(p.getOutputStream());
+            for (String tmpCmd : fp1Commands) {
+                os.writeBytes(tmpCmd+"\n");
+            }
+            os.writeBytes(SHELL_COMMAND_EXIT+"\n");
+            os.flush();
+            p.waitFor();
+        }else {
+            if(RootTools.isAccessGiven()) {
+                for (String tmpCmd : fp1Commands) {
+                    try {
+                        Shell.runRootCommand(new CommandCapture(0, tmpCmd));
+                    } catch (TimeoutException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }else{
+                throw new RootDeniedException("Root Denied");
+            }
+        }
     }
 }
