@@ -600,7 +600,7 @@ public class Utils
         return fileExists;
     }
 
-    private final static String[] fp1Commands = {
+    private final static String[] SHELL_COMMANDS_ERASE_DATA = {
             // remove data
             "rm -rf /data/data/com.android.providers.media*",
             "rm -rf /data/data/com.android.keychain*",
@@ -616,7 +616,7 @@ public class Utils
             "rm -rf /data/data/com.google.android.location*",
             "rm -rf /data/data/com.google.android.marvin.talkback*",
             // remove cache
-            "rm -rf /data/dalvik-cache",
+//            "rm -rf /data/dalvik-cache",
             // remove data/app
             "rm -rf /data/app/com.android.apps.plus*",
             "rm -rf /data/app/com.android.vending*",
@@ -625,15 +625,15 @@ public class Utils
             "rm -rf /data/app/com.android.tts*"
     };
 
-    public final static String SHELL_COMMAND_SU = "su";
+    public final static String SHELL_COMMAND_ERASE_DALVIK_CACHE = "rm -rf /data/dalvik-cache";
     public final static String SHELL_COMMAND_EXIT = "exit";
 
     public static void clearGappsData() throws RootDeniedException, IOException, InterruptedException {
 
         if (PrivilegeChecker.isPrivilegedApp()) {
-            Process p = Runtime.getRuntime().exec(SHELL_COMMAND_SU);
+            Process p = Runtime.getRuntime().exec(SHELL_COMMAND_ERASE_DALVIK_CACHE);
             DataOutputStream os = new DataOutputStream(p.getOutputStream());
-            for (String tmpCmd : fp1Commands) {
+            for (String tmpCmd : SHELL_COMMANDS_ERASE_DATA) {
                 os.writeBytes(tmpCmd+"\n");
             }
             os.writeBytes(SHELL_COMMAND_EXIT+"\n");
@@ -641,7 +641,12 @@ public class Utils
             p.waitFor();
         }else {
             if(RootTools.isAccessGiven()) {
-                for (String tmpCmd : fp1Commands) {
+                try {
+                    Shell.runRootCommand(new CommandCapture(0, SHELL_COMMAND_ERASE_DALVIK_CACHE));
+                } catch (TimeoutException e) {
+                    e.printStackTrace();
+                }
+                for (String tmpCmd : SHELL_COMMANDS_ERASE_DATA) {
                     try {
                         Shell.runRootCommand(new CommandCapture(0, tmpCmd));
                     } catch (TimeoutException e) {
