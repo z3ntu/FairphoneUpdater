@@ -133,8 +133,13 @@ public class FairphoneUpdater extends FragmentActivity
         mIsFirstTimeFairphone = mSharedPreferences.getBoolean(PREFERENCE_FIRST_TIME_FAIRPHONE, true);
 
         mIsFirstTimeAppStore = false;//mSharedPreferences.getBoolean(PREFERENCE_FIRST_TIME_APP_STORE, true);
-        
-        mOtaDownloadUrl = mSharedPreferences.getString(PREFERENCE_OTA_DOWNLOAD_URL, getResources().getString(R.string.downloadUrl));
+
+        mOtaDownloadUrl = getResources().getString(R.string.downloadUrl);
+
+        // reset download URL
+        Editor editor = mSharedPreferences.edit();
+        editor.putString(PREFERENCE_OTA_DOWNLOAD_URL, mOtaDownloadUrl);
+        editor.commit();
 
         // get system data
         mDeviceVersion = VersionParserHelper.getDeviceVersion(this);
@@ -224,6 +229,20 @@ public class FairphoneUpdater extends FragmentActivity
         editor.putLong(key, value);
 
         editor.commit();
+    }
+
+    public void changeOTADownloadURL(String newUrl){
+        Editor editor = mSharedPreferences.edit();
+
+        mOtaDownloadUrl = newUrl;
+
+        editor.putString(PREFERENCE_OTA_DOWNLOAD_URL, newUrl);
+
+        editor.commit();
+    }
+
+    public void forceConfiDownload(){
+        Utils.downloadConfigFile(this, true);
     }
 
     private void initHeaderViews()
@@ -588,7 +607,8 @@ public class FairphoneUpdater extends FragmentActivity
 
                 Log.d(TAG, "Developer mode enabled for this session");
 
-                Utils.downloadConfigFile(this, true);
+                forceConfiDownload();
+                //Utils.downloadConfigFile(this, true);
             }
         }
     }

@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -46,6 +47,9 @@ public class MainFragment extends BaseFragment
 	private RelativeLayout mGappsIcon;
     private Button mGappsButton;
     private Button mGappsDismissButton;
+    private LinearLayout mDevModeUrlContainer;
+    private EditText mDevModeUrlEditText;
+    private Button mDevModeUrlButton;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -92,6 +96,25 @@ public class MainFragment extends BaseFragment
         mGappsButton = (Button) view.findViewById(R.id.install_gapps_button);
         mGappsDismissButton = (Button) view.findViewById(R.id.install_gapps_dismiss_button);
         mGappsIcon = (RelativeLayout) view.findViewById(R.id.gapps_reminder_group);
+
+        // Dev mode
+        mDevModeUrlEditText = (EditText)view.findViewById(R.id.dev_mode_url_edit_text);
+        mDevModeUrlButton = (Button)view.findViewById(R.id.dev_mode_url_ok_button);
+        mDevModeUrlContainer = (LinearLayout)view.findViewById(R.id.dev_mode_url_container);
+
+        mDevModeUrlButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String url = mDevModeUrlEditText.getText().toString();
+
+                // set the URL for the shared prefs
+                mainActivity.changeOTADownloadURL(url);
+
+                // download new code
+                mainActivity.forceConfiDownload();
+            }
+        });
+
     }
 
     private boolean getGappsInstalationButtonState()
@@ -269,6 +292,8 @@ public class MainFragment extends BaseFragment
                 public void onClick(View v)
                 {
                     mainActivity.onEnableDevMode();
+
+                    mDevModeUrlContainer.setVisibility(FairphoneUpdater.DEV_MODE_ENABLED ? View.VISIBLE : View.GONE);
                 }
             });
         }
