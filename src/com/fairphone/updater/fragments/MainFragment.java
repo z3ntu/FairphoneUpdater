@@ -110,7 +110,7 @@ public class MainFragment extends BaseFragment
                 // set the URL for the shared prefs
                 mainActivity.changeOTADownloadURL(url);
 
-                // download new code
+                // download new config
                 mainActivity.forceConfiDownload();
             }
         });

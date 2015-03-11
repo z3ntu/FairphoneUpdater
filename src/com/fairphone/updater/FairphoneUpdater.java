@@ -232,12 +232,10 @@ public class FairphoneUpdater extends FragmentActivity
     }
 
     public void changeOTADownloadURL(String newUrl){
+        mOtaDownloadUrl = TextUtils.isEmpty(newUrl) ? getResources().getString(R.string.downloadUrl) : newUrl;
+
         Editor editor = mSharedPreferences.edit();
-
-        mOtaDownloadUrl = newUrl;
-
-        editor.putString(PREFERENCE_OTA_DOWNLOAD_URL, newUrl);
-
+        editor.putString(PREFERENCE_OTA_DOWNLOAD_URL, mOtaDownloadUrl);
         editor.commit();
     }
 
