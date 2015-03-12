@@ -376,7 +376,7 @@ public class Utils
     {
         double fileSize = file.length();
         double cacheSize = Utils.getPartitionSizeInBytes(Environment.getDownloadCacheDirectory());
-        return cacheSize >= fileSize;
+        return fileSize > 0 && cacheSize >= fileSize;
     }
 
     public static String getFilenameFromDownloadableItem(DownloadableItem item, boolean isVersion)
