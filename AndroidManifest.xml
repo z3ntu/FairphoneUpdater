@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           xmlns:tools="http://schemas.android.com/tools"
           package="com.fairphone.updater"
-    android:versionCode="18"
-    android:versionName="18 (FP 1.8.3)" >
+    android:versionCode="19"
+    android:versionName="19 (FP 1.8.3)" >
 
     <uses-sdk
         android:minSdkVersion="17"
@@ -74,6 +74,11 @@
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:mimeType="application/zip"/>
             </intent-filter>
         </activity>
         <activity

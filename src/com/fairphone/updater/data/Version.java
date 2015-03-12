@@ -45,6 +45,8 @@ public class Version extends DownloadableItem implements Comparable<Version>
 
     private final List<Integer> mDependencies;
 
+    public static final int ZIP_INSTALL_VERSION = 999;
+
     public Version()
     {
         super();

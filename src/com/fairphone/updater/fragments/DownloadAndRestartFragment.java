@@ -39,6 +39,7 @@ import com.fairphone.updater.R;
 import com.fairphone.updater.UpdaterService;
 import com.fairphone.updater.data.DownloadableItem;
 import com.fairphone.updater.data.Store;
+import com.fairphone.updater.data.UpdaterData;
 import com.fairphone.updater.data.Version;
 import com.fairphone.updater.data.VersionParserHelper;
 import com.fairphone.updater.tools.PrivilegeChecker;
@@ -55,6 +56,7 @@ public class DownloadAndRestartFragment extends BaseFragment
 
     private static final String TAG = DownloadAndRestartFragment.class.getSimpleName();
     private static final int GET_LATEST_DOWNLOAD_ID_RETRIES = 12;
+    private boolean mIsZipInstall;
 
     private TextView mDownloadVersionName;
     private LinearLayout mVersionDownloadingGroup;
@@ -74,6 +76,7 @@ public class DownloadAndRestartFragment extends BaseFragment
     private BroadcastReceiver mNetworkStateReceiver;
 
     private long mLatestUpdateDownloadId;
+    private TextView mDownloadCompleteLabel;
 
     public DownloadAndRestartFragment(boolean isVersion)
     {
@@ -86,10 +89,11 @@ public class DownloadAndRestartFragment extends BaseFragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         // Inflate the layout for this fragment
+        mIsZipInstall = UpdaterState.ZIP_INSTALL == mainActivity.getCurrentUpdaterState();
         View view;
         if (mIsVersion)
         {
-            mSelectedVersion = mainActivity.getSelectedVersion();
+            mSelectedVersion = getSelectedVersion();
             view = inflateViewByImageType(inflater, container);
             mSelectedStore = null;
         }
@@ -103,6 +107,29 @@ public class DownloadAndRestartFragment extends BaseFragment
         setupLayout(view);
 
         return view;
+    }
+
+    private Version getSelectedVersion() {
+        Version version;
+        if(mIsZipInstall) {
+            Resources resources = mainActivity.getResources();
+
+            //Get the zip file name
+            String[] zipPath = getDownloadPath(null).split("/");
+            String zipName = "";
+            if (zipPath != null && zipPath.length > 0) {
+                zipName = zipPath[zipPath.length - 1];
+            }
+
+            version = new Version();
+            version.setName(resources.getString(R.string.install) + " " + zipName);
+            version.setNumber(Version.ZIP_INSTALL_VERSION);
+        }
+        else
+        {
+            version = mainActivity.getSelectedVersion();
+        }
+        return version;
     }
 
     private View inflateViewByImageType(LayoutInflater inflater, ViewGroup container)
@@ -141,6 +168,7 @@ public class DownloadAndRestartFragment extends BaseFragment
                 break;
 
             case PREINSTALL:
+            case ZIP_INSTALL:
                 setupPreInstallState();
 
                 mVersionDownloadingGroup.setVisibility(View.GONE);
@@ -179,6 +207,10 @@ public class DownloadAndRestartFragment extends BaseFragment
             public void onClick(View v)
             {
                 abortUpdateProcess("");
+                if(Utils.hasUnifiedPartition(mainActivity.getResources()))
+                {
+                    Utils.clearCache();
+                }
                 mainActivity.onBackPressed();
             }
         });
@@ -335,6 +367,7 @@ public class DownloadAndRestartFragment extends BaseFragment
     private void setupLayout(View view)
     {
         mDownloadVersionName = (TextView) view.findViewById(R.id.download_version_name_text);
+        mDownloadCompleteLabel = (TextView) view.findViewById(R.id.download_complete_label);
 
         // download in progress group
         mVersionDownloadingGroup = (LinearLayout) view.findViewById(R.id.version_downloading_group);
@@ -363,6 +396,14 @@ public class DownloadAndRestartFragment extends BaseFragment
         if (item != null)
         {
             mDownloadVersionName.setText(mainActivity.getItemName(item, mIsVersion));
+            if(mIsZipInstall)
+            {
+                mDownloadCompleteLabel.setVisibility(View.GONE);
+            }
+            else
+            {
+                mDownloadCompleteLabel.setVisibility(View.VISIBLE);
+            }
         }
 
         toggleDownloadProgressAndRestart();
@@ -514,7 +555,7 @@ public class DownloadAndRestartFragment extends BaseFragment
 
             if (file.exists())
             {
-                if (Utils.checkMD5(item.getMd5Sum(), file))
+                if (Utils.checkMD5(item.getMd5Sum(), file) || mIsZipInstall)
                 {
                     copyUpdateToCache(file);
                 }
@@ -817,8 +858,17 @@ public class DownloadAndRestartFragment extends BaseFragment
 
     private String getDownloadPath(DownloadableItem item)
     {
-        Resources resources = mainActivity.getResources();
-        return Environment.getExternalStorageDirectory() + resources.getString(R.string.updaterFolder) + Utils.getFilenameFromDownloadableItem(item, mIsVersion);
+        String path;
+        if(mIsZipInstall)
+        {
+           path = mainActivity.getZipFilePath();
+        }
+        else
+        {
+            Resources resources = mainActivity.getResources();
+            path = Environment.getExternalStorageDirectory() + resources.getString(R.string.updaterFolder) + Utils.getFilenameFromDownloadableItem(item, mIsVersion);
+        }
+        return path;
     }
 
     public void abortUpdateProcess(final String reason)

@@ -3,6 +3,7 @@ package com.fairphone.updater;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.app.Fragment;
@@ -65,11 +66,12 @@ public class FairphoneUpdater extends FragmentActivity
     public static final String PREFERENCE_OTA_DOWNLOAD_URL = "OtaDownloadUrl";
     
     private static final String TAG_FIRST_FRAGMENT = "FIRST_FRAGMENT";
+    private String mZipPath;
 
 
     public static enum UpdaterState
     {
-        NORMAL, DOWNLOAD, PREINSTALL
+        NORMAL, DOWNLOAD, PREINSTALL, ZIP_INSTALL
     }
 
     private Version mDeviceVersion;
@@ -112,6 +114,8 @@ public class FairphoneUpdater extends FragmentActivity
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+        mSharedPreferences = getSharedPreferences(FAIRPHONE_UPDATER_PREFERENCES, MODE_PRIVATE);
+
         onNewIntent(getIntent());
         
         setContentView(R.layout.activity_updater);
@@ -124,8 +128,6 @@ public class FairphoneUpdater extends FragmentActivity
 
         DEV_MODE_ENABLED = false;
         mIsDevModeCounter = 10;
-
-        mSharedPreferences = getSharedPreferences(FAIRPHONE_UPDATER_PREFERENCES, MODE_PRIVATE);
 
         // update first times
         mIsFirstTimeAndroid = mSharedPreferences.getBoolean(PREFERENCE_FIRST_TIME_ANDROID, true);
@@ -306,7 +308,8 @@ public class FairphoneUpdater extends FragmentActivity
         {
             ((DownloadAndRestartFragment) fragment).abortUpdateProcess("");
         }
-        else if (fragment != null && TAG_FIRST_FRAGMENT.equals(fragment.getTag()))
+
+        if (fragment != null && TAG_FIRST_FRAGMENT.equals(fragment.getTag()))
         {
             clearSelectedItems();
             finish();
@@ -530,6 +533,9 @@ public class FairphoneUpdater extends FragmentActivity
                     firstFragment = new MainFragment();
                 }
                 break;
+            case ZIP_INSTALL:
+                firstFragment = new DownloadAndRestartFragment(true);
+                break;
             default:
                 firstFragment = new MainFragment();
                 break;
@@ -643,7 +649,10 @@ public class FairphoneUpdater extends FragmentActivity
         String itemName = "";
         if (version != null)
         {
-            itemName = version.getImageTypeDescription(getResources()) + " " + version.getName() + " " + version.getBuildNumber();
+            if(mCurrentState != UpdaterState.ZIP_INSTALL) {
+                itemName = version.getImageTypeDescription(getResources()) + " ";
+            }
+            itemName += version.getName() + " " + version.getBuildNumber();
         }
         return itemName;
     }
@@ -777,19 +786,40 @@ public class FairphoneUpdater extends FragmentActivity
     {
         super.onNewIntent(intent);
         setIntent(intent);
-        
         mLaunchGapps = false;
 
-        if (checkStartGappsInstall(intent))
-        {
-            mLaunchGapps = true;
-        }
-        else
-        {
-            Intent parentIntent = getParentActivityIntent();
-            if (checkStartGappsInstall(parentIntent))
+        if(intent != null) {
+            String action = intent.getAction();
+            switch (action)
             {
-                mLaunchGapps = true;
+                case GappsInstallerHelper.EXTRA_START_GAPPS_INSTALL:
+                    if (checkStartGappsInstall(intent)) {
+                        mLaunchGapps = true;
+                    } else {
+                        Intent parentIntent = getParentActivityIntent();
+                        if (checkStartGappsInstall(parentIntent)) {
+                            mLaunchGapps = true;
+                        }
+                    }
+                    break;
+                case Intent.ACTION_VIEW:
+                    Uri data = intent.getData();
+                    if(data != null)
+                    {
+                        String zipPath = data.getPath();
+                        if(!TextUtils.isEmpty(zipPath)) {
+                            mZipPath = zipPath;
+                            updateStatePreference(UpdaterState.ZIP_INSTALL);
+                        }
+                        else
+                        {
+                            mZipPath = "";
+                        }
+                    }
+                    break;
+                default:
+                    //no action
+                    break;
             }
         }
     }
@@ -806,6 +836,10 @@ public class FairphoneUpdater extends FragmentActivity
 
         // check current state
         mCurrentState = getCurrentUpdaterState();
+        if(mCurrentState == UpdaterState.ZIP_INSTALL)
+        {
+            mCurrentState = TextUtils.isEmpty(mZipPath) ? UpdaterState.NORMAL : UpdaterState.ZIP_INSTALL;
+        }
 
         startService();
 
@@ -896,5 +930,10 @@ public class FairphoneUpdater extends FragmentActivity
     public void clearConfigFileDownloadId()
     {
         savePreference(UpdaterService.PREFERENCE_LAST_CONFIG_DOWNLOAD_ID, 0L);
+    }
+
+    public String getZipFilePath()
+    {
+        return mZipPath;
     }
 }
