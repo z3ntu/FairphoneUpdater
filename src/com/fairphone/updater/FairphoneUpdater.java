@@ -806,7 +806,8 @@ public class FairphoneUpdater extends FragmentActivity
                     Uri data = intent.getData();
                     if(data != null)
                     {
-                        String zipPath = data.getPath();
+
+                        String zipPath = Utils.getPath(this, data);
                         if(!TextUtils.isEmpty(zipPath)) {
                             mZipPath = zipPath;
                             updateStatePreference(UpdaterState.ZIP_INSTALL);
