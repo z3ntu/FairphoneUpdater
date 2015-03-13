@@ -350,7 +350,7 @@ public class MainFragment extends BaseFragment
                 {
                     UpdaterService.readUpdaterData(mainActivity);
                     mainActivity.updateLatestVersionFromConfig();
-                    if (mainActivity.getCurrentUpdaterState() == UpdaterState.NORMAL)
+                    if (mainActivity.getCurrentUpdaterState() != UpdaterState.DOWNLOAD && mainActivity.getCurrentUpdaterState() != UpdaterState.PREINSTALL)
                     {
                         toogleUpdateAvailableGroup();
                         enableGappsGroup(getGappsInstalationButtonState());

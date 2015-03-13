@@ -86,8 +86,6 @@ public class FairphoneUpdater extends FragmentActivity
     public static boolean DEV_MODE_ENABLED;
     public static boolean BETA_MODE_ENABLED;
     private int mIsDevModeCounter;
-    
-    public String mOtaDownloadUrl;
 
     private TextView headerMainFairphoneText;
     private TextView headerMainAndroidText;
@@ -136,11 +134,11 @@ public class FairphoneUpdater extends FragmentActivity
 
         mIsFirstTimeAppStore = false;//mSharedPreferences.getBoolean(PREFERENCE_FIRST_TIME_APP_STORE, true);
 
-        mOtaDownloadUrl = getResources().getString(R.string.downloadUrl);
+        String otaDownloadUrl = getResources().getString(R.string.downloadUrl);
 
         // reset download URL
         Editor editor = mSharedPreferences.edit();
-        editor.putString(PREFERENCE_OTA_DOWNLOAD_URL, mOtaDownloadUrl);
+        editor.putString(PREFERENCE_OTA_DOWNLOAD_URL, otaDownloadUrl);
         editor.commit();
 
         // get system data
@@ -234,10 +232,10 @@ public class FairphoneUpdater extends FragmentActivity
     }
 
     public void changeOTADownloadURL(String newUrl){
-        mOtaDownloadUrl = TextUtils.isEmpty(newUrl) ? getResources().getString(R.string.downloadUrl) : newUrl;
+        String otaDownloadUrl = TextUtils.isEmpty(newUrl) ? getResources().getString(R.string.downloadUrl) : newUrl;
 
         Editor editor = mSharedPreferences.edit();
-        editor.putString(PREFERENCE_OTA_DOWNLOAD_URL, mOtaDownloadUrl);
+        editor.putString(PREFERENCE_OTA_DOWNLOAD_URL, otaDownloadUrl);
         editor.commit();
     }
 
@@ -936,5 +934,10 @@ public class FairphoneUpdater extends FragmentActivity
     public String getZipFilePath()
     {
         return mZipPath;
+    }
+
+    public String getPreferenceOtaDownloadUrl()
+    {
+        return mSharedPreferences.getString(FairphoneUpdater.PREFERENCE_OTA_DOWNLOAD_URL, getResources().getString(R.string.downloadUrl));
     }
 }
