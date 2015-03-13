@@ -837,7 +837,7 @@ public class FairphoneUpdater extends FragmentActivity
         mCurrentState = getCurrentUpdaterState();
         if(mCurrentState == UpdaterState.ZIP_INSTALL)
         {
-            mCurrentState = TextUtils.isEmpty(mZipPath) ? UpdaterState.NORMAL : UpdaterState.ZIP_INSTALL;
+            updateStatePreference(TextUtils.isEmpty(mZipPath) ? UpdaterState.NORMAL : UpdaterState.ZIP_INSTALL);
         }
 
         startService();
