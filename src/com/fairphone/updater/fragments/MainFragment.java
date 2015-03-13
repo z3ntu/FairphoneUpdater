@@ -22,6 +22,7 @@ import com.fairphone.updater.FairphoneUpdater;
 import com.fairphone.updater.FairphoneUpdater.HeaderType;
 import com.fairphone.updater.FairphoneUpdater.UpdaterState;
 import com.fairphone.updater.R;
+import com.fairphone.updater.UpdaterService;
 import com.fairphone.updater.data.Store;
 import com.fairphone.updater.data.UpdaterData;
 import com.fairphone.updater.data.Version;
@@ -347,6 +348,7 @@ public class MainFragment extends BaseFragment
 
                 if (FairphoneUpdater.FAIRPHONE_UPDATER_NEW_VERSION_RECEIVED.equals(action))
                 {
+                    UpdaterService.readUpdaterData(mainActivity);
                     mainActivity.updateLatestVersionFromConfig();
                     if (mainActivity.getCurrentUpdaterState() == UpdaterState.NORMAL)
                     {

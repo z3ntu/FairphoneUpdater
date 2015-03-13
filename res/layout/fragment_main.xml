@@ -15,7 +15,8 @@
             android:layout_width="0dp"
             android:layout_weight="5"
             android:layout_height="wrap_content"
-            android:hint="@string/downloadUrl"/>
+            android:hint="@string/downloadUrl"
+            android:singleLine="true"/>
 
         <Button
             android:id="@+id/dev_mode_url_ok_button"
