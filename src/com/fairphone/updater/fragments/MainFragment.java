@@ -348,7 +348,6 @@ public class MainFragment extends BaseFragment
 
                 if (FairphoneUpdater.FAIRPHONE_UPDATER_NEW_VERSION_RECEIVED.equals(action))
                 {
-                    UpdaterService.readUpdaterData(mainActivity);
                     mainActivity.updateLatestVersionFromConfig();
                     if (mainActivity.getCurrentUpdaterState() != UpdaterState.DOWNLOAD && mainActivity.getCurrentUpdaterState() != UpdaterState.PREINSTALL)
                     {

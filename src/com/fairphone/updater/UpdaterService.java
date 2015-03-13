@@ -487,7 +487,6 @@ public class UpdaterService extends Service
 
     private static void checkVersionValidation(Context context)
     {
-
         Version latestVersion = VersionParserHelper.getLatestVersion(context.getApplicationContext());
         Version currentVersion = VersionParserHelper.getDeviceVersion(context.getApplicationContext());
 
@@ -497,10 +496,11 @@ public class UpdaterService extends Service
             {
                 setNotification(context);
             }
-            // to update the activity
-            Intent updateIntent = new Intent(FairphoneUpdater.FAIRPHONE_UPDATER_NEW_VERSION_RECEIVED);
-            context.sendBroadcast(updateIntent);
         }
+
+        // to update the activity
+        Intent updateIntent = new Intent(FairphoneUpdater.FAIRPHONE_UPDATER_NEW_VERSION_RECEIVED);
+        context.sendBroadcast(updateIntent);
     }
 
     public static boolean readUpdaterData(Context context)
