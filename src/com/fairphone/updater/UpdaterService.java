@@ -479,12 +479,6 @@ public class UpdaterService extends Service
         }
     }
 
-    private void removeBroadcastReceiver()
-    {
-        getApplicationContext().unregisterReceiver(mDownloadBroadCastReceiver);
-        mDownloadBroadCastReceiver = null;
-    }
-
     private static void checkVersionValidation(Context context)
     {
         Version latestVersion = VersionParserHelper.getLatestVersion(context.getApplicationContext());
@@ -660,7 +654,6 @@ public class UpdaterService extends Service
             {
                 Log.d(TAG, "Configuration download failed. Clearing grace period.");
                 mSharedPreferences.edit().remove(LAST_CONFIG_DOWNLOAD_IN_MS).apply();
-                removeBroadcastReceiver();
             }
         }
     }
