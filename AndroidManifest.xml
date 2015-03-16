@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           xmlns:tools="http://schemas.android.com/tools"
           package="com.fairphone.updater"
-    android:versionCode="19"
-    android:versionName="19 (FP 1.8.3)" >
+    android:versionCode="20"
+    android:versionName="20 (FP 1.8.3)" >
 
     <uses-sdk
         android:minSdkVersion="17"
