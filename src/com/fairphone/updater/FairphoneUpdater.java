@@ -85,7 +85,6 @@ public class FairphoneUpdater extends FragmentActivity
 
     public static boolean DEV_MODE_ENABLED;
     public static boolean BETA_MODE_ENABLED;
-    private int mIsDevModeCounter;
 
     private TextView headerMainFairphoneText;
     private TextView headerMainAndroidText;
@@ -125,7 +124,6 @@ public class FairphoneUpdater extends FragmentActivity
         }
 
         DEV_MODE_ENABLED = false;
-        mIsDevModeCounter = 10;
 
         // update first times
         mIsFirstTimeAndroid = mSharedPreferences.getBoolean(PREFERENCE_FIRST_TIME_ANDROID, true);
@@ -239,7 +237,7 @@ public class FairphoneUpdater extends FragmentActivity
         editor.commit();
     }
 
-    public void forceConfiDownload(){
+    public void forceConfigDownload(){
         Utils.downloadConfigFile(this, true);
     }
 
@@ -591,28 +589,6 @@ public class FairphoneUpdater extends FragmentActivity
             Log.e(TAG, "getTopFragment - Couldn't get FragmentManager");
         }
         return topFragment;
-    }
-
-    public void onEnableDevMode()
-    {
-        if (!DEV_MODE_ENABLED)
-        {
-            mIsDevModeCounter--;
-
-            Log.d(TAG, "Developer mode in " + mIsDevModeCounter + " Clicks...");
-
-            if (mIsDevModeCounter <= 0)
-            {
-                DEV_MODE_ENABLED = true;
-
-                Toast.makeText(getApplicationContext(), getResources().getString(R.string.dev_mode_message), Toast.LENGTH_LONG).show();
-
-                Log.d(TAG, "Developer mode enabled for this session");
-
-                forceConfiDownload();
-                //Utils.downloadConfigFile(this, true);
-            }
-        }
     }
 
     public boolean isUpdateAvailable()

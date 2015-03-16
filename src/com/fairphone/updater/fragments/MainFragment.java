@@ -7,6 +7,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -22,7 +23,6 @@ import com.fairphone.updater.FairphoneUpdater;
 import com.fairphone.updater.FairphoneUpdater.HeaderType;
 import com.fairphone.updater.FairphoneUpdater.UpdaterState;
 import com.fairphone.updater.R;
-import com.fairphone.updater.UpdaterService;
 import com.fairphone.updater.data.Store;
 import com.fairphone.updater.data.UpdaterData;
 import com.fairphone.updater.data.Version;
@@ -32,6 +32,7 @@ import com.fairphone.updater.gappsinstaller.GappsInstallerHelper;
 public class MainFragment extends BaseFragment
 {
 
+	private static final String TAG = MainFragment.class.getSimpleName();
     public static final String SHARED_PREFERENCES_ENABLE_GAPPS = "SHARED_PREFERENCES_ENABLE_GAPPS_POPUP";
 
     private LinearLayout mVersionUpToDateGroup;
@@ -51,6 +52,7 @@ public class MainFragment extends BaseFragment
     private LinearLayout mDevModeUrlContainer;
     private EditText mDevModeUrlEditText;
     private Button mDevModeUrlButton;
+	private int mIsDevModeCounter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -59,8 +61,10 @@ public class MainFragment extends BaseFragment
         View view = inflater.inflate(R.layout.fragment_main, container, false);
 
         setupLayout(inflater, view);
+	    mDevModeUrlContainer.setVisibility(FairphoneUpdater.DEV_MODE_ENABLED ? View.VISIBLE : View.GONE);
+	    mIsDevModeCounter = FairphoneUpdater.DEV_MODE_ENABLED ? 0 : 10;
 
-        return view;
+	    return view;
     }
 
     private void updateHeader()
@@ -112,7 +116,7 @@ public class MainFragment extends BaseFragment
                 mainActivity.changeOTADownloadURL(url);
 
                 // download new config
-                mainActivity.forceConfiDownload();
+                mainActivity.forceConfigDownload();
             }
         });
 
@@ -241,7 +245,6 @@ public class MainFragment extends BaseFragment
                 mVersionUpToDateGroup.setVisibility(View.VISIBLE);
             }
         }
-	    mDevModeUrlContainer.setVisibility(FairphoneUpdater.DEV_MODE_ENABLED ? View.VISIBLE : View.GONE);
 
         updateOtherOSOptionsGroup();
     }
@@ -293,7 +296,7 @@ public class MainFragment extends BaseFragment
                 @Override
                 public void onClick(View v)
                 {
-                    mainActivity.onEnableDevMode();
+                    onEnableDevMode();
                 }
             });
         }
@@ -306,7 +309,7 @@ public class MainFragment extends BaseFragment
                 @Override
                 public void onClick(View v)
                 {
-                    mainActivity.onEnableDevMode();
+                    onEnableDevMode();
                 }
             });
         }
@@ -377,4 +380,26 @@ public class MainFragment extends BaseFragment
         mainActivity.unregisterReceiver(newVersionbroadcastReceiver);
     }
 
+	public void onEnableDevMode()
+	{
+		if (!FairphoneUpdater.DEV_MODE_ENABLED)
+		{
+			mIsDevModeCounter--;
+
+			Log.d(TAG, "Developer mode in " + mIsDevModeCounter + " Clicks...");
+
+			if (mIsDevModeCounter <= 0)
+			{
+				FairphoneUpdater.DEV_MODE_ENABLED = true;
+
+				Toast.makeText(mainActivity.getApplicationContext(), getResources().getString(R.string.dev_mode_message), Toast.LENGTH_LONG).show();
+
+				Log.d(TAG, "Developer mode enabled for this session");
+
+				mDevModeUrlContainer.setVisibility(FairphoneUpdater.DEV_MODE_ENABLED ? View.VISIBLE : View.GONE);
+				mainActivity.forceConfigDownload();
+				//Utils.downloadConfigFile(this, true);
+			}
+		}
+	}
 }
