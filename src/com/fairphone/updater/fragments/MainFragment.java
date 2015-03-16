@@ -241,6 +241,7 @@ public class MainFragment extends BaseFragment
                 mVersionUpToDateGroup.setVisibility(View.VISIBLE);
             }
         }
+	    mDevModeUrlContainer.setVisibility(FairphoneUpdater.DEV_MODE_ENABLED ? View.VISIBLE : View.GONE);
 
         updateOtherOSOptionsGroup();
     }
@@ -293,8 +294,6 @@ public class MainFragment extends BaseFragment
                 public void onClick(View v)
                 {
                     mainActivity.onEnableDevMode();
-
-                    mDevModeUrlContainer.setVisibility(FairphoneUpdater.DEV_MODE_ENABLED ? View.VISIBLE : View.GONE);
                 }
             });
         }
