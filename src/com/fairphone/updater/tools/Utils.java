@@ -510,7 +510,7 @@ public class Utils
         }
     }
 
-    public static String getOtaPackagePath(Resources resources, DownloadableItem item, boolean isVersion){
+    public static String getOtaPackagePath(Resources resources, DownloadableItem item, boolean isVersion, boolean isZipInstall){
         String path;
 
         if (Utils.hasUnifiedPartition(resources))
@@ -519,7 +519,16 @@ public class Utils
         }
         else
         {
-            path = resources.getString(R.string.recoverySdCardPath) + resources.getString(R.string.updaterFolder) + Utils.getFilenameFromDownloadableItem(item, isVersion);
+            if(isZipInstall && Build.MODEL.equalsIgnoreCase(resources.getString(R.string.FP1Model)))
+            {
+                //TODO: Find a way to not have this hardcoded
+                String zipPath = item.getDownloadLink();
+                path = zipPath.replace("/storage/sdcard0", resources.getString(R.string.recoverySdCardPath));
+            }
+            else
+            {
+                path = resources.getString(R.string.recoverySdCardPath) + resources.getString(R.string.updaterFolder) + Utils.getFilenameFromDownloadableItem(item, isVersion);
+            }
         }
 
         return path;

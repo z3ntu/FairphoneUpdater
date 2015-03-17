@@ -123,6 +123,7 @@ public class DownloadAndRestartFragment extends BaseFragment
 
             version = new Version();
             version.setName(resources.getString(R.string.install) + " " + zipName);
+            version.setDownloadLink(mainActivity.getZipFilePath());
             version.setNumber(Version.ZIP_INSTALL_VERSION);
         }
         else
@@ -615,7 +616,7 @@ public class DownloadAndRestartFragment extends BaseFragment
         final Resources resources = getResources();
         DownloadableItem item = mIsVersion ? mSelectedVersion : mSelectedStore;
 
-        String otaPackagePath = Utils.getOtaPackagePath(resources, item, mIsVersion);
+        String otaPackagePath = Utils.getOtaPackagePath(resources, item, mIsVersion, mIsZipInstall);
 
         boolean fileNotExists = !Utils.fileExists(otaPackagePath);
 
