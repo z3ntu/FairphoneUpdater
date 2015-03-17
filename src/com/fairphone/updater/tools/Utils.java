@@ -362,7 +362,7 @@ public class Utils
         double roundedSize = Math.ceil(sizeInGB * PERCENT_100) / PERCENT_100;
         Log.d(TAG, "/data size: " + roundedSize + "Gb");
 
-        double fp1DataPartitionSize = (double) resources.getInteger(R.integer.FP1DataPartitionSizeMb) / PERCENT_100;
+        double fp1DataPartitionSize = (double) resources.getInteger(R.integer.FP1DataPartitionSizeMb) / BUFFER_1024_BYTES;
         // Add a little buffer to the 1gb default just in case
         return roundedSize > fp1DataPartitionSize;
     }
