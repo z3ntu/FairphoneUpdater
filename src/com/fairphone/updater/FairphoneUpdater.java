@@ -880,7 +880,7 @@ public class FairphoneUpdater extends FragmentActivity
 
     public Fragment startGappsInstall()
     {
-        getSelectedStoreFromSharedPreferences();
+        mSelectedStore = UpdaterData.getInstance().getStore(0);
 
         VersionDetailFragment fragment = new VersionDetailFragment(false);
 
