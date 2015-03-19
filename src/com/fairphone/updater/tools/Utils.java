@@ -41,6 +41,7 @@ import com.fairphone.updater.R;
 import com.fairphone.updater.UpdaterService;
 import com.fairphone.updater.data.DownloadableItem;
 import com.fairphone.updater.data.Store;
+import com.fairphone.updater.data.UpdaterData;
 import com.fairphone.updater.data.Version;
 import com.fairphone.updater.data.VersionParserHelper;
 import com.stericson.RootTools.RootTools;
@@ -81,6 +82,7 @@ public class Utils
     private static final double PERCENT_100 = 100d;
     private static final char CHAR_SPACE = ' ';
     private static final char CHAR_ZERO = '0';
+    public static final int GAPPS_STORE_NUMBER = 0;
 
     private static double getPartitionSizeInGBytes(File path)
     {
@@ -731,4 +733,9 @@ public class Utils
 
 		return manager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).isConnectedOrConnecting();
 	}
+
+    public static Store getGappsStore()
+    {
+        return UpdaterData.getInstance().getStore(GAPPS_STORE_NUMBER);
+    }
 }

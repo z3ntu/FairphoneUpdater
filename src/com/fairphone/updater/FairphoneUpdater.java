@@ -701,7 +701,7 @@ public class FairphoneUpdater extends FragmentActivity
         clearSelectedVersion(versionNumber, versionImageType);
 
         mSelectedVersion = UpdaterData.getInstance().getVersion(versionImageType, versionNumber);
-        clearSelectedStore(0);
+        clearSelectedStore(-1);
     }
 
     public void clearSelectedItems()
@@ -722,7 +722,7 @@ public class FairphoneUpdater extends FragmentActivity
 
     public void setSelectedStore(Store selectedStore)
     {
-        int storeNumber = selectedStore != null ? selectedStore.getNumber() : 0;
+        int storeNumber = selectedStore != null ? selectedStore.getNumber() : -1;
 
         clearSelectedStore(storeNumber);
 
@@ -880,7 +880,7 @@ public class FairphoneUpdater extends FragmentActivity
 
     public Fragment startGappsInstall()
     {
-        mSelectedStore = UpdaterData.getInstance().getStore(0);
+        mSelectedStore = Utils.getGappsStore();
 
         VersionDetailFragment fragment = new VersionDetailFragment(false);
 

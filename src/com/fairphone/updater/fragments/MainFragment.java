@@ -28,6 +28,7 @@ import com.fairphone.updater.data.UpdaterData;
 import com.fairphone.updater.data.Version;
 import com.fairphone.updater.fragments.VersionDetailFragment.DetailLayoutType;
 import com.fairphone.updater.gappsinstaller.GappsInstallerHelper;
+import com.fairphone.updater.tools.Utils;
 
 public class MainFragment extends BaseFragment
 {
@@ -126,13 +127,8 @@ public class MainFragment extends BaseFragment
     {
         boolean showGappsGroup = mSharedPreferences.getBoolean(SHARED_PREFERENCES_ENABLE_GAPPS, true);
         boolean gappsNotInstalled = !GappsInstallerHelper.areGappsInstalled();
-        boolean hasStoreInfo = getSelectedStoreFromSharedPreferences() != null;
+        boolean hasStoreInfo = Utils.getGappsStore() != null;
         return  showGappsGroup && gappsNotInstalled && hasStoreInfo;
-    }
-    
-    Store getSelectedStoreFromSharedPreferences()
-    {
-        return UpdaterData.getInstance().getStore(mSharedPreferences.getInt(FairphoneUpdater.PREFERENCE_SELECTED_STORE_NUMBER, 0));
     }
 
     private void disableGappsInstalationButton()
