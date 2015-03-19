@@ -61,5 +61,6 @@
     <string name="fairphone_os_info">Este sistema operativo consiste numa adaptação do Android para o Fairphone com funcionalidades como o Peace of Mind, Edge Swipe e Your Apps Widget.\n\nRecomendamos a instalação do Android para o Fairphone no seu dispositivo para que tenha a melhor experiência.</string>
     <string name="android_os_info">Este sistema operativo é a mais pura experência Android sem qualquer modificação para o Fairphone.</string>
     <string name="about">Sobre</string>
+    <string name="wifi_discaimer_message_startup">Necessita de acesso à internet para verificar e instalar atualizações. Por favor ligue-se ao Wi-Fi.</string>
 
 </resources>

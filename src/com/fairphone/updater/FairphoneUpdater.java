@@ -1,8 +1,13 @@
 package com.fairphone.updater;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.content.res.Resources;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -171,7 +176,33 @@ public class FairphoneUpdater extends FragmentActivity
         initHeaderViews();
 
         setupFragments(savedInstanceState);
+
+	    if (!Utils.isWiFiEnabled(this) &&
+			    UpdaterData.getInstance().isAppStoreListEmpty() &&
+			    !UpdaterData.getInstance().isAOSPVersionListNotEmpty() &&
+			    !UpdaterData.getInstance().isFairphoneVersionListNotEmpty() )
+	    {
+		    Resources resources = getResources();
+
+		    AlertDialog.Builder wifiOffDialog = new AlertDialog.Builder(this);
+
+		    wifiOffDialog.setTitle(resources.getString(R.string.wifi_disabled));
+
+		    // Setting Dialog Message
+		    wifiOffDialog.setMessage(resources.getString(R.string.wifi_discaimer_message_startup));
+		    wifiOffDialog.setPositiveButton(resources.getString(android.R.string.ok), new DialogInterface.OnClickListener()
+		    {
+			    public void onClick(DialogInterface dialog, int id)
+			    {
+				    // do nothing, since the state is still the same
+			    }
+		    });
+		    wifiOffDialog.create();
+		    wifiOffDialog.show();
+	    }
     }
+
+
     
     void setupBetaStatus()
     {

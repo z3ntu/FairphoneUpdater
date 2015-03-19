@@ -232,14 +232,6 @@ public class VersionDetailFragment extends BaseFragment
         }
     }
 
-    private boolean isWiFiEnabled()
-    {
-
-        ConnectivityManager manager = (ConnectivityManager) mainActivity.getSystemService(Context.CONNECTIVITY_SERVICE);
-
-	    return manager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).isConnectedOrConnecting();
-    }
-
     private Request createDownloadRequest(String url, String fileName, String downloadTitle)
     {
 
@@ -272,7 +264,7 @@ public class VersionDetailFragment extends BaseFragment
     {
         DownloadableItem item = mIsVersion ? mSelectedVersion : mSelectedStore;
         // use only on WiFi
-        if (isWiFiEnabled())
+        if (Utils.isWiFiEnabled(mainActivity))
         {
             if (item != null)
             {

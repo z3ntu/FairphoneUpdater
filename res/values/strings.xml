@@ -55,6 +55,7 @@
     <string name="warning">Warning</string>
     <string name="wifi_disabled">Wi-Fi disabled</string>
     <string name="wifi_discaimer_message">The file you\'re trying to download is too large for mobile connections (~200MB). Please enable Wi-Fi connection and try again.</string>
+    <string name="wifi_discaimer_message_startup">You need internet access to check for updates or install software. Please enable Wi-Fi connection.</string>
     <string name="your_are_about_to_install">You are about to install</string>
     <string name="your_current_os_version">Your current operating system version</string>
     <string name="your_os_is_up_to_date">Your operating system is up-to-date</string>
