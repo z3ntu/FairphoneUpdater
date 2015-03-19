@@ -51,6 +51,7 @@ import android.widget.Toast;
 
 import java.util.concurrent.TimeoutException;
 
+import com.fairphone.updater.data.UpdaterData;
 import com.fairphone.updater.data.Version;
 import com.fairphone.updater.data.VersionParserHelper;
 import com.fairphone.updater.gappsinstaller.GappsInstallerHelper;
@@ -125,35 +126,33 @@ public class UpdaterService extends Service
 
         getApplicationContext().registerReceiver(mBCastConfigFileDownload, new IntentFilter(ACTION_FAIRPHONE_UPDATER_CONFIG_FILE_DOWNLOAD));
 
-        runInstallationDisclaimer();
+        runInstallationDisclaimer(getApplicationContext());
 
         return Service.START_STICKY;
     }
 
-    private void runInstallationDisclaimer()
+    private static void runInstallationDisclaimer(Context context)
     {
-
-        if (mSharedPreferences.getBoolean(PREFERENCE_REINSTALL_GAPPS, true))
+	    SharedPreferences sharedPreferences = context.getApplicationContext().getSharedPreferences(FairphoneUpdater.FAIRPHONE_UPDATER_PREFERENCES, MODE_PRIVATE);
+	    if (sharedPreferences.getBoolean(PREFERENCE_REINSTALL_GAPPS, true) && !UpdaterData.getInstance().isAppStoreListEmpty())
         {
             if(!GappsInstallerHelper.areGappsInstalled()){
-                showReinstallAlert();
+                showReinstallAlert(context);
             }
 
-            Editor editor = mSharedPreferences.edit();
+            Editor editor = sharedPreferences.edit();
             editor.putBoolean(PREFERENCE_REINSTALL_GAPPS, false);
 
             editor.apply();
         }
     }
 
-    void showReinstallAlert()
+    private static void showReinstallAlert(Context context)
     {
-
         if ( FairphoneUpdater.BETA_MODE_ENABLED )
         {
             return;
         }
-        Context context = getApplicationContext();
 
 	    NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         
@@ -165,7 +164,7 @@ public class UpdaterService extends Service
         PendingIntent contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, 0);
 
 	    NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context).setSmallIcon(R.drawable.updater_tray_icon)
-			    .setContentTitle(getResources().getString(R.string.app_name))
+			    .setContentTitle(context.getResources().getString(R.string.app_name))
 			    .setContentText(context.getResources().getString(R.string.appStoreReinstall))
 			    .setAutoCancel(true)
 			    .setDefaults(Notification.DEFAULT_SOUND)
@@ -491,6 +490,7 @@ public class UpdaterService extends Service
                 setNotification(context);
             }
         }
+	    runInstallationDisclaimer(context);
 
         // to update the activity
         Intent updateIntent = new Intent(FairphoneUpdater.FAIRPHONE_UPDATER_NEW_VERSION_RECEIVED);
