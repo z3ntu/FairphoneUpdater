@@ -162,18 +162,17 @@ public class DownloadAndRestartFragment extends BaseFragment
         switch (state)
         {
             case DOWNLOAD:
+	            mVersionInstallGroup.setVisibility(View.GONE);
+	            mVersionDownloadingGroup.setVisibility(View.VISIBLE);
                 setupDownloadState();
-
-                mVersionInstallGroup.setVisibility(View.GONE);
-                mVersionDownloadingGroup.setVisibility(View.VISIBLE);
                 break;
 
             case PREINSTALL:
             case ZIP_INSTALL:
-                setupPreInstallState();
+	            mVersionDownloadingGroup.setVisibility(View.GONE);
+	            mVersionInstallGroup.setVisibility(View.VISIBLE);
 
-                mVersionDownloadingGroup.setVisibility(View.GONE);
-                mVersionInstallGroup.setVisibility(View.VISIBLE);
+	            setupPreInstallState();
 
                 mRestartButton.setOnClickListener(new OnClickListener()
                 {
