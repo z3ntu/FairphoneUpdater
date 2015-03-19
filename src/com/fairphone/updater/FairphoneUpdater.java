@@ -72,9 +72,10 @@ public class FairphoneUpdater extends FragmentActivity
     
     private static final String TAG_FIRST_FRAGMENT = "FIRST_FRAGMENT";
     private String mZipPath;
+	private AlertDialog wifiOffDialog;
 
 
-    public static enum UpdaterState
+	public static enum UpdaterState
     {
         NORMAL, DOWNLOAD, PREINSTALL, ZIP_INSTALL
     }
@@ -176,30 +177,6 @@ public class FairphoneUpdater extends FragmentActivity
         initHeaderViews();
 
         setupFragments(savedInstanceState);
-
-	    if (!Utils.isWiFiEnabled(this) &&
-			    UpdaterData.getInstance().isAppStoreListEmpty() &&
-			    !UpdaterData.getInstance().isAOSPVersionListNotEmpty() &&
-			    !UpdaterData.getInstance().isFairphoneVersionListNotEmpty() )
-	    {
-		    Resources resources = getResources();
-
-		    AlertDialog.Builder wifiOffDialog = new AlertDialog.Builder(this);
-
-		    wifiOffDialog.setTitle(resources.getString(R.string.wifi_disabled));
-
-		    // Setting Dialog Message
-		    wifiOffDialog.setMessage(resources.getString(R.string.wifi_discaimer_message_startup));
-		    wifiOffDialog.setPositiveButton(resources.getString(android.R.string.ok), new DialogInterface.OnClickListener()
-		    {
-			    public void onClick(DialogInterface dialog, int id)
-			    {
-				    // do nothing, since the state is still the same
-			    }
-		    });
-		    wifiOffDialog.create();
-		    wifiOffDialog.show();
-	    }
     }
 
 
@@ -835,7 +812,16 @@ public class FairphoneUpdater extends FragmentActivity
         return intent != null && GappsInstallerHelper.EXTRA_START_GAPPS_INSTALL.equals(intent.getAction());
     }
 
-    @Override
+	@Override
+	protected void onPause() {
+		super.onPause();
+		if(wifiOffDialog != null) {
+			wifiOffDialog.cancel();
+			wifiOffDialog = null;
+		}
+	}
+
+	@Override
     protected void onResume()
     {
         super.onResume();
@@ -865,6 +851,31 @@ public class FairphoneUpdater extends FragmentActivity
         getSelectedStoreFromSharedPreferences();
         
         changeFragment(getFragmentFromState());
+
+	    // Show wifi disable dialog if in a blank state and no wifi is available
+	    if (    wifiOffDialog == null &&
+			    mCurrentState == UpdaterState.NORMAL &&
+			    !Utils.isWiFiEnabled(this) &&
+			    UpdaterData.getInstance().isAppStoreListEmpty() &&
+			    !UpdaterData.getInstance().isAOSPVersionListNotEmpty() &&
+			    !UpdaterData.getInstance().isFairphoneVersionListNotEmpty() )
+	    {
+		    Resources resources = getResources();
+
+		    AlertDialog.Builder wifiOffDialogBuilder = new AlertDialog.Builder(this);
+
+		    wifiOffDialogBuilder.setTitle(resources.getString(R.string.wifi_disabled));
+
+		    // Setting Dialog Message
+		    wifiOffDialogBuilder.setMessage(resources.getString(R.string.wifi_discaimer_message_startup));
+		    wifiOffDialogBuilder.setPositiveButton(resources.getString(android.R.string.ok), new DialogInterface.OnClickListener() {
+			    public void onClick(DialogInterface dialog, int id) {
+				    // do nothing, since the state is still the same
+			    }
+		    });
+		    wifiOffDialog = wifiOffDialogBuilder.create();
+		    wifiOffDialog.show();
+	    }
     }
 
     public Fragment startGappsInstall()
