@@ -47,15 +47,15 @@ public class FairphoneUpdater extends FragmentActivity
 
     private static final String PREFERENCE_FIRST_TIME_APP_STORE = "FirstTimeAppStore";
 
-    private static final String PREFERENCE_CURRENT_UPDATER_STATE = "CurrentUpdaterState";
+    public static final String PREFERENCE_CURRENT_UPDATER_STATE = "CurrentUpdaterState";
 
     private static final String PREFERENCE_DOWNLOAD_ID = "LatestUpdateDownloadId";
 
     public static final String FAIRPHONE_UPDATER_PREFERENCES = "FairphoneUpdaterPreferences";
 
-    private static final String PREFERENCE_SELECTED_VERSION_NUMBER = "SelectedVersionNumber";
+    public static final String PREFERENCE_SELECTED_VERSION_NUMBER = "SelectedVersionNumber";
 
-    private static final String PREFERENCE_SELECTED_VERSION_TYPE = "SelectedVersionImageType";
+    public static final String PREFERENCE_SELECTED_VERSION_TYPE = "SelectedVersionImageType";
 
     public static final String FAIRPHONE_UPDATER_CONFIG_DOWNLOAD_FAILED = "FairphoneUpdater.Config.File.Download.FAILED";
 
@@ -196,7 +196,7 @@ public class FairphoneUpdater extends FragmentActivity
 
     void getSelectedStoreFromSharedPreferences()
     {
-        int storeNumber = mSharedPreferences.getInt(PREFERENCE_SELECTED_STORE_NUMBER, 0);
+        int storeNumber = mSharedPreferences.getInt(PREFERENCE_SELECTED_STORE_NUMBER, -1);
         mSelectedStore = UpdaterData.getInstance().getStore(storeNumber);
     }
 
@@ -699,7 +699,7 @@ public class FairphoneUpdater extends FragmentActivity
     public void clearSelectedItems()
     {
         clearSelectedVersion(0, "");
-        clearSelectedStore(0);
+        clearSelectedStore(-1);
     }
 
     private void clearSelectedVersion(int versionNumber, String versionImageType)
