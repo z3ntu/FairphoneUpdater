@@ -158,6 +158,16 @@
         <item name="android:textColor">@color/button_green_dark_text</item>
     </style>
 
+    <style name="ButtonSmallBlueDarkWhite" parent="@style/ButtonSmall">
+        <item name="android:background">@drawable/button_blue_dark_white_background</item>
+        <item name="android:textColor">@color/button_blue_dark_text</item>
+    </style>
+
+    <style name="ButtonSmallGreenDarkWhite" parent="@style/ButtonSmall">
+        <item name="android:background">@drawable/button_green_dark_white_background</item>
+        <item name="android:textColor">@color/button_green_dark_text</item>
+    </style>
+
     <style name="ButtonSmallBlueDarkGrey" parent="@style/ButtonSmall">
         <item name="android:background">@drawable/button_blue_dark_grey_background</item>
         <item name="android:textColor">@color/white</item>
