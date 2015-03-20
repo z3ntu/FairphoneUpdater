@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Button xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/android_button"
-    style="@style/ButtonTextGreen"
+    style="@style/ButtonTextBackgroundGreen"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="@dimen/main_button_margin_top" />
+    android:layout_height="wrap_content" />

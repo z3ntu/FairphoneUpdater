@@ -4,42 +4,43 @@
               android:gravity="center_horizontal"
               android:orientation="vertical">
 
-    <LinearLayout
+    <FrameLayout
         android:id="@+id/other_os_options_android_latest_version_group"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/green"
-        android:gravity="center_horizontal"
-        android:orientation="vertical"
-        android:padding="@dimen/main_padding" >
-
-        <TextView
-            style="@style/TextRegular16BlueDark"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/latest_version" />
+        android:layout_height="wrap_content">
 
         <Button
             android:id="@+id/other_os_options_android_latest_version_button"
-            style="@style/ButtonTextWhite"
+            style="@style/ButtonBigBackgroundGreen"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="@dimen/main_button_update_height"/>
+
+        <TextView
+            style="@style/TextRegular16White"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|center_horizontal"
+            android:gravity="center"
+            android:padding="@dimen/main_padding"
+            android:text="@string/latest_version"/>
 
         <TextView
             android:id="@+id/other_os_options_android_version_installed_indicator_text"
             style="@style/TextBold16White"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:text="@string/installed" />
-    </LinearLayout>
+            android:padding="@dimen/main_padding_small"
+            android:layout_gravity="bottom|center_horizontal"
+            android:gravity="center"
+            android:text="@string/installed"/>
+    </FrameLayout>
 
     <LinearLayout
         android:id="@+id/older_versions_group"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
-        android:orientation="vertical" >
+        android:orientation="vertical">
 
         <TextView
             style="@style/TextRegular16GreenDark"
@@ -47,21 +48,21 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/main_padding_small"
             android:layout_marginTop="@dimen/main_padding"
-            android:text="@string/older_versions" />
+            android:text="@string/older_versions"/>
 
         <ScrollView
             android:id="@+id/version_list_scroll"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:orientation="vertical" >
+            android:orientation="vertical">
 
             <LinearLayout
                 android:id="@+id/version_list_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:clickable="true"
-                android:orientation="vertical" />
+                android:orientation="vertical"/>
         </ScrollView>
     </LinearLayout>
 

@@ -44,6 +44,7 @@ public class InfoPopupDialog extends DialogFragment implements OnEditorActionLis
                 break;
             case UPDATE_FAIRPHONE:
             case FAIRPHONE:
+            case APP_STORE:
             default:
                 view = inflater.inflate(R.layout.fragment_info_fairphone_popup, container);
                 break;

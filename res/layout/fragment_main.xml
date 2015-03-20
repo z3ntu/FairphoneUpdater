@@ -3,6 +3,30 @@
               android:layout_height="match_parent"
               android:orientation="vertical">
 
+    <LinearLayout
+        android:id="@+id/dev_mode_url_container"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+        <EditText
+            android:id="@+id/dev_mode_url_edit_text"
+            android:layout_width="0dp"
+            android:layout_weight="5"
+            android:layout_height="wrap_content"
+            android:hint="@string/downloadUrl"
+            android:singleLine="true"/>
+
+        <Button
+            android:id="@+id/dev_mode_url_ok_button"
+            style="@style/ButtonTextBackgroundBlue"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:text="@android:string/ok"/>
+    </LinearLayout>
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -76,7 +100,8 @@
         android:background="@color/background_other_os_options"
         android:gravity="center_horizontal"
         android:orientation="vertical"
-        android:padding="@dimen/main_padding" >
+        android:paddingTop="@dimen/main_padding"
+        android:paddingBottom="@dimen/main_padding" >
 
         <TextView
             style="@style/TextRegular14GreyLight"
@@ -86,7 +111,7 @@
 
         <Button
             android:id="@+id/other_os_options_button"
-            style="@style/ButtonTextBlue"
+            style="@style/ButtonTextBackgroundBlue"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/other_os_options" />

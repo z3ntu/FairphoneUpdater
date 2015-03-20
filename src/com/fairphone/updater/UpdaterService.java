@@ -51,9 +51,11 @@ import android.widget.Toast;
 
 import java.util.concurrent.TimeoutException;
 
+import com.fairphone.updater.data.UpdaterData;
 import com.fairphone.updater.data.Version;
 import com.fairphone.updater.data.VersionParserHelper;
 import com.fairphone.updater.gappsinstaller.GappsInstallerHelper;
+import com.fairphone.updater.tools.PrivilegeChecker;
 import com.fairphone.updater.tools.RSAUtils;
 import com.fairphone.updater.tools.Utils;
 import com.stericson.RootTools.execution.CommandCapture;
@@ -82,7 +84,7 @@ public class UpdaterService extends Service
 
 	private SharedPreferences mSharedPreferences;
 
-    private final static long DOWNLOAD_GRACE_PERIOD_IN_MS = 4 /* hour */ * Utils.MINUTES_IN_HOUR /* minute */ * Utils.SECONDS_IN_MINUTE /* second */ * 1000 /* millisecond */;
+    private final static long DOWNLOAD_GRACE_PERIOD_IN_MS = 24 /* hour */ * Utils.MINUTES_IN_HOUR /* minute */ * Utils.SECONDS_IN_MINUTE /* second */ * 1000 /* millisecond */;
 
 	@Override
     public int onStartCommand(Intent intent, int flags, int startId)
@@ -124,35 +126,33 @@ public class UpdaterService extends Service
 
         getApplicationContext().registerReceiver(mBCastConfigFileDownload, new IntentFilter(ACTION_FAIRPHONE_UPDATER_CONFIG_FILE_DOWNLOAD));
 
-        runInstallationDisclaimer();
+        runInstallationDisclaimer(getApplicationContext());
 
         return Service.START_STICKY;
     }
 
-    private void runInstallationDisclaimer()
+    private static void runInstallationDisclaimer(Context context)
     {
-
-        if (mSharedPreferences.getBoolean(PREFERENCE_REINSTALL_GAPPS, true))
+	    SharedPreferences sharedPreferences = context.getApplicationContext().getSharedPreferences(FairphoneUpdater.FAIRPHONE_UPDATER_PREFERENCES, MODE_PRIVATE);
+	    if (sharedPreferences.getBoolean(PREFERENCE_REINSTALL_GAPPS, true) && !UpdaterData.getInstance().isAppStoreListEmpty())
         {
             if(!GappsInstallerHelper.areGappsInstalled()){
-                showReinstallAlert();
+                showReinstallAlert(context);
             }
 
-            Editor editor = mSharedPreferences.edit();
+            Editor editor = sharedPreferences.edit();
             editor.putBoolean(PREFERENCE_REINSTALL_GAPPS, false);
 
             editor.apply();
         }
     }
 
-    void showReinstallAlert()
+    private static void showReinstallAlert(Context context)
     {
-
         if ( FairphoneUpdater.BETA_MODE_ENABLED )
         {
             return;
         }
-        Context context = getApplicationContext();
 
 	    NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         
@@ -164,7 +164,7 @@ public class UpdaterService extends Service
         PendingIntent contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, 0);
 
 	    NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context).setSmallIcon(R.drawable.updater_tray_icon)
-			    .setContentTitle(getResources().getString(R.string.app_name))
+			    .setContentTitle(context.getResources().getString(R.string.app_name))
 			    .setContentText(context.getResources().getString(R.string.appStoreReinstall))
 			    .setAutoCancel(true)
 			    .setDefaults(Notification.DEFAULT_SOUND)
@@ -201,17 +201,46 @@ public class UpdaterService extends Service
 //    }
 // --Commented out by Inspection STOP (06/02/2015 12:27)
 
-    void clearDataLogs()
+    private static void clearDataLogs()
     {
-        try
-        {
-            Log.d(TAG, "Clearing dump log data...");
-            Shell.runCommand(new CommandCapture(0, "rm /data/log_other_mode/*_log"));
-        } catch (IOException | TimeoutException e)
-        {
-            e.printStackTrace();
+        if (PrivilegeChecker.isPrivilegedApp()) {
+	        clearDataLogsPrivileged();
+        } else {
+	        clearDataLogsUnprivileged();
         }
     }
+
+	private static void clearDataLogsPrivileged()
+	{
+		try
+		{
+			Log.d(TAG, "Clearing dump log data...");
+			Process p = Runtime.getRuntime().exec("rm /data/log_other_mode/*_log");
+            try
+            {
+                p.waitFor();
+            } catch (InterruptedException e)
+            {
+                e.printStackTrace();
+            }
+		} catch (IOException e)
+		{
+			Log.d(TAG, "Clearing dump log data failed: " + e.getLocalizedMessage());
+		}
+	}
+
+	private static void clearDataLogsUnprivileged()
+	{
+		try
+		{
+			Log.d(TAG, "Clearing dump log data...");
+			Shell.runCommand(new CommandCapture(0, "rm /data/log_other_mode/*_log"));
+		} catch (IOException | TimeoutException e)
+		{
+			Log.d(TAG, "Clearing dump log data failed: " + e.getLocalizedMessage());
+		}
+	}
+
 
     @Override
     public IBinder onBind(Intent intent)
@@ -297,7 +326,7 @@ public class UpdaterService extends Service
         return downloadLink;
     }
 
-    private void addModelAndOS(Context context, StringBuilder sb)
+    private static void addModelAndOS(Context context, StringBuilder sb)
     {
         // attach the model and the os
         sb.append("?");
@@ -449,15 +478,8 @@ public class UpdaterService extends Service
         }
     }
 
-    private void removeBroadcastReceiver()
-    {
-        getApplicationContext().unregisterReceiver(mDownloadBroadCastReceiver);
-        mDownloadBroadCastReceiver = null;
-    }
-
     private static void checkVersionValidation(Context context)
     {
-
         Version latestVersion = VersionParserHelper.getLatestVersion(context.getApplicationContext());
         Version currentVersion = VersionParserHelper.getDeviceVersion(context.getApplicationContext());
 
@@ -467,10 +489,12 @@ public class UpdaterService extends Service
             {
                 setNotification(context);
             }
-            // to update the activity
-            Intent updateIntent = new Intent(FairphoneUpdater.FAIRPHONE_UPDATER_NEW_VERSION_RECEIVED);
-            context.sendBroadcast(updateIntent);
         }
+	    runInstallationDisclaimer(context);
+
+        // to update the activity
+        Intent updateIntent = new Intent(FairphoneUpdater.FAIRPHONE_UPDATER_NEW_VERSION_RECEIVED);
+        context.sendBroadcast(updateIntent);
     }
 
     public static boolean readUpdaterData(Context context)
@@ -630,7 +654,6 @@ public class UpdaterService extends Service
             {
                 Log.d(TAG, "Configuration download failed. Clearing grace period.");
                 mSharedPreferences.edit().remove(LAST_CONFIG_DOWNLOAD_IN_MS).apply();
-                removeBroadcastReceiver();
             }
         }
     }

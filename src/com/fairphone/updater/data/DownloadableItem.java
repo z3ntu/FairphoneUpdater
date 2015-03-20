@@ -46,15 +46,28 @@ public abstract class DownloadableItem
 
     DownloadableItem()
     {
-        setNumber(0);
-        setName("");
-        setDownloadLink("");
-        setMd5Sum("");
-        setBuildNumber("");
-        setReleaseDate("");
-        setThumbnailLink("");
+        mNumber = 0;
+        mName = "";
+        mOTADownloadLink = "";
+        mOTAMd5Sum = "";
+        mBuildNumber = "";
+        mReleaseDate = "";
+        mThumbnailImageLink = "";
 
         mReleaseNotesMap = new HashMap<>();
+    }
+
+    DownloadableItem(DownloadableItem other)
+    {
+        mNumber = other.mNumber;
+        mName = other.mName;
+        mOTADownloadLink = other.mOTADownloadLink;
+        mOTAMd5Sum = other.mOTAMd5Sum;
+        mBuildNumber = other.mBuildNumber;
+        mReleaseDate = other.mReleaseDate;
+        mThumbnailImageLink = other.mThumbnailImageLink;
+
+        mReleaseNotesMap = other.mReleaseNotesMap;
     }
 
     public int getNumber()
@@ -69,6 +82,7 @@ public abstract class DownloadableItem
             this.mNumber = Integer.valueOf(number);
         } catch (NumberFormatException e)
         {
+            Log.w(TAG, "Error decoding version number. Defaulting to 0: " + e.getLocalizedMessage());
             this.mNumber = 0;
         }
     }
@@ -115,7 +129,7 @@ public abstract class DownloadableItem
 
         if (item != null)
         {
-            result = this.getNumber() > item.getNumber();
+            result = this.mNumber > item.mNumber;
         }
         else
         {
@@ -174,6 +188,13 @@ public abstract class DownloadableItem
         }
         return TextUtils.isEmpty(releaseNotes) ? "" : releaseNotes;
     }
+
+// --Commented out by Inspection START (09/02/2015 19:48):
+//    Map<String, String> getReleaseNotes()
+//    {
+//        return mReleaseNotesMap;
+//    }
+// --Commented out by Inspection STOP (09/02/2015 19:48)
 
 // --Commented out by Inspection START (06/02/2015 12:36):
 //    void resetReleaseNotes()

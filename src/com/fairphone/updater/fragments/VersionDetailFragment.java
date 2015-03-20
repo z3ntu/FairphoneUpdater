@@ -21,6 +21,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.fairphone.updater.FairphoneUpdater;
 import com.fairphone.updater.FairphoneUpdater.HeaderType;
 import com.fairphone.updater.FairphoneUpdater.UpdaterState;
 import com.fairphone.updater.R;
@@ -186,7 +187,7 @@ public class VersionDetailFragment extends BaseFragment
 
         if (mIsVersion && mSelectedVersion != null)
         {
-            mHeaderType = mainActivity.getHeaderTypeFromImageType(mSelectedVersion.getImageType());
+            mHeaderType = FairphoneUpdater.getHeaderTypeFromImageType(mSelectedVersion.getImageType());
         }
         else if (mSelectedStore != null)
         {
@@ -215,7 +216,7 @@ public class VersionDetailFragment extends BaseFragment
                         (deviceVersion.getImageType().equalsIgnoreCase(Version.IMAGE_TYPE_AOSP) && deviceVersion.isNewerVersionThan(mSelectedVersion));
                 break;
             case APP_STORE:
-                mHeaderText = mainActivity.getStoreName(mSelectedStore);
+                mHeaderText = FairphoneUpdater.getStoreName(mSelectedStore);
                 mVersionDetailsTitle = resources.getString(R.string.install);
                 mIsOSChange = false;
                 mIsOlderVersion = false;
@@ -229,14 +230,6 @@ public class VersionDetailFragment extends BaseFragment
                         (deviceVersion.getImageType().equalsIgnoreCase(Version.IMAGE_TYPE_FAIRPHONE) && deviceVersion.isNewerVersionThan(mSelectedVersion));
                 break;
         }
-    }
-
-    private boolean isWiFiEnabled()
-    {
-
-        ConnectivityManager manager = (ConnectivityManager) mainActivity.getSystemService(Context.CONNECTIVITY_SERVICE);
-
-	    return manager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).isConnectedOrConnecting();
     }
 
     private Request createDownloadRequest(String url, String fileName, String downloadTitle)
@@ -260,6 +253,7 @@ public class VersionDetailFragment extends BaseFragment
             request.setTitle(downloadTitle);
         } catch (Exception e)
         {
+            Log.w(TAG, "Error setting the download request: " + e.getLocalizedMessage());
             request = null;
         }
 
@@ -270,7 +264,7 @@ public class VersionDetailFragment extends BaseFragment
     {
         DownloadableItem item = mIsVersion ? mSelectedVersion : mSelectedStore;
         // use only on WiFi
-        if (isWiFiEnabled())
+        if (Utils.isWiFiEnabled(mainActivity))
         {
             if (item != null)
             {
@@ -282,7 +276,7 @@ public class VersionDetailFragment extends BaseFragment
                 if (!(download_link.startsWith("http://") || download_link.startsWith("https://")))
                 {
                     // If the download URL is a relative path, make it an absolute
-                    download_link = mainActivity.mOtaDownloadUrl + "/" + download_link;
+                    download_link = mainActivity.getPreferenceOtaDownloadUrl() + "/" + download_link;
                     // Sanitize URL - e.g. turn http://a.b//c/./d/../e to http://a.b/c/e
                     download_link = download_link.replaceAll("([^:])//", "/");
                     download_link = download_link.replaceAll("/([^/]+)/\\.\\./", "/");
@@ -290,7 +284,7 @@ public class VersionDetailFragment extends BaseFragment
                     try {
                         download_link = new URL(download_link).toExternalForm();
                     } catch (MalformedURLException e) {
-                        Log.w(TAG, "Potentially malformed download link.");
+                        Log.w(TAG, "Potentially malformed download link " + download_link + ": " + e.getLocalizedMessage());
                     }
                 }
                 Request request = createDownloadRequest(download_link + Utils.getModelAndOS(mainActivity), fileName, downloadTitle);

@@ -17,7 +17,7 @@
             android:text="@string/download_started" />
 
         <TextView
-            style="@style/TextRegular14PinkLight"
+            style="@style/TextRegular14White"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/main_small_text_margin_top"
@@ -25,7 +25,7 @@
             android:text="@string/os_update_has_started_message" />
 
         <TextView
-            style="@style/TextRegular14PinkLight"
+            style="@style/TextRegular14White"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/main_small_text_margin_top"

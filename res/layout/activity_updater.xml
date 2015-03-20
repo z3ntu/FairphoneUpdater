@@ -2,13 +2,14 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:background="@color/background"
+              android:animateLayoutChanges="true"
               android:orientation="vertical">
 
-    <include layout="@layout/header" />
+    <include layout="@layout/header"/>
 
     <FrameLayout
         android:id="@+id/fragment_holder"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"/>
 
 </LinearLayout>

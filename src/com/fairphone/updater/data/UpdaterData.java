@@ -1,5 +1,7 @@
 package com.fairphone.updater.data;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -9,6 +11,8 @@ import java.util.Map;
 
 public class UpdaterData
 {
+
+    private static final String TAG = UpdaterData.class.getSimpleName();
 
     private static UpdaterData mInstance;
 
@@ -54,7 +58,7 @@ public class UpdaterData
         mLatestAOSPVersionNumber = getLatestVersionFromTag(latestVersion);
     }
 
-    private int getLatestVersionFromTag(String latestVersion)
+    private static int getLatestVersionFromTag(String latestVersion)
     {
         int latestVersionNumber;
         try
@@ -62,6 +66,7 @@ public class UpdaterData
             latestVersionNumber = Integer.valueOf(latestVersion);
         } catch (NumberFormatException e)
         {
+            Log.w(TAG, "Error decoding latest version number. Defaulting to 0: " + e.getLocalizedMessage());
             latestVersionNumber = 0;
         }
         return latestVersionNumber;
@@ -102,7 +107,7 @@ public class UpdaterData
         return version;
     }
 
-    List<Version> mapToOrderedVersionList(Collection<Version> a)
+    private static List<Version> mapToOrderedVersionList(Collection<Version> a)
     {
         List<Version> retval = new ArrayList<>();
         for (Version version : a)
@@ -113,7 +118,7 @@ public class UpdaterData
         return retval;
     }
     
-    List<Store> mapToOrderedStoreList(Collection<Store> a)
+    private static List<Store> mapToOrderedStoreList(Collection<Store> a)
     {
         List<Store> retval = new ArrayList<>();
         for (Store store : a)

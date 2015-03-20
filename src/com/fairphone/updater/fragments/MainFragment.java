@@ -7,11 +7,13 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -26,10 +28,12 @@ import com.fairphone.updater.data.UpdaterData;
 import com.fairphone.updater.data.Version;
 import com.fairphone.updater.fragments.VersionDetailFragment.DetailLayoutType;
 import com.fairphone.updater.gappsinstaller.GappsInstallerHelper;
+import com.fairphone.updater.tools.Utils;
 
 public class MainFragment extends BaseFragment
 {
 
+	private static final String TAG = MainFragment.class.getSimpleName();
     public static final String SHARED_PREFERENCES_ENABLE_GAPPS = "SHARED_PREFERENCES_ENABLE_GAPPS_POPUP";
 
     private LinearLayout mVersionUpToDateGroup;
@@ -46,6 +50,10 @@ public class MainFragment extends BaseFragment
 	private RelativeLayout mGappsIcon;
     private Button mGappsButton;
     private Button mGappsDismissButton;
+    private LinearLayout mDevModeUrlContainer;
+    private EditText mDevModeUrlEditText;
+    private Button mDevModeUrlButton;
+	private int mIsDevModeCounter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -54,8 +62,10 @@ public class MainFragment extends BaseFragment
         View view = inflater.inflate(R.layout.fragment_main, container, false);
 
         setupLayout(inflater, view);
+	    mDevModeUrlContainer.setVisibility(FairphoneUpdater.DEV_MODE_ENABLED ? View.VISIBLE : View.GONE);
+	    mIsDevModeCounter = FairphoneUpdater.DEV_MODE_ENABLED ? 0 : 10;
 
-        return view;
+	    return view;
     }
 
     private void updateHeader()
@@ -92,19 +102,33 @@ public class MainFragment extends BaseFragment
         mGappsButton = (Button) view.findViewById(R.id.install_gapps_button);
         mGappsDismissButton = (Button) view.findViewById(R.id.install_gapps_dismiss_button);
         mGappsIcon = (RelativeLayout) view.findViewById(R.id.gapps_reminder_group);
+
+        // Dev mode
+        mDevModeUrlEditText = (EditText)view.findViewById(R.id.dev_mode_url_edit_text);
+        mDevModeUrlButton = (Button)view.findViewById(R.id.dev_mode_url_ok_button);
+        mDevModeUrlContainer = (LinearLayout)view.findViewById(R.id.dev_mode_url_container);
+
+        mDevModeUrlButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String url = mDevModeUrlEditText.getText().toString();
+
+                // set the URL for the shared prefs
+                mainActivity.changeOTADownloadURL(url);
+
+                // download new config
+                mainActivity.forceConfigDownload();
+            }
+        });
+
     }
 
     private boolean getGappsInstalationButtonState()
     {
         boolean showGappsGroup = mSharedPreferences.getBoolean(SHARED_PREFERENCES_ENABLE_GAPPS, true);
         boolean gappsNotInstalled = !GappsInstallerHelper.areGappsInstalled();
-        boolean hasStoreInfo = getSelectedStoreFromSharedPreferences() != null;
+        boolean hasStoreInfo = Utils.getGappsStore() != null;
         return  showGappsGroup && gappsNotInstalled && hasStoreInfo;
-    }
-    
-    Store getSelectedStoreFromSharedPreferences()
-    {
-        return UpdaterData.getInstance().getStore(mSharedPreferences.getInt(FairphoneUpdater.PREFERENCE_SELECTED_STORE_NUMBER, 0));
     }
 
     private void disableGappsInstalationButton()
@@ -242,7 +266,7 @@ public class MainFragment extends BaseFragment
         });
     }
 
-    private VersionDetailFragment.DetailLayoutType getDetailLayoutFromDeviceVersion(Version latestVersion)
+    private static VersionDetailFragment.DetailLayoutType getDetailLayoutFromDeviceVersion(Version latestVersion)
     {
         VersionDetailFragment.DetailLayoutType type = DetailLayoutType.UPDATE_FAIRPHONE;
         if (Version.IMAGE_TYPE_FAIRPHONE.equalsIgnoreCase(latestVersion.getImageType()))
@@ -268,7 +292,7 @@ public class MainFragment extends BaseFragment
                 @Override
                 public void onClick(View v)
                 {
-                    mainActivity.onEnableDevMode();
+                    onEnableDevMode();
                 }
             });
         }
@@ -281,7 +305,7 @@ public class MainFragment extends BaseFragment
                 @Override
                 public void onClick(View v)
                 {
-                    mainActivity.onEnableDevMode();
+                    onEnableDevMode();
                 }
             });
         }
@@ -323,7 +347,7 @@ public class MainFragment extends BaseFragment
                 if (FairphoneUpdater.FAIRPHONE_UPDATER_NEW_VERSION_RECEIVED.equals(action))
                 {
                     mainActivity.updateLatestVersionFromConfig();
-                    if (mainActivity.getCurrentUpdaterState() == UpdaterState.NORMAL)
+                    if (mainActivity.getCurrentUpdaterState() != UpdaterState.DOWNLOAD && mainActivity.getCurrentUpdaterState() != UpdaterState.PREINSTALL)
                     {
                         toogleUpdateAvailableGroup();
                         enableGappsGroup(getGappsInstalationButtonState());
@@ -352,4 +376,26 @@ public class MainFragment extends BaseFragment
         mainActivity.unregisterReceiver(newVersionbroadcastReceiver);
     }
 
+	public void onEnableDevMode()
+	{
+		if (!FairphoneUpdater.DEV_MODE_ENABLED)
+		{
+			mIsDevModeCounter--;
+
+			Log.d(TAG, "Developer mode in " + mIsDevModeCounter + " Clicks...");
+
+			if (mIsDevModeCounter <= 0)
+			{
+				FairphoneUpdater.DEV_MODE_ENABLED = true;
+
+				Toast.makeText(mainActivity.getApplicationContext(), getResources().getString(R.string.dev_mode_message), Toast.LENGTH_LONG).show();
+
+				Log.d(TAG, "Developer mode enabled for this session");
+
+				mDevModeUrlContainer.setVisibility(FairphoneUpdater.DEV_MODE_ENABLED ? View.VISIBLE : View.GONE);
+				mainActivity.forceConfigDownload();
+				//Utils.downloadConfigFile(this, true);
+			}
+		}
+	}
 }

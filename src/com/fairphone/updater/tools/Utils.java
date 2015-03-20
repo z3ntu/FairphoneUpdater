@@ -16,21 +16,32 @@
 
 package com.fairphone.updater.tools;
 
+import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningServiceInfo;
+import android.app.DownloadManager;
+import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
+import android.os.PowerManager;
+import android.provider.DocumentsContract;
+import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.fairphone.updater.BetaEnabler;
 import com.fairphone.updater.R;
 import com.fairphone.updater.UpdaterService;
 import com.fairphone.updater.data.DownloadableItem;
 import com.fairphone.updater.data.Store;
+import com.fairphone.updater.data.UpdaterData;
 import com.fairphone.updater.data.Version;
 import com.fairphone.updater.data.VersionParserHelper;
 import com.stericson.RootTools.RootTools;
@@ -38,12 +49,16 @@ import com.stericson.RootTools.exceptions.RootDeniedException;
 import com.stericson.RootTools.execution.CommandCapture;
 import com.stericson.RootTools.execution.Shell;
 
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
 import java.math.BigInteger;
+import java.nio.channels.FileChannel;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.NoSuchElementException;
@@ -55,8 +70,8 @@ public class Utils
     private static final String TAG = Utils.class.getSimpleName();
     private static final int DELAY_100_MILLIS = 100;
     public static final int DELAY_HALF_SECOND = 500;
-    public static final long SECONDS_IN_MINUTE = 60l;
-    public static final long MINUTES_IN_HOUR = 60l;
+    public static final long SECONDS_IN_MINUTE = 60L;
+    public static final long MINUTES_IN_HOUR = 60L;
 
     private static final double BUFFER_1024_BYTES = 1024d;
     // --Commented out by Inspection (06/02/2015 12:27):public static final int BUFFER_SIZE_4_KBYTES = 4096;
@@ -65,6 +80,9 @@ public class Utils
     public static final int BUFFER_SIZE_10_MBYTES = 10240;
     private static final int RADIX_BASE_16 = 16;
     private static final double PERCENT_100 = 100d;
+    private static final char CHAR_SPACE = ' ';
+    private static final char CHAR_ZERO = '0';
+    public static final int GAPPS_STORE_NUMBER = 0;
 
     private static double getPartitionSizeInGBytes(File path)
     {
@@ -137,7 +155,7 @@ public class Utils
         }
         else if (forceDownload)
         {
-            downloadConfigFile(context);
+            downloadConfigFile(context, true);
         }
     }
 
@@ -177,10 +195,6 @@ public class Utils
 //    }
 // --Commented out by Inspection STOP (06/02/2015 12:26)
 
-    private static void downloadConfigFile(Context context) {
-        downloadConfigFile(context, false);
-    }
-
     public static void downloadConfigFile(Context context, boolean forceDownload)
     {
         Intent i = new Intent(UpdaterService.ACTION_FAIRPHONE_UPDATER_CONFIG_FILE_DOWNLOAD);
@@ -200,7 +214,7 @@ public class Utils
             return false;
         }
 
-        if (md5 == null || md5.equals("") )
+        if (md5 == null || md5.isEmpty())
         {
             Log.e(TAG, "MD5 String NULL or UpdateFile NULL");
             return false;
@@ -250,11 +264,11 @@ public class Utils
             BigInteger bigInt = new BigInteger(1, md5sum);
             String output = bigInt.toString(RADIX_BASE_16);
             // Fill to 32 chars
-            output = String.format("%32s", output).replace(' ', '0');
+            output = String.format("%32s", output).replace(CHAR_SPACE, CHAR_ZERO);
             return output;
         } catch (IOException e)
         {
-            Log.e(TAG, "Error digesting MD5", e);
+            Log.e(TAG, "Error digesting MD5: " + e.getLocalizedMessage());
             return null;
 //            throw new RuntimeException("Unable to process file for MD5", e);
         } finally
@@ -287,25 +301,60 @@ public class Utils
         return sb.toString();
     }
 
+	public static void copy(File src, File dst) throws IOException {
+		if (PrivilegeChecker.isPrivilegedApp()) {
+			copyPrivileged(src, dst);
+		} else {
+			copyUnprivileged(src, dst);
+		}
+	}
+
+	private static void copyUnprivileged(File src, File dst) throws IOException {
+		if (RootTools.isAccessGiven()) {
+			RootTools.copyFile(src.getPath(), dst.getPath(), false, false);
+		} else {
+			throw new IOException("No root permissions granted.");
+		}
+	}
+
+	private static void copyPrivileged(File src, File dst) throws IOException {
+		FileInputStream inStream = new FileInputStream(src);
+		FileOutputStream outStream = new FileOutputStream(dst);
+		FileChannel inChannel = inStream.getChannel();
+		FileChannel outChannel = outStream.getChannel();
+		inChannel.transferTo(0, inChannel.size(), outChannel);
+		inStream.close();
+		outStream.close();
+    }
+
     public static void clearCache()
     {
-        File f = Environment.getDownloadCacheDirectory();
-        File[] files = f.listFiles();
-        if (files != null)
-        {
-            Log.d(TAG, "Size: " + files.length);
-	        for (File file : files) {
-		        String filename = file.getName();
+        if(PrivilegeChecker.isPrivilegedApp()) {
+            File f = Environment.getDownloadCacheDirectory();
+            File[] files = f.listFiles();
+            if (files != null) {
+                Log.d(TAG, "Size: " + files.length);
+                for (File file : files) {
+                    String filename = file.getName();
 
-		        if (filename.endsWith(".zip")) {
-			        final boolean delete = file.delete();
-			        if (delete) {
-				        Log.d(TAG, "Deleted file " + filename);
-			        } else {
-				        Log.d(TAG, "Failed to delete file " + filename);
-			        }
-		        }
-	        }
+                    if (filename.endsWith(".zip")) {
+                        final boolean delete = file.delete();
+                        if (delete) {
+                            Log.d(TAG, "Deleted file " + filename);
+                        } else {
+                            Log.d(TAG, "Failed to delete file " + filename);
+                        }
+                    }
+                }
+            }
+        } else {
+            if(RootTools.isAccessGiven()) {
+                try {
+                    Shell.runRootCommand(new CommandCapture(0, "rm -f *.zip"));
+                } catch (IOException | TimeoutException |RootDeniedException e) {
+                    Log.w(TAG, "Failed to clear cache: " + e.getLocalizedMessage());
+                }
+            }
         }
     }
 
@@ -316,7 +365,7 @@ public class Utils
         double roundedSize = Math.ceil(sizeInGB * PERCENT_100) / PERCENT_100;
         Log.d(TAG, "/data size: " + roundedSize + "Gb");
 
-        double fp1DataPartitionSize = (double) resources.getInteger(R.integer.FP1DataPartitionSizeMb) / PERCENT_100;
+        double fp1DataPartitionSize = (double) resources.getInteger(R.integer.FP1DataPartitionSizeMb) / BUFFER_1024_BYTES;
         // Add a little buffer to the 1gb default just in case
         return roundedSize > fp1DataPartitionSize;
     }
@@ -337,12 +386,12 @@ public class Utils
     {
         double fileSize = file.length();
         double cacheSize = Utils.getPartitionSizeInBytes(Environment.getDownloadCacheDirectory());
-        return cacheSize >= fileSize;
+        return fileSize > 0 && cacheSize >= fileSize;
     }
 
     public static String getFilenameFromDownloadableItem(DownloadableItem item, boolean isVersion)
     {
-        StringBuilder filename = null;
+        StringBuilder filename;
 
         if(isVersion)
         {
@@ -413,6 +462,7 @@ public class Utils
             return prop;
         } catch (NoSuchElementException e)
         {
+            Log.w(TAG, "Error reading prop "+name+". Defaulting to " + defaultValue + ": " + e.getLocalizedMessage());
             return defaultValue;
         } catch (Exception e)
         {
@@ -432,8 +482,26 @@ public class Utils
         }
         return defaultValue;
     }
-    
-    public static void setBetaPropToEnable()
+
+	public static void setBetaPropToEnable() {
+		if (PrivilegeChecker.isPrivilegedApp()) {
+			setBetaPropToEnablePrivileged();
+		} else {
+			setBetaPropToEnableUnprivileged();
+		}
+	}
+
+	private static void setBetaPropToEnablePrivileged() {
+	    ProcessBuilder pb = new ProcessBuilder("/system/bin/setprop", BetaEnabler.FAIRPHONE_BETA_PROPERTY, BetaEnabler.BETA_ENABLED);
+	    try {
+		    Process p = pb.start();
+		    p.waitFor();
+	    } catch (IOException | InterruptedException e) {
+		    Log.d(TAG, "Failed to setprop: " + e.getLocalizedMessage());
+	    }
+	}
+
+	private static void setBetaPropToEnableUnprivileged()
     {
         if(RootTools.isAccessGiven()) {
             CommandCapture command = new CommandCapture(0, "setprop "+ BetaEnabler.FAIRPHONE_BETA_PROPERTY+" "+BetaEnabler.BETA_ENABLED);
@@ -443,6 +511,88 @@ public class Utils
 	            Log.d(TAG, "Failed to setprop: " + e.getLocalizedMessage());
             }
         }
+    }
+
+    public static String getOtaPackagePath(Resources resources, DownloadableItem item, boolean isVersion, boolean isZipInstall){
+        String path;
+
+        if (Utils.hasUnifiedPartition(resources))
+        {
+            path = resources.getString(R.string.recoveryCachePath) + Utils.getFilenameFromDownloadableItem(item, isVersion);
+        }
+        else
+        {
+            if(isZipInstall && Build.MODEL.equalsIgnoreCase(resources.getString(R.string.FP1Model)))
+            {
+                //TODO: Find a way to not have this hardcoded
+                String zipPath = item.getDownloadLink();
+                path = zipPath.replace("/storage/sdcard0", resources.getString(R.string.recoverySdCardPath));
+            }
+            else
+            {
+                path = resources.getString(R.string.recoverySdCardPath) + resources.getString(R.string.updaterFolder) + Utils.getFilenameFromDownloadableItem(item, isVersion);
+            }
+        }
+
+        return path;
+    }
+
+    public static void writeCacheCommand(Context context, String otaPackagePath) throws IOException, TimeoutException, RootDeniedException, Resources.NotFoundException {
+        if (PrivilegeChecker.isPrivilegedApp()) {
+            File recovery_dir = new File("/cache/recovery/");
+            final boolean mkdirs = recovery_dir.mkdirs();
+            if(! (mkdirs || recovery_dir.exists()) ) {
+                String errorMessage = context.getResources().getString(R.string.failed_mkdirs_cache_message);
+                Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show();
+                throw new IOException(errorMessage);
+            }
+
+            File command = new File("/cache/recovery/command");
+            File extendedCommand = new File("/cache/recovery/extendedcommand");
+            final boolean deleteFailed = !extendedCommand.delete();
+            if (deleteFailed) {
+                Log.d(TAG, "Couldn't delete "+extendedCommand.getAbsolutePath());
+            }
+
+            String updateCommand = "--update_package=" + otaPackagePath;
+            PrintWriter writer = new PrintWriter(command, "UTF-8");
+            writer.println("--wipe_cache");
+            writer.println(updateCommand);
+            writer.flush();
+            writer.close();
+        }else {
+            if(RootTools.isAccessGiven()) {
+                Shell.runRootCommand(new CommandCapture(0, "rm -f /cache/recovery/command"));
+                Shell.runRootCommand(new CommandCapture(0, "rm -f /cache/recovery/extendedcommand"));
+                Shell.runRootCommand(new CommandCapture(0, "echo '--wipe_cache' >> /cache/recovery/command"));
+                Shell.runRootCommand(new CommandCapture(0, "echo '--update_package=" + otaPackagePath + "' >> /cache/recovery/command"));
+            }else{
+                throw new RootDeniedException("Root Denied");
+            }
+        }
+    }
+
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
+    public static boolean rebootToRecovery(Context context) {
+        boolean result;
+        if (PrivilegeChecker.isPrivilegedApp()) {
+            ((PowerManager) context.getSystemService(Context.POWER_SERVICE)).reboot("recovery");
+            result = false;
+        } else {
+            if(RootTools.isAccessGiven()) {
+                try {
+                    Shell.runRootCommand(new CommandCapture(0, "reboot recovery"));
+                    result = true;
+                } catch (IOException | TimeoutException | RootDeniedException e) {
+                    Log.e(TAG, "Error rebooting to recovery: " + e.getLocalizedMessage());
+                    result = false;
+                }
+            }else{
+                result = false;
+            }
+
+        }
+        return result;
     }
     
 // --Commented out by Inspection START (06/02/2015 12:25):
@@ -457,4 +607,135 @@ public class Utils
 //        Log.wtf(TAG, sb.toString());
 //    }
 // --Commented out by Inspection STOP (06/02/2015 12:25)
+
+    public static boolean fileExists(String otaPackagePath) {
+        boolean fileExists;
+        if(PrivilegeChecker.isPrivilegedApp()){
+            File f = new File(otaPackagePath);
+            fileExists = f.exists();
+        }else {
+            fileExists = RootTools.exists(otaPackagePath);
+        }
+        return fileExists;
+    }
+
+    private final static String[] SHELL_COMMANDS_ERASE_DATA = {
+            // remove data
+            "rm -rf /data/data/com.android.providers.media*",
+            "rm -rf /data/data/com.android.keychain*",
+            "rm -rf /data/data/com.android.location.fused*",
+            "rm -rf /data/data/com.android.providers.applications*",
+            "rm -rf /data/data/com.android.providers.media*",
+            "rm -rf /data/data/com.android.vending*",
+            "rm -rf /data/data/com.google.android.apps.genie.geniewidget*",
+            "rm -rf /data/data/com.google.android.apps.plus*",
+            "rm -rf /data/data/com.google.android.ears*",
+            "rm -rf /data/data/com.google.android.gms*",
+            "rm -rf /data/data/com.google.android.googlequicksearchbox*",
+            "rm -rf /data/data/com.google.android.location*",
+            "rm -rf /data/data/com.google.android.marvin.talkback*",
+            // remove cache
+//            "rm -rf /data/dalvik-cache",
+            // remove data/app
+            "rm -rf /data/app/com.android.apps.plus*",
+            "rm -rf /data/app/com.android.vending*",
+            "rm -rf /data/app/com.android.easr*",
+            "rm -rf /data/app/com.android.gms*",
+            "rm -rf /data/app/com.android.tts*"
+    };
+
+    public final static String SHELL_COMMAND_ERASE_DALVIK_CACHE = "rm -rf /data/dalvik-cache";
+    public final static String SHELL_COMMAND_EXIT = "exit";
+
+    public static void clearGappsData() throws RootDeniedException, IOException, InterruptedException {
+
+        if (PrivilegeChecker.isPrivilegedApp()) {
+            Process p = Runtime.getRuntime().exec(SHELL_COMMAND_ERASE_DALVIK_CACHE);
+            DataOutputStream os = new DataOutputStream(p.getOutputStream());
+            for (String tmpCmd : SHELL_COMMANDS_ERASE_DATA) {
+                os.writeBytes(tmpCmd+"\n");
+            }
+            os.writeBytes(SHELL_COMMAND_EXIT+"\n");
+            os.flush();
+            p.waitFor();
+        }else {
+            if(RootTools.isAccessGiven()) {
+                try {
+                    Shell.runRootCommand(new CommandCapture(0, SHELL_COMMAND_ERASE_DALVIK_CACHE));
+                } catch (TimeoutException e) {
+                    e.printStackTrace();
+                }
+                for (String tmpCmd : SHELL_COMMANDS_ERASE_DATA) {
+                    try {
+                        Shell.runRootCommand(new CommandCapture(0, tmpCmd));
+                    } catch (TimeoutException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }else{
+                throw new RootDeniedException("Root Denied");
+            }
+        }
+    }
+
+    public static String getPath(final Context context, final Uri uri)
+    {
+        String filePath = uri.getPath();
+        if ("content".equalsIgnoreCase(uri.getScheme())) {
+
+            //Get the zip file name
+            String[] path = filePath.split("/");
+            String downloadIdStr = "";
+            if (path != null && path.length > 0) {
+                downloadIdStr = path[path.length - 1];
+            }
+            long downloadId = 0;
+            try {
+                downloadId = Long.parseLong(downloadIdStr);
+            } catch (NumberFormatException nfe) {
+                Log.w(TAG, "NumberFormatException: " + nfe.getMessage());
+            }
+
+            DownloadManager downloadManager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
+            DownloadManager.Query query = new DownloadManager.Query();
+
+            query.setFilterById(downloadId);
+
+            Cursor cursor = downloadManager != null ? downloadManager.query(query) : null;
+
+            if (cursor != null && cursor.moveToFirst()) {
+                int columnIndex = cursor.getColumnIndex(DownloadManager.COLUMN_STATUS);
+                int status = cursor.getInt(columnIndex);
+
+                switch (status) {
+                    case DownloadManager.STATUS_SUCCESSFUL: {
+                        filePath = downloadManager.getUriForDownloadedFile(downloadId).getPath();
+                        break;
+                    }
+                    case DownloadManager.STATUS_FAILED:
+                    case DownloadManager.STATUS_PAUSED:
+                    case DownloadManager.STATUS_PENDING:
+                    case DownloadManager.STATUS_RUNNING:
+                    default:
+                        filePath = "";
+                        break;
+                }
+            }
+        }
+
+        return filePath;
+    }
+
+	public static boolean isWiFiEnabled(Context context)
+	{
+
+		ConnectivityManager manager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+		return manager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).isConnectedOrConnecting();
+	}
+
+    public static Store getGappsStore()
+    {
+        return UpdaterData.getInstance().getStore(GAPPS_STORE_NUMBER);
+    }
 }

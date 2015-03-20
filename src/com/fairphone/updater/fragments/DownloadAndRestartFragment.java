@@ -21,6 +21,7 @@ import android.net.ConnectivityManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,10 +39,11 @@ import com.fairphone.updater.R;
 import com.fairphone.updater.UpdaterService;
 import com.fairphone.updater.data.DownloadableItem;
 import com.fairphone.updater.data.Store;
+import com.fairphone.updater.data.UpdaterData;
 import com.fairphone.updater.data.Version;
 import com.fairphone.updater.data.VersionParserHelper;
+import com.fairphone.updater.tools.PrivilegeChecker;
 import com.fairphone.updater.tools.Utils;
-import com.stericson.RootTools.RootTools;
 import com.stericson.RootTools.exceptions.RootDeniedException;
 import com.stericson.RootTools.execution.CommandCapture;
 import com.stericson.RootTools.execution.Shell;
@@ -54,6 +56,7 @@ public class DownloadAndRestartFragment extends BaseFragment
 
     private static final String TAG = DownloadAndRestartFragment.class.getSimpleName();
     private static final int GET_LATEST_DOWNLOAD_ID_RETRIES = 12;
+    private boolean mIsZipInstall;
 
     private TextView mDownloadVersionName;
     private LinearLayout mVersionDownloadingGroup;
@@ -73,6 +76,7 @@ public class DownloadAndRestartFragment extends BaseFragment
     private BroadcastReceiver mNetworkStateReceiver;
 
     private long mLatestUpdateDownloadId;
+    private TextView mDownloadCompleteLabel;
 
     public DownloadAndRestartFragment(boolean isVersion)
     {
@@ -85,10 +89,11 @@ public class DownloadAndRestartFragment extends BaseFragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         // Inflate the layout for this fragment
+        mIsZipInstall = UpdaterState.ZIP_INSTALL == mainActivity.getCurrentUpdaterState();
         View view;
         if (mIsVersion)
         {
-            mSelectedVersion = mainActivity.getSelectedVersion();
+            mSelectedVersion = getSelectedVersion();
             view = inflateViewByImageType(inflater, container);
             mSelectedStore = null;
         }
@@ -102,6 +107,30 @@ public class DownloadAndRestartFragment extends BaseFragment
         setupLayout(view);
 
         return view;
+    }
+
+    private Version getSelectedVersion() {
+        Version version;
+        if(mIsZipInstall) {
+            Resources resources = mainActivity.getResources();
+
+            //Get the zip file name
+            String[] zipPath = getDownloadPath(null).split("/");
+            String zipName = "";
+            if (zipPath != null && zipPath.length > 0) {
+                zipName = zipPath[zipPath.length - 1];
+            }
+
+            version = new Version();
+            version.setName(resources.getString(R.string.install) + " " + zipName);
+            version.setDownloadLink(mainActivity.getZipFilePath());
+            version.setNumber(Version.ZIP_INSTALL_VERSION);
+        }
+        else
+        {
+            version = mainActivity.getSelectedVersion();
+        }
+        return version;
     }
 
     private View inflateViewByImageType(LayoutInflater inflater, ViewGroup container)
@@ -121,7 +150,7 @@ public class DownloadAndRestartFragment extends BaseFragment
         return view;
     }
 
-    private View inflateStoreView(LayoutInflater inflater, ViewGroup container)
+    private static View inflateStoreView(LayoutInflater inflater, ViewGroup container)
     {
 
 	    return inflater.inflate(R.layout.fragment_download_app_store, container, false);
@@ -133,17 +162,17 @@ public class DownloadAndRestartFragment extends BaseFragment
         switch (state)
         {
             case DOWNLOAD:
+	            mVersionInstallGroup.setVisibility(View.GONE);
+	            mVersionDownloadingGroup.setVisibility(View.VISIBLE);
                 setupDownloadState();
-
-                mVersionInstallGroup.setVisibility(View.GONE);
-                mVersionDownloadingGroup.setVisibility(View.VISIBLE);
                 break;
 
             case PREINSTALL:
-                setupPreInstallState();
+            case ZIP_INSTALL:
+	            mVersionDownloadingGroup.setVisibility(View.GONE);
+	            mVersionInstallGroup.setVisibility(View.VISIBLE);
 
-                mVersionDownloadingGroup.setVisibility(View.GONE);
-                mVersionInstallGroup.setVisibility(View.VISIBLE);
+	            setupPreInstallState();
 
                 mRestartButton.setOnClickListener(new OnClickListener()
                 {
@@ -163,7 +192,7 @@ public class DownloadAndRestartFragment extends BaseFragment
                 });
 
                 break;
-
+            case NORMAL:
             default:
                 Log.w(TAG, "Wrong State: " + state + "\nOnly DOWNLOAD and PREINSTALL are supported");
                 mainActivity.onBackPressed();
@@ -177,7 +206,11 @@ public class DownloadAndRestartFragment extends BaseFragment
             @Override
             public void onClick(View v)
             {
-                abortUpdateProcess();
+                abortUpdateProcess("");
+                if(Utils.hasUnifiedPartition(mainActivity.getResources()))
+                {
+                    Utils.clearCache();
+                }
                 mainActivity.onBackPressed();
             }
         });
@@ -279,8 +312,7 @@ public class DownloadAndRestartFragment extends BaseFragment
                             if ((bytes_total + Utils.BUFFER_SIZE_10_MBYTES) > Utils.getAvailablePartitionSizeInBytes(Environment.getExternalStorageDirectory()))
                             {
                                 downloading = false;
-                                Toast.makeText(mainActivity, getResources().getString(R.string.no_space_available_sd_card_message), Toast.LENGTH_LONG).show();
-                                abortUpdateProcess();
+                                abortUpdateProcess(getResources().getString(R.string.no_space_available_sd_card_message));
                             }
                             else
                             {
@@ -335,6 +367,7 @@ public class DownloadAndRestartFragment extends BaseFragment
     private void setupLayout(View view)
     {
         mDownloadVersionName = (TextView) view.findViewById(R.id.download_version_name_text);
+        mDownloadCompleteLabel = (TextView) view.findViewById(R.id.download_complete_label);
 
         // download in progress group
         mVersionDownloadingGroup = (LinearLayout) view.findViewById(R.id.version_downloading_group);
@@ -355,7 +388,7 @@ public class DownloadAndRestartFragment extends BaseFragment
         setupInstallationReceivers();
         registerDownloadBroadCastReceiver();
 
-        registerNetworkStatusBoradcastReceiver();
+        registerNetworkStatusBroadcastReceiver();
 
         updateHeader();
 
@@ -363,34 +396,42 @@ public class DownloadAndRestartFragment extends BaseFragment
         if (item != null)
         {
             mDownloadVersionName.setText(mainActivity.getItemName(item, mIsVersion));
+            if(mIsZipInstall)
+            {
+                mDownloadCompleteLabel.setVisibility(View.GONE);
+            }
+            else
+            {
+                mDownloadCompleteLabel.setVisibility(View.VISIBLE);
+            }
         }
 
         toggleDownloadProgressAndRestart();
     }
 
-    private void registerNetworkStatusBoradcastReceiver()
+    private void registerNetworkStatusBroadcastReceiver()
     {
+		unregisterNetworkStatusBroadcastReceiver();
         // Setup monitoring for future connectivity status changes
-        if (mNetworkStateReceiver != null)
+		mNetworkStateReceiver = new BroadcastReceiver()
         {
-            mNetworkStateReceiver = new BroadcastReceiver()
+            @Override
+            public void onReceive(Context context, Intent intent)
             {
-                @Override
-                public void onReceive(Context context, Intent intent)
+                if (intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, false))
                 {
-                    if (intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, false))
-                    {
-                        abortUpdateProcess();
-                    }
+                    Log.w(TAG, "Aborted due to connection failure.");
+                    abortUpdateProcess("");
+	                mainActivity.onBackPressed();
                 }
-            };
-        }
+            }
+        };
 
         IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
         mainActivity.registerReceiver(mNetworkStateReceiver, filter);
     }
 
-    private void unregisterNetworkStatusBoradcastReceiver()
+    private void unregisterNetworkStatusBroadcastReceiver()
     {
         if (mNetworkStateReceiver != null)
         {
@@ -407,7 +448,7 @@ public class DownloadAndRestartFragment extends BaseFragment
 
         unregisterBroadCastReceiver();
 
-        unregisterNetworkStatusBoradcastReceiver();
+        unregisterNetworkStatusBroadcastReceiver();
     }
 
     private void setupInstallationReceivers()
@@ -472,16 +513,17 @@ public class DownloadAndRestartFragment extends BaseFragment
                     case DownloadManager.STATUS_FAILED:
                         Resources resources = getResources();
                         DownloadableItem item = mIsVersion ? mSelectedVersion : mSelectedStore;
+                        String error;
                         if (item != null)
                         {
                             String downloadTitle = Utils.getDownloadTitleFromDownloadableItem(getResources(), item, mIsVersion);
-                            Toast.makeText(mainActivity, resources.getString(R.string.error_downloading) + " " + downloadTitle, Toast.LENGTH_LONG).show();
+                            error = resources.getString(R.string.error_downloading) + " " + downloadTitle;
                         }
                         else
                         {
-                            Toast.makeText(mainActivity, resources.getString(R.string.error_downloading), Toast.LENGTH_LONG).show();
+                            error = resources.getString(R.string.error_downloading);
                         }
-                        abortUpdateProcess();
+                        abortUpdateProcess(error);
                         break;
                     default:
                         break;
@@ -489,7 +531,7 @@ public class DownloadAndRestartFragment extends BaseFragment
             }
             else
             {
-                abortUpdateProcess();
+                abortUpdateProcess("");
             }
 
             if (cursor != null)
@@ -513,7 +555,7 @@ public class DownloadAndRestartFragment extends BaseFragment
 
             if (file.exists())
             {
-                if (Utils.checkMD5(item.getMd5Sum(), file))
+                if (Utils.checkMD5(item.getMd5Sum(), file) || mIsZipInstall)
                 {
                     copyUpdateToCache(file);
                 }
@@ -544,10 +586,10 @@ public class DownloadAndRestartFragment extends BaseFragment
 
 	        final boolean notDeleted = !updateDir.delete();
 	        if(notDeleted) {
-		        Log.d(TAG, "Unable to delete "+updateDir.getAbsolutePath());
+		        Log.d(TAG, "Unable to delete " + updateDir.getAbsolutePath());
 	        }
 
-	        abortUpdateProcess();
+	        abortUpdateProcess("");
 
             return;
         }
@@ -560,7 +602,7 @@ public class DownloadAndRestartFragment extends BaseFragment
             // invalid download Id
             if (mLatestUpdateDownloadId == 0)
             {
-                abortUpdateProcess();
+                abortUpdateProcess("");
                 return;
             }
         }
@@ -573,57 +615,48 @@ public class DownloadAndRestartFragment extends BaseFragment
         final Resources resources = getResources();
         DownloadableItem item = mIsVersion ? mSelectedVersion : mSelectedStore;
 
-        File f = new File("/" + resources.getString(R.string.recoveryCachePath) + "/" + Utils.getFilenameFromDownloadableItem(item, mIsVersion));
-        if (!f.exists())
+        String otaPackagePath = Utils.getOtaPackagePath(resources, item, mIsVersion, mIsZipInstall);
+
+        boolean fileNotExists = !Utils.fileExists(otaPackagePath);
+
+        if (fileNotExists)
         {
-            abortUpdateProcess();
+            abortUpdateProcess(resources.getString(R.string.file_not_found_message) + ": " + otaPackagePath);
         }
-        else if (item != null && RootTools.isAccessGiven())
+        else if (item != null)
         {
             // set the command for the recovery
             try
             {
+                Utils.writeCacheCommand(mainActivity, otaPackagePath);
 
-                Shell.runRootCommand(new CommandCapture(0, "rm -f /cache/recovery/command"));
+                new Thread(new Runnable() {
+                    @SuppressLint("CommitPrefEdits")
+                    @Override
+                    public void run() {
+                        Editor editor = mSharedPreferences.edit();
+                        editor.remove(UpdaterService.PREFERENCE_REINSTALL_GAPPS);
+                        editor.commit();
 
-                Shell.runRootCommand(new CommandCapture(0, "rm -f /cache/recovery/extendedcommand"));
+                        if (Utils.hasUnifiedPartition(resources))
+                        {
+                            removeLastUpdateDownload();
+                        }
 
-                Shell.runRootCommand(new CommandCapture(0, "echo '--wipe_cache' >> /cache/recovery/command"));
+                        // remove the gapps stuff
+//                        String model = Utils.getModelAndOS(getActivity());
+//                        if( model.contains("FP1") ) {
+                            try {
 
-                if (Utils.hasUnifiedPartition(resources))
-                {
-                    Shell.runRootCommand(new CommandCapture(0, "echo '--update_package=/" + resources.getString(R.string.recoveryCachePath) + "/"
-                            + Utils.getFilenameFromDownloadableItem(item, mIsVersion) + "' >> /cache/recovery/command"));
-                }
-                else
-                {
-                    Shell.runRootCommand(new CommandCapture(0, "echo '--update_package=/" + resources.getString(R.string.recoverySdCardPath)
-                            + resources.getString(R.string.updaterFolder) + Utils.getFilenameFromDownloadableItem(item, mIsVersion) + "' >> /cache/recovery/command"));
-                }
-            } catch (IOException | NotFoundException | TimeoutException | RootDeniedException e)
-            {
-                e.printStackTrace();
-            }
+                                Utils.clearGappsData();
+                            } catch (RootDeniedException | InterruptedException | IOException e) {
+                                e.printStackTrace();
+                            }
+//                        }
 
-            new Thread(new Runnable() {
-                @SuppressLint("CommitPrefEdits")
-                @Override
-                public void run() {
-                    Editor editor = mSharedPreferences.edit();
-                    editor.remove(UpdaterService.PREFERENCE_REINSTALL_GAPPS);
-                    editor.commit();
+                        // remove the update files from data
+                        removeUpdateFilesFromData();
 
-                    if (Utils.hasUnifiedPartition(resources))
-                    {
-                        removeLastUpdateDownload();
-                    }
-
-                    // remove the update files from data
-                    removeUpdateFilesFromData();
-
-                    // reboot the device into recovery
-                    try
-                    {
                         mainActivity.updateStatePreference(UpdaterState.NORMAL);
                         mainActivity.clearSelectedItems();
                         clearConfigFile();
@@ -631,17 +664,26 @@ public class DownloadAndRestartFragment extends BaseFragment
                         editor.remove(UpdaterService.LAST_CONFIG_DOWNLOAD_IN_MS);
                         editor.remove(MainFragment.SHARED_PREFERENCES_ENABLE_GAPPS);
                         editor.commit();
-                        Shell.runRootCommand(new CommandCapture(0, "reboot recovery"));
-                    } catch (IOException | TimeoutException | RootDeniedException e)
-                    {
-                        e.printStackTrace();
+
+                        // reboot the device into recovery
+                        if(!Utils.rebootToRecovery(mainActivity)) {
+                            String error = resources.getString(R.string.reboot_failed);
+                            Log.w(TAG, error);
+                            abortUpdateProcess(error);
+                        }
                     }
-                }
-            }).start();
+                }).start();
+            } catch (IOException | NotFoundException | TimeoutException | RootDeniedException e)
+            {
+                String error = resources.getString(R.string.command_write_to_cache_failed);
+                Log.e(TAG, error + ": " + e.getLocalizedMessage());
+                abortUpdateProcess(error);
+            }
         }
         else
         {
-            abortUpdateProcess();
+            Log.e(TAG, "Null item");
+            abortUpdateProcess("");
         }
     }
 
@@ -668,18 +710,15 @@ public class DownloadAndRestartFragment extends BaseFragment
             }
             else
             {
-                Toast.makeText(mainActivity, getResources().getString(R.string.no_space_available_cache_message), Toast.LENGTH_LONG).show();
-                abortUpdateProcess();
+                abortUpdateProcess(getResources().getString(R.string.no_space_available_cache_message));
             }
         }
         else
         {
             if (Utils.hasUnifiedPartition(getResources()))
             {
-                Log.d(TAG, "No space on cache. Defaulting to Sdcard");
-                Toast.makeText(mainActivity, getResources().getString(R.string.no_space_available_cache_message), Toast.LENGTH_LONG).show();
-
-                abortUpdateProcess();
+                Log.w(TAG, "No space on cache. Defaulting to Sdcard");
+                abortUpdateProcess(getResources().getString(R.string.no_space_available_cache_message));
             }
         }
     }
@@ -687,8 +726,41 @@ public class DownloadAndRestartFragment extends BaseFragment
     // ************************************************************************************
     // Update Removal
     // ************************************************************************************
-    private void removeUpdateFilesFromData()
-    {
+    private void removeUpdateFilesFromData() {
+		if (PrivilegeChecker.isPrivilegedApp()) {
+			removeUpdateFilesFromDataPrivileged();
+		} else {
+			removeUpdateFilesFromDataUnprivileged();
+		}
+    }
+
+	private void removeUpdateFilesFromDataPrivileged() {
+		Resources resource = getResources();
+
+		try {
+			Process p = Runtime.getRuntime().exec(resource.getString(R.string.removePlayStoreCommand));
+            p.waitFor();
+            p = Runtime.getRuntime().exec(resource.getString(R.string.removeGooglePlusCommand));
+            p.waitFor();
+            p = Runtime.getRuntime().exec(resource.getString(R.string.removeSoundSearchCommand));
+            p.waitFor();
+            p = Runtime.getRuntime().exec(resource.getString(R.string.removeGmailCommand));
+            p.waitFor();
+            p = Runtime.getRuntime().exec(resource.getString(R.string.removePlayServicesCommand));
+            p.waitFor();
+            p = Runtime.getRuntime().exec(resource.getString(R.string.removeQuicksearchCommand));
+            p.waitFor();
+            p = Runtime.getRuntime().exec(resource.getString(R.string.removeTalkbackCommand));
+            p.waitFor();
+            p = Runtime.getRuntime().exec(resource.getString(R.string.removeText2SpeechCommand));
+            p.waitFor();
+		} catch (IOException | InterruptedException e) {
+			Log.d(TAG, "Failed to remove files from data:" +e);
+		}
+	}
+
+	private void removeUpdateFilesFromDataUnprivileged()
+	{
         try
         {
             Shell.runRootCommand(new CommandCapture(0, getResources().getString(R.string.removePlayStoreCommand), getResources().getString(
@@ -698,7 +770,7 @@ public class DownloadAndRestartFragment extends BaseFragment
                     R.string.removeText2SpeechCommand)));
         } catch (IOException | TimeoutException | RootDeniedException e)
         {
-            e.printStackTrace();
+	        Log.d(TAG, "Failed to remove files from data:" +e.getLocalizedMessage());
         }
     }
 
@@ -731,21 +803,27 @@ public class DownloadAndRestartFragment extends BaseFragment
             String originalFilePath = params[0];
             String destinyFilePath = params[1];
 
-            if (RootTools.isAccessGiven())
+            Utils.clearCache();
+
+            File otaOriginalFile = new File(originalFilePath);
+            File otaDestinyFile = new File(destinyFilePath);
+
+            if (otaOriginalFile.exists())
             {
-                Utils.clearCache();
-
-                File otaFilePath = new File(originalFilePath);
-                File otaFileCache = new File(destinyFilePath);
-
-                if (!otaFileCache.exists())
-                {
-                    RootTools.copyFile(otaFilePath.getPath(), otaFileCache.getPath(), false, false);
-                }
+	            try {
+		            Utils.copy(otaOriginalFile, otaDestinyFile);
+	            } catch (IOException e) {
+                    String error = mainActivity.getResources().getString(R.string.copy_to_cache_failed_message);
+		            Log.e(TAG, error + ": " + originalFilePath + ". " + e.getLocalizedMessage());
+		            abortUpdateProcess(error);
+	            }
             }
             else
             {
-                abortUpdateProcess();
+                Resources resources = mainActivity.getResources();
+                String error = resources.getString(R.string.copy_to_cache_failed_message) + ". " + resources.getString(R.string.file_not_found_message) + ": " + originalFilePath;
+                Log.e(TAG, error);
+                abortUpdateProcess(error);
             }
 
             return 1;
@@ -780,12 +858,30 @@ public class DownloadAndRestartFragment extends BaseFragment
 
     private String getDownloadPath(DownloadableItem item)
     {
-        Resources resources = mainActivity.getResources();
-        return Environment.getExternalStorageDirectory() + resources.getString(R.string.updaterFolder) + Utils.getFilenameFromDownloadableItem(item, mIsVersion);
+        String path;
+        if(mIsZipInstall)
+        {
+           path = mainActivity.getZipFilePath();
+        }
+        else
+        {
+            Resources resources = mainActivity.getResources();
+            path = Environment.getExternalStorageDirectory() + resources.getString(R.string.updaterFolder) + Utils.getFilenameFromDownloadableItem(item, mIsVersion);
+        }
+        return path;
     }
 
-    public void abortUpdateProcess()
+    public void abortUpdateProcess(final String reason)
     {
+        if(!TextUtils.isEmpty(reason)) {
+            mainActivity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(mainActivity, reason, Toast.LENGTH_LONG).show();
+                }
+            });
+        }
+
         removeLastUpdateDownload();
 
         mainActivity.clearSelectedItems();

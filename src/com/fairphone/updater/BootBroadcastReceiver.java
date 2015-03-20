@@ -23,7 +23,9 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 
+import com.fairphone.updater.fragments.MainFragment;
 import com.fairphone.updater.tools.Utils;
 
 public class BootBroadcastReceiver extends BroadcastReceiver
@@ -38,6 +40,17 @@ public class BootBroadcastReceiver extends BroadcastReceiver
         //
         // if (Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction()))
         // {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(FairphoneUpdater.FAIRPHONE_UPDATER_PREFERENCES, Context.MODE_PRIVATE);
+
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(FairphoneUpdater.PREFERENCE_CURRENT_UPDATER_STATE, FairphoneUpdater.UpdaterState.NORMAL.name());
+        editor.putInt(FairphoneUpdater.PREFERENCE_SELECTED_VERSION_NUMBER, 0);
+        editor.putString(FairphoneUpdater.PREFERENCE_SELECTED_VERSION_TYPE, "");
+        editor.putInt(FairphoneUpdater.PREFERENCE_SELECTED_STORE_NUMBER, -1);
+        editor.remove(UpdaterService.LAST_CONFIG_DOWNLOAD_IN_MS);
+        editor.remove(MainFragment.SHARED_PREFERENCES_ENABLE_GAPPS);
+        editor.commit();
+
         AlarmManager service = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Intent i = new Intent(context, UpdaterService.class);
         PendingIntent pending = PendingIntent.getService(context, 0, i, PendingIntent.FLAG_CANCEL_CURRENT);

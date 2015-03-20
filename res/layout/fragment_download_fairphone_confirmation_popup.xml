@@ -10,20 +10,20 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/alert_title_margin_bottom"
-        android:text="@string/warning" />
+        android:text="@string/warning"/>
 
     <TextView
         style="@style/TextRegular14BlueDark"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="@string/your_are_about_to_install" />
+        android:text="@string/your_are_about_to_install"/>
 
     <TextView
         android:id="@+id/installing_version"
         style="@style/TextBold14BlueDark"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"/>
 
     <TextView
         android:id="@+id/version_type_text"
@@ -31,7 +31,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="@string/an_older_version_of_os" />
+        android:text="@string/an_older_version_of_os"/>
 
     <TextView
         android:id="@+id/erase_all_data_warning_text"
@@ -42,30 +42,30 @@
         android:layout_marginTop="@dimen/alert_padding"
         android:gravity="center"
         android:text="@string/erase_all_data_warning_message"
-        android:visibility="gone" />
+        android:visibility="gone"/>
 
     <TextView
-        style="@style/TextRegular14GreyLight"
+        style="@style/TextRegular14BlueDark"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/alert_padding"
         android:layout_marginTop="@dimen/alert_padding"
         android:gravity="center_horizontal"
-        android:text="@string/older_version_os_install_confirmation" />
+        android:text="@string/older_version_os_install_confirmation"/>
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/alert_padding" >
+        android:layout_marginBottom="@dimen/alert_padding">
 
         <Button
             android:id="@+id/confirmation_no_button"
-            style="@style/ButtonBlueDarkGrey"
+            style="@style/ButtonBlueDark"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingBottom="25dp"
             android:paddingTop="5dp"
-            android:text="@android:string/no" />
+            android:text="@android:string/cancel"/>
 
         <TextView
             style="@style/TextRegular16White"
@@ -75,13 +75,13 @@
             android:clickable="false"
             android:focusable="false"
             android:paddingBottom="5dp"
-            android:text="@string/take_me_back" />
+            android:text="@string/take_me_back"/>
     </FrameLayout>
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/alert_padding" >
+        android:layout_marginBottom="@dimen/alert_padding">
 
         <Button
             android:id="@+id/confirmation_yes_button"
@@ -90,7 +90,7 @@
             android:layout_height="wrap_content"
             android:paddingBottom="25dp"
             android:paddingTop="5dp"
-            android:text="@android:string/yes" />
+            android:text="@android:string/ok"/>
 
         <TextView
             style="@style/TextRegular16White"
@@ -100,7 +100,7 @@
             android:clickable="false"
             android:focusable="false"
             android:paddingBottom="5dp"
-            android:text="@string/go_ahead_and_install_it" />
+            android:text="@string/go_ahead_and_install_it"/>
     </FrameLayout>
 
     <CheckBox
@@ -108,6 +108,6 @@
         style="@style/CheckBoxBlue"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/older_version_os_install_confirmation_checkbox" />
+        android:text="@string/older_version_os_install_confirmation_checkbox"/>
 
 </LinearLayout>

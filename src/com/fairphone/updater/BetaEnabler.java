@@ -42,7 +42,7 @@ public class BetaEnabler extends Activity {
         }
     }
     
-    private boolean isBetaEnabled(){
+    private static boolean isBetaEnabled(){
         return Utils.getprop(FAIRPHONE_BETA_PROPERTY, BETA_DISABLED).equals(BETA_ENABLED);
     }
     

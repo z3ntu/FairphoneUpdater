@@ -5,7 +5,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:background="@color/pink"
+        android:background="@color/green"
         android:gravity="center_horizontal"
         android:orientation="vertical"
         android:visibility="gone" >
@@ -25,7 +25,7 @@
             android:text="@string/os_update_has_started_message" />
 
         <TextView
-            style="@style/TextRegular14PinkLight"
+            style="@style/TextRegular14GreenLight"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/main_small_text_margin_top"

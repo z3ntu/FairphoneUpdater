@@ -9,8 +9,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.fairphone.updater.FairphoneUpdater.HeaderType;
 import com.fairphone.updater.R;
@@ -29,10 +27,10 @@ public class VersionListFragment extends BaseFragment
 
     private ListLayoutType mListLayoutType;
     private List<Version> mVersionList;
-	private LinearLayout mVersionListContainer;
+	private ViewGroup mVersionListContainer;
     private Button mLatestVersionDetailsButton;
-    private TextView mLatestVersionInstalledIndicator;
-    private LinearLayout mOlderVersionsGroup;
+    private View mLatestVersionInstalledIndicator;
+    private View mOlderVersionsGroup;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -53,8 +51,8 @@ public class VersionListFragment extends BaseFragment
                 view = inflater.inflate(R.layout.fragment_app_store_options_list, container, false);
                 mainActivity.updateHeader(HeaderType.APP_STORE, resources.getString(R.string.app_store), true);
 
-                mOlderVersionsGroup = (LinearLayout) view.findViewById(R.id.older_versions_group);
-                mVersionListContainer = (LinearLayout) view.findViewById(R.id.version_list_container);
+                mOlderVersionsGroup = view.findViewById(R.id.older_versions_group);
+                mVersionListContainer = (ViewGroup) view.findViewById(R.id.version_list_container);
 
                 setupAppStoreVersions(container);
                 break;
@@ -62,11 +60,11 @@ public class VersionListFragment extends BaseFragment
                 view = inflater.inflate(R.layout.fragment_other_os_options_android_list, container, false);
                 mainActivity.updateHeader(HeaderType.ANDROID, resources.getString(R.string.android_os), true);
 
-                mOlderVersionsGroup = (LinearLayout) view.findViewById(R.id.older_versions_group);
-                mVersionListContainer = (LinearLayout) view.findViewById(R.id.version_list_container);
+                mOlderVersionsGroup = view.findViewById(R.id.older_versions_group);
+                mVersionListContainer = (ViewGroup) view.findViewById(R.id.version_list_container);
 
                 mLatestVersionDetailsButton = (Button) view.findViewById(R.id.other_os_options_android_latest_version_button);
-                mLatestVersionInstalledIndicator = (TextView) view.findViewById(R.id.other_os_options_android_version_installed_indicator_text);
+                mLatestVersionInstalledIndicator = view.findViewById(R.id.other_os_options_android_version_installed_indicator_text);
 
                 setupAndroidLatestVersion();
                 setupAndroidVersions(container);
@@ -76,11 +74,11 @@ public class VersionListFragment extends BaseFragment
                 view = inflater.inflate(R.layout.fragment_other_os_options_fairphone_list, container, false);
                 mainActivity.updateHeader(HeaderType.FAIRPHONE, resources.getString(R.string.fairphone_os), true);
 
-                mOlderVersionsGroup = (LinearLayout) view.findViewById(R.id.older_versions_group);
-                mVersionListContainer = (LinearLayout) view.findViewById(R.id.version_list_container);
+                mOlderVersionsGroup = view.findViewById(R.id.older_versions_group);
+                mVersionListContainer = (ViewGroup) view.findViewById(R.id.version_list_container);
 
                 mLatestVersionDetailsButton = (Button) view.findViewById(R.id.other_os_options_fairphone_latest_version_button);
-                mLatestVersionInstalledIndicator = (TextView) view.findViewById(R.id.other_os_options_fairphone_version_installed_indicator_text);
+                mLatestVersionInstalledIndicator = view.findViewById(R.id.other_os_options_fairphone_version_installed_indicator_text);
 
                 setupFairphoneLatestVersion();
                 setupFairphoneVersions(container);

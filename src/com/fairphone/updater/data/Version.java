@@ -43,7 +43,9 @@ public class Version extends DownloadableItem implements Comparable<Version>
 
     private boolean mErasePartitionsWarning;
 
-    private List<Integer> mDependencies;
+    private final List<Integer> mDependencies;
+
+    public static final int ZIP_INSTALL_VERSION = 999;
 
     public Version()
     {
@@ -51,13 +53,23 @@ public class Version extends DownloadableItem implements Comparable<Version>
         mDependencies = new ArrayList<>();
         mAndroidVersion = "";
         mImageType = IMAGE_TYPE_FAIRPHONE;
-        setEraseAllPartitionWarning(false);
+        mErasePartitionsWarning = false;
         mBetaStatus = "";
     }
 
-    public void setEraseAllPartitionWarning(boolean erasePartitionsWarning)
+    public Version(Version other)
     {
-        mErasePartitionsWarning = erasePartitionsWarning;
+        super(other);
+        mDependencies = other.mDependencies;
+        mAndroidVersion = other.mAndroidVersion;
+        mImageType = other.mImageType;
+        mErasePartitionsWarning = other.hasEraseAllPartitionWarning();
+        mBetaStatus = other.mBetaStatus;
+    }
+
+    public void setEraseAllPartitionWarning()
+    {
+        mErasePartitionsWarning = true;
     }
 
     public boolean hasEraseAllPartitionWarning()
@@ -135,11 +147,11 @@ public class Version extends DownloadableItem implements Comparable<Version>
         int retVal;
         if (another != null)
         {
-            if (this.getNumber() < another.getNumber() && this.getImageType().equalsIgnoreCase(another.getImageType()))
+            if (this.getNumber() < another.getNumber() && this.mImageType.equalsIgnoreCase(another.mImageType))
             {
                 retVal = 1;
             }
-            else if (this.getNumber() == another.getNumber() && this.getImageType().equalsIgnoreCase(another.getImageType()))
+            else if (this.getNumber() == another.getNumber() && this.mImageType.equalsIgnoreCase(another.mImageType))
             {
                 retVal = 0;
             }
@@ -171,16 +183,16 @@ public class Version extends DownloadableItem implements Comparable<Version>
                     mDependencies.add(Integer.valueOf(dependency));
                 } catch (NumberFormatException e)
                 {
-                    Log.e(TAG, "Invalid dependency");
+                    Log.e(TAG, "Invalid dependency: " + e.getLocalizedMessage());
                 }
             }
         }
     }
 
-// --Commented out by Inspection START (06/02/2015 12:36):
-//    public ArrayList<Integer> getVersionDependencies()
+// --Commented out by Inspection START (09/02/2015 19:47):
+//    List<Integer> getVersionDependencies()
 //    {
 //        return mDependencies;
 //    }
-// --Commented out by Inspection STOP (06/02/2015 12:36)
+// --Commented out by Inspection STOP (09/02/2015 19:47)
 }
