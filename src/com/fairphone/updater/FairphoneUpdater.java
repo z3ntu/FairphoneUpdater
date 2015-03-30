@@ -771,7 +771,7 @@ public class FairphoneUpdater extends FragmentActivity
         mLaunchGapps = false;
 
         if(intent != null) {
-            String action = intent.getAction();
+            String action =  TextUtils.isEmpty(intent.getAction()) ? "" : intent.getAction();
             switch (action)
             {
                 case GappsInstallerHelper.EXTRA_START_GAPPS_INSTALL:
