@@ -16,6 +16,13 @@
 
 package com.fairphone.updater.tools;
 
+import android.content.Context;
+import android.content.res.Resources;
+import android.util.Base64;
+import android.util.Log;
+
+import com.fairphone.updater.R;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -31,13 +38,6 @@ import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-
-import android.content.Context;
-import android.content.res.Resources;
-import android.util.Base64;
-import android.util.Log;
-
-import com.fairphone.updater.R;
 
 public class RSAUtils
 {
@@ -163,7 +163,7 @@ public class RSAUtils
         return valid;
     }
 
-    private static void unzip(String filePath, String targetPath)
+    public static void unzip(String filePath, String targetPath)
     {
         File path = new File(targetPath);
         boolean notMkDirs = !path.mkdirs();

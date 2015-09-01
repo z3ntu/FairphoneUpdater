@@ -1,13 +1,11 @@
 package com.fairphone.updater;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.res.Resources;
-import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -91,6 +89,7 @@ public class FairphoneUpdater extends FragmentActivity
 
     public static boolean DEV_MODE_ENABLED;
     public static boolean BETA_MODE_ENABLED;
+    public static String otaDevDownloadUrl = "";
 
     private TextView headerMainFairphoneText;
     private TextView headerMainAndroidText;
@@ -108,7 +107,7 @@ public class FairphoneUpdater extends FragmentActivity
     private Store mSelectedStore;
 
     private TextView headerMainAppStoreText;
-    public static enum HeaderType
+    public enum HeaderType
     {
         MAIN_FAIRPHONE, MAIN_ANDROID, MAIN_APP_STORE, FAIRPHONE, ANDROID, OTHER_OS, APP_STORE
     }
@@ -126,10 +125,16 @@ public class FairphoneUpdater extends FragmentActivity
 	    if (Settings.Global.getInt(getContentResolver(), CRASHLYTICS_OPT_IN, 0) == 1)
         {
             Log.d(TAG, "Crash reports active.");
-            Crashlytics.start(this);
+            try {
+                Crashlytics.start(this);
+            } catch(Exception e) {
+                Log.w(TAG, "Crashlytics failed to start");
+            }
         }
 
         DEV_MODE_ENABLED = false;
+
+        otaDevDownloadUrl = "";
 
         // update first times
         mIsFirstTimeAndroid = mSharedPreferences.getBoolean(PREFERENCE_FIRST_TIME_ANDROID, true);
@@ -143,7 +148,7 @@ public class FairphoneUpdater extends FragmentActivity
         // reset download URL
         Editor editor = mSharedPreferences.edit();
         editor.putString(PREFERENCE_OTA_DOWNLOAD_URL, otaDownloadUrl);
-        editor.commit();
+        editor.apply();
 
         // get system data
         mDeviceVersion = VersionParserHelper.getDeviceVersion(this);
@@ -160,8 +165,6 @@ public class FairphoneUpdater extends FragmentActivity
             mSharedPreferences.edit().remove(UpdaterService.LAST_CONFIG_DOWNLOAD_IN_MS).apply();
         }
 
-        startService();
-
         if (mDeviceVersion != null)
         {
             mLatestVersion = isConfigLoaded ? UpdaterData.getInstance().getLatestVersion(mDeviceVersion.getImageType()) : null;
@@ -171,12 +174,11 @@ public class FairphoneUpdater extends FragmentActivity
             mLatestVersion = null;
         }
 
-        getSelectedVersionFromSharedPreferences();
-        getSelectedStoreFromSharedPreferences();
-
         initHeaderViews();
 
         setupFragments(savedInstanceState);
+
+        startService();
     }
 
 
@@ -238,15 +240,15 @@ public class FairphoneUpdater extends FragmentActivity
     }
 
     public void changeOTADownloadURL(String newUrl){
-        String otaDownloadUrl = TextUtils.isEmpty(newUrl) ? getResources().getString(R.string.downloadUrl) : newUrl;
+        otaDevDownloadUrl = TextUtils.isEmpty(newUrl) ? getResources().getString(R.string.downloadUrl) : newUrl;
 
         Editor editor = mSharedPreferences.edit();
-        editor.putString(PREFERENCE_OTA_DOWNLOAD_URL, otaDownloadUrl);
+        editor.putString(PREFERENCE_OTA_DOWNLOAD_URL, otaDevDownloadUrl);
         editor.commit();
     }
 
     public void forceConfigDownload(){
-        Utils.downloadConfigFile(this, true);
+        Utils.startUpdaterService(getApplicationContext(), true);
     }
 
     private void initHeaderViews()
@@ -449,6 +451,7 @@ public class FairphoneUpdater extends FragmentActivity
             default:
                 headerMainFairphoneText.setVisibility(View.VISIBLE);
                 headerMainAndroidText.setVisibility(View.GONE);
+                headerMainAppStoreText.setVisibility(View.GONE);
                 headerFairphoneText.setVisibility(View.GONE);
                 headerAndroidText.setVisibility(View.GONE);
                 headerAppStoreText.setVisibility(View.GONE);
@@ -832,8 +835,6 @@ public class FairphoneUpdater extends FragmentActivity
         {
             updateStatePreference(TextUtils.isEmpty(mZipPath) ? UpdaterState.NORMAL : UpdaterState.ZIP_INSTALL);
         }
-
-        startService();
 
         boolean isConfigLoaded = UpdaterService.readUpdaterData(this);
         mDeviceVersion = VersionParserHelper.getDeviceVersion(this);

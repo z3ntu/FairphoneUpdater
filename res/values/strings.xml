@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Fairphone Updater</string>
+    <string name="app_name">Updater</string>
+    <string name="app_full_name">Fairphone Updater</string>
     <string name="fairphone">Fairphone</string>
     <string name="android">Android</string>
     <string name="updater_service">Updater Service</string>
@@ -26,7 +27,7 @@
     <string name="google_apps_disclaimer_title">Install Google Apps</string>
     <string name="google_apps_initial_title">Install\nGoogle Apps</string>
     <string name="google_apps_installer_name">Google Apps Installer</string>
-    <string name="google_apps_re_install_description">Remove this or\nclick to re-install</string>
+    <string name="google_apps_re_install_description">Remove this or\nclick to reinstall</string>
     <string name="google_apps_re_install_title">Google Apps installed</string>
     <string name="important_notice">Important notice</string>
     <string name="important_notice_message">It\'s important that you keep in mind that installing other operating systems will change the user experience.</string>
@@ -54,27 +55,26 @@
     <string name="want_to_change_your_os">Are you an advanced user?</string>
     <string name="warning">Warning</string>
     <string name="wifi_disabled">Wi-Fi disabled</string>
-    <string name="wifi_discaimer_message">The file you\'re trying to download is too large for mobile connections (~200MB). Please enable Wi-Fi connection and try again.</string>
-    <string name="wifi_discaimer_message_startup">You need internet access to check for updates or install software. Please enable Wi-Fi connection.</string>
+    <string name="wifi_discaimer_message">The file you\'re trying to download is too large for mobile connections (~200MB). Please connect to a Wi-Fi network and try again.</string>
     <string name="your_are_about_to_install">You are about to install</string>
     <string name="your_current_os_version">Your current operating system version</string>
     <string name="your_os_is_up_to_date">Your operating system is up-to-date</string>
     <string name="fairphone_os_info">This Android for Fairphone operating system has an extra layer of Fairphone flavor with features like the Peace of Mind widget, Edge Swipe, and the Last Used / Most Used Apps widget.\n\nWe recommend installing Android for Fairphone on your device to have the best Fairphone experience.</string>
     <string name="android_os_info">This Stock Android operating system is the pure Android experience without any additional Fairphone modifications.</string>
     <string name="about">about</string>
-    <string name="appStoreReinstall">Reinstall the app store</string>
-    <string name="app_store">App Stores</string>
     <string name="gapps_store_install">Install Google Apps</string>
-    <string name="gapps_store_hide_reminder">or hide reminder</string>
+    <string name="gapps_store_hide_reminder">or close this reminder</string>
     <string name="title_activity_beta_enabler">Fairphone Beta Program</string>
     <string name="enable_beta">Enable Beta</string>
     <string name="beta_is_enabled">Beta is enabled</string>
     <string name="beta_activation_failed">Failed to activate beta</string>
-    <string name="genericContentDescription" translatable="false">genericContentDescription</string>
-    <string name="failed_mkdirs_cache_message">Failed to create directories on /cache.</string>
-    <string name="copy_to_cache_failed_message">Failed to copy file to cache</string>
+    <string name="failed_mkdirs_cache_message">Failed to create directories on /cache</string>
+    <string name="copy_to_cache_failed_message">Failed to copy file to /cache</string>
     <string name="file_not_found_message">File not found</string>
     <string name="reboot_failed">Error rebooting to recovery</string>
-    <string name="command_write_to_cache_failed">Error writing commands to cache</string>
+    <string name="command_write_to_cache_failed">Error writing commands to /cache</string>
+    <string name="wifi_discaimer_message_startup">You need to connect to a Wi-Fi network to check for updates or install software.</string>
+    <string name="appStoreReinstall">Reinstall the app store</string>
+    <string name="app_store">App Stores</string>
 
 </resources>

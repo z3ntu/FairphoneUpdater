@@ -67,3 +67,22 @@ Ex: http://www.server.com/updater.zip?model=FP1U&os=4.2.2&b_n=1.8&ota_v_n=6&d=14
   </stores>
 </updater>
 ```
+
+**Updater server path structure:**
+
+```
+Root -> Server URL
+      |
+      |--> latest.zip -> Old updater config file
+      |
+      |--> FP1/   -> FP1 original and FP1 Fuse fit here since they have the same Model
+      |    |--> originalPartition/   -> FP1 with 1GB data partition 
+      |    |    |--> updater.zip
+      |    |--> unifiedPartition/    -> FP1 with unified data partition
+      |         |--> updater.zip
+      |--> FP1U
+      |    |--> updater.zip
+      |--> FP2
+      |    |--> updater.zip
+      (...)
+```

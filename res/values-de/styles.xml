@@ -1,0 +1,7 @@
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <style name="TextRegular20" parent="@style/TextRegular">
+        <item name="android:textSize">18sp</item>
+    </style>
+
+</resources>

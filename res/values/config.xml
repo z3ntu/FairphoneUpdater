@@ -36,4 +36,6 @@
 	<string name="removeTalkbackCommand" translatable="false">rm /data/app/com.google.android.marvin.talkback-*.apk</string>
 	<string name="removeText2SpeechCommand" translatable="false">rm /data/app/com.google.android.tts-*.apk</string>
 	
+	<string name="genericContentDescription" translatable="false">genericContentDescription</string>
+	
 </resources>

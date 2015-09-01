@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Fairphone Updater</string>
+    <string name="app_name">Updater</string>
     <string name="fairphone">Fairphone</string>
     <string name="android">Android</string>
     <string name="updater_service">Updater Service</string>
@@ -54,12 +54,26 @@
     <string name="want_to_change_your_os">Bist du ein fortgeschrittener Nutzer?</string>
     <string name="warning">Warnung</string>
     <string name="wifi_disabled">WLAN deaktiviert</string>
-    <string name="wifi_discaimer_message">Die Datei, die du herunterladen möchten, ist zu groß für mobile Verbindungen (~200 MB). Bitte aktiviere die WLAN-Verbindung und versuche es erneut.</string>
+    <string name="wifi_discaimer_message">Die Datei, die du herunterladen möchtest, ist zu groß für mobile Verbindungen (~200 MB). Bitte verbinde dich mit einem WLAN-Netzwerk und versuche es erneut.</string>
     <string name="your_are_about_to_install">Du bist dabei zu installieren</string>
     <string name="your_current_os_version">Dein aktuelles Betriebssystem</string>
     <string name="your_os_is_up_to_date">Dein Betriebssystem ist auf dem neusten Stand</string>
     <string name="fairphone_os_info">Dieses Fairphone Android Betriebssystem hat den besonderen Fairphone Touch mit Eigenschaften wie dem Geniess die Ruhe Widget, Edge Swipe und Zuletzt benutzt/Meist benutzt Widget.\n\nWir empfehlen das Fairphone Android Betriebssystem zu installieren für die beste Fairphone Erfahrung.</string>
     <string name="android_os_info">Dieses Stock Android Betriebssystem ist die pure Android Erfahrung ohne zusätzliche Fairphone Änderungen.</string>
     <string name="about">über</string>
+    <string name="gapps_store_install">Installiere Google Apps</string>
+    <string name="gapps_store_hide_reminder">oder verberge die Erinnerung</string>
+    <string name="title_activity_beta_enabler">Fairphone Beta Programm</string>
+    <string name="enable_beta">Aktiviere Beta</string>
+    <string name="beta_is_enabled">Beta ist aktiviert</string>
+    <string name="beta_activation_failed">Akttivierung von Beta fehlgeschlagen</string>
+    <string name="failed_mkdirs_cache_message">Erstellung von Datenverzeichnissen auf Cache fehlgeschlagen</string>
+    <string name="copy_to_cache_failed_message">Dateikopie auf Cache fehlgeschlagen</string>
+    <string name="file_not_found_message">Datei nicht gefunden</string>
+    <string name="reboot_failed">Fehler bei Neustart von Wiederherstellung</string>
+    <string name="command_write_to_cache_failed">Fehler beim Schreiben von Befehlen auf Cache</string>
+    <string name="wifi_discaimer_message_startup">Du musst dich mit einem WLAN-Netzwerk verbinden um nach Updates zu suchen oder um Software zu installieren.</string>
+    <string name="appStoreReinstall">Reinstalliere den app store</string>
+    <string name="app_store">App Stores</string>
 
 </resources>

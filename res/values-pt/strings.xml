@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Fairphone Updater</string>
+    <string name="app_name"> Updater</string>
     <string name="fairphone">Fairphone</string>
     <string name="android">Android</string>
     <string name="updater_service">Updater Service</string>
@@ -61,6 +61,19 @@
     <string name="fairphone_os_info">Este sistema operativo consiste numa adaptação do Android para o Fairphone com funcionalidades como o Peace of Mind, Edge Swipe e Your Apps Widget.\n\nRecomendamos a instalação do Android para o Fairphone no seu dispositivo para que tenha a melhor experiência.</string>
     <string name="android_os_info">Este sistema operativo é a mais pura experência Android sem qualquer modificação para o Fairphone.</string>
     <string name="about">Sobre</string>
-    <string name="wifi_discaimer_message_startup">Necessita de acesso à internet para verificar e instalar atualizações. Por favor ligue-se ao Wi-Fi.</string>
+    <string name="gapps_store_install">Instalar Google Apps</string>
+    <string name="gapps_store_hide_reminder">ou feche este lembrete</string>
+    <string name="title_activity_beta_enabler">Fairphone programa Beta</string>
+    <string name="enable_beta">Activar programa Beta</string>
+    <string name="beta_is_enabled">O programa Beta está activo</string>
+    <string name="beta_activation_failed">Falha ao activar o programa Beta</string>
+    <string name="failed_mkdirs_cache_message">Falha ao criar directorias em /cache.</string>
+    <string name="copy_to_cache_failed_message">Falha ao copiar ficheiros para a cache</string>
+    <string name="file_not_found_message">Ficheiro não encontrado</string>
+    <string name="reboot_failed">Erro ao reiniciar para o modo de recuperação</string>
+    <string name="command_write_to_cache_failed">Erro ao escrever comandos para /cache</string>
+    <string name="wifi_discaimer_message_startup">Precisa de ligar o Wi-Fi para verificar se existem actualizações ou para instalar software.</string>
+    <string name="appStoreReinstall">Reinstale a app store</string>
+    <string name="app_store">App Stores</string>
 
 </resources>

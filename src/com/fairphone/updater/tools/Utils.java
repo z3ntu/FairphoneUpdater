@@ -16,11 +16,7 @@
 
 package com.fairphone.updater.tools;
 
-import android.annotation.SuppressLint;
-import android.app.ActivityManager;
-import android.app.ActivityManager.RunningServiceInfo;
 import android.app.DownloadManager;
-import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -30,8 +26,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.os.PowerManager;
-import android.provider.DocumentsContract;
-import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
@@ -61,9 +55,13 @@ import java.math.BigInteger;
 import java.nio.channels.FileChannel;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.util.concurrent.TimeoutException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Utils
 {
@@ -138,40 +136,9 @@ public class Utils
 
     public static void startUpdaterService(Context context, boolean forceDownload)
     {
-        boolean isNotRunning = !isServiceRunning(context);
-
-        if (isNotRunning)
-        {
-            Log.e(TAG, "Starting Updater Service...");
-            Intent i = new Intent(context, UpdaterService.class);
-            context.startService(i);
-            try
-            {
-                Thread.sleep(DELAY_100_MILLIS);
-            } catch (InterruptedException e)
-            {
-                Log.w(TAG, "Start Updater service delay error: " + e.getLocalizedMessage());
-            }
-        }
-        else if (forceDownload)
-        {
-            downloadConfigFile(context, true);
-        }
-    }
-
-    private static boolean isServiceRunning(Context context)
-    {
-        boolean isRunning = false;
-        ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
-        for (RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE))
-        {
-            if (UpdaterService.class.getName().equals(service.service.getClassName()))
-            {
-                isRunning = true;
-                break;
-            }
-        }
-        return isRunning;
+        Intent i = new Intent(context, UpdaterService.class);
+        i.putExtra(UpdaterService.EXTRA_FORCE_CONFIG_FILE_DOWNLOAD, forceDownload);
+        context.startService(i);
     }
 
 // --Commented out by Inspection START (06/02/2015 12:26):
@@ -194,13 +161,6 @@ public class Utils
 //        }
 //    }
 // --Commented out by Inspection STOP (06/02/2015 12:26)
-
-    public static void downloadConfigFile(Context context, boolean forceDownload)
-    {
-        Intent i = new Intent(UpdaterService.ACTION_FAIRPHONE_UPDATER_CONFIG_FILE_DOWNLOAD);
-        i.putExtra(UpdaterService.EXTRA_FORCE_CONFIG_FILE_DOWNLOAD, forceDownload);
-        context.sendBroadcast(i);
-    }
 
     // **************************************************************************************************************
     // HELPERS
@@ -230,7 +190,7 @@ public class Utils
         return calculatedDigest.equalsIgnoreCase(md5);
     }
 
-    private static String calculateMD5(File updateFile)
+    public static String calculateMD5(File updateFile)
     {
         MessageDigest digest;
         try
@@ -440,77 +400,64 @@ public class Utils
         Version deviceVersion = VersionParserHelper.getDeviceVersion(context);
         return deviceVersion == null || TextUtils.isEmpty(deviceVersion.getName());
     }
-    
-    public static String getprop(String name, String defaultValue)
-    {
-        ProcessBuilder pb = new ProcessBuilder("/system/bin/getprop", name);
-        pb.redirectErrorStream(true);
 
-        Process p;
-        InputStream is = null;
-        try
-        {
-            p = pb.start();
-            is = p.getInputStream();
-            Scanner scan = new Scanner(is);
-            scan.useDelimiter("\n");
-            String prop = scan.next();
-            if (prop.isEmpty())
-            {
-                return defaultValue;
-            }
-            return prop;
-        } catch (NoSuchElementException e)
-        {
-            Log.w(TAG, "Error reading prop "+name+". Defaulting to " + defaultValue + ": " + e.getLocalizedMessage());
-            return defaultValue;
-        } catch (Exception e)
-        {
-            e.printStackTrace();
-        } finally
-        {
-            if (is != null)
-            {
-                try
-                {
-                    is.close();
-                } catch (Exception e)
-                {
-	                Log.d(TAG, "Unexpected issue: "+e.getLocalizedMessage() );
-                }
+    private static Map<String,String> buildProps;
+    public static Map<String,String> getpropAll(){
+
+        if(buildProps==null) {
+            buildProps = new HashMap<>();
+            ProcessBuilder pb = new ProcessBuilder("/system/bin/getprop");
+            pb.redirectErrorStream(true);
+            Pattern propRegex = Pattern.compile("\\[([^\\]]+)\\]: \\[([^\\]]+)\\]");
+
+            Process p;
+            InputStream is = null;
+            try {
+                p = pb.start();
+                is = p.getInputStream();
+                Scanner scan = new Scanner(is);
+                String prop;
+                do {
+                    prop = scan.nextLine();
+                    Matcher match = propRegex.matcher(prop);
+                    if(match.find()){
+                        buildProps.put(match.group(1), match.group(2));
+                    }
+                } while(!prop.isEmpty());
+            } catch (NoSuchElementException e) {
+            } catch (IOException e) {
             }
         }
-        return defaultValue;
+        return buildProps;
     }
 
-	public static void setBetaPropToEnable() {
-		if (PrivilegeChecker.isPrivilegedApp()) {
-			setBetaPropToEnablePrivileged();
-		} else {
-			setBetaPropToEnableUnprivileged();
-		}
-	}
+    public static String getprop(String name, String defaultValue)
+    {
+        String result;
+        if (getpropAll().containsKey(name)){
+            result = getpropAll().get(name);
+        } else {
+            result = defaultValue;
+        }
+        return result;
+    }
 
-	private static void setBetaPropToEnablePrivileged() {
-	    ProcessBuilder pb = new ProcessBuilder("/system/bin/setprop", BetaEnabler.FAIRPHONE_BETA_PROPERTY, BetaEnabler.BETA_ENABLED);
-	    try {
-		    Process p = pb.start();
-		    p.waitFor();
-	    } catch (IOException | InterruptedException e) {
-		    Log.d(TAG, "Failed to setprop: " + e.getLocalizedMessage());
-	    }
-	}
-
-	private static void setBetaPropToEnableUnprivileged()
+	public static void setBetaPropToEnable()
     {
         if(RootTools.isAccessGiven()) {
-            CommandCapture command = new CommandCapture(0, "setprop "+ BetaEnabler.FAIRPHONE_BETA_PROPERTY+" "+BetaEnabler.BETA_ENABLED);
+            CommandCapture command = new CommandCapture(0, "/system/bin/setprop "+ BetaEnabler.FAIRPHONE_BETA_PROPERTY+" "+BetaEnabler.BETA_ENABLED);
             try {
                 Shell.runRootCommand(command);
             } catch (IOException | TimeoutException | RootDeniedException e) {
 	            Log.d(TAG, "Failed to setprop: " + e.getLocalizedMessage());
             }
         }
+        try {
+            Thread.sleep(200);
+        } catch (InterruptedException e) {
+
+        }
+        buildProps = null;
     }
 
     public static String getOtaPackagePath(Resources resources, DownloadableItem item, boolean isVersion, boolean isZipInstall){

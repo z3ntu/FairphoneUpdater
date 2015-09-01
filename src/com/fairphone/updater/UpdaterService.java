@@ -16,12 +16,6 @@
 
 package com.fairphone.updater;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.nio.charset.Charset;
-
 import android.app.DownloadManager;
 import android.app.DownloadManager.Request;
 import android.app.Notification;
@@ -49,8 +43,6 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
 
-import java.util.concurrent.TimeoutException;
-
 import com.fairphone.updater.data.UpdaterData;
 import com.fairphone.updater.data.Version;
 import com.fairphone.updater.data.VersionParserHelper;
@@ -61,19 +53,29 @@ import com.fairphone.updater.tools.Utils;
 import com.stericson.RootTools.execution.CommandCapture;
 import com.stericson.RootTools.execution.Shell;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.channels.FileChannel;
+import java.nio.charset.Charset;
+import java.util.concurrent.TimeoutException;
+
 
 public class UpdaterService extends Service
 {
 
     public static final String LAST_CONFIG_DOWNLOAD_IN_MS = "LAST_CONFIG_DOWNLOAD_IN_MS";
     private static final int CONFIG_FILE_DOWNLOAD_TIMEOUT_MILLIS = 23500;
-    public static final String ACTION_FAIRPHONE_UPDATER_CONFIG_FILE_DOWNLOAD = "FAIRPHONE_UPDATER_CONFIG_FILE_DOWNLOAD";
     public static final String EXTRA_FORCE_CONFIG_FILE_DOWNLOAD = "FORCE_DOWNLOAD";
     
     private static final String TAG = UpdaterService.class.getSimpleName();
 
     public static final String PREFERENCE_LAST_CONFIG_DOWNLOAD_ID = "LastConfigDownloadId";
     public static final String PREFERENCE_REINSTALL_GAPPS = "ReinstallGappsOmnStartUp";
+    public static final String PREFERENCE_CONFIG_MD_5 = "CONFIG_MD5";
     private DownloadManager mDownloadManager = null;
     private DownloadBroadCastReceiver mDownloadBroadCastReceiver = null;
 
@@ -85,8 +87,9 @@ public class UpdaterService extends Service
 	private SharedPreferences mSharedPreferences;
 
     private final static long DOWNLOAD_GRACE_PERIOD_IN_MS = 24 /* hour */ * Utils.MINUTES_IN_HOUR /* minute */ * Utils.SECONDS_IN_MINUTE /* second */ * 1000 /* millisecond */;
+    private BroadcastReceiver networkStateReceiver;
 
-	@Override
+    @Override
     public int onStartCommand(Intent intent, int flags, int startId)
     {
         // remove the logs
@@ -105,26 +108,13 @@ public class UpdaterService extends Service
 
         setupConnectivityMonitoring();
 
-        if (hasInternetConnection())
+        if (Utils.isWiFiEnabled(getApplicationContext()))
         {
-            downloadConfigFile(false);
+            downloadConfigFile(intent != null && intent.getBooleanExtra(EXTRA_FORCE_CONFIG_FILE_DOWNLOAD, false));
         }
 
         // setup the gapps installer
         GappsInstallerHelper.checkGappsAreInstalled(getApplicationContext());
-
-	    BroadcastReceiver mBCastConfigFileDownload = new BroadcastReceiver() {
-
-		    @Override
-		    public void onReceive(Context context, Intent intent) {
-			    if (hasInternetConnection()) {
-				    boolean forceDownload = intent.getBooleanExtra(EXTRA_FORCE_CONFIG_FILE_DOWNLOAD, false);
-				    downloadConfigFile(forceDownload);
-			    }
-		    }
-	    };
-
-        getApplicationContext().registerReceiver(mBCastConfigFileDownload, new IntentFilter(ACTION_FAIRPHONE_UPDATER_CONFIG_FILE_DOWNLOAD));
 
         runInstallationDisclaimer(getApplicationContext());
 
@@ -164,7 +154,7 @@ public class UpdaterService extends Service
         PendingIntent contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, 0);
 
 	    NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context).setSmallIcon(R.drawable.updater_tray_icon)
-			    .setContentTitle(context.getResources().getString(R.string.app_name))
+			    .setContentTitle(context.getResources().getString(R.string.app_full_name))
 			    .setContentText(context.getResources().getString(R.string.appStoreReinstall))
 			    .setAutoCancel(true)
 			    .setDefaults(Notification.DEFAULT_SOUND)
@@ -178,7 +168,7 @@ public class UpdaterService extends Service
         long now = System.currentTimeMillis();
         long last_download = mSharedPreferences.getLong(LAST_CONFIG_DOWNLOAD_IN_MS, 0L);
         if( forceDownload || now > (last_download + DOWNLOAD_GRACE_PERIOD_IN_MS) ) {
-            Log.d(TAG, "Downloading updater configuration file.");
+            Log.i(TAG, "Downloading updater configuration file.");
             // remove the old file if its still there for some reason
             removeLatestFileDownload(getApplicationContext());
     
@@ -364,7 +354,7 @@ public class UpdaterService extends Service
         NotificationCompat.Builder builder =
                 new NotificationCompat.Builder(context).setSmallIcon(R.drawable.updater_tray_icon_small)
                         .setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.drawable.updater_tray_icon))
-                        .setContentTitle(context.getResources().getString(R.string.app_name))
+                        .setContentTitle(context.getResources().getString(R.string.app_full_name))
                         .setContentText(context.getResources().getString(R.string.fairphone_update_message));
 
         Intent resultIntent = new Intent(context, FairphoneUpdater.class);
@@ -414,53 +404,49 @@ public class UpdaterService extends Service
     private void setupConnectivityMonitoring()
     {
 
-        // Check current connectivity status
-        ConnectivityManager manager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        boolean is3g = manager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).isConnectedOrConnecting();
-        boolean isWifi = manager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).isConnectedOrConnecting();
-        mInternetConnectionAvailable = isWifi || is3g;
+        if (networkStateReceiver == null) {
+            // Check current connectivity status
+            mInternetConnectionAvailable = Utils.isWiFiEnabled(getApplicationContext());
 
-        // Setup monitoring for future connectivity status changes
-        BroadcastReceiver networkStateReceiver = new BroadcastReceiver()
-        {
-            @Override
-            public void onReceive(Context context, Intent intent)
+            // Setup monitoring for future connectivity status changes
+            networkStateReceiver = new BroadcastReceiver()
             {
-                if (intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, false))
+                @Override
+                public void onReceive(Context context, Intent intent)
                 {
-                    Log.i(TAG, "Lost network connectivity.");
-                    mInternetConnectionAvailable = false;
-                    if (mLatestFileDownloadId != 0 && mDownloadManager != null)
+                    if (intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, false)) {
+                        Log.i(TAG, "Lost network connectivity.");
+                        mInternetConnectionAvailable = false;
+                        if (mLatestFileDownloadId != 0 && mDownloadManager != null)
+                        {
+                            onDownloadStatus(mLatestFileDownloadId, new Runnable() {
+                                @Override
+                                public void run() {
+                                    Log.d(TAG, "Removing pending download.");
+                                    mDownloadManager.remove(mLatestFileDownloadId);
+                                    saveLatestDownloadId(0);
+                                }
+                            });
+                        }
+                    }
+                    else
                     {
-                        onDownloadStatus(mLatestFileDownloadId, new Runnable() {
-                            @Override
-                            public void run() {
-                                Log.d(TAG, "Removing pending download.");
-                                mDownloadManager.remove(mLatestFileDownloadId);
-                                saveLatestDownloadId(0);
+                        int conn_type = intent.getIntExtra(ConnectivityManager.EXTRA_NETWORK_TYPE, ConnectivityManager.TYPE_DUMMY);
+                        if( conn_type == ConnectivityManager.TYPE_WIFI ) {
+                            Log.i(TAG, "Network connectivity potentially available.");
+                            if (!mInternetConnectionAvailable) {
+                                downloadConfigFile(false);
                             }
-                        });
+                            mInternetConnectionAvailable = true;
+                        }
                     }
                 }
-                else
-                {
-                    Log.i(TAG, "Network connectivity potentially available.");
-                    if (!mInternetConnectionAvailable)
-                    {
-                        downloadConfigFile(false);
-                    }
-                    mInternetConnectionAvailable = true;
-                }
-            }
-        };
+            };
 
-        IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
-        registerReceiver(networkStateReceiver, filter);
-    }
+            IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+            registerReceiver(networkStateReceiver, filter);
 
-    private boolean hasInternetConnection()
-    {
-        return mInternetConnectionAvailable;
+        }
     }
 
     private void setupDownloadManager()
@@ -478,11 +464,22 @@ public class UpdaterService extends Service
         }
     }
 
+    private static void copyConfigToData(Context context) throws IOException {
+        Resources resources = context.getApplicationContext().getResources();
+        String targetPath = Environment.getExternalStorageDirectory() + resources.getString(R.string.updaterFolder);
+        FileInputStream inStream = new FileInputStream(targetPath + resources.getString(R.string.configFilename) + resources.getString(R.string.config_xml));
+        FileOutputStream outStream = context.openFileOutput(resources.getString(R.string.configFilename) + resources.getString(R.string.config_xml), MODE_PRIVATE);
+        FileChannel inChannel = inStream.getChannel();
+        FileChannel outChannel = outStream.getChannel();
+        inChannel.transferTo(0, inChannel.size(), outChannel);
+        inStream.close();
+        outStream.close();
+    }
+
     private static void checkVersionValidation(Context context)
     {
         Version latestVersion = VersionParserHelper.getLatestVersion(context.getApplicationContext());
         Version currentVersion = VersionParserHelper.getDeviceVersion(context.getApplicationContext());
-
         if (latestVersion != null)
         {
             if (latestVersion.isNewerVersionThan(currentVersion))
@@ -497,7 +494,12 @@ public class UpdaterService extends Service
         context.sendBroadcast(updateIntent);
     }
 
-    public static boolean readUpdaterData(Context context)
+    public static boolean readUpdaterData(Context context){
+        Version latestVersion = VersionParserHelper.getLatestVersion(context.getApplicationContext());
+        return latestVersion != null;
+    }
+
+    public static boolean updateUpdaterData(Context context)
     {
 
         boolean retVal = false;
@@ -510,20 +512,32 @@ public class UpdaterService extends Service
 
         if (file.exists())
         {
-            if (RSAUtils.checkFileSignature(context, filePath, targetPath))
-            {
-                checkVersionValidation(context);
+            String md5sum = Utils.calculateMD5(file);
+            SharedPreferences sp = context.getApplicationContext().getSharedPreferences(FairphoneUpdater.FAIRPHONE_UPDATER_PREFERENCES, MODE_PRIVATE);
+            if(sp.getString(PREFERENCE_CONFIG_MD_5, "").equals(md5sum)){
                 retVal = true;
-            }
-            else
-            {
-                //Toast.makeText(context, resources.getString(R.string.invalid_signature_download_message), Toast.LENGTH_LONG).show();
-                final boolean notDeleted = !file.delete();
-	            if(notDeleted) {
-		            Log.d(TAG, "Unable to delete "+file.getAbsolutePath());
-	            }
+            } else {
+                if (RSAUtils.checkFileSignature(context, filePath, targetPath)) {
+                    try {
+                        copyConfigToData(context);
+                        checkVersionValidation(context);
+                        retVal = true;
+                        sp.edit().putString(PREFERENCE_CONFIG_MD_5, md5sum).apply();
+                    } catch (IOException e) {
+                        Log.e(TAG, "Failed to store configuration " + e.getLocalizedMessage());
+                        retVal = false;
+                    }
+                } else {
+                    //Toast.makeText(context, resources.getString(R.string.invalid_signature_download_message), Toast.LENGTH_LONG).show();
+                    final boolean notDeleted = !file.delete();
+                    if(notDeleted) {
+                        Log.d(TAG, "Unable to delete "+file.getAbsolutePath());
+                    }
 
+                }
             }
+        } else {
+            Log.wtf(TAG, "No file");
         }
 
         return retVal;
@@ -617,13 +631,10 @@ public class UpdaterService extends Service
                     case DownloadManager.STATUS_SUCCESSFUL:
                     {
                         Log.d(TAG, "Download successful.");
-                        String filePath = mDownloadManager.getUriForDownloadedFile(mLatestFileDownloadId).getPath();
 
-                        String targetPath = Environment.getExternalStorageDirectory() + resources.getString(R.string.updaterFolder);
-
-                        if (RSAUtils.checkFileSignature(context, filePath, targetPath))
+                        if (updateUpdaterData(context))
                         {
-                            checkVersionValidation(context);
+                            removeLatestFileDownload(context);
                         }
                         else
                         {

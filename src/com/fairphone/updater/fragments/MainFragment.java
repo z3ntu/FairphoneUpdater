@@ -108,6 +108,8 @@ public class MainFragment extends BaseFragment
         mDevModeUrlButton = (Button)view.findViewById(R.id.dev_mode_url_ok_button);
         mDevModeUrlContainer = (LinearLayout)view.findViewById(R.id.dev_mode_url_container);
 
+        mDevModeUrlEditText.setText(FairphoneUpdater.otaDevDownloadUrl);
+
         mDevModeUrlButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {

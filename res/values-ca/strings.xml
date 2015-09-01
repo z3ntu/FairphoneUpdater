@@ -1,18 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Fairphone Updater</string>
+    <string name="app_name">Updater</string>
     <string name="fairphone">Fairphone</string>
     <string name="android">Android</string>
     <string name="updater_service">Updater Service</string>
+    <string name="a_different_os_from_the_current">un Sistema Operatiu diferent que el que tens instal·lat</string>
+    <string name="an_older_version_of_os">una versió més vella del teu sistema operatiu.</string>
     <string name="fairphone_os">Android for Fairphone</string>
     <string name="fairphone_update_message_title">S\'estan comprovant les actualitzacions</string>
     <string name="google_apps_disclaimer_agree">Accepto</string>
     <string name="google_apps_disclaimer_description">Per tenir accéss a l\'experiència de Google i Android completa com la app store, el seu telèfon necessita contingut i software addicional. Desafortunadament, com Fairphone no té la llicència necessària, no podem pre-instal·lar aquest contingut, ni el podem proveir directament. Estem treballant amb el propietari dels continguts per aconseguir-ho.\nEsculli « Accept » a continuació per a descarregar el contingut des d\'una font externa segura. La instal·lació d\'aquest contingut és la seva responsabilitat.\nSi no accepta, el seu telèfon continuarà funcionant amb aplicacions Android bàsiques, però perdrà alguns serveis de Google.</string>
+    <string name="google_apps_disclaimer_title">Instal·lar Google Apps</string>
     <string name="google_apps_initial_title">Instal·lar\nGoogle Apps</string>
     <string name="google_apps_installer_name">Instal·lador Google Apps</string>
     <string name="google_apps_re_install_title">Google Apps instal·lat</string>
     <string name="wifi_disabled">Wi-Fi desconnectat</string>
-    <string name="wifi_discaimer_message">L\'arxiu que està intentant descarregar és massa gran per connexions mòbils (~200mb). Si us plau, connecti amb un punt Wi-Fi i provi de nou.</string>
+    <string name="wifi_discaimer_message">L\'arxiu que estàs intentant descarregar és massa gran si utilitzes una connexió mòbil (~200mb). Si us plau, connecta amb un punt Wi-Fi i prova de nou.</string>
+    <string name="gapps_store_install">Instal·lar Google Apps</string>
+    <string name="gapps_store_hide_reminder">o tanca aquest recordatori</string>
+    <string name="title_activity_beta_enabler">Fairphone programa beta</string>
+    <string name="enable_beta">Activa programa beta</string>
+    <string name="beta_is_enabled">Programa beta està activat</string>
+    <string name="beta_activation_failed">Fallada en activar programa beta</string>
+    <string name="failed_mkdirs_cache_message">Fallada en intentar crear directoris a /cache</string>
+    <string name="copy_to_cache_failed_message">Fallada en copiar directoris a /cache</string>
+    <string name="file_not_found_message">Directori no trobat</string>
+    <string name="reboot_failed">Error en intentar reiniciar en mode de recuperació</string>
+    <string name="command_write_to_cache_failed">Error en escriure ordres a /cache</string>
+    <string name="wifi_discaimer_message_startup">Has de connectar-te a un punt Wi-Fi per a comprovar si existeixen noves actualitzacions o per a instal·lar nou software.</string>
+    <string name="appStoreReinstall">Reinstal·lar la tenda d\'aplicacions (app store)</string>
+    <string name="app_store">App Stores</string>
 
 </resources>

@@ -32,6 +32,7 @@ import org.xmlpull.v1.XmlPullParserFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Locale;
@@ -49,36 +50,39 @@ public class VersionParserHelper
     private static final String CURRENT_VERSION_IMAGE_TYPE = "fairphone.ota.image_type";
     private static final String CURRENT_VERSION_BUILD_DATE = "ro.build.date.utc";
 
+    private static Version version;
     public static Version getDeviceVersion(Context context)
     {
+        if (version == null){
+            Version versionBuilder = new Version();
+            String[] suportedDevices = context.getResources().getString(R.string.knownFPDevices).split(";");
+            String modelWithoutSpaces = Build.MODEL.replaceAll("\\s", "");
+            boolean knownFPDevice = false;
+            for(String device : suportedDevices){
+                knownFPDevice = knownFPDevice || device.equals(modelWithoutSpaces);
+            }
 
-        Version version = new Version();
-        String[] suportedDevices = context.getResources().getString(R.string.knownFPDevices).split(";");
-        String modelWithoutSpaces = Build.MODEL.replaceAll("\\s", "");
-        boolean knownFPDevice = false;
-        for(String device : suportedDevices){
-            knownFPDevice = knownFPDevice || device.equals(modelWithoutSpaces);
-        }
-        
-        try
-        {
-            version.setNumber(Integer.valueOf(getSystemData(context, CURRENT_VERSION_NUMBER, knownFPDevice)));
-        } catch (NumberFormatException e)
-        {
-            int defaultVersionNumber = context.getResources().getInteger(R.integer.defaultVersionNumber);
-            Log.w(TAG, "Error parsing current version number. Defaulting to " + defaultVersionNumber + ": " + e.getLocalizedMessage());
-            version.setNumber(defaultVersionNumber);
-        }
-        version.setName(getSystemData(context, CURRENT_VERSION_NAME, knownFPDevice));
-        version.setBuildNumber(getSystemData(context, CURRENT_VERSION_BUILD_NUMBER, knownFPDevice));
-        version.setAndroidVersion(getSystemData(context, CURRENT_ANDROID_VERSION, knownFPDevice));
-        version.setImageType(getSystemData(context, CURRENT_VERSION_IMAGE_TYPE, knownFPDevice));
-        version.setReleaseDate(getSystemData(context, CURRENT_VERSION_BUILD_DATE, knownFPDevice));
-        version.setBetaStatus(getSystemData(context, CURRENT_BETA_STATUS, knownFPDevice));
+            try
+            {
+                versionBuilder.setNumber(Integer.valueOf(getSystemData(context, CURRENT_VERSION_NUMBER, knownFPDevice)));
+            } catch (NumberFormatException e)
+            {
+                int defaultVersionNumber = context.getResources().getInteger(R.integer.defaultVersionNumber);
+                Log.w(TAG, "Error parsing current version number. Defaulting to " + defaultVersionNumber + ": " + e.getLocalizedMessage());
+                versionBuilder.setNumber(defaultVersionNumber);
+            }
+            versionBuilder.setName(getSystemData(context, CURRENT_VERSION_NAME, knownFPDevice));
+            versionBuilder.setBuildNumber(getSystemData(context, CURRENT_VERSION_BUILD_NUMBER, knownFPDevice));
+            versionBuilder.setAndroidVersion(getSystemData(context, CURRENT_ANDROID_VERSION, knownFPDevice));
+            versionBuilder.setImageType(getSystemData(context, CURRENT_VERSION_IMAGE_TYPE, knownFPDevice));
+            versionBuilder.setReleaseDate(getSystemData(context, CURRENT_VERSION_BUILD_DATE, knownFPDevice));
+            versionBuilder.setBetaStatus(getSystemData(context, CURRENT_BETA_STATUS, knownFPDevice));
 
-        Version versionData = UpdaterData.getInstance().getVersion(version.getImageType(), version.getNumber());
-        version.setThumbnailLink(versionData != null ? versionData.getThumbnailLink() : "");
-        version.setReleaseNotes(Locale.getDefault().getLanguage(), versionData != null ? versionData.getReleaseNotes(Locale.getDefault().getLanguage()) : "");
+            Version versionData = UpdaterData.getInstance().getVersion(versionBuilder.getImageType(), versionBuilder.getNumber());
+            versionBuilder.setThumbnailLink(versionData != null ? versionData.getThumbnailLink() : "");
+            versionBuilder.setReleaseNotes(Locale.getDefault().getLanguage(), versionData != null ? versionData.getReleaseNotes(Locale.getDefault().getLanguage()) : "");
+            version = versionBuilder;
+        }
 
         return version;
     }
@@ -121,15 +125,17 @@ public class VersionParserHelper
 
         Version latest = null;
         Resources resources = context.getResources();
-        String filePath =
-                Environment.getExternalStorageDirectory() + resources.getString(R.string.updaterFolder) + resources.getString(R.string.configFilename);
-        File file = new File(filePath + resources.getString(R.string.config_xml));
+        FileInputStream fis = null;
+        try {
+            fis = context.openFileInput(resources.getString(R.string.configFilename) + resources.getString(R.string.config_xml));
+        } catch (FileNotFoundException e){
+        }
 
-        if (file.exists())
+        if (fis != null)
         {
             try
             {
-                latest = parseLatestXML(context, file);
+                latest = parseLatestXML(context, fis);
             } catch (XmlPullParserException e)
             {
                 Log.e(TAG, "Could not start the XML parser", e);
@@ -159,7 +165,12 @@ public class VersionParserHelper
 
     // @formatter:on
 
-    private static Version parseLatestXML(Context context, File latestFile) throws XmlPullParserException, IOException
+    private static Version parseLatestXML(Context context, File latestFile) throws XmlPullParserException, IOException {
+        FileInputStream fis = new FileInputStream(latestFile);
+        return parseLatestXML(context, fis);
+    }
+
+    private static Version parseLatestXML(Context context, FileInputStream fis) throws XmlPullParserException, IOException
     {
 
         Version version = null;
@@ -172,7 +183,6 @@ public class VersionParserHelper
         XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
         factory.setNamespaceAware(true);
 
-        FileInputStream fis = new FileInputStream(latestFile);
 
         XmlPullParser xpp = factory.newPullParser();
 

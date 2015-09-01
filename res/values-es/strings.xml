@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Fairphone Updater</string>
+    <string name="app_name">Updater</string>
     <string name="fairphone">Fairphone</string>
     <string name="android">Android</string>
     <string name="updater_service">Updater Service</string>
@@ -50,16 +50,30 @@
     <string name="restart_your_phone_message">Reinicia tu teléfono para completar la instalación.</string>
     <string name="take_me_back">Volver atrás</string>
     <string name="update_is_available">Actualización disponible</string>
-    <string name="update_version">Actualiza la versión.</string>
+    <string name="update_version">Actualiza la versión</string>
     <string name="want_to_change_your_os">¿Eres un usuario avanzado?</string>
     <string name="warning">Aviso</string>
     <string name="wifi_disabled">Wi-Fi desconectado</string>
-    <string name="wifi_discaimer_message">El archivo que estás intentando descargar es demasiado grande para conexiones móviles (~200mb). Por favor, conéctese a un punto Wi-Fi e inténtelo de nuevo.</string>
+    <string name="wifi_discaimer_message">El archivo que estás intentando descargar es demasiado grande para conexiones móviles (~200mb). Por favor, conéctate a un punto Wi-Fi e inténtalo de nuevo.</string>
     <string name="your_are_about_to_install">Estás a punto de instalar</string>
     <string name="your_current_os_version">La versión actual de tu sistema operativo</string>
     <string name="your_os_is_up_to_date">Tu sistema operativo está actualizado.</string>
     <string name="fairphone_os_info">El sistema operativo Fairphone para Android tiene algunas modificaciones y adiciones como el widget Peace of Mind, el menu lateral y el widget con tus aplicaciones recientemente o más usadas.\n\nTe recomendamos instalar Fairphone Android en tu teléfono para tener la mejor experiencia de usuario.</string>
     <string name="android_os_info">Stock Android es la versión pura de Android sin modificaciones hechas por Fairphone.</string>
     <string name="about">acerca de</string>
+    <string name="gapps_store_install">Instalar Google Apps</string>
+    <string name="gapps_store_hide_reminder">o cierra este recordatorio</string>
+    <string name="title_activity_beta_enabler">Fairphone Programa Beta</string>
+    <string name="enable_beta">Activar Programa Beta</string>
+    <string name="beta_is_enabled">Beta esta activado</string>
+    <string name="beta_activation_failed">Fallo al intentar activar el programa Beta</string>
+    <string name="failed_mkdirs_cache_message">Fallo al intentar crear directorios en /cache</string>
+    <string name="copy_to_cache_failed_message">Fallo al intentar copiar archivo a /cache</string>
+    <string name="file_not_found_message">Archivo no encontrado</string>
+    <string name="reboot_failed">Error al intentar reiniciar en modo de recuperación</string>
+    <string name="command_write_to_cache_failed">Error al escribir comandos en /cache</string>
+    <string name="wifi_discaimer_message_startup">Debes conectarte a un punto Wi-Fi para comprobar si existen nuevas actualizaciones o para instalar software.</string>
+    <string name="appStoreReinstall">Reinstalar la tienda de aplicaciones (app store)</string>
+    <string name="app_store">App Stores</string>
 
 </resources>

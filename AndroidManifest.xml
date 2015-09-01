@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           xmlns:tools="http://schemas.android.com/tools"
           package="com.fairphone.updater"
-    android:versionCode="26"
-    android:versionName="26 (FP 1.8.3)" >
+    android:versionCode="31"
+    android:versionName="31" >
 
     <uses-sdk
         android:minSdkVersion="17"
@@ -28,13 +28,13 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@drawable/updater_app_icon"
-        android:label="@string/app_name"
+        android:icon="@drawable/updater"
+        android:label="@string/app_full_name"
         android:theme="@style/AppTheme"
         android:supportsRtl="true">
         <service
             android:name=".UpdaterService"
-            android:icon="@drawable/updater_app_icon_small"
+            android:icon="@drawable/updater"
             android:label="@string/updater_service" />
 
         <receiver
@@ -54,7 +54,7 @@
 
         <receiver
             android:name=".widgets.gapps.GoogleAppsInstallerWidget"
-            android:icon="@drawable/updater_app_icon"
+            android:icon="@drawable/updater"
             android:label="@string/google_apps_installer_name" >
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />

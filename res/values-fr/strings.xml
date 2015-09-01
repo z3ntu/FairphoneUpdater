@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Fairphone Updater</string>
+    <string name="app_name">Updater</string>
     <string name="fairphone">Fairphone</string>
     <string name="android">Android</string>
     <string name="updater_service">Updater Service</string>
@@ -54,12 +54,26 @@
     <string name="want_to_change_your_os">Êtes-vous un utilisateur avancé ?</string>
     <string name="warning">Avertissement</string>
     <string name="wifi_disabled">Fonction Wi-Fi désactivée</string>
-    <string name="wifi_discaimer_message">Le fichier que vous essayez de télécharger est trop volumineux pour les connexions mobiles (~200 Mo). Activez la connexion Wi-Fi et réessayez.</string>
+    <string name="wifi_discaimer_message">Le fichier que vous tentez de télécharger est trop volumineux pour les connexions mobiles (~200 Mo). Connectez-vous au réseau Wi-Fi et réessayez.</string>
     <string name="your_are_about_to_install">Vous êtes sur le point d\'installer</string>
     <string name="your_current_os_version">Version actuelle de votre système d\'exploitation actuel</string>
     <string name="your_os_is_up_to_date">Votre système d\'exploitation est à jour</string>
     <string name="fairphone_os_info">Ce système d\'exploitation Android pour Fairphone intègre une couche Fairphone comprenant les widgets Peace of Mind, Edge Swipe et Last Used/Most Used Apps.\n\nPour profiter pleinement de votre Fairphone, nous vous conseillons d\'installer Android pour Fairphone.</string>
     <string name="android_os_info">Ce système d\'exploitation Stock Android est une version pure d\'Android, sans aucune modification par Fairphone.</string>
     <string name="about">environ</string>
+    <string name="gapps_store_install">Installer les Google Apps</string>
+    <string name="gapps_store_hide_reminder">ou fermer ce rappel</string>
+    <string name="title_activity_beta_enabler">Programme bêta Fairphone</string>
+    <string name="enable_beta">Activer le programme bêta</string>
+    <string name="beta_is_enabled">Bêta activé</string>
+    <string name="beta_activation_failed">Échec d\'activation du programme bêta</string>
+    <string name="failed_mkdirs_cache_message">Échec de création de répertoires sur /cache</string>
+    <string name="copy_to_cache_failed_message">Échec de copie du fichier sur /cache</string>
+    <string name="file_not_found_message">Fichier introuvable</string>
+    <string name="reboot_failed">Erreur du redémarrage en mode restauration</string>
+    <string name="command_write_to_cache_failed">Érreur d\'écriture des commandes sur /cache</string>
+    <string name="wifi_discaimer_message_startup">Vous devez vous connecter à un réseau Wi-Fi pour vérifier l\'existence de mises à jour ou installer le logiciel.</string>
+    <string name="appStoreReinstall">Réinstaller la boutique d\'applications</string>
+    <string name="app_store">App Stores</string>
 
 </resources>

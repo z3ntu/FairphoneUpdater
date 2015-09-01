@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Fairphone Updater</string>
+    <string name="app_name">Updater</string>
     <string name="fairphone">Fairphone</string>
     <string name="android">Android</string>
     <string name="updater_service">Updater Service</string>
@@ -54,12 +54,26 @@
     <string name="want_to_change_your_os">Ben je een geavanceerde gebruiker?</string>
     <string name="warning">Waarschuwing</string>
     <string name="wifi_disabled">Wi-Fi niet beschikbaar</string>
-    <string name="wifi_discaimer_message">Het bestand dat je probeert te downloaden is te groot voor mobiele verbindingen (~200MB). Breng de Wi-Fi verbinding tot stand en probeer het opnieuw.</string>
+    <string name="wifi_discaimer_message">Het bestand dat je probeert te downloaden is te groot voor mobiele verbindingen (~200MB). Maak verbinding met een Wi-Fi netwerk en probeer het opnieuw.</string>
     <string name="your_are_about_to_install">Je staat op het punt te installeren</string>
     <string name="your_current_os_version">Je huidige versie van het besturingssysteem</string>
     <string name="your_os_is_up_to_date">Je besturingssysteem is up-to-date</string>
     <string name="fairphone_os_info">Dit Android voor Fairphone besturingssysteem heeft een extra laag van Fairphone zelf, met functies zoals de Geniet van de Rust widget, Edge Swipe en de Laatst gebruikte / Meest gebruikte Apps widget.\n\nWij raden aan Android for Fairphone op je apparaat te installeren voor de beste Fairphone beleving.</string>
     <string name="android_os_info">Dit Stock Android besturingssysteem is de pure Android ervaring zonder de extra Fairphone functies.</string>
     <string name="about">over</string>
+    <string name="gapps_store_install">Installeer Google Apps</string>
+    <string name="gapps_store_hide_reminder">of sluit deze melding</string>
+    <string name="title_activity_beta_enabler">Fairphone Beta programma</string>
+    <string name="enable_beta">Activeer Beta</string>
+    <string name="beta_is_enabled">Beta is geactiveerd</string>
+    <string name="beta_activation_failed">Fout tijdens Beta activering</string>
+    <string name="failed_mkdirs_cache_message">Fout bij creëren folders in /cache</string>
+    <string name="copy_to_cache_failed_message">Fout bij kopiëren bestand naar /cache</string>
+    <string name="file_not_found_message">Bestand niet gevonden</string>
+    <string name="reboot_failed">Fout bij herstarten van recovery</string>
+    <string name="command_write_to_cache_failed">Fout bij wegschrijven commands naar /cache</string>
+    <string name="wifi_discaimer_message_startup">Je dient verbonden te zijn met een Wi-Fi netwerk voor het controleren op updates en het installeren van software.</string>
+    <string name="appStoreReinstall">Herinstalleer de app store</string>
+    <string name="app_store">App Stores</string>
 
 </resources>

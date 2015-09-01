@@ -195,7 +195,12 @@ public class DownloadAndRestartFragment extends BaseFragment
             case NORMAL:
             default:
                 Log.w(TAG, "Wrong State: " + state + "\nOnly DOWNLOAD and PREINSTALL are supported");
-                mainActivity.onBackPressed();
+                mainActivity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mainActivity.onBackPressed();
+                    }
+                });
                 return;
 
         }
@@ -211,7 +216,12 @@ public class DownloadAndRestartFragment extends BaseFragment
                 {
                     Utils.clearCache();
                 }
-                mainActivity.onBackPressed();
+                mainActivity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mainActivity.onBackPressed();
+                    }
+                });
             }
         });
     }
@@ -386,6 +396,7 @@ public class DownloadAndRestartFragment extends BaseFragment
         super.onResume();
 
         setupInstallationReceivers();
+
         registerDownloadBroadCastReceiver();
 
         registerNetworkStatusBroadcastReceiver();
@@ -405,7 +416,6 @@ public class DownloadAndRestartFragment extends BaseFragment
                 mDownloadCompleteLabel.setVisibility(View.VISIBLE);
             }
         }
-
         toggleDownloadProgressAndRestart();
     }
 
@@ -422,7 +432,12 @@ public class DownloadAndRestartFragment extends BaseFragment
                 {
                     Log.w(TAG, "Aborted due to connection failure.");
                     abortUpdateProcess("");
-	                mainActivity.onBackPressed();
+                    mainActivity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mainActivity.onBackPressed();
+                        }
+                    });
                 }
             }
         };
@@ -524,6 +539,13 @@ public class DownloadAndRestartFragment extends BaseFragment
                             error = resources.getString(R.string.error_downloading);
                         }
                         abortUpdateProcess(error);
+                        mainActivity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                mainActivity.onBackPressed();
+                            }
+                        });
+
                         break;
                     default:
                         break;
@@ -532,6 +554,7 @@ public class DownloadAndRestartFragment extends BaseFragment
             else
             {
                 abortUpdateProcess("");
+
             }
 
             if (cursor != null)
@@ -555,15 +578,7 @@ public class DownloadAndRestartFragment extends BaseFragment
 
             if (file.exists())
             {
-                if (Utils.checkMD5(item.getMd5Sum(), file) || mIsZipInstall)
-                {
-                    copyUpdateToCache(file);
-                }
-                else
-                {
-                    Toast.makeText(mainActivity, resources.getString(R.string.invalid_md5_download_message), Toast.LENGTH_LONG).show();
-                    removeLastUpdateDownload();
-                }
+                copyUpdateToCache(file);
             }
         }
     }
@@ -622,6 +637,12 @@ public class DownloadAndRestartFragment extends BaseFragment
         if (fileNotExists)
         {
             abortUpdateProcess(resources.getString(R.string.file_not_found_message) + ": " + otaPackagePath);
+            mainActivity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mainActivity.onBackPressed();
+                }
+            });
         }
         else if (item != null)
         {
@@ -670,6 +691,7 @@ public class DownloadAndRestartFragment extends BaseFragment
                             String error = resources.getString(R.string.reboot_failed);
                             Log.w(TAG, error);
                             abortUpdateProcess(error);
+                            mainActivity.onBackPressed();
                         }
                     }
                 }).start();
@@ -678,12 +700,25 @@ public class DownloadAndRestartFragment extends BaseFragment
                 String error = resources.getString(R.string.command_write_to_cache_failed);
                 Log.e(TAG, error + ": " + e.getLocalizedMessage());
                 abortUpdateProcess(error);
+                mainActivity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mainActivity.onBackPressed();
+                    }
+                });
             }
         }
         else
         {
             Log.e(TAG, "Null item");
             abortUpdateProcess("");
+            mainActivity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mainActivity.onBackPressed();
+                }
+            });
+
         }
     }
 
@@ -702,8 +737,10 @@ public class DownloadAndRestartFragment extends BaseFragment
     {
         if (Utils.canCopyToCache(file))
         {
+
             DownloadableItem item = mIsVersion ? mSelectedVersion : mSelectedStore;
             CopyFileToCacheTask copyTask = new CopyFileToCacheTask();
+
             if (item != null)
             {
                 copyTask.execute(file.getPath(), Environment.getDownloadCacheDirectory() + "/" + Utils.getFilenameFromDownloadableItem(item, mIsVersion));
@@ -794,6 +831,7 @@ public class DownloadAndRestartFragment extends BaseFragment
         @Override
         protected Integer doInBackground(String... params)
         {
+
             // check the correct number of
             if (params.length != 2)
             {
@@ -808,14 +846,38 @@ public class DownloadAndRestartFragment extends BaseFragment
             File otaOriginalFile = new File(originalFilePath);
             File otaDestinyFile = new File(destinyFilePath);
 
-            if (otaOriginalFile.exists())
+            DownloadableItem item = mIsVersion ? mSelectedVersion : mSelectedStore;
+
+            if (!(Utils.checkMD5(item.getMd5Sum(), otaOriginalFile) || mIsZipInstall))
+            {
+                mainActivity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        abortUpdateProcess(getResources().getString(R.string.invalid_md5_download_message));
+                        mainActivity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                mainActivity.onBackPressed();
+                            }
+                        });
+                    }
+                });
+                removeLastUpdateDownload();
+            }
+            else if (otaOriginalFile.exists())
             {
 	            try {
 		            Utils.copy(otaOriginalFile, otaDestinyFile);
 	            } catch (IOException e) {
                     String error = mainActivity.getResources().getString(R.string.copy_to_cache_failed_message);
 		            Log.e(TAG, error + ": " + originalFilePath + ". " + e.getLocalizedMessage());
-		            abortUpdateProcess(error);
+                    abortUpdateProcess(error);
+                    mainActivity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mainActivity.onBackPressed();
+                        }
+                    });
 	            }
             }
             else
@@ -824,6 +886,12 @@ public class DownloadAndRestartFragment extends BaseFragment
                 String error = resources.getString(R.string.copy_to_cache_failed_message) + ". " + resources.getString(R.string.file_not_found_message) + ": " + originalFilePath;
                 Log.e(TAG, error);
                 abortUpdateProcess(error);
+                mainActivity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mainActivity.onBackPressed();
+                    }
+                });
             }
 
             return 1;
@@ -836,7 +904,6 @@ public class DownloadAndRestartFragment extends BaseFragment
 
         protected void onPreExecute()
         {
-
             if (mProgress == null)
             {
                 String title = "";
