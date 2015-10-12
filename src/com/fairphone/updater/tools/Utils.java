@@ -80,7 +80,7 @@ public class Utils
     private static final double PERCENT_100 = 100d;
     private static final char CHAR_SPACE = ' ';
     private static final char CHAR_ZERO = '0';
-    public static final int GAPPS_STORE_NUMBER = 0;
+    public static final String GAPPS_STORE_NUMBER = "0";
 
     private static double getPartitionSizeInGBytes(File path)
     {
@@ -371,7 +371,6 @@ public class Utils
         if (item != null)
         {
             filename.append(type);
-            filename.append(item.getNumber());
         }
         filename.append(".zip");
         return filename;

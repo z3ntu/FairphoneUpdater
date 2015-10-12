@@ -49,6 +49,8 @@ public class VersionParserHelper
     private static final String CURRENT_ANDROID_VERSION = "fairphone.ota.android_version";
     private static final String CURRENT_VERSION_IMAGE_TYPE = "fairphone.ota.image_type";
     private static final String CURRENT_VERSION_BUILD_DATE = "ro.build.date.utc";
+    private static final String CURRENT_VERSION_FINGERPRINT = "ro.build.fingerprint";
+
 
     private static Version version;
     public static Version getDeviceVersion(Context context)
@@ -64,10 +66,10 @@ public class VersionParserHelper
 
             try
             {
-                versionBuilder.setNumber(Integer.valueOf(getSystemData(context, CURRENT_VERSION_NUMBER, knownFPDevice)));
+                versionBuilder.setNumber(getSystemData(context, CURRENT_VERSION_FINGERPRINT, knownFPDevice));
             } catch (NumberFormatException e)
             {
-                int defaultVersionNumber = context.getResources().getInteger(R.integer.defaultVersionNumber);
+                String defaultVersionNumber = context.getResources().getString(R.string.defaultVersionNumber);
                 Log.w(TAG, "Error parsing current version number. Defaulting to " + defaultVersionNumber + ": " + e.getLocalizedMessage());
                 versionBuilder.setNumber(defaultVersionNumber);
             }
@@ -92,7 +94,7 @@ public class VersionParserHelper
 		String result;
 	    switch (property) {
 		    case CURRENT_VERSION_NUMBER:
-			    result = Utils.getprop(CURRENT_VERSION_NUMBER, useDefaults ? String.valueOf(context.getResources().getInteger(R.integer.defaultVersionNumber)) : "");
+			    result = Utils.getprop(CURRENT_VERSION_NUMBER, useDefaults ? String.valueOf(context.getResources().getString(R.string.defaultVersionNumber)) : "");
 			    break;
 		    case CURRENT_VERSION_NAME:
 			    result = Utils.getprop(CURRENT_VERSION_NAME, useDefaults ? context.getResources().getString(R.string.defaultVersionName) : "");
@@ -112,6 +114,9 @@ public class VersionParserHelper
 		    case CURRENT_BETA_STATUS:
 			    result = Utils.getprop(CURRENT_BETA_STATUS, useDefaults ? context.getResources().getString(R.string.defaultBetaStatus) : "0");
 			    break;
+            case CURRENT_VERSION_FINGERPRINT:
+                result = Utils.getprop(CURRENT_VERSION_FINGERPRINT, useDefaults ? "" : ""); // TODO: define default value for fingerprint
+                break;
 		    default:
 			    result = "";
 			    break;

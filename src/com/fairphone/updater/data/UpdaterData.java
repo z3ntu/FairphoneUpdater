@@ -16,15 +16,15 @@ public class UpdaterData
 
     private static UpdaterData mInstance;
 
-    private int mLatestAOSPVersionNumber;
+    private String mLatestAOSPVersionNumber;
 
-    private int mLatestFairphoneVersionNumber;
+    private String mLatestFairphoneVersionNumber;
 
-    private final Map<Integer, Version> mAOSPVersionMap;
+    private final Map<String, Version> mAOSPVersionMap;
 
-    private final Map<Integer, Version> mFairphoneVersionMap;
+    private final Map<String, Version> mFairphoneVersionMap;
     
-    private final Map<Integer, Store> mAppStoresMap;
+    private final Map<String, Store> mAppStoresMap;
 
     public static UpdaterData getInstance()
     {
@@ -37,8 +37,8 @@ public class UpdaterData
 
     private UpdaterData()
     {
-        mLatestAOSPVersionNumber = 0;
-        mLatestFairphoneVersionNumber = 0;
+        mLatestAOSPVersionNumber = "0";
+        mLatestFairphoneVersionNumber = "0";
         mAOSPVersionMap = new HashMap<>();
         mFairphoneVersionMap = new HashMap<>();
         mAppStoresMap = new HashMap<>();
@@ -46,8 +46,8 @@ public class UpdaterData
 
     public void resetUpdaterData()
     {
-        mLatestAOSPVersionNumber = 0;
-        mLatestFairphoneVersionNumber = 0;
+        mLatestAOSPVersionNumber = "0";
+        mLatestFairphoneVersionNumber = "0";
         mAOSPVersionMap.clear();
         mFairphoneVersionMap.clear();
         mAppStoresMap.clear();
@@ -58,16 +58,16 @@ public class UpdaterData
         mLatestAOSPVersionNumber = getLatestVersionFromTag(latestVersion);
     }
 
-    private static int getLatestVersionFromTag(String latestVersion)
+    private static String getLatestVersionFromTag(String latestVersion)
     {
-        int latestVersionNumber;
+        String latestVersionNumber;
         try
         {
-            latestVersionNumber = Integer.valueOf(latestVersion);
+            latestVersionNumber = latestVersion;
         } catch (NumberFormatException e)
         {
             Log.w(TAG, "Error decoding latest version number. Defaulting to 0: " + e.getLocalizedMessage());
-            latestVersionNumber = 0;
+            latestVersionNumber = "0";
         }
         return latestVersionNumber;
     }
@@ -145,7 +145,7 @@ public class UpdaterData
 	    return mapToOrderedStoreList(mAppStoresMap.values());
     }
 
-    public Version getVersion(String imageType, int versionNumber)
+    public Version getVersion(String imageType, String versionNumber)
     {
         Version version = null;
         if (Version.IMAGE_TYPE_AOSP.equalsIgnoreCase(imageType))
@@ -160,7 +160,7 @@ public class UpdaterData
         return version;
     }
     
-    public Store getStore(int storeNumber)
+    public Store getStore(String storeNumber)
     {
         return mAppStoresMap.get(storeNumber);
     }

@@ -45,7 +45,7 @@ public class Version extends DownloadableItem implements Comparable<Version>
 
     private final List<Integer> mDependencies;
 
-    public static final int ZIP_INSTALL_VERSION = 999;
+    public static final String ZIP_INSTALL_VERSION = "999";
 
     public Version()
     {
@@ -147,7 +147,7 @@ public class Version extends DownloadableItem implements Comparable<Version>
         int retVal;
         if (another != null)
         {
-            if (this.getNumber() < another.getNumber() && this.mImageType.equalsIgnoreCase(another.mImageType))
+            if (!this.getNumber().equals(another.getNumber()) && this.mImageType.equalsIgnoreCase(another.mImageType))
             {
                 retVal = 1;
             }

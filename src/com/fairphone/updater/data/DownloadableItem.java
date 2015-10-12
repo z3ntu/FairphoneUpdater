@@ -16,11 +16,11 @@
 
 package com.fairphone.updater.data;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import android.text.TextUtils;
 import android.util.Log;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public abstract class DownloadableItem
 {
@@ -28,7 +28,7 @@ public abstract class DownloadableItem
 
     public static final String DEFAULT_NOTES_LANG = "en";
 
-    private int mNumber;
+    private String mNumber;
 
     private String mName;
 
@@ -46,7 +46,7 @@ public abstract class DownloadableItem
 
     DownloadableItem()
     {
-        mNumber = 0;
+        mNumber = "";
         mName = "";
         mOTADownloadLink = "";
         mOTAMd5Sum = "";
@@ -70,24 +70,12 @@ public abstract class DownloadableItem
         mReleaseNotesMap = other.mReleaseNotesMap;
     }
 
-    public int getNumber()
+    public String getNumber()
     {
         return mNumber;
     }
 
     public void setNumber(String number)
-    {
-        try
-        {
-            this.mNumber = Integer.valueOf(number);
-        } catch (NumberFormatException e)
-        {
-            Log.w(TAG, "Error decoding version number. Defaulting to 0: " + e.getLocalizedMessage());
-            this.mNumber = 0;
-        }
-    }
-
-    public void setNumber(int number)
     {
         this.mNumber = number;
     }
@@ -129,7 +117,7 @@ public abstract class DownloadableItem
 
         if (item != null)
         {
-            result = this.mNumber > item.mNumber;
+            result = !this.mNumber.equals(item.mNumber);
         }
         else
         {

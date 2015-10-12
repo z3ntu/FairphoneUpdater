@@ -7,7 +7,7 @@
 	<string name="config_xml" translatable="false">.xml</string>
 	<string name="config_sig" translatable="false">.sig</string>
 	
-    <integer name="defaultVersionNumber">1</integer>
+    <string name="defaultVersionNumber">1</string>
     <string name="defaultVersionName" translatable="false">Almond</string>
     <string name="defaultBuildNumber" translatable="false">1.0</string>
     <string name="defaultBuildDate" translatable="false">0</string>

@@ -200,13 +200,13 @@ public class FairphoneUpdater extends FragmentActivity
     void getSelectedVersionFromSharedPreferences()
     {
         String versionImageType = mSharedPreferences.getString(PREFERENCE_SELECTED_VERSION_TYPE, "");
-        int versionNumber = mSharedPreferences.getInt(PREFERENCE_SELECTED_VERSION_NUMBER, 0);
+        String versionNumber = mSharedPreferences.getString(PREFERENCE_SELECTED_VERSION_NUMBER, "0");
         mSelectedVersion = UpdaterData.getInstance().getVersion(versionImageType, versionNumber);
     }
 
     void getSelectedStoreFromSharedPreferences()
     {
-        int storeNumber = mSharedPreferences.getInt(PREFERENCE_SELECTED_STORE_NUMBER, -1);
+        String storeNumber = mSharedPreferences.getString(PREFERENCE_SELECTED_STORE_NUMBER, "-1");
         mSelectedStore = UpdaterData.getInstance().getStore(storeNumber);
     }
 
@@ -698,25 +698,25 @@ public class FairphoneUpdater extends FragmentActivity
 
     public void setSelectedVersion(Version selectedVersion)
     {
-        int versionNumber = selectedVersion != null ? selectedVersion.getNumber() : 0;
+        String versionNumber = selectedVersion != null ? selectedVersion.getNumber() : "0";
         String versionImageType = selectedVersion != null ? selectedVersion.getImageType() : "";
 
         clearSelectedVersion(versionNumber, versionImageType);
 
         mSelectedVersion = UpdaterData.getInstance().getVersion(versionImageType, versionNumber);
-        clearSelectedStore(-1);
+        clearSelectedStore("-1");
     }
 
     public void clearSelectedItems()
     {
-        clearSelectedVersion(0, "");
-        clearSelectedStore(-1);
+        clearSelectedVersion("0", "");
+        clearSelectedStore("-1");
     }
 
-    private void clearSelectedVersion(int versionNumber, String versionImageType)
+    private void clearSelectedVersion(String versionNumber, String versionImageType)
     {
         Editor editor = mSharedPreferences.edit();
-        editor.putInt(PREFERENCE_SELECTED_VERSION_NUMBER, versionNumber);
+        editor.putString(PREFERENCE_SELECTED_VERSION_NUMBER, versionNumber);
         editor.putString(PREFERENCE_SELECTED_VERSION_TYPE, versionImageType);
         editor.commit();
 
@@ -725,18 +725,18 @@ public class FairphoneUpdater extends FragmentActivity
 
     public void setSelectedStore(Store selectedStore)
     {
-        int storeNumber = selectedStore != null ? selectedStore.getNumber() : -1;
+        String storeNumber = selectedStore != null ? selectedStore.getNumber() : "-1";
 
         clearSelectedStore(storeNumber);
 
         mSelectedStore = UpdaterData.getInstance().getStore(storeNumber);
-        clearSelectedVersion(0, "");
+        clearSelectedVersion("0", "");
     }
 
-    private void clearSelectedStore(int storeNumber)
+    private void clearSelectedStore(String storeNumber)
     {
         Editor editor = mSharedPreferences.edit();
-        editor.putInt(PREFERENCE_SELECTED_STORE_NUMBER, storeNumber);
+        editor.putString(PREFERENCE_SELECTED_STORE_NUMBER, storeNumber);
         editor.commit();
 
         mSelectedStore = null;
