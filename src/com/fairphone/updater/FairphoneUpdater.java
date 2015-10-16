@@ -200,13 +200,23 @@ public class FairphoneUpdater extends FragmentActivity
     void getSelectedVersionFromSharedPreferences()
     {
         String versionImageType = mSharedPreferences.getString(PREFERENCE_SELECTED_VERSION_TYPE, "");
-        String versionNumber = mSharedPreferences.getString(PREFERENCE_SELECTED_VERSION_NUMBER, "0");
+        String versionNumber = "0";
+        try {
+            versionNumber = mSharedPreferences.getString(PREFERENCE_SELECTED_VERSION_NUMBER, "0");
+        } catch (ClassCastException e) {
+            versionNumber = Integer.toString(mSharedPreferences.getInt(PREFERENCE_SELECTED_VERSION_NUMBER, 0));
+        }
         mSelectedVersion = UpdaterData.getInstance().getVersion(versionImageType, versionNumber);
     }
 
     void getSelectedStoreFromSharedPreferences()
     {
-        String storeNumber = mSharedPreferences.getString(PREFERENCE_SELECTED_STORE_NUMBER, "-1");
+        String storeNumber = "-1";
+        try {
+            storeNumber = mSharedPreferences.getString(PREFERENCE_SELECTED_STORE_NUMBER, "-1");
+        } catch (ClassCastException e) {
+            storeNumber = Integer.toString(mSharedPreferences.getInt(PREFERENCE_SELECTED_STORE_NUMBER, -1));
+        }
         mSelectedStore = UpdaterData.getInstance().getStore(storeNumber);
     }
 
