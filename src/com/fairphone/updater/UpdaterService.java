@@ -153,7 +153,7 @@ public class UpdaterService extends Service
         
         PendingIntent contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, 0);
 
-	    NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context).setSmallIcon(R.drawable.updater)
+	    NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context).setSmallIcon(R.drawable.updater_white)
 			    .setContentTitle(context.getResources().getString(R.string.app_full_name))
 			    .setContentText(context.getResources().getString(R.string.appStoreReinstall))
 			    .setAutoCancel(true)
@@ -352,7 +352,7 @@ public class UpdaterService extends Service
         NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
         NotificationCompat.Builder builder =
-                new NotificationCompat.Builder(context).setSmallIcon(R.drawable.updater)
+                new NotificationCompat.Builder(context).setSmallIcon(R.drawable.updater_white)
                         .setContentTitle(context.getResources().getString(R.string.app_full_name))
                         .setContentText(context.getResources().getString(R.string.fairphone_update_message));
 
@@ -612,7 +612,6 @@ public class UpdaterService extends Service
         {
 
             boolean removeReceiver = false;
-
             DownloadManager.Query query = new DownloadManager.Query();
 
             query.setFilterById(mLatestFileDownloadId);
