@@ -24,6 +24,8 @@ import com.fairphone.updater.R;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Version extends DownloadableItem implements Comparable<Version>
 {
@@ -44,8 +46,6 @@ public class Version extends DownloadableItem implements Comparable<Version>
     private boolean mErasePartitionsWarning;
 
     private final List<Integer> mDependencies;
-
-    public static final String ZIP_INSTALL_VERSION = "999";
 
     public Version()
     {
@@ -195,4 +195,67 @@ public class Version extends DownloadableItem implements Comparable<Version>
 //        return mDependencies;
 //    }
 // --Commented out by Inspection STOP (09/02/2015 19:47)
+
+    /**
+     *
+     * @param fingerprint String containing sdfasdf=number.number.nunmber
+     * @return the version as string or null if no version was found
+     */
+    private String getVersionNumberFromFingerPrint(String fingerprint){
+        Pattern pattern = Pattern.compile(".*?\\d+.*?(\\d+)(\\.)(\\d+)(\\.)(\\d+)",Pattern.CASE_INSENSITIVE | Pattern.DOTALL);    // is this pattern sufficient?
+        Matcher matcher = pattern.matcher(fingerprint);                             // get version number from fingerprint
+        if (matcher.find()) {
+            return  matcher.group(1) + "." +matcher.group(3) + "." + matcher.group(5);
+        }
+        Log.d(TAG,String.format("Failed to determine version number from fingerprint: %s",fingerprint));
+        return null; /* we don't know what version is here */
+
+    }
+
+    /**
+     * This method uses the different strategies to find a human readable name for this version
+     * It tries to find a pattern of "a.b.c" numbers in the string returned from "getNumber()"
+     * and appends some strings to it
+     * @return A human (english) version name to be displayed on the screen
+     */
+    public String getHumanReadableName() {
+        String fingerprint = getNumber();
+
+        if (fingerprint == null) { /* this for example currently happens on a zip install */
+
+            /* try to make something nice */
+            StringBuffer sb = new StringBuffer();
+
+            if (getName() != null) {
+                sb.append(getName());
+            }
+            if (getBuildNumber() != null) {
+                if (sb.length() != 0) {
+                    sb.append(" ");/* it not empty add a space */
+                }
+                sb.append(getBuildNumber());
+            }
+            return sb.toString();
+        }
+
+        String actualNumber = getVersionNumberFromFingerPrint(fingerprint);
+        if (actualNumber == null) {
+                        /* we can not extract the a.b.c version number from the fingerprint */
+                        /* just return the fingerprint/version thingy that was passed to us*/
+            return fingerprint;
+        }
+
+        //@TODO Version currently only has the concept of image type  "AOSP" or Fairphone. this concept
+        //need to be elaborated and different versions shoud be possible.
+        //
+        if (fingerprint.contains("sibon")) {
+            return "Fairphone Open Source OS " + actualNumber;
+        } else if (fingerprint.contains("gms")) {
+            return "Fairphone OS " + actualNumber;
+        } else {
+            /* we do have a version but.. we don't know about it. return the full "number"
+             */
+            return fingerprint;
+        }
+    }
 }

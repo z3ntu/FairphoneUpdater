@@ -49,7 +49,7 @@ public class VersionParserHelper
     private static final String CURRENT_ANDROID_VERSION = "fairphone.ota.android_version";
     private static final String CURRENT_VERSION_IMAGE_TYPE = "fairphone.ota.image_type";
     private static final String CURRENT_VERSION_BUILD_DATE = "ro.build.date.utc";
-    private static final String CURRENT_VERSION_FINGERPRINT = "ro.build.fingerprint";
+    private static final String CURRENT_VERSION_FINGERPRINT = "ro.build.version.incremental";
 
 
     private static Version version;

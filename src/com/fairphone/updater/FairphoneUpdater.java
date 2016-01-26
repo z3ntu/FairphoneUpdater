@@ -629,7 +629,7 @@ public class FairphoneUpdater extends FragmentActivity
         {
             if(isVersion)
             {
-                itemName = getVersionName((Version) item);
+                itemName = ((Version) item).getHumanReadableName();
             }
             else
             {
@@ -639,18 +639,7 @@ public class FairphoneUpdater extends FragmentActivity
         return itemName;
     }
 
-    public String getVersionName(Version version)
-    {
-        String itemName = "";
-        if (version != null)
-        {
-            if(mCurrentState != UpdaterState.ZIP_INSTALL) {
-                itemName = version.getImageTypeDescription(getResources()) + " ";
-            }
-            itemName += version.getName() + " " + version.getBuildNumber();
-        }
-        return itemName;
-    }
+
 
     public static String getStoreName(Store store)
     {
@@ -664,12 +653,12 @@ public class FairphoneUpdater extends FragmentActivity
 
     public String getDeviceVersionName()
     {
-        return getVersionName(mDeviceVersion);
+        return mDeviceVersion.getHumanReadableName();
     }
 
     public String getLatestVersionName()
     {
-        return getVersionName(mLatestVersion);
+        return mLatestVersion.getHumanReadableName();
     }
 
     public Version getDeviceVersion()

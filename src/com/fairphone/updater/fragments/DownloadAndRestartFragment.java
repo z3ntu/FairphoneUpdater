@@ -1,9 +1,5 @@
 package com.fairphone.updater.fragments;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.concurrent.TimeoutException;
-
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.DownloadManager;
@@ -39,7 +35,6 @@ import com.fairphone.updater.R;
 import com.fairphone.updater.UpdaterService;
 import com.fairphone.updater.data.DownloadableItem;
 import com.fairphone.updater.data.Store;
-import com.fairphone.updater.data.UpdaterData;
 import com.fairphone.updater.data.Version;
 import com.fairphone.updater.data.VersionParserHelper;
 import com.fairphone.updater.tools.PrivilegeChecker;
@@ -47,6 +42,10 @@ import com.fairphone.updater.tools.Utils;
 import com.stericson.RootTools.exceptions.RootDeniedException;
 import com.stericson.RootTools.execution.CommandCapture;
 import com.stericson.RootTools.execution.Shell;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.concurrent.TimeoutException;
 
 @SuppressLint("ValidFragment")
 public class DownloadAndRestartFragment extends BaseFragment
@@ -124,9 +123,8 @@ public class DownloadAndRestartFragment extends BaseFragment
             version = new Version();
             version.setName(resources.getString(R.string.install) + " " + zipName);
             version.setDownloadLink(mainActivity.getZipFilePath());
-            version.setNumber(Version.ZIP_INSTALL_VERSION);
-        }
-        else
+            version.setNumber(null);
+        } else
         {
             version = mainActivity.getSelectedVersion();
         }

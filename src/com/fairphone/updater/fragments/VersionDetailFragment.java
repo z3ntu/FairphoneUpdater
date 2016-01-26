@@ -7,7 +7,6 @@ import android.app.DownloadManager.Request;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.Resources;
-import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -209,7 +208,7 @@ public class VersionDetailFragment extends BaseFragment
                 break;
 
             case ANDROID:
-                mHeaderText = mainActivity.getVersionName(mSelectedVersion);
+                mHeaderText = mSelectedVersion.getHumanReadableName();
                 mVersionDetailsTitle = resources.getString(R.string.new_os);
                 mIsOSChange = deviceVersion.getImageType().equalsIgnoreCase(Version.IMAGE_TYPE_FAIRPHONE);
                 mIsOlderVersion =
@@ -223,7 +222,7 @@ public class VersionDetailFragment extends BaseFragment
                 break;
             case FAIRPHONE:
             default:
-                mHeaderText = mainActivity.getVersionName(mSelectedVersion);
+                mHeaderText = mSelectedVersion.getHumanReadableName();
                 mVersionDetailsTitle = resources.getString(R.string.older_version);
                 mIsOSChange = deviceVersion.getImageType().equalsIgnoreCase(Version.IMAGE_TYPE_AOSP);
                 mIsOlderVersion =
@@ -362,7 +361,7 @@ public class VersionDetailFragment extends BaseFragment
         {
             if (mIsOSChange || mIsOlderVersion)
             {
-                showPopupDialog(mainActivity.getVersionName(mSelectedVersion), mSelectedVersion.hasEraseAllPartitionWarning(),
+                showPopupDialog(mSelectedVersion.getHumanReadableName(), mSelectedVersion.hasEraseAllPartitionWarning(),
                         new ConfirmationPopupDialogListener()
                         {
 
