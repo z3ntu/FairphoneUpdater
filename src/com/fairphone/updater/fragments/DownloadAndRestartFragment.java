@@ -123,7 +123,7 @@ public class DownloadAndRestartFragment extends BaseFragment
             version = new Version();
             version.setName(resources.getString(R.string.install) + " " + zipName);
             version.setDownloadLink(mainActivity.getZipFilePath());
-            version.setNumber(null);
+            version.setId(null);
         } else
         {
             version = mainActivity.getSelectedVersion();

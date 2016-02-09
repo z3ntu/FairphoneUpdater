@@ -28,7 +28,7 @@ public abstract class DownloadableItem
 
     public static final String DEFAULT_NOTES_LANG = "en";
 
-    private String mNumber;
+    private String mId;
 
     private String mName;
 
@@ -46,7 +46,7 @@ public abstract class DownloadableItem
 
     DownloadableItem()
     {
-        mNumber = "";
+        mId = "";
         mName = "";
         mOTADownloadLink = "";
         mOTAMd5Sum = "";
@@ -59,7 +59,7 @@ public abstract class DownloadableItem
 
     DownloadableItem(DownloadableItem other)
     {
-        mNumber = other.mNumber;
+        mId = other.mId;
         mName = other.mName;
         mOTADownloadLink = other.mOTADownloadLink;
         mOTAMd5Sum = other.mOTAMd5Sum;
@@ -70,14 +70,14 @@ public abstract class DownloadableItem
         mReleaseNotesMap = other.mReleaseNotesMap;
     }
 
-    public String getNumber()
+    public String getId()
     {
-        return mNumber;
+        return mId;
     }
 
-    public void setNumber(String number)
+    public void setId(String id)
     {
-        this.mNumber = number;
+        this.mId = id;
     }
 
     public String getName()
@@ -117,7 +117,7 @@ public abstract class DownloadableItem
 
         if (item != null)
         {
-            result = !this.mNumber.equals(item.mNumber);
+            result = !this.mId.equals(item.mId);
         }
         else
         {

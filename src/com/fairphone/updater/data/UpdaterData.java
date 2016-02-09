@@ -79,17 +79,17 @@ public class UpdaterData
 
     public void addAOSPVersion(Version version)
     {
-        mAOSPVersionMap.put(version.getNumber(), version);
+        mAOSPVersionMap.put(version.getId(), version);
     }
 
     public void addFairphoneVersion(Version version)
     {
-        mFairphoneVersionMap.put(version.getNumber(), version);
+        mFairphoneVersionMap.put(version.getId(), version);
     }
     
     public void addAppStore(Store store)
     {
-        mAppStoresMap.put(store.getNumber(), store);
+        mAppStoresMap.put(store.getId(), store);
     }
 
     public Version getLatestVersion(String imageType)

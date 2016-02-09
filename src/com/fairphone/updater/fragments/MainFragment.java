@@ -23,7 +23,6 @@ import com.fairphone.updater.FairphoneUpdater;
 import com.fairphone.updater.FairphoneUpdater.HeaderType;
 import com.fairphone.updater.FairphoneUpdater.UpdaterState;
 import com.fairphone.updater.R;
-import com.fairphone.updater.data.Store;
 import com.fairphone.updater.data.UpdaterData;
 import com.fairphone.updater.data.Version;
 import com.fairphone.updater.fragments.VersionDetailFragment.DetailLayoutType;

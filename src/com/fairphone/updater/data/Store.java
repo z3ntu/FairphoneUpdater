@@ -33,11 +33,11 @@ public class Store extends DownloadableItem  implements Comparable<Store>
         int retVal;
         if (another != null)
         {
-            if (!this.getNumber().equals(another.getNumber()))
+            if (!this.getId().equals(another.getId()))
             {
                 retVal = 1;
             }
-            else if (this.getNumber() == another.getNumber())
+            else if (this.getId() == another.getId())
             {
                 retVal = 0;
             }

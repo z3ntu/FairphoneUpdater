@@ -697,7 +697,7 @@ public class FairphoneUpdater extends FragmentActivity
 
     public void setSelectedVersion(Version selectedVersion)
     {
-        String versionNumber = selectedVersion != null ? selectedVersion.getNumber() : "0";
+        String versionNumber = selectedVersion != null ? selectedVersion.getId() : "0";
         String versionImageType = selectedVersion != null ? selectedVersion.getImageType() : "";
 
         clearSelectedVersion(versionNumber, versionImageType);
@@ -724,7 +724,7 @@ public class FairphoneUpdater extends FragmentActivity
 
     public void setSelectedStore(Store selectedStore)
     {
-        String storeNumber = selectedStore != null ? selectedStore.getNumber() : "-1";
+        String storeNumber = selectedStore != null ? selectedStore.getId() : "-1";
 
         clearSelectedStore(storeNumber);
 

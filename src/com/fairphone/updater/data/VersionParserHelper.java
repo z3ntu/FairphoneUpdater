@@ -49,7 +49,7 @@ public class VersionParserHelper
     private static final String CURRENT_ANDROID_VERSION = "fairphone.ota.android_version";
     private static final String CURRENT_VERSION_IMAGE_TYPE = "fairphone.ota.image_type";
     private static final String CURRENT_VERSION_BUILD_DATE = "ro.build.date.utc";
-    private static final String CURRENT_VERSION_FINGERPRINT = "ro.build.version.incremental";
+    private static final String CURRENT_VERSION_ID = "ro.build.version.incremental";                // for FP2
 
 
     private static Version version;
@@ -57,30 +57,44 @@ public class VersionParserHelper
     {
         if (version == null){
             Version versionBuilder = new Version();
-            String[] suportedDevices = context.getResources().getString(R.string.knownFPDevices).split(";");
+            String[] supportedDevices = context.getResources().getString(R.string.knownFPDevices).split(";");
             String modelWithoutSpaces = Build.MODEL.replaceAll("\\s", "");
             boolean knownFPDevice = false;
-            for(String device : suportedDevices){
+            for (String device : supportedDevices) {
                 knownFPDevice = knownFPDevice || device.equals(modelWithoutSpaces);
             }
 
-            try
-            {
-                versionBuilder.setNumber(getSystemData(context, CURRENT_VERSION_FINGERPRINT, knownFPDevice));
-            } catch (NumberFormatException e)
-            {
-                String defaultVersionNumber = context.getResources().getString(R.string.defaultVersionNumber);
-                Log.w(TAG, "Error parsing current version number. Defaulting to " + defaultVersionNumber + ": " + e.getLocalizedMessage());
-                versionBuilder.setNumber(defaultVersionNumber);
+            if(modelWithoutSpaces.equals(context.getResources().getString(R.string.FP2Model))) {
+                // FP2
+                try {
+                    versionBuilder.setId(getSystemData(context, CURRENT_VERSION_ID, knownFPDevice));
+                } catch (NumberFormatException e) {
+                    String defaultVersionId = context.getResources().getString(R.string.defaultVersionId);
+                    Log.w(TAG, "Error parsing current version id. Defaulting to " + defaultVersionId + ": " + e.getLocalizedMessage());
+                    versionBuilder.setId(defaultVersionId);
+                }
+                versionBuilder.setName(versionBuilder.getCurrentImageType());
+                versionBuilder.setBuildNumber(versionBuilder.getBuildNumberFromId());
+            } else {
+                // FP1(U)
+                try
+                {
+                    versionBuilder.setId(getSystemData(context, CURRENT_VERSION_NUMBER, knownFPDevice) );
+                } catch (NumberFormatException e) {
+                    String defaultVersionNumber = context.getResources().getString(R.string.defaultVersionId);
+                    Log.w(TAG, "Error parsing current version number. Defaulting to " + defaultVersionNumber + ": " + e.getLocalizedMessage());
+                    versionBuilder.setId(defaultVersionNumber);
+                }
+                versionBuilder.setName(getSystemData(context, CURRENT_VERSION_NAME, knownFPDevice));
+                versionBuilder.setBuildNumber(getSystemData(context, CURRENT_VERSION_BUILD_NUMBER, knownFPDevice));
             }
-            versionBuilder.setName(getSystemData(context, CURRENT_VERSION_NAME, knownFPDevice));
-            versionBuilder.setBuildNumber(getSystemData(context, CURRENT_VERSION_BUILD_NUMBER, knownFPDevice));
+
             versionBuilder.setAndroidVersion(getSystemData(context, CURRENT_ANDROID_VERSION, knownFPDevice));
             versionBuilder.setImageType(getSystemData(context, CURRENT_VERSION_IMAGE_TYPE, knownFPDevice));
             versionBuilder.setReleaseDate(getSystemData(context, CURRENT_VERSION_BUILD_DATE, knownFPDevice));
             versionBuilder.setBetaStatus(getSystemData(context, CURRENT_BETA_STATUS, knownFPDevice));
 
-            Version versionData = UpdaterData.getInstance().getVersion(versionBuilder.getImageType(), versionBuilder.getNumber());
+            Version versionData = UpdaterData.getInstance().getVersion(versionBuilder.getImageType(), versionBuilder.getId());
             versionBuilder.setThumbnailLink(versionData != null ? versionData.getThumbnailLink() : "");
             versionBuilder.setReleaseNotes(Locale.getDefault().getLanguage(), versionData != null ? versionData.getReleaseNotes(Locale.getDefault().getLanguage()) : "");
             version = versionBuilder;
@@ -94,7 +108,7 @@ public class VersionParserHelper
 		String result;
 	    switch (property) {
 		    case CURRENT_VERSION_NUMBER:
-			    result = Utils.getprop(CURRENT_VERSION_NUMBER, useDefaults ? String.valueOf(context.getResources().getString(R.string.defaultVersionNumber)) : "");
+			    result = Utils.getprop(CURRENT_VERSION_NUMBER, useDefaults ? String.valueOf(context.getResources().getString(R.string.defaultVersionId)) : "");
 			    break;
 		    case CURRENT_VERSION_NAME:
 			    result = Utils.getprop(CURRENT_VERSION_NAME, useDefaults ? context.getResources().getString(R.string.defaultVersionName) : "");
@@ -114,8 +128,8 @@ public class VersionParserHelper
 		    case CURRENT_BETA_STATUS:
 			    result = Utils.getprop(CURRENT_BETA_STATUS, useDefaults ? context.getResources().getString(R.string.defaultBetaStatus) : "0");
 			    break;
-            case CURRENT_VERSION_FINGERPRINT:
-                result = Utils.getprop(CURRENT_VERSION_FINGERPRINT, useDefaults ? "" : ""); // TODO: define default value for fingerprint
+            case CURRENT_VERSION_ID:
+                result = Utils.getprop(CURRENT_VERSION_ID, useDefaults ? "" : ""); // TODO: define default value for fingerprint
                 break;
 		    default:
 			    result = "";
@@ -352,7 +366,7 @@ public class VersionParserHelper
 
         if (tagName.equalsIgnoreCase(XML_TAGS.VERSION.name()))
         {
-            updateVersion.setNumber(xpp.getAttributeValue(0));
+            updateVersion.setId(xpp.getAttributeValue(0));
         }
         else if (tagName.equalsIgnoreCase(XML_TAGS.ANDROID_VERSION.name()))
         {
@@ -387,7 +401,7 @@ public class VersionParserHelper
 
         if (tagName.equalsIgnoreCase(XML_TAGS.STORE.name()))
         {
-            updateStore.setNumber(xpp.getAttributeValue(0));
+            updateStore.setId(xpp.getAttributeValue(0));
         }
         else if (tagName.equalsIgnoreCase(XML_TAGS.SHOW_DISCLAIMER.name()))
         {

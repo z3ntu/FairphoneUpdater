@@ -31,7 +31,6 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.res.Resources;
 import android.database.Cursor;
-import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Build;
@@ -329,7 +328,7 @@ public class UpdaterService extends Service
                 final String defaultCharset = Charset.defaultCharset().displayName();
                 sb.append("&os=").append(URLEncoder.encode(currentVersion.getAndroidVersion(), defaultCharset));
                 sb.append("&b_n=").append(URLEncoder.encode(currentVersion.getBuildNumber(), defaultCharset));
-                sb.append("&ota_v_n=").append(URLEncoder.encode(String.valueOf(currentVersion.getNumber()), defaultCharset));
+                sb.append("&ota_v_n=").append(URLEncoder.encode(String.valueOf(currentVersion.getId()), defaultCharset));
                 sb.append("&d=").append(URLEncoder.encode(currentVersion.getReleaseDate(), defaultCharset));
                 sb.append("&beta=").append(URLEncoder.encode(currentVersion.getBetaStatus(), defaultCharset));
                 sb.append("&dev=").append(FairphoneUpdater.DEV_MODE_ENABLED ? "1" : "0");

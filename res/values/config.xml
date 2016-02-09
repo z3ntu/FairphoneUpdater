@@ -7,7 +7,7 @@
 	<string name="config_xml" translatable="false">.xml</string>
 	<string name="config_sig" translatable="false">.sig</string>
 	
-    <string name="defaultVersionNumber">1</string>
+    <string name="defaultVersionId">1</string>
     <string name="defaultVersionName" translatable="false">Almond</string>
     <string name="defaultBuildNumber" translatable="false">1.0</string>
     <string name="defaultBuildDate" translatable="false">0</string>
@@ -16,7 +16,7 @@
     <string name="defaultBetaStatus" translatable="false">0</string>
     
     <!-- Device Model without spaces separated by semicolon. Ex: FP1;FP1U;FP2 -->
-    <string name="knownFPDevices" translatable="false">FP1;FP1U</string>
+    <string name="knownFPDevices" translatable="false">FP1;FP1U;FP2</string>
     
     <string name="oneGBDataPartition" translatable="false">/originalPartition</string>
 	<string name="unifiedDataPartition" translatable="false">/unifiedPartition</string>
@@ -25,6 +25,8 @@
 	<string name="recoverySdCardPath" translatable="false">/sdcard</string>
 	<string name="updaterFolder" translatable="false">/updater/</string>
 	<integer name="FP1DataPartitionSizeMb">1100</integer>
+
+	<string name="FP2Model" translatable="false">FP2</string>
 	
 	<!-- Packager -->
 	<string name="removePlayStoreCommand" translatable="false">rm /data/app/com.android.vending-*.apk</string>
