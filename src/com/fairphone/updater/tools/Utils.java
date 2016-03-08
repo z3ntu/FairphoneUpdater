@@ -383,7 +383,7 @@ public class Utils
             if (isVersion)
             {
                 Version version = (Version) item;
-                title = version.getName() + " " + version.getImageTypeDescription(resources);
+                title = version.getHumanReadableName();
             }
             else
             {
