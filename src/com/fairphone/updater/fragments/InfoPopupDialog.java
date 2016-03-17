@@ -43,6 +43,7 @@ public class InfoPopupDialog extends DialogFragment implements OnEditorActionLis
                 view = inflater.inflate(R.layout.fragment_info_android_popup, container);
                 break;
             case UPDATE_FAIRPHONE:
+            case LATEST_FAIRPHONE:
             case FAIRPHONE:
             case APP_STORE:
             default:

@@ -43,7 +43,7 @@ public class VersionDetailFragment extends BaseFragment
 
     public static enum DetailLayoutType
     {
-        UPDATE_FAIRPHONE, UPDATE_ANDROID, FAIRPHONE, ANDROID, APP_STORE
+        UPDATE_FAIRPHONE, UPDATE_ANDROID, LATEST_FAIRPHONE, FAIRPHONE, ANDROID, APP_STORE
     }
 
     private HeaderType mHeaderType;
@@ -92,6 +92,7 @@ public class VersionDetailFragment extends BaseFragment
                 view = inflater.inflate(R.layout.fragment_app_store_detail, container, false);
                 break;
             case UPDATE_FAIRPHONE:
+            case LATEST_FAIRPHONE:
             case FAIRPHONE:
             default:
                 view = inflater.inflate(R.layout.fragment_version_detail_fairphone, container, false);
@@ -134,6 +135,7 @@ public class VersionDetailFragment extends BaseFragment
                 mDownload_and_update_button.setText(R.string.install_update);
                 break;
             case APP_STORE:
+            case LATEST_FAIRPHONE:
             case FAIRPHONE:
             case ANDROID:
             default:
@@ -219,6 +221,13 @@ public class VersionDetailFragment extends BaseFragment
                 mVersionDetailsTitle = resources.getString(R.string.install);
                 mIsOSChange = false;
                 mIsOlderVersion = false;
+                break;
+            case LATEST_FAIRPHONE:
+                mHeaderText = mSelectedVersion.getHumanReadableName();
+                mVersionDetailsTitle = resources.getString(R.string.latest_version);
+                mIsOSChange = deviceVersion.getImageType().equalsIgnoreCase(Version.IMAGE_TYPE_AOSP);
+                mIsOlderVersion =
+                        (deviceVersion.getImageType().equalsIgnoreCase(Version.IMAGE_TYPE_FAIRPHONE) && deviceVersion.isNewerVersionThan(mSelectedVersion));
                 break;
             case FAIRPHONE:
             default:

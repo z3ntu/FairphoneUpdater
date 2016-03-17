@@ -64,6 +64,7 @@ public class ConfirmationPopupDialog extends DialogFragment implements OnEditorA
                 view = inflater.inflate(R.layout.fragment_download_android_confirmation_popup, container);
                 break;
             case UPDATE_FAIRPHONE:
+            case LATEST_FAIRPHONE:
             case FAIRPHONE:
             case APP_STORE:
             default:

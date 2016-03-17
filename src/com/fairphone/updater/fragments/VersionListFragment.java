@@ -207,7 +207,7 @@ public class VersionListFragment extends BaseFragment
                 {
                     VersionDetailFragment versionDetail = new VersionDetailFragment(true);
 
-                    versionDetail.setupFragment(latestFairphoneVersion, DetailLayoutType.FAIRPHONE);
+                    versionDetail.setupFragment(latestFairphoneVersion, DetailLayoutType.LATEST_FAIRPHONE);
 
                     mainActivity.changeFragment(versionDetail);
                 }
