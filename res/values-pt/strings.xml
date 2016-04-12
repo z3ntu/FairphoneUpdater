@@ -54,7 +54,7 @@
     <string name="want_to_change_your_os">É um utilizador avançado?</string>
     <string name="warning">Aviso</string>
     <string name="wifi_disabled">Wi-Fi desligado</string>
-    <string name="wifi_discaimer_message">O ficheiro que está a tentar descarregar é muito grande para ligações móveis (~200mb). Por favor ligue-se ao Wi-Fi e tente outra vez.</string>
+    <string name="wifi_discaimer_message">O ficheiro que está a tentar descarregar é muito grande para ligações móveis. Por favor ligue-se ao Wi-Fi e tente outra vez.</string>
     <string name="your_are_about_to_install">Está prestes a instalar</string>
     <string name="your_current_os_version">Versão actual do Sistema Operativo</string>
     <string name="your_os_is_up_to_date">O Sistema Operativo está actualizado</string>

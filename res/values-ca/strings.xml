@@ -16,7 +16,7 @@
     <string name="google_apps_installer_name">Instal·lador Google Apps</string>
     <string name="google_apps_re_install_title">Google Apps instal·lat</string>
     <string name="wifi_disabled">Wi-Fi desconnectat</string>
-    <string name="wifi_discaimer_message">L\'arxiu que estàs intentant descarregar és massa gran si utilitzes una connexió mòbil (~200mb). Si us plau, connecta amb un punt Wi-Fi i prova de nou.</string>
+    <string name="wifi_discaimer_message">L\'arxiu que estàs intentant descarregar és massa gran si utilitzes una connexió mòbil. Si us plau, connecta amb un punt Wi-Fi i prova de nou.</string>
     <string name="gapps_store_install">Instal·lar Google Apps</string>
     <string name="gapps_store_hide_reminder">o tanca aquest recordatori</string>
     <string name="title_activity_beta_enabler">Fairphone programa beta</string>

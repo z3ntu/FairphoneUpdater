@@ -54,7 +54,7 @@
     <string name="want_to_change_your_os">Ben je een geavanceerde gebruiker?</string>
     <string name="warning">Waarschuwing</string>
     <string name="wifi_disabled">Wi-Fi niet beschikbaar</string>
-    <string name="wifi_discaimer_message">Het bestand dat je probeert te downloaden is te groot voor mobiele verbindingen (~200MB). Maak verbinding met een Wi-Fi netwerk en probeer het opnieuw.</string>
+    <string name="wifi_discaimer_message">Het bestand dat je probeert te downloaden is te groot voor mobiele verbindingen. Maak verbinding met een Wi-Fi netwerk en probeer het opnieuw.</string>
     <string name="your_are_about_to_install">Je staat op het punt te installeren</string>
     <string name="your_current_os_version">Je huidige versie van het besturingssysteem</string>
     <string name="your_os_is_up_to_date">Je besturingssysteem is up-to-date</string>

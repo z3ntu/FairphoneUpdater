@@ -54,7 +54,7 @@
     <string name="want_to_change_your_os">Bist du ein fortgeschrittener Nutzer?</string>
     <string name="warning">Warnung</string>
     <string name="wifi_disabled">WLAN deaktiviert</string>
-    <string name="wifi_discaimer_message">Die Datei, die du herunterladen möchtest, ist zu groß für mobile Verbindungen (~200 MB). Bitte verbinde dich mit einem WLAN-Netzwerk und versuche es erneut.</string>
+    <string name="wifi_discaimer_message">Die Datei, die du herunterladen möchtest, ist zu groß für mobile Verbindungen. Bitte verbinde dich mit einem WLAN-Netzwerk und versuche es erneut.</string>
     <string name="your_are_about_to_install">Du bist dabei zu installieren</string>
     <string name="your_current_os_version">Dein aktuelles Betriebssystem</string>
     <string name="your_os_is_up_to_date">Dein Betriebssystem ist auf dem neusten Stand</string>
