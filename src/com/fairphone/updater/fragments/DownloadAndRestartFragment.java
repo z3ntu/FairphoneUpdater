@@ -70,6 +70,8 @@ public class DownloadAndRestartFragment extends BaseFragment
 
     private DownloadManager mDownloadManager;
 
+    private CopyFileToCacheTask copyTask;
+
     private DownloadBroadCastReceiver mDownloadBroadCastReceiver;
 
     private BroadcastReceiver mNetworkStateReceiver;
@@ -735,12 +737,14 @@ public class DownloadAndRestartFragment extends BaseFragment
     {
         if (Utils.canCopyToCache(file))
         {
-
             DownloadableItem item = mIsVersion ? mSelectedVersion : mSelectedStore;
-            CopyFileToCacheTask copyTask = new CopyFileToCacheTask();
 
             if (item != null)
             {
+                if (copyTask != null) {
+                    return;
+                }
+                copyTask = new CopyFileToCacheTask();
                 copyTask.execute(file.getPath(), Environment.getDownloadCacheDirectory() + "/" + Utils.getFilenameFromDownloadableItem(item, mIsVersion));
             }
             else
