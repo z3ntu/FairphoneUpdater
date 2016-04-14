@@ -8,7 +8,6 @@
     <string name="a_different_os_from_the_current">een ander besturingssysteem dan je huidige</string>
     <string name="an_older_version_of_os">een oudere versie van je huidige besturingssysteem</string>
     <string name="android_os">Stock Android</string>
-    <string name="config_file_download_error_message">Fout tijdens downloaden configuratiebestand</string>
     <string name="config_file_download_link_error_message">Fout tijdens downloaden configuratiebestand. Gebruikte link:</string>
     <string name="dev_mode_message">Ontwikkelaarsmodus aangezet voor deze sessie</string>
     <string name="device_not_supported_message">Apparaat wordt niet ondersteund</string>

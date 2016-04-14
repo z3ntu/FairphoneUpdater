@@ -8,7 +8,6 @@
     <string name="a_different_os_from_the_current">ein anderes Betriebssystem als das aktuelle.</string>
     <string name="an_older_version_of_os">eine ältere Version von deinem aktuellen Betriebssytem.</string>
     <string name="android_os">Stock Android</string>
-    <string name="config_file_download_error_message">Fehler beim runterladen von config file</string>
     <string name="config_file_download_link_error_message">Fehler beim runterladen von config file. Benutzter Link:</string>
     <string name="dev_mode_message">Entwickler Modus freigeschaltet für diese Sitzung</string>
     <string name="device_not_supported_message">Gerät nicht unterstützt</string>
