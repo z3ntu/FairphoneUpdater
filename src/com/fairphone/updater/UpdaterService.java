@@ -563,10 +563,6 @@ public class UpdaterService extends Service
             mDownloadRetries++;
             removeReceiver = false;
         }
-        if (removeReceiver)
-        {
-            Toast.makeText(getApplicationContext(), getResources().getString(R.string.config_file_download_error_message), Toast.LENGTH_LONG).show();
-        }
         return removeReceiver;
     }
 

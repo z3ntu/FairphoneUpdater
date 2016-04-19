@@ -9,7 +9,6 @@
     <string name="a_different_os_from_the_current">a different operating system from your current one.</string>
     <string name="an_older_version_of_os">an older version of your current operating system.</string>
     <string name="android_os">Stock Android</string>
-    <string name="config_file_download_error_message">Error downloading config file</string>
     <string name="config_file_download_link_error_message">Error downloading config file. Link used:</string>
     <string name="dev_mode_message">Developer mode enabled for this session</string>
     <string name="device_not_supported_message">Device not supported</string>

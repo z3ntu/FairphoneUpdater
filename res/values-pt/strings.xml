@@ -8,7 +8,6 @@
     <string name="a_different_os_from_the_current">um Sistema Operativo diferente do que o que está instalado.</string>
     <string name="an_older_version_of_os">uma versão anterior do Sistema Operativo instalado.</string>
     <string name="android_os">Stock Android</string>
-    <string name="config_file_download_error_message">Erro ao descarregar o ficheiro de configuração</string>
     <string name="config_file_download_link_error_message">Erro ao descarregar o ficheiro de configuração. Link usado:</string>
     <string name="dev_mode_message">Modo de desenvolvimento activo para esta sessão</string>
     <string name="device_not_supported_message">Dispositivo não suportado</string>
