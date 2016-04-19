@@ -54,7 +54,7 @@
     <string name="want_to_change_your_os">¿Eres un usuario avanzado?</string>
     <string name="warning">Aviso</string>
     <string name="wifi_disabled">Wi-Fi desconectado</string>
-    <string name="wifi_discaimer_message">El archivo que estás intentando descargar es demasiado grande para conexiones móviles (~200mb). Por favor, conéctate a un punto Wi-Fi e inténtalo de nuevo.</string>
+    <string name="wifi_discaimer_message">El archivo que estás intentando descargar es demasiado grande para conexiones móviles. Por favor, conéctate a un punto Wi-Fi e inténtalo de nuevo.</string>
     <string name="your_are_about_to_install">Estás a punto de instalar</string>
     <string name="your_current_os_version">La versión actual de tu sistema operativo</string>
     <string name="your_os_is_up_to_date">Tu sistema operativo está actualizado.</string>

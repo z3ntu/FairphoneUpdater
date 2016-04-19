@@ -55,7 +55,7 @@
     <string name="want_to_change_your_os">Are you an advanced user?</string>
     <string name="warning">Warning</string>
     <string name="wifi_disabled">Wi-Fi disabled</string>
-    <string name="wifi_discaimer_message">The file you\'re trying to download is too large for mobile connections (~200MB). Please connect to a Wi-Fi network and try again.</string>
+    <string name="wifi_discaimer_message">The file you\'re trying to download is too large for mobile connections. Please connect to a Wi-Fi network and try again.</string>
     <string name="your_are_about_to_install">You are about to install</string>
     <string name="your_current_os_version">Your current operating system version</string>
     <string name="your_os_is_up_to_date">Your operating system is up-to-date</string>
