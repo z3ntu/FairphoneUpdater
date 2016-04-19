@@ -243,24 +243,6 @@ public class Utils
         }
     }
 
-    public static String getModelAndOS(Context context)
-    {
-        StringBuilder sb = new StringBuilder();
-
-        // attach the model and the os
-        sb.append("?");
-        sb.append("model=").append(Build.MODEL.replaceAll("\\s", ""));
-        Version currentVersion = VersionParserHelper.getDeviceVersion(context);
-
-        if (currentVersion != null)
-        {
-            sb.append("&");
-            sb.append("os=").append(currentVersion.getAndroidVersion());
-        }
-
-        return sb.toString();
-    }
-
 	public static void copy(File src, File dst) throws IOException {
 		if (PrivilegeChecker.isPrivilegedApp()) {
 			copyPrivileged(src, dst);

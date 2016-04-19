@@ -10,8 +10,6 @@
     <string name="defaultVersionId">1</string>
     <string name="defaultVersionName" translatable="false">Almond</string>
     <string name="defaultBuildNumber" translatable="false">1.0</string>
-    <string name="defaultBuildDate" translatable="false">0</string>
-    <string name="defaultAndroidVersionNumber" translatable="false">4.2.2</string>
     <string name="defaultImageType" translatable="false">fairphone</string>
     <string name="defaultBetaStatus" translatable="false">0</string>
     

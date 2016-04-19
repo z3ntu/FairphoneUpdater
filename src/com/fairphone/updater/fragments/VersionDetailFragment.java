@@ -295,7 +295,7 @@ public class VersionDetailFragment extends BaseFragment
                         Log.w(TAG, "Potentially malformed download link " + download_link + ": " + e.getLocalizedMessage());
                     }
                 }
-                Request request = createDownloadRequest(download_link + Utils.getModelAndOS(mainActivity), fileName, downloadTitle);
+                Request request = createDownloadRequest(download_link, fileName, downloadTitle);
                 if (request != null && mDownloadManager != null)
                 {
                     //Guarantee that only we have only one download

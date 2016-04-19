@@ -46,9 +46,7 @@ public class VersionParserHelper
     private static final String CURRENT_VERSION_NAME = "fairphone.ota.version.name";
     private static final String CURRENT_VERSION_BUILD_NUMBER = "fairphone.ota.build_number";
     private static final String CURRENT_BETA_STATUS = "fairphone.ota.beta";
-    private static final String CURRENT_ANDROID_VERSION = "fairphone.ota.android_version";
     private static final String CURRENT_VERSION_IMAGE_TYPE = "fairphone.ota.image_type";
-    private static final String CURRENT_VERSION_BUILD_DATE = "ro.build.date.utc";
     private static final String CURRENT_VERSION_ID = "ro.build.version.incremental";                // for FP2
 
 
@@ -89,9 +87,7 @@ public class VersionParserHelper
                 versionBuilder.setBuildNumber(getSystemData(context, CURRENT_VERSION_BUILD_NUMBER, knownFPDevice));
             }
 
-            versionBuilder.setAndroidVersion(getSystemData(context, CURRENT_ANDROID_VERSION, knownFPDevice));
             versionBuilder.setImageType(getSystemData(context, CURRENT_VERSION_IMAGE_TYPE, knownFPDevice));
-            versionBuilder.setReleaseDate(getSystemData(context, CURRENT_VERSION_BUILD_DATE, knownFPDevice));
             versionBuilder.setBetaStatus(getSystemData(context, CURRENT_BETA_STATUS, knownFPDevice));
 
             Version versionData = UpdaterData.getInstance().getVersion(versionBuilder.getImageType(), versionBuilder.getId());
@@ -113,17 +109,11 @@ public class VersionParserHelper
 		    case CURRENT_VERSION_NAME:
 			    result = Utils.getprop(CURRENT_VERSION_NAME, useDefaults ? context.getResources().getString(R.string.defaultVersionName) : "");
 			    break;
-		    case CURRENT_ANDROID_VERSION:
-			    result = Utils.getprop(CURRENT_ANDROID_VERSION, useDefaults ? context.getResources().getString(R.string.defaultAndroidVersionNumber) : "");
-			    break;
 		    case CURRENT_VERSION_BUILD_NUMBER:
 			    result = Utils.getprop(CURRENT_VERSION_BUILD_NUMBER, useDefaults ? context.getResources().getString(R.string.defaultBuildNumber) : "");
 			    break;
 		    case CURRENT_VERSION_IMAGE_TYPE:
 			    result = Utils.getprop(CURRENT_VERSION_IMAGE_TYPE, useDefaults ? context.getResources().getString(R.string.defaultImageType) : "");
-			    break;
-		    case CURRENT_VERSION_BUILD_DATE:
-			    result = Utils.getprop(CURRENT_VERSION_BUILD_DATE, useDefaults ? context.getResources().getString(R.string.defaultBuildDate) : "");
 			    break;
 		    case CURRENT_BETA_STATUS:
 			    result = Utils.getprop(CURRENT_BETA_STATUS, useDefaults ? context.getResources().getString(R.string.defaultBetaStatus) : "0");
