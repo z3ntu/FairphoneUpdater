@@ -142,11 +142,6 @@ public abstract class DownloadableItem
         mReleaseDate = releaseDate;
     }
 
-    public String getReleaseDate()
-    {
-        return mReleaseDate;
-    }
-
     public void setThumbnailLink(String thumbnailImageLink)
     {
         mThumbnailImageLink = thumbnailImageLink;

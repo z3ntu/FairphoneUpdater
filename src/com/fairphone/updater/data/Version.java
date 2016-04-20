@@ -77,11 +77,6 @@ public class Version extends DownloadableItem implements Comparable<Version>
         return mErasePartitionsWarning;
     }
 
-    public String getAndroidVersion()
-    {
-        return mAndroidVersion;
-    }
-
     public void setAndroidVersion(String mAndroid)
     {
         this.mAndroidVersion = mAndroid;

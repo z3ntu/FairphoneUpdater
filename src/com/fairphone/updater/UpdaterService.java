@@ -306,7 +306,7 @@ public class UpdaterService extends Service
 
         sb.append(resources.getString(R.string.config_zip));
 
-        addModelAndOS(context, sb);
+        addUrlParameters(context, sb);
 
         String downloadLink = sb.toString();
 
@@ -315,21 +315,20 @@ public class UpdaterService extends Service
         return downloadLink;
     }
 
-    private static void addModelAndOS(Context context, StringBuilder sb)
+    private static void addUrlParameters(Context context, StringBuilder sb)
     {
-        // attach the model and the os
         sb.append("?");
-        sb.append("model=").append(Build.MODEL.replaceAll("\\s", ""));
         Version currentVersion = VersionParserHelper.getDeviceVersion(context.getApplicationContext());
 
-        if (currentVersion != null)
-        {
+        if (currentVersion != null) {
             try {
                 final String defaultCharset = Charset.defaultCharset().displayName();
-                sb.append("&os=").append(URLEncoder.encode(currentVersion.getAndroidVersion(), defaultCharset));
-                sb.append("&b_n=").append(URLEncoder.encode(currentVersion.getBuildNumber(), defaultCharset));
+
+                String modelWithoutSpaces = Build.MODEL.replaceAll("\\s", "");
+                if(modelWithoutSpaces.startsWith(context.getResources().getString(R.string.FP1Model))) {
+                    sb.append("&b_n=").append(URLEncoder.encode(currentVersion.getBuildNumber(), defaultCharset));
+                }
                 sb.append("&ota_v_n=").append(URLEncoder.encode(String.valueOf(currentVersion.getId()), defaultCharset));
-                sb.append("&d=").append(URLEncoder.encode(currentVersion.getReleaseDate(), defaultCharset));
                 sb.append("&beta=").append(URLEncoder.encode(currentVersion.getBetaStatus(), defaultCharset));
                 sb.append("&dev=").append(FairphoneUpdater.DEV_MODE_ENABLED ? "1" : "0");
             } catch (UnsupportedEncodingException e) {
