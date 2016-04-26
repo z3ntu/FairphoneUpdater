@@ -74,5 +74,8 @@
     <string name="wifi_discaimer_message_startup">Precisa de ligar o Wi-Fi para verificar se existem actualizações ou para instalar software.</string>
     <string name="appStoreReinstall">Reinstale a app store</string>
     <string name="app_store">App Stores</string>
+    <string name="got_it">Entendi</string>
+    <string name="connect_to_wifi">Por favor ligue-se a uma rede Wi-Fi</string>
+    <string name="charge_battery">Por favor carregue a bateria até pelo menos 80%</string>
 
 </resources>

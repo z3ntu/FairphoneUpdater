@@ -75,5 +75,7 @@
     <string name="wifi_discaimer_message_startup">You need to connect to a Wi-Fi network to check for updates or install software.</string>
     <string name="appStoreReinstall">Reinstall the app store</string>
     <string name="app_store">App Stores</string>
-
+    <string name="connect_to_wifi">Please connect to a Wi-Fi network</string>
+    <string name="charge_battery">Please charge your battery to at least 80%</string>
+    <string name="got_it">Got it</string>
 </resources>

@@ -121,7 +121,41 @@ public class VersionDetailFragment extends BaseFragment
             @Override
             public void onClick(View v)
             {
-                startDownload();
+                boolean isWifiEnabled = Utils.isWiFiEnabled(mainActivity);
+                boolean isBatteryLevelOk = Utils.isBatteryLevelOk(mainActivity);
+
+                if (isWifiEnabled && isBatteryLevelOk)
+                {
+                    startDownload();
+                }
+                else
+                {
+                    if(!isWifiEnabled) {
+                        AlertDialog.Builder wifiDialog = new AlertDialog.Builder(mainActivity);
+                        wifiDialog.setIcon(R.drawable.ic_signal_wifi_4_bar_fpblue_24dp);
+                        wifiDialog.setTitle(R.string.connect_to_wifi);
+                        wifiDialog.setPositiveButton(R.string.got_it, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                // do nothing, since the state is still the same
+                            }
+                        });
+                        wifiDialog.create();
+                        wifiDialog.show();
+                    }
+
+                    if(!isBatteryLevelOk) {
+                        AlertDialog.Builder batteryDialog = new AlertDialog.Builder(mainActivity);
+                        batteryDialog.setIcon(R.drawable.ic_battery_std_fpblue_24dp);
+                        batteryDialog.setTitle(R.string.charge_battery);
+                        batteryDialog.setPositiveButton(R.string.got_it, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                // do nothing, since the state is still the same
+                            }
+                        });
+                        batteryDialog.create();
+                        batteryDialog.show();
+                    }
+                }
             }
         });
     }
@@ -271,8 +305,11 @@ public class VersionDetailFragment extends BaseFragment
     void startUpdateDownload()
     {
         DownloadableItem item = mIsVersion ? mSelectedVersion : mSelectedStore;
-        // use only on WiFi
-        if (Utils.isWiFiEnabled(mainActivity))
+
+        boolean isWifiEnabled = Utils.isWiFiEnabled(mainActivity);
+        boolean isBatteryLevelOk = Utils.isBatteryLevelOk(mainActivity);
+
+        if (isWifiEnabled && isBatteryLevelOk)
         {
             if (item != null)
             {
@@ -324,21 +361,31 @@ public class VersionDetailFragment extends BaseFragment
         {
             Resources resources = this.getResources();
 
-            AlertDialog.Builder wifiOffDialog = new AlertDialog.Builder(mainActivity);
+            if(!isWifiEnabled) {
+                AlertDialog.Builder wifiDialog = new AlertDialog.Builder(mainActivity);
+                wifiDialog.setIcon(R.drawable.ic_signal_wifi_4_bar_fpblue_24dp);
+                wifiDialog.setTitle(resources.getString(R.string.connect_to_wifi));
+                wifiDialog.setPositiveButton(resources.getString(R.string.got_it), new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // do nothing, since the state is still the same
+                    }
+                });
+                wifiDialog.create();
+                wifiDialog.show();
+            }
 
-            wifiOffDialog.setTitle(resources.getString(R.string.wifi_disabled));
-
-            // Setting Dialog Message
-            wifiOffDialog.setMessage(resources.getString(R.string.wifi_discaimer_message));
-            wifiOffDialog.setPositiveButton(resources.getString(android.R.string.ok), new DialogInterface.OnClickListener()
-            {
-                public void onClick(DialogInterface dialog, int id)
-                {
-                    // do nothing, since the state is still the same
-                }
-            });
-            wifiOffDialog.create();
-            wifiOffDialog.show();
+            if(!isBatteryLevelOk) {
+                AlertDialog.Builder batteryDialog = new AlertDialog.Builder(mainActivity);
+                batteryDialog.setIcon(R.drawable.ic_battery_std_fpblue_24dp);
+                batteryDialog.setTitle(resources.getString(R.string.charge_battery));
+                batteryDialog.setPositiveButton(resources.getString(R.string.got_it), new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // do nothing, since the state is still the same
+                    }
+                });
+                batteryDialog.create();
+                batteryDialog.show();
+            }
         }
     }
 

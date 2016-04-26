@@ -15,7 +15,7 @@
     
     <!-- Device Model without spaces separated by semicolon. Ex: FP1;FP1U;FP2 -->
     <string name="knownFPDevices" translatable="false">FP1;FP1U;FP2</string>
-    
+
     <string name="oneGBDataPartition" translatable="false">/originalPartition</string>
 	<string name="unifiedDataPartition" translatable="false">/unifiedPartition</string>
 	<string name="FP1Model" translatable="false">FP1</string>
@@ -25,6 +25,8 @@
 	<integer name="FP1DataPartitionSizeMb">1100</integer>
 
 	<string name="FP2Model" translatable="false">FP2</string>
+
+	<string name="minimumBatteryLevel" translatable="false">0.8</string>
 	
 	<!-- Packager -->
 	<string name="removePlayStoreCommand" translatable="false">rm /data/app/com.android.vending-*.apk</string>

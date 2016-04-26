@@ -180,13 +180,23 @@ public class DownloadAndRestartFragment extends BaseFragment
                     @Override
                     public void onClick(View v)
                     {
-                        if (mIsVersion)
-                        {
-                            showEraseAllDataWarning();
-                        }
-                        else if (mSelectedStore != null)
-                        {
-                            startPreInstall();
+                        if(Utils.isBatteryLevelOk(mainActivity)) {
+                            if (mIsVersion) {
+                                showEraseAllDataWarning();
+                            } else if (mSelectedStore != null) {
+                                startPreInstall();
+                            }
+                        } else {
+                            AlertDialog.Builder batteryDialog = new AlertDialog.Builder(mainActivity);
+                            batteryDialog.setIcon(R.drawable.ic_battery_std_fpblue_24dp);
+                            batteryDialog.setTitle(R.string.charge_battery);
+                            batteryDialog.setPositiveButton(R.string.got_it, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    // do nothing, since the state is still the same
+                                }
+                            });
+                            batteryDialog.create();
+                            batteryDialog.show();
                         }
                     }
                 });
