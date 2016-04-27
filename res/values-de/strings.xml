@@ -74,5 +74,8 @@
     <string name="wifi_discaimer_message_startup">Du musst dich mit einem WLAN-Netzwerk verbinden um nach Updates zu suchen oder um Software zu installieren.</string>
     <string name="appStoreReinstall">Reinstalliere den app store</string>
     <string name="app_store">App Stores</string>
+    <string name="got_it">Ich verstehe</string>
+    <string name="connect_to_wifi">Stell eine Verbindung zum WLAN her</string>
+    <string name="charge_battery">Bitte lade die Batterie mindestens 80% auf</string>
 
 </resources>

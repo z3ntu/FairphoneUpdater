@@ -74,5 +74,8 @@
     <string name="wifi_discaimer_message_startup">Vous devez vous connecter à un réseau Wi-Fi pour vérifier l\'existence de mises à jour ou installer le logiciel.</string>
     <string name="appStoreReinstall">Réinstaller la boutique d\'applications</string>
     <string name="app_store">App Stores</string>
+    <string name="got_it">OK</string>
+    <string name="connect_to_wifi">Merci de vous connecter à un réseau Wi-Fi</string>
+    <string name="charge_battery">Chargez votre batterie à au moins 80%</string>
 
 </resources>

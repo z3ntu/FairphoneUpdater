@@ -864,11 +864,10 @@ public class FairphoneUpdater extends FragmentActivity
 
 		    AlertDialog.Builder wifiOffDialogBuilder = new AlertDialog.Builder(this);
 
-		    wifiOffDialogBuilder.setTitle(resources.getString(R.string.wifi_disabled));
+		    wifiOffDialogBuilder.setTitle(resources.getString(R.string.connect_to_wifi));
+            wifiOffDialogBuilder.setIcon(resources.getDrawable(R.drawable.ic_signal_wifi_4_bar_fpblue_24dp));
 
-		    // Setting Dialog Message
-		    wifiOffDialogBuilder.setMessage(resources.getString(R.string.wifi_discaimer_message_startup));
-		    wifiOffDialogBuilder.setPositiveButton(resources.getString(android.R.string.ok), new DialogInterface.OnClickListener() {
+		    wifiOffDialogBuilder.setPositiveButton(resources.getString(R.string.got_it), new DialogInterface.OnClickListener() {
 			    public void onClick(DialogInterface dialog, int id) {
 				    // do nothing, since the state is still the same
 			    }
