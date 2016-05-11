@@ -534,7 +534,7 @@ public class UpdaterService extends Service
                 }
             }
         } else {
-            Log.wtf(TAG, "No file");
+            Log.w(TAG, "No file");
         }
 
         return retVal;
