@@ -215,7 +215,7 @@ public class Version extends DownloadableItem implements Comparable<Version>
         if(id.contains("gms")) {
             return "Fairphone OS";
         } else if (id.contains("sibon")) {
-            return "Fairphone Open Source OS";
+            return "Fairphone Open";
         } else if (id.contains("AOSP+")) {
             return "Fairphone Internal";
         } else {
