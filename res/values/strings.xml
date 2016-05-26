@@ -78,4 +78,5 @@
     <string name="connect_to_wifi">Please connect to a Wi-Fi network</string>
     <string name="charge_battery">Please charge your battery to at least 80%</string>
     <string name="got_it">Got it</string>
+    <string name="beta_mode">beta mode</string>
 </resources>

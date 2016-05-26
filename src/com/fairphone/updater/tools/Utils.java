@@ -16,10 +16,14 @@
 
 package com.fairphone.updater.tools;
 
+import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.DownloadManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
@@ -32,7 +36,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.fairphone.updater.BetaEnabler;
+import com.fairphone.updater.FairphoneUpdater;
 import com.fairphone.updater.R;
 import com.fairphone.updater.UpdaterService;
 import com.fairphone.updater.data.DownloadableItem;
@@ -425,22 +429,11 @@ public class Utils
         return result;
     }
 
-	public static void setBetaPropToEnable()
-    {
-        if(RootTools.isAccessGiven()) {
-            CommandCapture command = new CommandCapture(0, "/system/bin/setprop "+ BetaEnabler.FAIRPHONE_BETA_PROPERTY+" "+BetaEnabler.BETA_ENABLED);
-            try {
-                Shell.runRootCommand(command);
-            } catch (IOException | TimeoutException | RootDeniedException e) {
-	            Log.d(TAG, "Failed to setprop: " + e.getLocalizedMessage());
-            }
-        }
-        try {
-            Thread.sleep(200);
-        } catch (InterruptedException e) {
-
-        }
-        buildProps = null;
+    public static void enableBeta(Context context) {
+        SharedPreferences settings = context.getSharedPreferences(FairphoneUpdater.FAIRPHONE_UPDATER_PREFERENCES, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putBoolean(FairphoneUpdater.PREFERENCE_BETA_MODE, true);
+        editor.commit();
     }
 
     public static String getOtaPackagePath(Resources resources, DownloadableItem item, boolean isVersion, boolean isZipInstall){
@@ -681,5 +674,14 @@ public class Utils
     public static Store getGappsStore()
     {
         return UpdaterData.getInstance().getStore(GAPPS_STORE_NUMBER);
+    }
+
+    public static void restartUpdater(Activity activity) {
+        Intent startActivity = new Intent(activity.getApplicationContext(), FairphoneUpdater.class);
+        int pendingIntentId = 123456;
+        PendingIntent pendingIntent = PendingIntent.getActivity(activity.getApplicationContext(), pendingIntentId, startActivity, PendingIntent.FLAG_CANCEL_CURRENT);
+        AlarmManager mgr = (AlarmManager)activity.getApplicationContext().getSystemService(Context.ALARM_SERVICE);
+        mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 100, pendingIntent);
+        System.exit(0);
     }
 }

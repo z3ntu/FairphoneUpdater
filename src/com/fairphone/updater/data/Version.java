@@ -41,8 +41,6 @@ public class Version extends DownloadableItem implements Comparable<Version>
 
     private String mAndroidVersion;
 
-    private String mBetaStatus;
-
     private boolean mErasePartitionsWarning;
 
     private final List<Integer> mDependencies;
@@ -54,7 +52,6 @@ public class Version extends DownloadableItem implements Comparable<Version>
         mAndroidVersion = "";
         mImageType = IMAGE_TYPE_FAIRPHONE;
         mErasePartitionsWarning = false;
-        mBetaStatus = "";
     }
 
     public Version(Version other)
@@ -64,7 +61,6 @@ public class Version extends DownloadableItem implements Comparable<Version>
         mAndroidVersion = other.mAndroidVersion;
         mImageType = other.mImageType;
         mErasePartitionsWarning = other.hasEraseAllPartitionWarning();
-        mBetaStatus = other.mBetaStatus;
     }
 
     public void setEraseAllPartitionWarning()
@@ -90,16 +86,6 @@ public class Version extends DownloadableItem implements Comparable<Version>
     public String getImageType()
     {
         return mImageType;
-    }
-
-    public void setBetaStatus(String betaStatus)
-    {
-        mBetaStatus = betaStatus;
-    }
-
-    public String getBetaStatus()
-    {
-        return mBetaStatus;
     }
 
     public String getImageTypeDescription(Resources resources)

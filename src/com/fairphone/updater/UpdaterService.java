@@ -329,7 +329,7 @@ public class UpdaterService extends Service
                     sb.append("&b_n=").append(URLEncoder.encode(currentVersion.getBuildNumber(), defaultCharset));
                 }
                 sb.append("&ota_v_n=").append(URLEncoder.encode(String.valueOf(currentVersion.getId()), defaultCharset));
-                sb.append("&beta=").append(URLEncoder.encode(currentVersion.getBetaStatus(), defaultCharset));
+                sb.append("&beta=").append(FairphoneUpdater.BETA_MODE_ENABLED ? BetaEnabler.BETA_ENABLED : BetaEnabler.BETA_DISABLED);
                 sb.append("&dev=").append(FairphoneUpdater.DEV_MODE_ENABLED ? "1" : "0");
             } catch (UnsupportedEncodingException e) {
                 Log.e(TAG, "Failed to add extra info on update request: "+e.getLocalizedMessage());

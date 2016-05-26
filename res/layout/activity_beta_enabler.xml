@@ -2,16 +2,26 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+	android:background="@color/blue"
     tools:context="com.fairphone.updater.BetaEnabler" >
 
-	<Button
-	    android:id="@+id/beta_activator"
-	    android:layout_width="wrap_content"
-	    android:layout_height="wrap_content"
-	    android:layout_centerHorizontal="true"
-	    android:layout_centerVertical="true"
-	    style="@style/ButtonSmallBlueDark"
-	    android:text="@string/beta_is_enabled" 
-	    android:enabled="false"/>
+	<include layout="@layout/header"/>
+
+	<FrameLayout
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_centerHorizontal="true"
+		android:layout_centerVertical="true"
+		android:paddingTop="@dimen/header_big_height">
+
+		<Button
+			android:id="@+id/beta_activator"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			style="@style/ButtonWhiteBlue"
+			android:text="@string/beta_is_enabled"
+			android:enabled="false"/>
+
+	</FrameLayout>
 
 </RelativeLayout>

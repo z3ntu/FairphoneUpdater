@@ -27,6 +27,7 @@
     <color name="pink_light">#f286b6</color>
     <color name="pink_light_transparent">#f0dbe4</color>
     <color name="red">#c3474c</color>
+    <color name="design_pink">#d7617f</color>
 
     <!-- GOOGLE COLORS (DEPENDENCIES) -->
     <color name="google_blue">#33b5e5</color>

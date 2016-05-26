@@ -13,6 +13,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.text.Html;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -67,6 +68,8 @@ public class FairphoneUpdater extends FragmentActivity
     public static final String PREFERENCE_SELECTED_STORE_NUMBER = "SelectedStoreNumber";
     
     public static final String PREFERENCE_OTA_DOWNLOAD_URL = "OtaDownloadUrl";
+
+    public static final String PREFERENCE_BETA_MODE = "BetaMode";
     
     private static final String TAG_FIRST_FRAGMENT = "FIRST_FRAGMENT";
     private String mZipPath;
@@ -176,6 +179,8 @@ public class FairphoneUpdater extends FragmentActivity
 
         initHeaderViews();
 
+        setupHeader();
+
         setupFragments(savedInstanceState);
 
         startService();
@@ -185,7 +190,7 @@ public class FairphoneUpdater extends FragmentActivity
     
     void setupBetaStatus()
     {
-        BETA_MODE_ENABLED = mDeviceVersion.getBetaStatus().equals("1");
+        BETA_MODE_ENABLED = mSharedPreferences.getBoolean(PREFERENCE_BETA_MODE, getResources().getBoolean(R.bool.defaultBetaStatus));
     }
 
     private void isDeviceSupported()
@@ -307,6 +312,15 @@ public class FairphoneUpdater extends FragmentActivity
                 showInfoPopupDialog(DetailLayoutType.ANDROID);
             }
         });
+    }
+
+    private void setupHeader() {
+        if(BETA_MODE_ENABLED) {
+            String input = "<br /><small><font color=" + getResources().getColor(R.color.design_pink) + ">" + getResources().getString(R.string.beta_mode) + "</font></small>";
+            headerMainFairphoneText.append(Html.fromHtml(input));
+            headerMainAndroidText.append(Html.fromHtml(input));
+            headerMainAppStoreText.append(Html.fromHtml(input));
+        }
     }
 
     private void showInfoPopupDialog(DetailLayoutType layoutType)
