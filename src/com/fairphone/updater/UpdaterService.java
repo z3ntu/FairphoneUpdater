@@ -107,7 +107,7 @@ public class UpdaterService extends Service
 
         setupConnectivityMonitoring();
 
-        if (Utils.isWiFiEnabled(getApplicationContext()))
+        if(Utils.isInternetEnabled(getApplicationContext()))
         {
             downloadConfigFile(intent != null && intent.getBooleanExtra(EXTRA_FORCE_CONFIG_FILE_DOWNLOAD, false));
         }
@@ -246,6 +246,9 @@ public class UpdaterService extends Service
 
         if (request != null && mDownloadManager != null)
         {
+            // Allow download over mobile data and Wi-Fi
+            request.setAllowedNetworkTypes(Request.NETWORK_MOBILE|Request.NETWORK_WIFI);
+
             //Guarantee that only we have only one download
             long oldDownloadId = mSharedPreferences.getLong(PREFERENCE_LAST_CONFIG_DOWNLOAD_ID, 0);
             if(oldDownloadId != 0){
@@ -403,7 +406,7 @@ public class UpdaterService extends Service
 
         if (networkStateReceiver == null) {
             // Check current connectivity status
-            mInternetConnectionAvailable = Utils.isWiFiEnabled(getApplicationContext());
+            mInternetConnectionAvailable = Utils.isInternetEnabled(getApplicationContext());
 
             // Setup monitoring for future connectivity status changes
             networkStateReceiver = new BroadcastReceiver()
@@ -429,7 +432,7 @@ public class UpdaterService extends Service
                     else
                     {
                         int conn_type = intent.getIntExtra(ConnectivityManager.EXTRA_NETWORK_TYPE, ConnectivityManager.TYPE_DUMMY);
-                        if( conn_type == ConnectivityManager.TYPE_WIFI ) {
+                        if( conn_type == ConnectivityManager.TYPE_WIFI || conn_type == ConnectivityManager.TYPE_MOBILE) {
                             Log.i(TAG, "Network connectivity potentially available.");
                             if (!mInternetConnectionAvailable) {
                                 downloadConfigFile(false);
