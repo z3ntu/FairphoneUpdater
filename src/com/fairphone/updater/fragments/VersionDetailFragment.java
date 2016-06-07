@@ -260,8 +260,7 @@ public class VersionDetailFragment extends BaseFragment
                 mHeaderText = mSelectedVersion.getHumanReadableName();
                 mVersionDetailsTitle = resources.getString(R.string.latest_version);
                 mIsOSChange = deviceVersion.getImageType().equalsIgnoreCase(Version.IMAGE_TYPE_AOSP);
-                mIsOlderVersion =
-                        (deviceVersion.getImageType().equalsIgnoreCase(Version.IMAGE_TYPE_FAIRPHONE) && deviceVersion.isNewerVersionThan(mSelectedVersion));
+                mIsOlderVersion = false;
                 break;
             case FAIRPHONE:
             default:
