@@ -30,13 +30,13 @@ public abstract class DownloadableItem
 
     private String mId;
 
-    private String mName;
+    protected String mName;
 
     private String mOTADownloadLink;
 
     private String mOTAMd5Sum;
 
-    private String mBuildNumber;
+    protected String mBuildNumber;
     
     private final Map<String, String> mReleaseNotesMap;
 

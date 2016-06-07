@@ -16,13 +16,17 @@
 
 LOCAL_PATH := $(call my-dir)
 include $(CLEAR_VARS)
+RES_DIR := app/src/main/res
 
 LOCAL_MODULE_TAGS := optional
 
 LOCAL_STATIC_JAVA_LIBRARIES := android-common android-support-v4 roottoolslib fpucrashlytics
 
-LOCAL_SRC_FILES := $(call all-java-files-under, src) $(call all-renderscript-files-under, src)
+LOCAL_RESOURCE_DIR := $(addprefix $(LOCAL_PATH)/, $(RES_DIR))
+LOCAL_SRC_FILES := $(call all-java-files-under, app/src/main/java) $(call all-renderscript-files-under, app/src/main/java)
 #LOCAL_SDK_VERSION := current
+
+LOCAL_MANIFEST_FILE := app/src/main/AndroidManifest.xml
 
 LOCAL_PACKAGE_NAME := FairphoneUpdater
 LOCAL_CERTIFICATE := platform
@@ -33,7 +37,7 @@ include $(BUILD_PACKAGE)
 
 include $(CLEAR_VARS)
 
-LOCAL_PREBUILT_STATIC_JAVA_LIBRARIES := roottoolslib:libs/RootTools-3.3.jar fpucrashlytics:libs/crashlytics.jar
+LOCAL_PREBUILT_STATIC_JAVA_LIBRARIES := roottoolslib:app/libs/RootTools-3.3.jar fpucrashlytics:app/libs/crashlytics.jar
 
 include $(BUILD_MULTI_PREBUILT)
 
