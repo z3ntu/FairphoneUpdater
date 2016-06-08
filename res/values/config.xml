@@ -11,7 +11,7 @@
     <string name="defaultVersionName" translatable="false">Almond</string>
     <string name="defaultBuildNumber" translatable="false">1.0</string>
     <string name="defaultImageType" translatable="false">fairphone</string>
-    <string name="defaultBetaStatus" translatable="false">0</string>
+    <bool name="defaultBetaStatus" translatable="false">false</bool>
     
     <!-- Device Model without spaces separated by semicolon. Ex: FP1;FP1U;FP2 -->
     <string name="knownFPDevices" translatable="false">FP1;FP1U;FP2</string>

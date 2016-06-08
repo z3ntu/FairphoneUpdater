@@ -45,7 +45,6 @@ public class VersionParserHelper
     private static final String CURRENT_VERSION_NUMBER = "fairphone.ota.version.number";
     private static final String CURRENT_VERSION_NAME = "fairphone.ota.version.name";
     private static final String CURRENT_VERSION_BUILD_NUMBER = "fairphone.ota.build_number";
-    private static final String CURRENT_BETA_STATUS = "fairphone.ota.beta";
     private static final String CURRENT_VERSION_IMAGE_TYPE = "fairphone.ota.image_type";
     private static final String CURRENT_VERSION_ID = "ro.build.version.incremental";                // for FP2
 
@@ -88,7 +87,6 @@ public class VersionParserHelper
             }
 
             versionBuilder.setImageType(getSystemData(context, CURRENT_VERSION_IMAGE_TYPE, knownFPDevice));
-            versionBuilder.setBetaStatus(getSystemData(context, CURRENT_BETA_STATUS, knownFPDevice));
 
             Version versionData = UpdaterData.getInstance().getVersion(versionBuilder.getImageType(), versionBuilder.getId());
             versionBuilder.setThumbnailLink(versionData != null ? versionData.getThumbnailLink() : "");
@@ -114,9 +112,6 @@ public class VersionParserHelper
 			    break;
 		    case CURRENT_VERSION_IMAGE_TYPE:
 			    result = Utils.getprop(CURRENT_VERSION_IMAGE_TYPE, useDefaults ? context.getResources().getString(R.string.defaultImageType) : "");
-			    break;
-		    case CURRENT_BETA_STATUS:
-			    result = Utils.getprop(CURRENT_BETA_STATUS, useDefaults ? context.getResources().getString(R.string.defaultBetaStatus) : "0");
 			    break;
             case CURRENT_VERSION_ID:
                 result = Utils.getprop(CURRENT_VERSION_ID, useDefaults ? "" : ""); // TODO: define default value for fingerprint

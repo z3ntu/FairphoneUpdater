@@ -13,6 +13,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.text.Html;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -67,10 +68,12 @@ public class FairphoneUpdater extends FragmentActivity
     public static final String PREFERENCE_SELECTED_STORE_NUMBER = "SelectedStoreNumber";
     
     public static final String PREFERENCE_OTA_DOWNLOAD_URL = "OtaDownloadUrl";
+
+    public static final String PREFERENCE_BETA_MODE = "BetaMode";
     
     private static final String TAG_FIRST_FRAGMENT = "FIRST_FRAGMENT";
     private String mZipPath;
-	private AlertDialog wifiOffDialog;
+    private AlertDialog internetOffDialog;
 
 
 	public static enum UpdaterState
@@ -176,6 +179,8 @@ public class FairphoneUpdater extends FragmentActivity
 
         initHeaderViews();
 
+        setupHeader();
+
         setupFragments(savedInstanceState);
 
         startService();
@@ -185,7 +190,7 @@ public class FairphoneUpdater extends FragmentActivity
     
     void setupBetaStatus()
     {
-        BETA_MODE_ENABLED = mDeviceVersion.getBetaStatus().equals("1");
+        BETA_MODE_ENABLED = mSharedPreferences.getBoolean(PREFERENCE_BETA_MODE, getResources().getBoolean(R.bool.defaultBetaStatus));
     }
 
     private void isDeviceSupported()
@@ -307,6 +312,15 @@ public class FairphoneUpdater extends FragmentActivity
                 showInfoPopupDialog(DetailLayoutType.ANDROID);
             }
         });
+    }
+
+    private void setupHeader() {
+        if(BETA_MODE_ENABLED) {
+            String input = "<br /><small><font color=" + getResources().getColor(R.color.design_pink) + ">" + getResources().getString(R.string.beta_mode) + "</font></small>";
+            headerMainFairphoneText.append(Html.fromHtml(input));
+            headerMainAndroidText.append(Html.fromHtml(input));
+            headerMainAppStoreText.append(Html.fromHtml(input));
+        }
     }
 
     private void showInfoPopupDialog(DetailLayoutType layoutType)
@@ -544,6 +558,10 @@ public class FairphoneUpdater extends FragmentActivity
                 if(mLaunchGapps)
                 {
                     firstFragment = startGappsInstall();  
+                }
+                else if (getTopFragment() != null)
+                {
+                    firstFragment = getTopFragment();
                 }
                 else
                 {
@@ -817,9 +835,9 @@ public class FairphoneUpdater extends FragmentActivity
 	@Override
 	protected void onPause() {
 		super.onPause();
-		if(wifiOffDialog != null) {
-			wifiOffDialog.cancel();
-			wifiOffDialog = null;
+		if(internetOffDialog != null) {
+            internetOffDialog.cancel();
+            internetOffDialog = null;
 		}
 	}
 
@@ -852,29 +870,29 @@ public class FairphoneUpdater extends FragmentActivity
         
         changeFragment(getFragmentFromState());
 
-	    // Show wifi disable dialog if in a blank state and no wifi is available
-	    if (    wifiOffDialog == null &&
-			    mCurrentState == UpdaterState.NORMAL &&
-			    !Utils.isWiFiEnabled(this) &&
-			    UpdaterData.getInstance().isAppStoreListEmpty() &&
+        // Show internet disable dialog if in a blank state and no internet is available
+        if(     internetOffDialog == null &&
+                mCurrentState == UpdaterState.NORMAL &&
+                !Utils.isInternetEnabled(this) &&
+                UpdaterData.getInstance().isAppStoreListEmpty() &&
 			    !UpdaterData.getInstance().isAOSPVersionListNotEmpty() &&
-			    !UpdaterData.getInstance().isFairphoneVersionListNotEmpty() )
-	    {
-		    Resources resources = getResources();
+			    !UpdaterData.getInstance().isFairphoneVersionListNotEmpty())
+        {
+            Resources resources = getResources();
 
-		    AlertDialog.Builder wifiOffDialogBuilder = new AlertDialog.Builder(this);
+            AlertDialog.Builder internetOffDialogBuilder = new AlertDialog.Builder(this);
 
-		    wifiOffDialogBuilder.setTitle(resources.getString(R.string.connect_to_wifi));
-            wifiOffDialogBuilder.setIcon(resources.getDrawable(R.drawable.ic_signal_wifi_4_bar_fpblue_24dp));
+            internetOffDialogBuilder.setTitle(R.string.connect_to_internet);
+            internetOffDialogBuilder.setIcon(resources.getDrawable(R.drawable.ic_import_export_fpblue_24dp));
 
-		    wifiOffDialogBuilder.setPositiveButton(resources.getString(R.string.got_it), new DialogInterface.OnClickListener() {
+            internetOffDialogBuilder.setPositiveButton(resources.getString(R.string.got_it), new DialogInterface.OnClickListener() {
 			    public void onClick(DialogInterface dialog, int id) {
 				    // do nothing, since the state is still the same
 			    }
 		    });
-		    wifiOffDialog = wifiOffDialogBuilder.create();
-		    wifiOffDialog.show();
-	    }
+            internetOffDialog = internetOffDialogBuilder.create();
+            internetOffDialog.show();
+        }
     }
 
     public Fragment startGappsInstall()

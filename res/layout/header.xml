@@ -13,7 +13,7 @@
             android:ellipsize="end"
             android:fontFamily="sans-serif-thin"
             android:gravity="center_vertical|center_horizontal"
-            android:lines="1"
+            android:lines="2"
             android:text="@string/app_full_name"
             android:textColor="@color/blue"
             android:textSize="@dimen/header_big_text_size" />

@@ -77,5 +77,6 @@
     <string name="got_it">Entendi</string>
     <string name="connect_to_wifi">Por favor ligue-se a uma rede Wi-Fi</string>
     <string name="charge_battery">Por favor carregue a bateria até pelo menos 80%</string>
+    <string name="connect_to_internet">Certifique-se que está ligado à internet</string>
 
 </resources>

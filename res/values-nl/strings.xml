@@ -76,6 +76,7 @@
     <string name="app_store">App Stores</string>
     <string name="got_it">Ik snap het</string>
     <string name="connect_to_wifi">Maak verbinding met een Wi-Fi netwerk</string>
-    <string name="charge_battery">Zorg er voor dat je batterij minstens 80% opgeladen is</string>
+    <string name="charge_battery">Zorg ervoor dat je batterij minstens 80% opgeladen is</string>
+    <string name="connect_to_internet">Zorg ervoor dat je bent verbonden met het internet</string>
 
 </resources>
