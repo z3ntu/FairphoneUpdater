@@ -76,7 +76,7 @@
     <string name="app_store">App Stores</string>
     <string name="got_it">Ich verstehe</string>
     <string name="connect_to_wifi">Stell eine Verbindung zum WLAN her</string>
-    <string name="charge_battery">Bitte lade die Batterie mindestens 80% auf</string>
+    <string name="charge_battery">Bitte lade die Batterie mindestens 40% auf</string>
     <string name="connect_to_internet">Stelle sicher, dass eine Internetverbindung besteht</string>
 
 </resources>

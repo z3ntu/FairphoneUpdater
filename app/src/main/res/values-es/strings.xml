@@ -76,7 +76,7 @@
     <string name="app_store">App Stores</string>
     <string name="got_it">Lo entiendo</string>
     <string name="connect_to_wifi">Conéctate a la red Wi-Fi</string>
-    <string name="charge_battery">Asegúrate de que tu batería está cargada al menos un 80%</string>
+    <string name="charge_battery">Asegúrate de que tu batería está cargada al menos un 40%</string>
     <string name="connect_to_internet">Asegúrate de que tienes conexión a internet</string>
 
 </resources>
