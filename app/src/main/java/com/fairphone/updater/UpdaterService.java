@@ -243,6 +243,7 @@ public class UpdaterService extends Service
         String downloadLink = getConfigDownloadLink(getApplicationContext());
         // set the download for the latest version on the download manager
         Request request = createDownloadRequest(downloadLink, resources.getString(R.string.configFilename) + resources.getString(R.string.config_zip));
+        request.setNotificationVisibility(Request.VISIBILITY_HIDDEN);
 
         if (request != null && mDownloadManager != null)
         {
