@@ -26,7 +26,7 @@
 
 	<string name="FP2Model" translatable="false">FP2</string>
 
-	<string name="minimumBatteryLevel" translatable="false">0.8</string>
+	<string name="minimumBatteryLevel" translatable="false">0.4</string>
 	
 	<!-- Packager -->
 	<string name="removePlayStoreCommand" translatable="false">rm /data/app/com.android.vending-*.apk</string>
