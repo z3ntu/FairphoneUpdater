@@ -77,7 +77,6 @@
     <string name="got_it">OK</string>
     <string name="connect_to_wifi">Merci de vous connecter à un réseau Wi-Fi</string>
     <string name="charge_battery">Chargez votre batterie à au moins 40%</string>
-    <string name="config_zip" translatable="false"></string>
     <string name="connect_to_internet">Assurez-vous d\'être connecté à internet</string>
 
 </resources>

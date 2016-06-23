@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           xmlns:tools="http://schemas.android.com/tools"
           package="com.fairphone.updater"
-    android:versionCode="32"
-    android:versionName="32" >
+    android:versionCode="33"
+    android:versionName="33" >
 
     <uses-sdk
         android:minSdkVersion="17"
