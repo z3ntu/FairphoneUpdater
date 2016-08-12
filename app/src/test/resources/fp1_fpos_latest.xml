@@ -1,0 +1,109 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<updater>
+    <releases>
+        <aosp latest="4">
+            <version number="4">
+                <name>Jelly Bean 11-2014</name>
+                <build_number>4.2.2</build_number>
+                <android_version>4.2.2</android_version>
+                <release_notes>Stock Android image
+                    Jelly Bean</release_notes>
+                <release_date>26/11/2014</release_date>
+                <md5sum>20286cb405e1487066c31b55438311ac</md5sum>
+                <thumbnail_link>http://192.168.0.29:8080/</thumbnail_link>
+                <update_link>http://storage.googleapis.com/update-v1_8/AOSP-4.2.2_OTA_2014-11-26.zip</update_link>
+            </version>
+        </aosp>
+        <fairphone latest="2015081400">
+            <version number="3">
+                <name>Cherry</name>
+                <build_number>1.6</build_number>
+                <android_version>4.2.2</android_version>
+                <release_notes>Release notes: For the full list of changes, please visit fairphone.com/support</release_notes>
+                <release_notes_de>Notiz: Für die vollständige Liste von Veränderungen, bitte besuche fairphone.com/support</release_notes_de>
+                <release_notes_nl>Versie-informatie: voor de volledige lijst met veranderingen, ga naar fairphone.com/support</release_notes_nl>
+                <release_notes_fr>Notes de mise à jour: pour connaître la liste complète des modifications, rendez-vous sur fairphone.com/support</release_notes_fr>
+                <release_notes_es>Nota: para ver la lista de novedades de esta actualización, visita la web fairphone.com/support</release_notes_es>
+                <release_notes_pt>Nota: Para ver a lista completa de novidades desta actualização, visite fairphone.com/support</release_notes_pt>
+                <release_notes_ca>Nota: per a veure la llista de novetats d'aquesta actualització, visita la web fairphone.com/support</release_notes_ca>
+                <release_date>31/07/2014</release_date>
+                <md5sum>664ca09368a4c922a12dc2526afe092b</md5sum>
+                <thumbnail_link>http://192.168.0.29:8080/</thumbnail_link>
+                <update_link>http://storage.googleapis.com/update-v1_6/FP1_Fairphone_OS_v1_6_OTA_2014-07-31.zip</update_link>
+            </version>
+            <version number="21">
+                <name>Kola Nut</name>
+                <build_number>1.8.5</build_number>
+                <android_version>4.2.2</android_version>
+                <release_notes>Release notes: For the full list of changes, please visit fairphone.com/support</release_notes>
+                <release_notes_de>Notiz: Für die vollständige Liste von Veränderungen, bitte besuche fairphone.com/support</release_notes_de>
+                <release_notes_nl>Versie-informatie: voor de volledige lijst met veranderingen, ga naar fairphone.com/support</release_notes_nl>
+                <release_notes_fr>Notes de mise à jour: pour connaître la liste complète des modifications, rendez-vous sur fairphone.com/support</release_notes_fr>
+                <release_notes_es>Nota: para ver la lista de novedades de esta actualización, visita la web fairphone.com/support</release_notes_es>
+                <release_notes_pt>Nota: Para ver a lista completa de novidades desta actualização, visite fairphone.com/support</release_notes_pt>
+                <release_notes_ca>Nota: per a veure la llista de novetats d'aquesta actualització, visita la web fairphone.com/support</release_notes_ca>
+                <release_date>07/05/2015</release_date>
+                <md5sum>b1b3272933d7f53c573b31d1c09c40f7</md5sum>
+                <thumbnail_link>http://192.168.0.29:8080/</thumbnail_link>
+                <update_link>http://storage.googleapis.com/fairphone-updates/FP1-Fairphone_OS_v1_8_5_OTA_2015-05-07.zip</update_link>
+            </version>
+            <version number="22">
+                <name>Kola Nut</name>
+                <build_number>1.8.6</build_number>
+                <android_version>4.2.2</android_version>
+                <release_notes>Release notes: For the full list of changes, please visit fairphone.com/support</release_notes>
+                <release_notes_de>Notiz: Für die vollständige Liste von Veränderungen, bitte besuche fairphone.com/support</release_notes_de>
+                <release_notes_nl>Versie-informatie: voor de volledige lijst met veranderingen, ga naar fairphone.com/support</release_notes_nl>
+                <release_notes_fr>Notes de mise à jour: pour connaître la liste complète des modifications, rendez-vous sur fairphone.com/support</release_notes_fr>
+                <release_notes_es>Nota: para ver la lista de novedades de esta actualización, visita la web fairphone.com/support</release_notes_es>
+                <release_notes_pt>Nota: Para ver a lista completa de novidades desta actualização, visite fairphone.com/support</release_notes_pt>
+                <release_notes_ca>Nota: per a veure la llista de novetats d'aquesta actualització, visita la web fairphone.com/support</release_notes_ca>
+                <release_date>07/07/2015</release_date>
+                <md5sum>555a763439aa8e39fc5433aeca9fdee3</md5sum>
+                <thumbnail_link>http://192.168.0.29:8080/</thumbnail_link>
+                <update_link>http://storage.googleapis.com/fairphone-updates/FP1-Fairphone_OS_v1_8_6_OTA-2015-07-07.zip</update_link>
+            </version>
+            <version number="24">
+                <name>FP1X</name>
+                <build_number>13</build_number>
+                <android_version>4.2.2</android_version>
+                <release_notes>Release notes: For the full list of changes, please visit fairphone.com/support</release_notes>
+                <release_notes_de>Notiz: Für die vollständige Liste von Veränderungen, bitte besuche fairphone.com/support</release_notes_de>
+                <release_notes_nl>Versie-informatie: voor de volledige lijst met veranderingen, ga naar fairphone.com/support</release_notes_nl>
+                <release_notes_fr>Notes de mise à jour: pour connaître la liste complète des modifications, rendez-vous sur fairphone.com/support</release_notes_fr>
+                <release_notes_es>Nota: para ver la lista de novedades de esta actualización, visita la web fairphone.com/support</release_notes_es>
+                <release_notes_pt>Nota: Para ver a lista completa de novidades desta actualização, visite fairphone.com/support</release_notes_pt>
+                <release_notes_ca>Nota: per a veure la llista de novetats d'aquesta actualització, visita la web fairphone.com/support</release_notes_ca>
+                <release_date>08/07/2015</release_date>
+                <md5sum>318a6d4c6936e4a713f6b1b3263d92f7</md5sum>
+                <thumbnail_link>http://192.168.0.29:8080/</thumbnail_link>
+                <update_link>http://storage.googleapis.com/fairphone-updates/FP1X-Fairphone_OS_OTA_13.zip</update_link>
+            </version>
+            <version number="2015070700"><name>FP1X</name><build_number>2015070700</build_number><android_version>4.2.2</android_version><release_notes /><release_date>13/07/2015</release_date><md5sum>ab71735cb7b4c89e23124a2d7ff8c9c9</md5sum><update_link>http://storage.googleapis.com/fairphone-updates/FP1X-Fairphone_OS_2015070700.zip</update_link></version>
+            <version number="2015081400"><name>Kola Nut</name><build_number>1.8.7</build_number><android_version>4.2.2</android_version><release_notes>Release notes: For the full list of changes, please visit fairphone.com/support</release_notes><release_notes_de>Notiz: Für die vollständige Liste von Veränderungen, bitte besuche fairphone.com/support</release_notes_de><release_notes_nl>Versie-informatie: voor de volledige lijst met veranderingen, ga naar fairphone.com/support</release_notes_nl><release_notes_fr>Notes de mise à jour: pour connaître la liste complète des modifications, rendez-vous sur fairphone.com/support</release_notes_fr><release_notes_es>Nota: para ver la lista de novedades de esta actualización, visita la web fairphone.com/support</release_notes_es><release_notes_pt>Nota: Para ver a lista completa de novidades desta actualização, visite fairphone.com/support</release_notes_pt><release_notes_ca>Nota: per a veure la llista de novetats d'aquesta actualització, visita la web fairphone.com/support</release_notes_ca><release_date>14/08/2015</release_date><md5sum>7f3b6a7c11f9b5444fa90cb73f82bff9</md5sum><update_link>http://storage.googleapis.com/fairphone-updates/FP1-Fairphone_OS_v1_8_7_OTA_2015081400.zip</update_link></version></fairphone>
+    </releases>
+    <stores>
+
+        <store number="0">
+
+            <name>Google Apps</name>
+            <build_number>1.0</build_number>
+            <release_notes>Google Apps package</release_notes>
+
+            <release_notes_fr>Google Apps package</release_notes_fr>
+
+            <release_notes_nl>Google Apps package</release_notes_nl>
+
+            <release_notes_es>Google Apps package</release_notes_es>
+
+            <release_notes_de>Google Apps package</release_notes_de>
+
+            <release_notes_pt>Google Apps package</release_notes_pt>
+            <release_date>20/12/2013</release_date>
+            <md5sum>9444e40ed5afc9d61530681542f97b97</md5sum>
+            <update_link>http://s3-eu-west-1.amazonaws.com/gatest15/gapps_1.5.zip</update_link>
+            <show_disclaimer />
+
+        </store>
+    </stores>
+</updater>

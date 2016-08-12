@@ -1,0 +1,32 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<updater>
+    <releases>
+        <fairphone latest="fp2-sibon-16.05.0">
+            <version number="fp2-sibon-16.05.0">
+                <name>Fairphone Open Source OS</name>
+                <build_number>16.05.0</build_number>
+                <android_version>5.1</android_version>
+                <release_notes>
+                </release_notes>
+                <release_date>27/05/2016</release_date>
+                <md5sum>ad533205938163686aaed40a75073fcd</md5sum>
+                <update_link>http://storage.googleapis.com/fairphone-updates/fp2-sibon-16.05.0-ota-userdebug.zip</update_link>
+            </version>
+            <version number="r4275.1_FP2_gms54_1.3.6">
+                <name>Fairphone OS</name>
+                <build_number>1.3.6</build_number>
+                <android_version>5.1</android_version>
+                <release_notes>Installing this Fairphone OS version will bring you back to the default Fairphone software that includes Google Services.
+
+                    Important: All of your data will be erased, so make sure you’ve backed up any important data beforehand.
+
+                    Before starting the update installation, make sure you're connected to a Wi-Fi network and your battery is fully charged.
+                </release_notes>
+                <release_date>28/04/2016</release_date>
+                <md5sum>3ac91fca0d2c51801bd6a72f747c1b3d</md5sum>
+                <update_link>http://storage.googleapis.com/fairphone-updates/FP2-gms54-1.3.6-ota_from_open.zip</update_link>
+                <erase_data_warning />
+            </version>
+        </fairphone>
+    </releases>
+</updater>

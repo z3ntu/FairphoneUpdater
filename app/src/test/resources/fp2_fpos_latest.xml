@@ -1,0 +1,45 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<updater>
+    <releases>
+        <fairphone latest="r4275.1_FP2_gms56_1.4.2">
+            <version number="r4275.1_FP2_gms56_1.4.2">
+                <name>Fairphone OS</name>
+                <build_number>1.4.2</build_number>
+                <android_version>5.1</android_version>
+                <release_notes>Before starting the update installation, make sure you're connected to a Wi-Fi network and your battery is charged to at least 80%
+
+                    For the full release notes, check
+                    fairphone.com/support
+                </release_notes>
+                <release_notes_nl>Voordat je verder gaat met de installatie, zorg dat je verbonden bent met een Wi-Fi netwerk en dat je batterij minstens 80% opgeladen is.
+
+                    Voor de volledige lijst met veranderingen,
+                    kijk op fairphone.com/support
+                </release_notes_nl>
+                <release_notes_de>Stell sicher, dass du mit dem WLAN verbunden und die Batterie mindestens 80% aufgeladen ist, bevor du mit der Installation des Updates beginnst.
+
+                    Eine Liste mit allen Änderungen findest du unter
+                    fairphone.com/support
+                </release_notes_de>
+                <release_notes_fr>Assurez-vous d’être connecté à un réseau Wi-Fi et d’avoir chargé votre batterie à au moins 80% avant de procéder à la mise à jour.
+
+                    Rendez-vous à l’adresse
+                    fairphone.com/support pour la liste complète des changements et améliorations.
+                </release_notes_fr>
+                <release_notes_es>Antes de comenzar la actualización, asegúrate que estás conectado a una red Wi-Fi y que tu batería está cargada un 80% como mínimo.
+
+                    Para acceder a los detalles sobre esta actualización, visita
+                    fairphone.com/support
+                </release_notes_es>
+                <release_notes_pt>Antes de prosseguir com a instalação, certifique-se que está conectado a uma rede Wi-Fi e que a sua bateria está com pelo menos 80% de carga.
+
+                    Para a lista completa de alterações, consulte
+                    fairphone.com/support
+                </release_notes_pt>
+                <release_date>07/06/2016</release_date>
+                <md5sum>f0d157ef40fc0bfa4bdb3911e772a4c0</md5sum>
+                <update_link>http://storage.googleapis.com/fairphone-updates/FP2-gms56-1.4.2-ota.zip</update_link>
+            </version>
+        </fairphone>
+    </releases>
+</updater>
