@@ -27,7 +27,7 @@ public class VersionParserHelper {
     private static final String CURRENT_VERSION_BUILD_NUMBER = "fairphone.ota.build_number";
     private static final String CURRENT_VERSION_IMAGE_TYPE = "fairphone.ota.image_type";
     private static final String CURRENT_VERSION_ID = "ro.build.version.incremental";                // for FP2
-
+    private static final String CURRENT_VERSION_BASEBAND_VERSION = "gsm.version.baseband";
 
     private static Version version;
     public static Version getDeviceVersion(Context context)
@@ -52,6 +52,7 @@ public class VersionParserHelper {
                 }
                 versionBuilder.setName(versionBuilder.getCurrentImageType());
                 versionBuilder.setBuildNumber(versionBuilder.getBuildNumberFromId());
+                versionBuilder.setBasebandVersion(getSystemData(context, CURRENT_VERSION_BASEBAND_VERSION, knownFPDevice));
             } else {
                 // FP1(U)
                 try
@@ -95,6 +96,9 @@ public class VersionParserHelper {
                 break;
             case CURRENT_VERSION_ID:
                 result = Utils.getprop(CURRENT_VERSION_ID, useDefaults ? "" : ""); // TODO: define default value for fingerprint
+                break;
+            case CURRENT_VERSION_BASEBAND_VERSION:
+                result = Utils.getprop(CURRENT_VERSION_BASEBAND_VERSION, useDefaults ? "" : ""); // TODO: define default value for baseband version
                 break;
             default:
                 result = "";
