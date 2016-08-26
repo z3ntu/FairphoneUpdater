@@ -138,11 +138,6 @@ public class UpdaterService extends Service
 
     private static void showReinstallAlert(Context context)
     {
-        if ( FairphoneUpdater.BETA_MODE_ENABLED )
-        {
-            return;
-        }
-
 	    NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         
         //Intent notificationIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(context.getResources().getString(R.string.supportAppStoreUrl)));
@@ -351,12 +346,6 @@ public class UpdaterService extends Service
 
     private static void setNotification(Context currentContext)
     {
-
-        if ( FairphoneUpdater.BETA_MODE_ENABLED )
-        {
-            return;
-        }
-        
         Context context = currentContext.getApplicationContext();
 
         NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
