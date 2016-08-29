@@ -48,7 +48,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/main_padding_small"
             android:layout_marginTop="@dimen/main_padding"
-            android:text="@string/older_versions"/>
+            android:text="@string/additional_downloads"/>
 
         <ScrollView
             android:id="@+id/version_list_scroll"

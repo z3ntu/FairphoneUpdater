@@ -38,10 +38,10 @@
     <string name="new_os">Neues Betriebssystem</string>
     <string name="no_space_available_cache_message">Kein Platz verfügbar im Cache</string>
     <string name="no_space_available_sd_card_message">Kein Platz verfügbar auf der SD Karte</string>
-    <string name="older_version">ältere Version</string>
+    <string name="additional_download">Weiterer Download</string>
     <string name="older_version_os_install_confirmation">Bist du sicher, dass du weitermachen willst?</string>
     <string name="older_version_os_install_confirmation_checkbox">Ich kenne und verstehe alle Konsequenzen dieser Installation</string>
-    <string name="older_versions">Ältere Versionen</string>
+    <string name="additional_downloads">Weitere Downloads</string>
     <string name="os_update_has_started_message">Das Update hat begonnen. Dies kann ein wenig dauern, abhängig von der Gechwindigkeit deiner Internet Verbindung.</string>
     <string name="other_os_options">Betrete den fortgeschrittenen Modus</string>
     <string name="please_be_patient">Bitte gedulde dich noch ein wenig&#8230;</string>

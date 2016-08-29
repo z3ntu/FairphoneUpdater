@@ -38,10 +38,10 @@
     <string name="new_os">Nuevo sistema operativo</string>
     <string name="no_space_available_cache_message">No hay espacio disponible en /cache.</string>
     <string name="no_space_available_sd_card_message">No hay espacio disponible en la tarjeta SD.</string>
-    <string name="older_version">Versión Anterior</string>
+    <string name="additional_download">Descarga adicional</string>
     <string name="older_version_os_install_confirmation">¿Seguro que deseas continuar?</string>
     <string name="older_version_os_install_confirmation_checkbox">Comprendo y acepto las consecuencias de esta instalación.</string>
-    <string name="older_versions">Versiones anteriores</string>
+    <string name="additional_downloads">Descarga(s) adicionales</string>
     <string name="os_update_has_started_message">Actualización en proceso. Puede tardar unos minutos dependiendo de la velocidad de tu red.</string>
     <string name="other_os_options">Accede al modo avanzado</string>
     <string name="please_be_patient">Un momento, por favor&#8230;</string>
