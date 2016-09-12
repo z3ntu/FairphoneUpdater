@@ -146,6 +146,7 @@ public class XmlParser {
                 version.setVersionDependencies(readDependencies(parser));
             } else if (tagName.equals("erase_data_warning")) {
                 version.setEraseAllPartitionWarning();
+		skip(parser);
             } else {
                 skip(parser);
             }
