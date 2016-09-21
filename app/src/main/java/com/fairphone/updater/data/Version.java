@@ -45,6 +45,8 @@ public class Version extends DownloadableItem implements Comparable<Version>
 
     private final List<Integer> mDependencies;
 
+    private String mBasebandVersion;
+
     public Version()
     {
         super();
@@ -52,6 +54,7 @@ public class Version extends DownloadableItem implements Comparable<Version>
         mAndroidVersion = "";
         mImageType = IMAGE_TYPE_FAIRPHONE;
         mErasePartitionsWarning = false;
+        mBasebandVersion = "";
     }
 
     public Version(Version other)
@@ -61,6 +64,7 @@ public class Version extends DownloadableItem implements Comparable<Version>
         mAndroidVersion = other.mAndroidVersion;
         mImageType = other.mImageType;
         mErasePartitionsWarning = other.hasEraseAllPartitionWarning();
+        mBasebandVersion = other.mBasebandVersion;
     }
 
     public void setEraseAllPartitionWarning()
@@ -108,6 +112,14 @@ public class Version extends DownloadableItem implements Comparable<Version>
             }
         }
         return description;
+    }
+
+    public String getBasebandVersion() {
+        return mBasebandVersion;
+    }
+
+    public void setBasebandVersion(String basebandVersion) {
+        this.mBasebandVersion = basebandVersion;
     }
 
 // --Commented out by Inspection START (06/02/2015 12:25):

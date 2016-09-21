@@ -138,11 +138,6 @@ public class UpdaterService extends Service
 
     private static void showReinstallAlert(Context context)
     {
-        if ( FairphoneUpdater.BETA_MODE_ENABLED )
-        {
-            return;
-        }
-
 	    NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         
         //Intent notificationIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(context.getResources().getString(R.string.supportAppStoreUrl)));
@@ -332,9 +327,17 @@ public class UpdaterService extends Service
                 if(modelWithoutSpaces.startsWith(context.getResources().getString(R.string.FP1Model))) {
                     sb.append("&b_n=").append(URLEncoder.encode(currentVersion.getBuildNumber(), defaultCharset));
                 }
-                sb.append("&ota_v_n=").append(URLEncoder.encode(String.valueOf(currentVersion.getId()), defaultCharset));
-                sb.append("&beta=").append(FairphoneUpdater.BETA_MODE_ENABLED ? BetaEnabler.BETA_ENABLED : BetaEnabler.BETA_DISABLED);
-                sb.append("&dev=").append(FairphoneUpdater.DEV_MODE_ENABLED ? "1" : "0");
+                sb.append("&ap=").append(URLEncoder.encode(String.valueOf(currentVersion.getId()), defaultCharset));
+                if(modelWithoutSpaces.equals(context.getResources().getString(R.string.FP2Model))) {
+                    sb.append("&bp=").append(URLEncoder.encode(String.valueOf(currentVersion.getBasebandVersion()), defaultCharset));
+                }
+                sb.append("&u=").append(URLEncoder.encode(String.valueOf(Utils.getVersionCode(context.getApplicationContext())), defaultCharset));
+                if(FairphoneUpdater.BETA_MODE_ENABLED) {
+                    sb.append("&beta=").append(BetaEnabler.BETA_ENABLED);
+                }
+                if(FairphoneUpdater.DEV_MODE_ENABLED) {
+                    sb.append("&dev=").append("1");
+                }
             } catch (UnsupportedEncodingException e) {
                 Log.e(TAG, "Failed to add extra info on update request: "+e.getLocalizedMessage());
             }
@@ -343,12 +346,6 @@ public class UpdaterService extends Service
 
     private static void setNotification(Context currentContext)
     {
-
-        if ( FairphoneUpdater.BETA_MODE_ENABLED )
-        {
-            return;
-        }
-        
         Context context = currentContext.getApplicationContext();
 
         NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);

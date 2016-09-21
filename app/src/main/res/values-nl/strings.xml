@@ -38,10 +38,10 @@
     <string name="new_os">Nieuw besturingssysteem</string>
     <string name="no_space_available_cache_message">Geen ruimte beschikbaar in /cache</string>
     <string name="no_space_available_sd_card_message">Geen ruimte beschikbaar op de SD kaart</string>
-    <string name="older_version">Oudere versie</string>
+    <string name="additional_download">Overige download</string>
     <string name="older_version_os_install_confirmation">Weet je zeker dat je wilt doorgaan?</string>
     <string name="older_version_os_install_confirmation_checkbox">Ik ken en begrijp alle implicaties van het uitvoeren van deze installatie</string>
-    <string name="older_versions">Oudere versies</string>
+    <string name="additional_downloads">Overige download(s)</string>
     <string name="os_update_has_started_message">De update is gestart. Dit kan enige tijd duren, afhankelijk van de snelheid van je netwerkverbinding.</string>
     <string name="other_os_options">Open de geavanceerde modus</string>
     <string name="please_be_patient">Een ogenblik geduld&#8230;</string>

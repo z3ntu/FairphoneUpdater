@@ -33,10 +33,9 @@ public class ConfirmationPopupDialog extends DialogFragment implements OnEditorA
     private final DetailLayoutType mLayoutType;
     private Button mOkButton;
 	private final boolean mIsOSChange;
-    private final boolean mIsOlderVersion;
     private final boolean mHasEraseAllDataWarning;
 
-    public ConfirmationPopupDialog(String version, boolean isOSChange, boolean isOlderVersion, boolean hasEraseAllDataWarning, DetailLayoutType layoutType,
+    public ConfirmationPopupDialog(String version, boolean isOSChange, boolean hasEraseAllDataWarning, DetailLayoutType layoutType,
             ConfirmationPopupDialogListener callback)
     {
         // Empty constructor required for DialogFragment
@@ -46,7 +45,6 @@ public class ConfirmationPopupDialog extends DialogFragment implements OnEditorA
         mCallback = callback;
         mLayoutType = layoutType;
         mIsOSChange = isOSChange;
-        mIsOlderVersion = isOlderVersion;
         mHasEraseAllDataWarning = hasEraseAllDataWarning;
     }
 
@@ -80,10 +78,6 @@ public class ConfirmationPopupDialog extends DialogFragment implements OnEditorA
         if (mIsOSChange)
         {
             versionTypeText.setText(R.string.a_different_os_from_the_current);
-        }
-        else if (mIsOlderVersion)
-        {
-            versionTypeText.setText(R.string.an_older_version_of_os);
         }
 
         TextView eraseAllDataWarning = (TextView) view.findViewById(R.id.erase_all_data_warning_text);

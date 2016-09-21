@@ -24,6 +24,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
@@ -691,5 +692,20 @@ public class Utils
         AlarmManager mgr = (AlarmManager)activity.getApplicationContext().getSystemService(Context.ALARM_SERVICE);
         mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 100, pendingIntent);
         System.exit(0);
+    }
+
+    public static int getVersionCode(Context context) {
+        PackageManager packageManager = context.getPackageManager();
+        String packageName = context.getPackageName();
+
+        int versionCode = 0;
+
+        try {
+            versionCode = packageManager.getPackageInfo(packageName, 0).versionCode;
+        } catch (PackageManager.NameNotFoundException e) {
+            Log.e(TAG, "App versionCode cannot be retrieved", e);
+        }
+
+        return versionCode;
     }
 }

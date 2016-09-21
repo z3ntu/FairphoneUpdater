@@ -39,10 +39,10 @@
     <string name="new_os">New operating system</string>
     <string name="no_space_available_cache_message">No space available on /cache.</string>
     <string name="no_space_available_sd_card_message">No space available on SD card.</string>
-    <string name="older_version">Older version</string>
+    <string name="additional_download">Additional download</string>
     <string name="older_version_os_install_confirmation">Are you sure you want to continue?</string>
     <string name="older_version_os_install_confirmation_checkbox">I know and understand all implications of performing this installation</string>
-    <string name="older_versions">Older versions</string>
+    <string name="additional_downloads">Additional download(s)</string>
     <string name="os_update_has_started_message">The update has started. This may take some time depending on your network connection speed.</string>
     <string name="other_os_options">Enter advanced mode</string>
     <string name="please_be_patient">Just a moment&#8230;</string>

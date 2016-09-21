@@ -14,7 +14,6 @@ import com.fairphone.updater.tools.Utils;
 
 public class BetaEnabler extends Activity {
 
-    public static final String BETA_DISABLED = "0";
     public static final String BETA_ENABLED = "1";
     
     @Override

@@ -57,7 +57,6 @@ public class VersionDetailFragment extends BaseFragment
     private DownloadManager mDownloadManager;
     private DetailLayoutType mDetailLayoutType;
     private boolean mIsOSChange;
-    private boolean mIsOlderVersion;
     private Store mSelectedStore;
     private final boolean mIsVersion;
 
@@ -240,35 +239,28 @@ public class VersionDetailFragment extends BaseFragment
                 mHeaderText = resources.getString(R.string.install_update);
                 mVersionDetailsTitle = resources.getString(R.string.update_version);
                 mIsOSChange = false;
-                mIsOlderVersion = false;
                 break;
 
             case ANDROID:
                 mHeaderText = mSelectedVersion.getHumanReadableName();
                 mVersionDetailsTitle = resources.getString(R.string.new_os);
                 mIsOSChange = deviceVersion.getImageType().equalsIgnoreCase(Version.IMAGE_TYPE_FAIRPHONE);
-                mIsOlderVersion =
-                        (deviceVersion.getImageType().equalsIgnoreCase(Version.IMAGE_TYPE_AOSP) && deviceVersion.isNewerVersionThan(mSelectedVersion));
                 break;
             case APP_STORE:
                 mHeaderText = FairphoneUpdater.getStoreName(mSelectedStore);
                 mVersionDetailsTitle = resources.getString(R.string.install);
                 mIsOSChange = false;
-                mIsOlderVersion = false;
                 break;
             case LATEST_FAIRPHONE:
                 mHeaderText = mSelectedVersion.getHumanReadableName();
                 mVersionDetailsTitle = resources.getString(R.string.latest_version);
                 mIsOSChange = deviceVersion.getImageType().equalsIgnoreCase(Version.IMAGE_TYPE_AOSP);
-                mIsOlderVersion = false;
                 break;
             case FAIRPHONE:
             default:
                 mHeaderText = mSelectedVersion.getHumanReadableName();
-                mVersionDetailsTitle = resources.getString(R.string.older_version);
+                mVersionDetailsTitle = resources.getString(R.string.additional_download);
                 mIsOSChange = deviceVersion.getImageType().equalsIgnoreCase(Version.IMAGE_TYPE_AOSP);
-                mIsOlderVersion =
-                        (deviceVersion.getImageType().equalsIgnoreCase(Version.IMAGE_TYPE_FAIRPHONE) && deviceVersion.isNewerVersionThan(mSelectedVersion));
                 break;
         }
     }
@@ -406,7 +398,7 @@ public class VersionDetailFragment extends BaseFragment
     {
         FragmentManager fm = getActivity().getSupportFragmentManager();
         ConfirmationPopupDialog popupDialog =
-                new ConfirmationPopupDialog(version, mIsOSChange, mIsOlderVersion, hasEraseAllDataWarning, mDetailLayoutType, listener);
+                new ConfirmationPopupDialog(version, mIsOSChange, hasEraseAllDataWarning, mDetailLayoutType, listener);
         popupDialog.show(fm, version);
     }
 
@@ -414,7 +406,7 @@ public class VersionDetailFragment extends BaseFragment
     {
         if (mIsVersion && mSelectedVersion != null)
         {
-            if (mIsOSChange || mIsOlderVersion)
+            if (mIsOSChange)
             {
                 showPopupDialog(mSelectedVersion.getHumanReadableName(), mSelectedVersion.hasEraseAllPartitionWarning(),
                         new ConfirmationPopupDialogListener()

@@ -635,7 +635,7 @@ public class FairphoneUpdater extends FragmentActivity
         boolean update = false;
         if (mLatestVersion != null)
         {
-	        update = BETA_MODE_ENABLED || mLatestVersion.isNewerVersionThan(mDeviceVersion);
+	        update = mLatestVersion.isNewerVersionThan(mDeviceVersion);
         }
         return update;
     }
