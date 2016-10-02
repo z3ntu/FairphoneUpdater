@@ -481,16 +481,16 @@ public class Utils
 
             String updateCommand = "--update_package=" + otaPackagePath;
             PrintWriter writer = new PrintWriter(command, "UTF-8");
-            writer.println("--wipe_cache");
             writer.println(updateCommand);
+            writer.println("--wipe_cache");
             writer.flush();
             writer.close();
         }else {
             if(RootTools.isAccessGiven()) {
                 Shell.runRootCommand(new CommandCapture(0, "rm -f /cache/recovery/command"));
                 Shell.runRootCommand(new CommandCapture(0, "rm -f /cache/recovery/extendedcommand"));
-                Shell.runRootCommand(new CommandCapture(0, "echo '--wipe_cache' >> /cache/recovery/command"));
                 Shell.runRootCommand(new CommandCapture(0, "echo '--update_package=" + otaPackagePath + "' >> /cache/recovery/command"));
+                Shell.runRootCommand(new CommandCapture(0, "echo '--wipe_cache' >> /cache/recovery/command"));
             }else{
                 throw new RootDeniedException("Root Denied");
             }
